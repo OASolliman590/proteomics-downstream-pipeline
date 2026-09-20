@@ -1,0 +1,1860 @@
+{
+  "schema_version": "1.0.0",
+  "requirements": [
+    {
+      "requirement": "FR-001",
+      "task": "T001",
+      "acceptance": "V001",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Installable maintained CLI",
+      "implementation_paths": [
+        "src/proteomics_pipeline/cli.py",
+        "pyproject.toml"
+      ],
+      "criterion": "An isolated install exposes proteomics and python -m entry points; --help/version never require R or data.",
+      "evidence": "docs/validation/002-foundation/V001.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-002",
+      "task": "T002",
+      "acceptance": "V002",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Strict versioned configuration",
+      "implementation_paths": [
+        "src/proteomics_pipeline/config.py",
+        "schemas/analysis.schema.json"
+      ],
+      "criterion": "Valid examples pass; unknown keys, malformed contrasts and conflicting modes fail with field paths.",
+      "evidence": "docs/validation/002-foundation/V002.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-003",
+      "task": "T003",
+      "acceptance": "V003",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Typed run and stage states",
+      "implementation_paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "schemas/stage-result.schema.json"
+      ],
+      "criterion": "A simulated failure cannot become COMPLETED; optional inapplicability has an eligibility reason.",
+      "evidence": "docs/validation/002-foundation/V003.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-004",
+      "task": "T004",
+      "acceptance": "V004",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Safe Python-to-R bridge",
+      "implementation_paths": [
+        "scripts/maintained/run_stage.R",
+        "src/proteomics_pipeline/runtime.py"
+      ],
+      "criterion": "Arguments with spaces are passed literally, nonzero R exit fails the stage, and stdout/stderr/session metadata survive.",
+      "evidence": "docs/validation/002-foundation/V004.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-005",
+      "task": "T005",
+      "acceptance": "V005",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Atomic artifact publication",
+      "implementation_paths": [
+        "src/proteomics_pipeline/provenance.py"
+      ],
+      "criterion": "An interrupted writer leaves no apparently completed artifact and a second writer cannot corrupt the run.",
+      "evidence": "docs/validation/002-foundation/V005.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-006",
+      "task": "T006",
+      "acceptance": "V006",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Environment doctor",
+      "implementation_paths": [
+        "src/proteomics_pipeline/doctor.py"
+      ],
+      "criterion": "Doctor lists actual binaries/package/resource versions; missing R/package is NOT_AVAILABLE and exits nonzero when required.",
+      "evidence": "docs/validation/002-foundation/V006.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-007",
+      "task": "T007",
+      "acceptance": "V007",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Maintained R package skeleton",
+      "implementation_paths": [
+        "r/proteomicsCore/DESCRIPTION",
+        "r/proteomicsCore/NAMESPACE",
+        "scripts/maintained/test_r.R"
+      ],
+      "criterion": "A real minimal R package installs and its executable test entry runs a nonmocked I/O roundtrip; it returns no fabricated analysis.",
+      "evidence": "docs/validation/002-foundation/V007.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-008",
+      "task": "T008",
+      "acceptance": "V008",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Independent test harness",
+      "implementation_paths": [
+        "tests/contract/",
+        "tests/unit/",
+        "r/proteomicsCore/tests/testthat/"
+      ],
+      "criterion": "Existing ten tests remain intact; pytest/testthat invoke real future test locations and missing prerequisites are not recorded as passes.",
+      "evidence": "docs/validation/002-foundation/V008.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-009",
+      "task": "T009",
+      "acceptance": "V009",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "Baseline preservation registry",
+      "implementation_paths": [
+        "docs/validation/baseline-hashes.json",
+        "scripts/maintained/check_baseline.py"
+      ],
+      "criterion": "All recovered pipeline/legacy/audit hashes match and tests fail on a deliberate scratch-copy mutation.",
+      "evidence": "docs/validation/002-foundation/V009.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-010",
+      "task": "T010",
+      "acceptance": "V010",
+      "slice": "002-foundation",
+      "story": "US1",
+      "capability": "One-command developer bootstrap",
+      "implementation_paths": [
+        "scripts/maintained/bootstrap.ps1",
+        "scripts/maintained/bootstrap.sh",
+        "docs/development.md"
+      ],
+      "criterion": "Fresh documented setup provisions only project-local environments, records solved versions and runs baseline plus foundation gates.",
+      "evidence": "docs/validation/002-foundation/V010.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-011",
+      "task": "T011",
+      "acceptance": "V011",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Canonical wide and long intake",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/canonical.py"
+      ],
+      "criterion": "Equivalent shuffled wide/long tables yield identical aligned numeric values and masks; duplicate feature-observation pairs fail.",
+      "evidence": "docs/validation/003-intake/V011.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-012",
+      "task": "T012",
+      "acceptance": "V012",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Explicit scale and missing encoding",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/scale.py"
+      ],
+      "criterion": "Linear-positive input is transformed once; log2 zero is retained; configured linear zero-as-missing and invalid negative values are distinguished.",
+      "evidence": "docs/validation/003-intake/V012.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-013",
+      "task": "T013",
+      "acceptance": "V013",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Biological observation hierarchy",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/samples.py"
+      ],
+      "criterion": "Technical injections never inflate biological n; paired and repeated observations retain subject identity; invalid shared IDs fail.",
+      "evidence": "docs/validation/003-intake/V013.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-014",
+      "task": "T014",
+      "acceptance": "V014",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Explicit technical aggregation",
+      "implementation_paths": [
+        "r/proteomicsCore/R/intake.R",
+        "tests/scientific/test_technical_units.py"
+      ],
+      "criterion": "Linear-mean and log-mean produce hand-calculated different results; coverage and specimen counts are preserved.",
+      "evidence": "docs/validation/003-intake/V014.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-015",
+      "task": "T015",
+      "acceptance": "V015",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Feature annotations and protein groups",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/features.py"
+      ],
+      "criterion": "Opaque row IDs remain unique while repeated accessions/gene mappings remain explicit; contaminant/decoy flags distinguish unknown from false.",
+      "evidence": "docs/validation/003-intake/V015.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-016",
+      "task": "T016",
+      "acceptance": "V016",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Versioned vendor mappings",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/vendor.py",
+        "configs/mappings/"
+      ],
+      "criterion": "Synthetic DIA-NN, MaxQuant, FragPipe protein and Spectronaut protein fixtures exercise declared mapping/version; unsupported peptide grain fails.",
+      "evidence": "docs/validation/003-intake/V016.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-017",
+      "task": "T017",
+      "acceptance": "V017",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Historical workbook importer",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/legacy.py"
+      ],
+      "criterion": "The existing parser is wrapped without editing its source; source-sheet contrast and Method A/B naming are mapped by biological meaning.",
+      "evidence": "docs/validation/003-intake/V017.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-018",
+      "task": "T018",
+      "acceptance": "V018",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Immutable canonical bundle",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/bundle.py"
+      ],
+      "criterion": "Matrix, masks, annotations, observation metadata and hashes roundtrip without numerical change; reruns refuse collisions.",
+      "evidence": "docs/validation/003-intake/V018.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-019",
+      "task": "T019",
+      "acceptance": "V019",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Intake validation report",
+      "implementation_paths": [
+        "src/proteomics_pipeline/intake/validation.py"
+      ],
+      "criterion": "Reports include grain, scale, n, missingness, duplicate keys, provenance gaps and errors; no hardcoded biological confirmation.",
+      "evidence": "docs/validation/003-intake/V019.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-020",
+      "task": "T020",
+      "acceptance": "V020",
+      "slice": "003-intake",
+      "story": "US1",
+      "capability": "Input edge-case fixtures",
+      "implementation_paths": [
+        "tests/contract/test_intake.py",
+        "tests/fixtures/synthetic/"
+      ],
+      "criterion": "Exercise ragged files, duplicate IDs, mismatched columns, empty values, Inf, quoted delimiters, unknown encoding and unsupported assay scope.",
+      "evidence": "docs/validation/003-intake/V020.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-021",
+      "task": "T021",
+      "acceptance": "V021",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "Preserve processed abundance by default",
+      "implementation_paths": [
+        "r/proteomicsCore/R/preprocess.R"
+      ],
+      "criterion": "An already normalized log2 fixture remains unchanged; every optional transform has a new artifact and recorded policy.",
+      "evidence": "docs/validation/004-preprocessing-qc/V021.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-022",
+      "task": "T022",
+      "acceptance": "V022",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "LFQ normalization policies",
+      "implementation_paths": [
+        "r/proteomicsCore/R/normalization.R"
+      ],
+      "criterion": "Median/reference normalization factors match analytic fixtures; quantile is explicit sensitivity; missing reference coverage is not silently ignored.",
+      "evidence": "docs/validation/004-preprocessing-qc/V022.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-023",
+      "task": "T023",
+      "acceptance": "V023",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "TMT plex and bridge policies",
+      "implementation_paths": [
+        "r/proteomicsCore/R/tmt.R"
+      ],
+      "criterion": "Two-plex synthetic bridges align loading offsets; missing bridge blocks bridge mode, while identifiable no-bridge plex-covariate inference is separately supported and confounding fails.",
+      "evidence": "docs/validation/004-preprocessing-qc/V023.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-024",
+      "task": "T024",
+      "acceptance": "V024",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "Contrast-aware coverage masks",
+      "implementation_paths": [
+        "r/proteomicsCore/R/filtering.R"
+      ],
+      "criterion": "Original observed coverage is computed at biological-unit grain; ordinary available-case all-missing groups are nonestimable while eligible proDA follows native dropout rules with explicit uncertainty.",
+      "evidence": "docs/validation/004-preprocessing-qc/V024.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-025",
+      "task": "T025",
+      "acceptance": "V025",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "Missingness mechanism diagnostics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/missingness.R"
+      ],
+      "criterion": "Observation/group/abundance summaries distinguish observed versus previously imputed values and do not assert MCAR/MNAR from a threshold.",
+      "evidence": "docs/validation/004-preprocessing-qc/V025.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-026",
+      "task": "T026",
+      "acceptance": "V026",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "PCA and correlation diagnostics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/qc.R"
+      ],
+      "criterion": "PCA-only fill is isolated; constant/empty/small matrices return valid diagnostic states; variance and feature/sample identities match direct calculations.",
+      "evidence": "docs/validation/004-preprocessing-qc/V026.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-027",
+      "task": "T027",
+      "acceptance": "V027",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "Prespecified exclusions and watchlists",
+      "implementation_paths": [
+        "src/proteomics_pipeline/planning.py",
+        "r/proteomicsCore/R/qc.R"
+      ],
+      "criterion": "Outlier flags never auto-delete observations; a changed exclusion reason/policy creates a new plan and sensitivity lineage.",
+      "evidence": "docs/validation/004-preprocessing-qc/V027.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-028",
+      "task": "T028",
+      "acceptance": "V028",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "Explicit imputation sensitivities",
+      "implementation_paths": [
+        "r/proteomicsCore/R/sensitivity.R"
+      ],
+      "criterion": "Deterministic minimum, stochastic Gaussian and KNN have correct names/seeds/masks, remain secondary and never alter the primary matrix.",
+      "evidence": "docs/validation/004-preprocessing-qc/V028.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-029",
+      "task": "T029",
+      "acceptance": "V029",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "Detection-only exploratory endpoint",
+      "implementation_paths": [
+        "r/proteomicsCore/R/detection.R"
+      ],
+      "criterion": "Independent two-group detection uses exact 2x2 counts and a separate BH family; paired/complex detection requests are marked unsupported.",
+      "evidence": "docs/validation/004-preprocessing-qc/V029.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-030",
+      "task": "T030",
+      "acceptance": "V030",
+      "slice": "004-preprocessing-qc",
+      "story": "US1",
+      "capability": "QC source data and stage report",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/qc_data.py",
+        "tests/integration/test_qc.py"
+      ],
+      "criterion": "All plots have exact source tables; QC-only run completes without R modeling or any significant features.",
+      "evidence": "docs/validation/004-preprocessing-qc/V030.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-031",
+      "task": "T031",
+      "acceptance": "V031",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Safe declarative design grammar",
+      "implementation_paths": [
+        "src/proteomics_pipeline/planning.py",
+        "r/proteomicsCore/R/design.R"
+      ],
+      "criterion": "Groups, continuous covariates and interactions generate expected matrices; arbitrary function calls/code strings fail before R evaluation.",
+      "evidence": "docs/validation/005-design-contrasts/V031.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-032",
+      "task": "T032",
+      "acceptance": "V032",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Stable levels and aligned matrices",
+      "implementation_paths": [
+        "r/proteomicsCore/R/design.R"
+      ],
+      "criterion": "Sample order shuffling with metadata alignment preserves coefficients; absent references and missing covariates give explicit errors.",
+      "evidence": "docs/validation/005-design-contrasts/V032.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-033",
+      "task": "T033",
+      "acceptance": "V033",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Rank and confounding diagnostics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/estimability.R"
+      ],
+      "criterion": "Batch=treatment fixture is detected, with aliased terms; no pseudoinverse silently manufactures an interpretable treatment effect.",
+      "evidence": "docs/validation/005-design-contrasts/V033.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-034",
+      "task": "T034",
+      "acceptance": "V034",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Independent, paired and repeated plans",
+      "implementation_paths": [
+        "r/proteomicsCore/R/design.R"
+      ],
+      "criterion": "Subject-fixed and eligible duplicateCorrelation designs preserve the experimental unit and reject invalid/unidentified blocks.",
+      "evidence": "docs/validation/005-design-contrasts/V034.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-035",
+      "task": "T035",
+      "acceptance": "V035",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Numeric contrasts and interaction semantics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/contrasts.R"
+      ],
+      "criterion": "Known disease/treatment/residual/interaction coefficients match analytic expectations; significance difference is never used as interaction.",
+      "evidence": "docs/validation/005-design-contrasts/V035.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-036",
+      "task": "T036",
+      "acceptance": "V036",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Featurewise estimability and df",
+      "implementation_paths": [
+        "r/proteomicsCore/R/estimability.R"
+      ],
+      "criterion": "Sparse features get engine-specific n/df/reason records; ordinary available-case all-missing groups are nonestimable and eligible native-dropout estimates retain their prior-dependence caveat.",
+      "evidence": "docs/validation/005-design-contrasts/V036.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-037",
+      "task": "T037",
+      "acceptance": "V037",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Exact contrast covariance strategy",
+      "implementation_paths": [
+        "r/proteomicsCore/R/contrasts.R"
+      ],
+      "criterion": "Sparse nonorthogonal weighted designs match direct coefficient-refit SE/P; exact shortcut is restricted to proven eligible designs.",
+      "evidence": "docs/validation/005-design-contrasts/V037.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-038",
+      "task": "T038",
+      "acceptance": "V038",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Method-design applicability registry",
+      "implementation_paths": [
+        "r/proteomicsCore/R/capabilities.R",
+        "src/proteomics_pipeline/planning.py"
+      ],
+      "criterion": "Unsupported proDA/DEqMS block or threshold combinations fail explicitly and no engine is silently substituted.",
+      "evidence": "docs/validation/005-design-contrasts/V038.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-039",
+      "task": "T039",
+      "acceptance": "V039",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Frozen analysis plan and matrices",
+      "implementation_paths": [
+        "src/proteomics_pipeline/planning.py"
+      ],
+      "criterion": "Plan saves configuration, inclusion masks, matrices, hypotheses, families and hashes before fitting; config changes invalidate the plan.",
+      "evidence": "docs/validation/005-design-contrasts/V039.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-040",
+      "task": "T040",
+      "acceptance": "V040",
+      "slice": "005-design-contrasts",
+      "story": "US2",
+      "capability": "Design adversarial verification",
+      "implementation_paths": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R"
+      ],
+      "criterion": "Unequal n, singletons, missing factor levels, repeated-unit imbalance and reordered IDs have reference-backed expected behavior.",
+      "evidence": "docs/validation/005-design-contrasts/V040.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-041",
+      "task": "T041",
+      "acceptance": "V041",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Observed-data limma adapter",
+      "implementation_paths": [
+        "r/proteomicsCore/R/model_limma.R"
+      ],
+      "criterion": "Eligible fixtures match direct lmFit/eBayes calls for effects/SE/df/P; primary input retains NA and declared normalization.",
+      "evidence": "docs/validation/006-limma-inference/V041.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-042",
+      "task": "T042",
+      "acceptance": "V042",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Exact sparse and weighted contrasts",
+      "implementation_paths": [
+        "r/proteomicsCore/R/model_limma.R"
+      ],
+      "criterion": "General designs use validated contrast reparametrization/direct covariance; nonorthogonal sparse example matches a separate oracle.",
+      "evidence": "docs/validation/006-limma-inference/V042.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-043",
+      "task": "T043",
+      "acceptance": "V043",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Robust/trend diagnostics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/diagnostics.R"
+      ],
+      "criterion": "Settings, prior/posterior variance and trend diagnostics are saved; robust eBayes is not mislabeled robust sample regression.",
+      "evidence": "docs/validation/006-limma-inference/V043.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-044",
+      "task": "T044",
+      "acceptance": "V044",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Effect-threshold TREAT endpoint",
+      "implementation_paths": [
+        "r/proteomicsCore/R/inference.R"
+      ],
+      "criterion": "Boundary effects compare to direct TREAT; true threshold-null evidence is distinct from observed effect filtering and zero-null results.",
+      "evidence": "docs/validation/006-limma-inference/V044.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-045",
+      "task": "T045",
+      "acceptance": "V045",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Backend-correct confidence intervals",
+      "implementation_paths": [
+        "r/proteomicsCore/R/inference.R"
+      ],
+      "criterion": "Intervals use correct moderated variance/df, match independent calculations and preserve unbounded/unavailable cases with reason.",
+      "evidence": "docs/validation/006-limma-inference/V045.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-046",
+      "task": "T046",
+      "acceptance": "V046",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Declared multiple-testing families",
+      "implementation_paths": [
+        "r/proteomicsCore/R/multiplicity.R"
+      ],
+      "criterion": "Finite-P BH/BY matches analytic and R references; separate endpoints/primary/sensitivity sets do not accidentally pool or omit rows.",
+      "evidence": "docs/validation/006-limma-inference/V046.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-047",
+      "task": "T047",
+      "acceptance": "V047",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Omnibus and interaction outputs",
+      "implementation_paths": [
+        "r/proteomicsCore/R/inference.R"
+      ],
+      "criterion": "F tests have distinct hypotheses/families, complete planned contrasts are exported and no unadjusted post-hoc claims appear.",
+      "evidence": "docs/validation/006-limma-inference/V047.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-048",
+      "task": "T048",
+      "acceptance": "V048",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Complete typed differential tables",
+      "implementation_paths": [
+        "schemas/differential-result.schema.json",
+        "r/proteomicsCore/R/export.R"
+      ],
+      "criterion": "Every planned feature-contrast row is tested or explicitly excluded/nonestimable; no zero/NA ambiguity or mislabeled q fields.",
+      "evidence": "docs/validation/006-limma-inference/V048.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-049",
+      "task": "T049",
+      "acceptance": "V049",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Biological-unit influence diagnostics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/influence.R"
+      ],
+      "criterion": "Whole subjects/technical sets are omitted appropriately; relevant omission counts are correct and influence stays descriptive.",
+      "evidence": "docs/validation/006-limma-inference/V049.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-050",
+      "task": "T050",
+      "acceptance": "V050",
+      "slice": "006-limma-inference",
+      "story": "US2",
+      "capability": "Core inference golden suite",
+      "implementation_paths": [
+        "tests/scientific/",
+        "r/proteomicsCore/tests/testthat/test-limma.R"
+      ],
+      "criterion": "Complete/sparse/paired/blocked fixtures match pinned direct references and no-null/no-discovery result paths pass.",
+      "evidence": "docs/validation/006-limma-inference/V050.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-051",
+      "task": "T051",
+      "acceptance": "V051",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "Count evidence schema",
+      "implementation_paths": [
+        "schemas/count-evidence.schema.json",
+        "src/proteomics_pipeline/intake/counts.py"
+      ],
+      "criterion": "True peptide/PSM count grain and provenance validate; observed-sample count or abundance proxy is rejected as unsupported evidence.",
+      "evidence": "docs/validation/007-assay-engines/V051.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-052",
+      "task": "T052",
+      "acceptance": "V052",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "DEqMS fit pipeline",
+      "implementation_paths": [
+        "r/proteomicsCore/R/model_deqms.R"
+      ],
+      "criterion": "Installed official fit/eBayes/count/spectraCounteBayes sequence reproduces reference count-adjusted statistics.",
+      "evidence": "docs/validation/007-assay-engines/V052.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-053",
+      "task": "T053",
+      "acceptance": "V053",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "DEqMS statistic alignment",
+      "implementation_paths": [
+        "r/proteomicsCore/R/model_deqms.R"
+      ],
+      "criterion": "sca P/statistic/variance fields are kept separate from original limma fields; shuffled count IDs align or fail, never silently reorder.",
+      "evidence": "docs/validation/007-assay-engines/V053.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-054",
+      "task": "T054",
+      "acceptance": "V054",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "DEqMS hypotheses and design guard",
+      "implementation_paths": [
+        "r/proteomicsCore/R/capabilities.R"
+      ],
+      "criterion": "Unsupported block/precision-weight/threshold-null requests are rejected with explicit contract; eligible sparse exact-contrast use is verified.",
+      "evidence": "docs/validation/007-assay-engines/V054.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-055",
+      "task": "T055",
+      "acceptance": "V055",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "LFQ dropout provenance gate",
+      "implementation_paths": [
+        "src/proteomics_pipeline/planning.py",
+        "r/proteomicsCore/R/model_proda.R"
+      ],
+      "criterion": "proDA accepts qualified unimputed LFQ data and rejects TMT, unknown incompatible imputation and unsupported repeated models.",
+      "evidence": "docs/validation/007-assay-engines/V055.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-056",
+      "task": "T056",
+      "acceptance": "V056",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "proDA fitting and test_diff",
+      "implementation_paths": [
+        "r/proteomicsCore/R/model_proda.R"
+      ],
+      "criterion": "Zero-null/reduced-model reference calls match native output and retain model-specific uncertainty and dropout diagnostics.",
+      "evidence": "docs/validation/007-assay-engines/V056.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-057",
+      "task": "T057",
+      "acceptance": "V057",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "Alternative-engine uncertainty",
+      "implementation_paths": [
+        "r/proteomicsCore/R/inference.R"
+      ],
+      "criterion": "Engine-appropriate intervals/statistics are verified against native/reference calculations; no borrowed limma df or fake TREAT output.",
+      "evidence": "docs/validation/007-assay-engines/V057.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-058",
+      "task": "T058",
+      "acceptance": "V058",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "Method sensitivity comparison",
+      "implementation_paths": [
+        "r/proteomicsCore/R/sensitivity.R",
+        "src/proteomics_pipeline/reporting/model_data.py"
+      ],
+      "criterion": "Matched-universe effects/discoveries are displayed as sensitivities, with unmatched universes explained; no hit-count winner changes primary.",
+      "evidence": "docs/validation/007-assay-engines/V058.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-059",
+      "task": "T059",
+      "acceptance": "V059",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "Dependencies and failure propagation",
+      "implementation_paths": [
+        "src/proteomics_pipeline/doctor.py",
+        "r/proteomicsCore/R/capabilities.R"
+      ],
+      "criterion": "Missing package/backend error is visible, required analysis fails, optional applicability is distinguished from installation failure.",
+      "evidence": "docs/validation/007-assay-engines/V059.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-060",
+      "task": "T060",
+      "acceptance": "V060",
+      "slice": "007-assay-engines",
+      "story": "US2",
+      "capability": "Assay-engine golden/calibration fixtures",
+      "implementation_paths": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R"
+      ],
+      "criterion": "Count-dependent variance and LFQ dropout simulations have pinned reference comparisons, unsuitable-input negative cases and recorded diagnostics.",
+      "evidence": "docs/validation/007-assay-engines/V060.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-061",
+      "task": "T061",
+      "acceptance": "V061",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Local resource snapshot registry",
+      "implementation_paths": [
+        "src/proteomics_pipeline/resources.py",
+        "schemas/resource.schema.json"
+      ],
+      "criterion": "Snapshots identify source/release/species/terms/hash; changed content or missing required files fails before production analysis.",
+      "evidence": "docs/validation/008-resources-mapping/V061.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-062",
+      "task": "T062",
+      "acceptance": "V062",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Explicit resource preparation command",
+      "implementation_paths": [
+        "src/proteomics_pipeline/resources.py",
+        "configs/resources/"
+      ],
+      "criterion": "Fetch/build occurs only in a separate explicit preparation action, records exact versions and never auto-fetches during a frozen run.",
+      "evidence": "docs/validation/008-resources-mapping/V062.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-063",
+      "task": "T063",
+      "acceptance": "V063",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Species-aware identifier mapping",
+      "implementation_paths": [
+        "r/proteomicsCore/R/mapping.R"
+      ],
+      "criterion": "Stable IDs/species keys align; symbol collisions, retired IDs and missing mappings have explicit records.",
+      "evidence": "docs/validation/008-resources-mapping/V063.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-064",
+      "task": "T064",
+      "acceptance": "V064",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Orthology evidence preservation",
+      "implementation_paths": [
+        "r/proteomicsCore/R/mapping.R"
+      ],
+      "criterion": "Source/target species and mapping evidence/version are retained; projected sets are labeled projected and ambiguous mappings are reported.",
+      "evidence": "docs/validation/008-resources-mapping/V064.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-065",
+      "task": "T065",
+      "acceptance": "V065",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Label-independent gene representatives",
+      "implementation_paths": [
+        "r/proteomicsCore/R/gene_matrix.R"
+      ],
+      "criterion": "Coverage/median/ID representative choice is invariant to sample-label permutation and never chooses minimum P or maximum statistic.",
+      "evidence": "docs/validation/008-resources-mapping/V065.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-066",
+      "task": "T066",
+      "acceptance": "V066",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Ambiguous protein-group policy",
+      "implementation_paths": [
+        "r/proteomicsCore/R/gene_matrix.R"
+      ],
+      "criterion": "Multi-gene groups are excluded from default mapping with reasons; declared aggregation sensitivity retains its own universe and estimand.",
+      "evidence": "docs/validation/008-resources-mapping/V066.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-067",
+      "task": "T067",
+      "acceptance": "V067",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Finite pathway matrix and model",
+      "implementation_paths": [
+        "r/proteomicsCore/R/gene_matrix.R"
+      ],
+      "criterion": "Gene matrix is finite for required design, models are refit consistently and missing-value loss is quantified rather than silently imputed.",
+      "evidence": "docs/validation/008-resources-mapping/V067.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-068",
+      "task": "T068",
+      "acceptance": "V068",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Gene-set overlap eligibility",
+      "implementation_paths": [
+        "r/proteomicsCore/R/genesets.R"
+      ],
+      "criterion": "Declared overlap-size filters are applied before tests, full/eligible/mapped membership counts are retained and tiny universe is explicit.",
+      "evidence": "docs/validation/008-resources-mapping/V068.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-069",
+      "task": "T069",
+      "acceptance": "V069",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Measured gene background for ORA",
+      "implementation_paths": [
+        "r/proteomicsCore/R/genesets.R"
+      ],
+      "criterion": "Universe equals eligible tested mapped genes and changes predictably under filtering; whole-genome background is never default.",
+      "evidence": "docs/validation/008-resources-mapping/V069.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-070",
+      "task": "T070",
+      "acceptance": "V070",
+      "slice": "008-resources-mapping",
+      "story": "US3",
+      "capability": "Resource/mapping regression fixtures",
+      "implementation_paths": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R"
+      ],
+      "criterion": "Tests cover one-to-many mapping, duplicated symbols, zero overlap, ortholog projection, offline checksum errors and stable representative selection.",
+      "evidence": "docs/validation/008-resources-mapping/V070.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-071",
+      "task": "T071",
+      "acceptance": "V071",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Pathway null and method dispatcher",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathways.R"
+      ],
+      "criterion": "Plan distinguishes competitive, rotation self-contained, preranked and ORA nulls and rejects unsupported method/design combinations.",
+      "evidence": "docs/validation/009-enrichment/V071.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-072",
+      "task": "T072",
+      "acceptance": "V072",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Independent-design CAMERA",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathway_camera.R"
+      ],
+      "criterion": "Finite gene matrix/design/contrast match official CAMERA with estimated correlation; block/correlation arguments cannot be ignored.",
+      "evidence": "docs/validation/009-enrichment/V072.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-073",
+      "task": "T073",
+      "acceptance": "V073",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Blocked-design ROAST",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathway_roast.R"
+      ],
+      "criterion": "Fixed-subject pairing passes its design only; duplicateCorrelation passes block/correlation without duplicate subject encoding; midpFALSE/rotation settings and reference outputs match.",
+      "evidence": "docs/validation/009-enrichment/V073.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-074",
+      "task": "T074",
+      "acceptance": "V074",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Directional and mixed rotation endpoints",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathway_roast.R"
+      ],
+      "criterion": "Directional and mixed raw P/statistics/families remain distinct; central adjustment uses correct columns rather than package-native FDR mislabeled global.",
+      "evidence": "docs/validation/009-enrichment/V074.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-075",
+      "task": "T075",
+      "acceptance": "V075",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Exploratory fgsea adapter",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathway_fgsea.R"
+      ],
+      "criterion": "Declared native ranks, ties, seeds and eps settings are honored; NES/log2err/warnings/leading edges and nonfinite tests are retained.",
+      "evidence": "docs/validation/009-enrichment/V075.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-076",
+      "task": "T076",
+      "acceptance": "V076",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Exact background-aware ORA",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathway_ora.R"
+      ],
+      "criterion": "Hand-enumerated hypergeometric examples match; all eligible sets enter the family and empty foreground gives a valid explanation.",
+      "evidence": "docs/validation/009-enrichment/V076.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-077",
+      "task": "T077",
+      "acceptance": "V077",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Pathway family adjustment",
+      "implementation_paths": [
+        "r/proteomicsCore/R/multiplicity.R"
+      ],
+      "criterion": "Collections/contrasts/null types/primary status obey the frozen families; original and central q fields remain distinguishable.",
+      "evidence": "docs/validation/009-enrichment/V077.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-078",
+      "task": "T078",
+      "acceptance": "V078",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Alternative-engine pathway sensitivity",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathways.R"
+      ],
+      "criterion": "proDA/DEqMS ranks and linear gene-model sensitivity are labeled correctly and never sold as equivalent correlation-adjusted primary-engine inference.",
+      "evidence": "docs/validation/009-enrichment/V078.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-079",
+      "task": "T079",
+      "acceptance": "V079",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Leading-edge redundancy and diagnostics",
+      "implementation_paths": [
+        "r/proteomicsCore/R/pathway_summary.R"
+      ],
+      "criterion": "Overlap relationships preserve original set IDs/P values and do not merge independent discoveries or invent causal mechanisms.",
+      "evidence": "docs/validation/009-enrichment/V079.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-080",
+      "task": "T080",
+      "acceptance": "V080",
+      "slice": "009-enrichment",
+      "story": "US3",
+      "capability": "Enrichment golden and failure suite",
+      "implementation_paths": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R"
+      ],
+      "criterion": "Exact ORA, reference CAMERA/ROAST/fgsea, missing snapshots, NA/Inf matrix, all nonfinite tests and no discoveries exercise honest statuses.",
+      "evidence": "docs/validation/009-enrichment/V080.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-081",
+      "task": "T081",
+      "acceptance": "V081",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Explicit disease-treatment-residual axes",
+      "implementation_paths": [
+        "r/proteomicsCore/R/response.R"
+      ],
+      "criterion": "d, t, r and interaction estimates align to planned contrasts with covariance; r=d+t matches analytic fixtures.",
+      "evidence": "docs/validation/010-treatment-response/V081.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-082",
+      "task": "T082",
+      "acceptance": "V082",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Descriptive reversal without double dipping",
+      "implementation_paths": [
+        "r/proteomicsCore/R/response.R"
+      ],
+      "criterion": "Current-data selected features can be displayed but produce no confirmatory score P or rescue label; selection provenance is explicit.",
+      "evidence": "docs/validation/010-treatment-response/V082.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-083",
+      "task": "T083",
+      "acceptance": "V083",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Bounded response categories",
+      "implementation_paths": [
+        "r/proteomicsCore/R/response.R"
+      ],
+      "criterion": "Configured epsilon classes handle zero/small d, RI=1, RI>1+epsilon and RI=3; old unlimited full-reversal label is absent.",
+      "evidence": "docs/validation/010-treatment-response/V083.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-084",
+      "task": "T084",
+      "acceptance": "V084",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Ratio uncertainty contract",
+      "implementation_paths": [
+        "r/proteomicsCore/R/response_uncertainty.R"
+      ],
+      "criterion": "Supported joint-covariance method handles unstable/unbounded RI intervals; dividing CI endpoints is rejected and descriptive-only mode is explicit.",
+      "evidence": "docs/validation/010-treatment-response/V084.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-085",
+      "task": "T085",
+      "acceptance": "V085",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Model-correct residual equivalence",
+      "implementation_paths": [
+        "r/proteomicsCore/R/equivalence.R"
+      ],
+      "criterion": "Analytic TOST examples match both one-sided tests/max-P and 90% equivalence intervals; a nonsignificant zero-null test alone cannot pass.",
+      "evidence": "docs/validation/010-treatment-response/V085.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-086",
+      "task": "T086",
+      "acceptance": "V086",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Conjunction claim eligibility",
+      "implementation_paths": [
+        "r/proteomicsCore/R/equivalence.R"
+      ],
+      "criterion": "Only independently defined direction and valid model-supported conjunction yield adjusted restoration endpoints; FDR-list intersection is not labeled rescue FDR.",
+      "evidence": "docs/validation/010-treatment-response/V086.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-087",
+      "task": "T087",
+      "acceptance": "V087",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Independent fixed-score artifacts",
+      "implementation_paths": [
+        "schemas/independent-score.schema.json",
+        "r/proteomicsCore/R/scores.R"
+      ],
+      "criterion": "Training identity/weights/transforms are frozen and checked; validation-outcome-derived selection or refitting produces descriptive-only eligibility.",
+      "evidence": "docs/validation/010-treatment-response/V087.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-088",
+      "task": "T088",
+      "acceptance": "V088",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Exact and Monte Carlo randomization",
+      "implementation_paths": [
+        "r/proteomicsCore/R/randomization.R"
+      ],
+      "criterion": "All 70 four-versus-four allocations use k/N; Monte Carlo +1 and interval are distinct; paired/restricted permutations honor blocks and ties.",
+      "evidence": "docs/validation/010-treatment-response/V088.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-089",
+      "task": "T089",
+      "acceptance": "V089",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Score/equivalence reporting semantics",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/response_data.py"
+      ],
+      "criterion": "Report distinguishes movement, overshoot, equivalence, conjunction evidence and unknown training overlap; no causal rescue prose is generated.",
+      "evidence": "docs/validation/010-treatment-response/V089.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-090",
+      "task": "T090",
+      "acceptance": "V090",
+      "slice": "010-treatment-response",
+      "story": "US4",
+      "capability": "Circularity/null/overshoot tests",
+      "implementation_paths": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R"
+      ],
+      "criterion": "Shared-untreated null exposes negative effect covariance but cannot yield a spurious inferential score path; exact old examples and RI overshoot regressions pass.",
+      "evidence": "docs/validation/010-treatment-response/V090.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-091",
+      "task": "T091",
+      "acceptance": "V091",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Typed report data assembler",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/data.py",
+        "schemas/report.schema.json"
+      ],
+      "criterion": "All sections derive from validated artifact statuses/counts and missing inputs never become healthy zero or PASS.",
+      "evidence": "docs/validation/011-reporting/V091.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-092",
+      "task": "T092",
+      "acceptance": "V092",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "One-run command integration",
+      "implementation_paths": [
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/runtime.py"
+      ],
+      "criterion": "Single run executes the valid DAG, stops failed required stages and assembles a useful partial report with failed stage evidence.",
+      "evidence": "docs/validation/011-reporting/V092.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-093",
+      "task": "T093",
+      "acceptance": "V093",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Offline HTML report",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/templates/",
+        "src/proteomics_pipeline/reporting/render.py"
+      ],
+      "criterion": "Report opens without external assets/network, has clear navigation and accessible tables, and no paths expose private content in source release.",
+      "evidence": "docs/validation/011-reporting/V093.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-094",
+      "task": "T094",
+      "acceptance": "V094",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "QC and inclusion/exclusion sections",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/qc_data.py"
+      ],
+      "criterion": "Observation hierarchy, n, scale, missingness, normalization and exclusion rationale are visible with source-table links.",
+      "evidence": "docs/validation/011-reporting/V094.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-095",
+      "task": "T095",
+      "acceptance": "V095",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Complete differential results views",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/model_data.py"
+      ],
+      "criterion": "All planned contrasts/hypotheses appear, including nonsignificant/auxiliary contrasts; estimates, CI, q family and estimability are clear.",
+      "evidence": "docs/validation/011-reporting/V095.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-096",
+      "task": "T096",
+      "acceptance": "V096",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Pathway and response views",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/pathway_data.py",
+        "response_data.py"
+      ],
+      "criterion": "Null type, resource universe, leading edges, exploratory status, response caveats and unavailable inference remain explicit.",
+      "evidence": "docs/validation/011-reporting/V096.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-097",
+      "task": "T097",
+      "acceptance": "V097",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Publication figure and source exports",
+      "implementation_paths": [
+        "r/proteomicsCore/R/plots.R"
+      ],
+      "criterion": "Vector PDF/SVG and raster PNG as appropriate have exact plotted data, units/n/thresholds and readable labels without unexplained stars.",
+      "evidence": "docs/validation/011-reporting/V097.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-098",
+      "task": "T098",
+      "acceptance": "V098",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Methods and limitations generation",
+      "implementation_paths": [
+        "src/proteomics_pipeline/reporting/methods.py"
+      ],
+      "criterion": "Methods derive actual config/packages/hypotheses; unknown tissue/batch/provenance restricts language and no canned study claim appears.",
+      "evidence": "docs/validation/011-reporting/V098.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-099",
+      "task": "T099",
+      "acceptance": "V099",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Null/empty/partial report robustness",
+      "implementation_paths": [
+        "tests/integration/test_reports.py"
+      ],
+      "criterion": "No DEPs, no pathways, tiny cohorts, inapplicable methods, failed backend and interrupted stage yield valid honest reports.",
+      "evidence": "docs/validation/011-reporting/V099.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-100",
+      "task": "T100",
+      "acceptance": "V100",
+      "slice": "011-reporting",
+      "story": "US5",
+      "capability": "Quickstart and user workflow",
+      "implementation_paths": [
+        "docs/user-guide/",
+        "configs/examples/"
+      ],
+      "criterion": "A fresh user can validate, plan, run, inspect, verify and compare examples without manually invoking individual R scripts; commands are actually exercised.",
+      "evidence": "docs/validation/011-reporting/V100.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-101",
+      "task": "T101",
+      "acceptance": "V101",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Pinned compatible environments",
+      "implementation_paths": [
+        "renv.lock",
+        "Python lockfile",
+        "containers/"
+      ],
+      "criterion": "Clean Python/R/Bioconductor restore is tested; version pair is compatible and installed package APIs match adapters.",
+      "evidence": "docs/validation/012-validation/V101.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-102",
+      "task": "T102",
+      "acceptance": "V102",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Immutable resource-offline reproduction",
+      "implementation_paths": [
+        "src/proteomics_pipeline/provenance.py",
+        "tests/integration/test_offline.py"
+      ],
+      "criterion": "A run with cached snapshots completes without network and semantic output hashes match the documented tolerance.",
+      "evidence": "docs/validation/012-validation/V102.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-103",
+      "task": "T103",
+      "acceptance": "V103",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Resume and cache invalidation",
+      "implementation_paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "tests/integration/test_resume.py"
+      ],
+      "criterion": "Code/config/data/resource changes invalidate dependent stages; compatible verified outputs reuse safely and partial artifacts never count as cache.",
+      "evidence": "docs/validation/012-validation/V103.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-104",
+      "task": "T104",
+      "acceptance": "V104",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Scientific golden reference matrix",
+      "implementation_paths": [
+        "tests/scientific/reference/",
+        "docs/validation/reference-matrix.json"
+      ],
+      "criterion": "Independent calls cover every backend/hypothesis/design eligibility; tolerances/versions are frozen before candidate comparison.",
+      "evidence": "docs/validation/012-validation/V104.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-105",
+      "task": "T105",
+      "acceptance": "V105",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Null and mixture calibration",
+      "implementation_paths": [
+        "scripts/maintained/run_calibration.py",
+        "r/proteomicsCore/R/simulate.R"
+      ],
+      "criterion": "Prespecified all-null/mixture scenarios calculate actual error/coverage metrics with Monte Carlo uncertainty; failing methods are not labeled validated.",
+      "evidence": "docs/validation/012-validation/V105.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-106",
+      "task": "T106",
+      "acceptance": "V106",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Correlated pathway calibration",
+      "implementation_paths": [
+        "tests/scientific/calibration_pathways.R"
+      ],
+      "criterion": "Known correlated null and spike-in pathways assess method-null-specific error/power; fgsea caveat is retained rather than demanding a false universal guarantee.",
+      "evidence": "docs/validation/012-validation/V106.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-107",
+      "task": "T107",
+      "acceptance": "V107",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Cross-platform CI",
+      "implementation_paths": [
+        ".github/workflows/maintained.yml",
+        "scripts/maintained/"
+      ],
+      "criterion": "Windows/Linux core Python+R jobs execute real examples; expensive release calibration is distinct and not silently skipped as passing CI.",
+      "evidence": "docs/validation/012-validation/V107.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-108",
+      "task": "T108",
+      "acceptance": "V108",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Performance and resource benchmark",
+      "implementation_paths": [
+        "scripts/maintained/benchmark.py",
+        "docs/validation/benchmarks/"
+      ],
+      "criterion": "20k x100 medium case logs time/peak memory/hardware, specialized engine cost separately; targets are assessed on actual work.",
+      "evidence": "docs/validation/012-validation/V108.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-109",
+      "task": "T109",
+      "acceptance": "V109",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Report numerical/visual validation",
+      "implementation_paths": [
+        "tests/integration/test_report_artifacts.py",
+        "docs/validation/"
+      ],
+      "criterion": "Plot-data values and references match tables; representative rendered reports/figures are visually inspected with explicit evidence.",
+      "evidence": "docs/validation/012-validation/V109.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-110",
+      "task": "T110",
+      "acceptance": "V110",
+      "slice": "012-validation",
+      "story": "US6",
+      "capability": "Machine-readable validation ledger",
+      "implementation_paths": [
+        "schemas/validation-evidence.schema.json",
+        "docs/validation/acceptance.json"
+      ],
+      "criterion": "Every requirement/test records command, versions, artifact hash, result and limitations; NOT_RUN/SKIPPED is not PASS.",
+      "evidence": "docs/validation/012-validation/V110.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-111",
+      "task": "T111",
+      "acceptance": "V111",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Private local legacy adapter regression",
+      "implementation_paths": [
+        "scripts/maintained/legacy_regression.py"
+      ],
+      "criterion": "Maintainer locally reconstructs archive values/masks/meta and confirms original source hashes without exposing study data to Packet Implementer, Independent Reviewer or any documentation worker.",
+      "evidence": "docs/validation/013-release/V111.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-112",
+      "task": "T112",
+      "acceptance": "V112",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Legacy core numerical comparison",
+      "implementation_paths": [
+        "tests/regression/",
+        "docs/validation/legacy-comparison.md"
+      ],
+      "criterion": "Matched-universe legacy mode compares coefficients/BH/declared settings; missing historical environment is explicit NOT_REPRODUCED, not an invented success.",
+      "evidence": "docs/validation/013-release/V112.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-113",
+      "task": "T113",
+      "acceptance": "V113",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Scientific-change reconciliation",
+      "implementation_paths": [
+        "docs/validation/legacy-comparison.md"
+      ],
+      "criterion": "Negr1 auxiliary result, exact permutation discrepancy, different filters/families/pathway nulls and corrected response labels are explained without hardcoding outputs.",
+      "evidence": "docs/validation/013-release/V113.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-114",
+      "task": "T114",
+      "acceptance": "V114",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Full maintained study run",
+      "implementation_paths": [
+        "configs/local example template",
+        "scripts/maintained/legacy_regression.py"
+      ],
+      "criterion": "Qualified local study runs new pipeline, reports inherited unknown metadata and returns new independent artifacts without modifying originals.",
+      "evidence": "docs/validation/013-release/V114.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-115",
+      "task": "T115",
+      "acceptance": "V115",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Comprehensive usage and methods docs",
+      "implementation_paths": [
+        "docs/user-guide/",
+        "docs/methods/",
+        "README.md"
+      ],
+      "criterion": "Supported assays/engines/designs/unsupported combinations and exact command examples reflect implemented behavior and actual validation.",
+      "evidence": "docs/validation/013-release/V115.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-116",
+      "task": "T116",
+      "acceptance": "V116",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Spec-task-evidence reconciliation",
+      "implementation_paths": [
+        "specs/001-downstream-proteomics/traceability.json",
+        "progress.md"
+      ],
+      "criterion": "Every requirement maps to a reviewed task/test/evidence/commit; unchecked or unverified work remains visible.",
+      "evidence": "docs/validation/013-release/V116.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-117",
+      "task": "T117",
+      "acceptance": "V117",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Source release hygiene",
+      "implementation_paths": [
+        "scripts/maintained/build_release.py",
+        ".gitignore"
+      ],
+      "criterion": "Artifact whitelist excludes private data, credentials, environments and execution logs; ownership/license is not invented and resource terms are recorded.",
+      "evidence": "docs/validation/013-release/V117.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-118",
+      "task": "T118",
+      "acceptance": "V118",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Versioned successor export",
+      "implementation_paths": [
+        "scripts/maintained/build_release.py",
+        "docs/validation/delivery.json"
+      ],
+      "criterion": "New releases/version folder receives verified source/spec/tests/docs/manifests; original archive package files and private archive hashes are unchanged.",
+      "evidence": "docs/validation/013-release/V118.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-119",
+      "task": "T119",
+      "acceptance": "V119",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Final integrated acceptance run",
+      "implementation_paths": [
+        "docs/validation/final-acceptance.md"
+      ],
+      "criterion": "All runnable core/golden/integration/scientific gates rerun on the final reviewed tree, clean setup is demonstrated and residual external limits are explicit.",
+      "evidence": "docs/validation/013-release/V119.json",
+      "status": "specified",
+      "verified_commit": null
+    },
+    {
+      "requirement": "FR-120",
+      "task": "T120",
+      "acceptance": "V120",
+      "slice": "013-release",
+      "story": "US6",
+      "capability": "Review-and-handoff completion",
+      "implementation_paths": [
+        "CHANGELOG.md",
+        "specs/001-downstream-proteomics/progress.md"
+      ],
+      "criterion": "Maintainer reviews final staged/unstaged/untracked diff, records verified commits and delivery paths; no unsupported completion claim or unauthorized release action occurs.",
+      "evidence": "docs/validation/013-release/V120.json",
+      "status": "specified",
+      "verified_commit": null
+    }
+  ]
+}

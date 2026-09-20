@@ -1,0 +1,35 @@
+# Technical audit
+
+Scope: the supplied ZIP and the recovered source package. Severity describes the effect on reproducibility or interpretation. This was a static source audit plus executed Python intake, preparation and independent table checks. No historical R analysis was executed on this host.
+
+## Findings
+
+| ID | Severity | Evidence and effect | Recovery status / next action |
+|---|---|---|---|
+| T01 | High | Archived `07_PIPELINE_AND_LOGS/run_all.sh:4–7` uses its own directory as ROOT and defaults to analyst-specific Mac executables. R 01 expects `data/processed/*.tsv`, while the handoff provides categorized CSV inputs elsewhere. The handoff is not directly runnable as claimed. | Added portable Python preparation/runner, preserved Method B metadata and restored expected TSV filenames in a separate run directory. Original layout remains in private evidence. |
+| T02 | High | Original `08_REPRODUCIBILITY/environment.yml` omits direct imports including ggrepel, matrixStats and patchwork. statmod is needed for robust empirical-Bayes support. R packages and msigdbr data are unpinned. | Recovered complete direct dependency list plus statmod. New environment is explicitly not a tested lock. Provision and execute a clean R environment, then lock exact versions. |
+| T03 | High | Historical launcher line 24 starts a fresh R process for sessionInfo; the saved file contains only base packages and compiler. It does not identify versions loaded by analysis stages. | New wrapper captures sessionInfo in each stage's actual process. Execution of this R wrapper remains unverified without R. |
+| T04 | High | `legacy/04_finalize.py:85–130` hardcodes PASS claims and biological confirmation rather than testing inputs. Its missing-artifact gate does not itself cause a nonzero exit. Files are read before the required-file check. | Portable runner does not execute this finalizer. Original retained for inspection; new execution status reports only executed work. |
+| T05 | Medium | `legacy/04_finalize.py:47` always reads `gsea_leave_one_sample_stability.tsv`; R 03 writes it only if significant treatment pathways exist. Similar empty-candidate/empty-pathway conditions affect later stages. Successful scientific null results can therefore cause reporting failures. | Documented. Runner fails visibly and saves stage logs; generic empty-result handling remains to be implemented/tested in a successor. |
+| T06 | Medium | R 03 catches unavailable collections and proceeds; R 03/06 suppress fgsea warnings and discard log2err. One stored joint T2 Reactome pathway has a nonfinite P value. | Preserve as audit finding. Required collection failures, nonfinite results and numerical diagnostics need explicit status in the maintained implementation. |
+| T07 | Medium | R input checks do not comprehensively reject invalid group labels, missing/duplicate protein IDs, mismatched annotations or nonfinite numeric values. Workbook reader assumes four specific sheets, shared strings, and exactly 3,714 rows; it is not a generic XLSX reader. | New preparation validates the historical input contract; ten synthetic tests exercise IDs, groups, treatment agreement, annotations, missingness, invalid values and refusal to overwrite. Original parser remains study-specific. |
+| T08 | Medium | Method A and B change group names and reverse D1/D2 and T1/T2 stage ordering. No script documenting the full metadata enrichment is included. | Explicit mapping in PIPELINE.md; preparation takes the archived Method B sample metadata rather than guessing a conversion. |
+| T09 | Medium | Fixed thresholds, group sizes, fallback selections and narrative claims are embedded across scripts. R stages repeat ranking and reversal logic. | Preserved and documented; general-purpose refactoring/configuration is future work. Do not advertise arbitrary-design support. |
+| T10 | Low | Outer manifest: 164/164 entries match. Inner Method B manifest: 138 present entries match; two absent `.DS_Store` entries remain listed. | No analytical data mismatch. Fresh packaging manifest replaces the stale delivery manifest for the new SSD copy; old manifests preserved as evidence. |
+| T11 | Medium | Eight workbook drawing/VML relationship targets are absent. Cell XML is intact, but strict spreadsheet readers may reject the workbook. | Custom XML intake rerun passed; independent cell extraction agreed. Preserve the original workbook hash; do not present the structural defect as a protein-value error. |
+| T12 | Medium | No tests, CI, license or author/citation metadata were included. The archive contains personal machine paths and repeated input/result copies. | Source package has synthetic Python tests, limited CI, path-free active defaults and source provenance. Original paths/data remain in private evidence. Owner must resolve license and credit before public release. |
+| T13 | Low | Large duplicate figures/workbooks and deeply nested export paths impede Windows portability. Recovery staging itself encountered Windows path-length limits. | Source tree is shallow; archived evidence copied using Windows extended paths. SSD copy is hash verified. Keep future run paths short. |
+
+## Recovered implementation changes
+
+Six R analysis stages are byte-identical to the source. Two historical Python packaging/reporting programs are preserved in `legacy/`. Method A's hardcoded input default was removed and its input made explicit. No upstream data or statistical method was changed.
+
+`scripts/run_pipeline.py` prepares/validates input and finds Rscript on PATH or via an explicit argument. It launches R with argument arrays rather than a shell, writes logs, stops on a failed stage and refuses to overwrite an execution. `scripts/run_stage.R` captures sessionInfo after sourcing each stage, including a failed stage. The new report contains execution status rather than biological PASS assertions. The legacy exporter is not called automatically.
+
+The input contract remains tied to this study. `prepare` can leave a newly created, invalid run directory after an input-validation failure; this is visible and contains no historical results. Choose a fresh run directory after correcting the source. Partial execution directories likewise remain for debugging and should not be treated as completed results.
+
+## Verification limits
+
+Python syntax, intake, input restoration and failure-path tests were executed. Stored limma effects, BH adjustments, reversal arithmetic and conditional exhaustive-score calculations were independently checked. R syntax/runtime, package installation, package versions, fgsea database retrieval, font/device support for figure generation, clean-environment end-to-end output and the GitHub CI workflow are unverified. The preserved RDS object was inventoried and hashed, not loaded into R.
+
+No general security certification is implied by the source scan. No credential-like token pattern was found in the proposed source package; historical personal paths were kept out of active defaults. No GitHub remote or push was configured.

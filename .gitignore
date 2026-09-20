@@ -1,0 +1,34 @@
+# Local experimental data and generated output
+/data/
+/runs/
+/results/
+/report/
+/logs/
+/reproducibility/
+/private_evidence/
+*.xlsx
+*.rds
+*.zip
+*.tiff
+*.tif
+__pycache__/
+*.py[cod]
+.venv/
+.Rhistory
+.RData
+.Rproj.user/
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+# Local recovery workspaces and generated validation artifacts
+/audit_work/
+/ssd_package/
+/spec_work/
+/inspect_archive.py
+/runs-data-checks.json
+/renv/library/
+/renv/staging/
+/renv/cache/
+/.Rlib/

@@ -1,0 +1,377 @@
+[
+  {
+    "path": "00_INDEX/CONTENTS.csv",
+    "rows": 163,
+    "columns": 6
+  },
+  {
+    "path": "00_INDEX/CSV_VALIDATION.csv",
+    "rows": 59,
+    "columns": 5
+  },
+  {
+    "path": "00_INDEX/KEY_RESULTS_BY_METHOD.csv",
+    "rows": 10,
+    "columns": 5
+  },
+  {
+    "path": "00_INDEX/MANIFEST_SHA256.csv",
+    "rows": 164,
+    "columns": 3
+  },
+  {
+    "path": "00_INDEX/METHOD_COMPARISON.csv",
+    "rows": 10,
+    "columns": 3
+  },
+  {
+    "path": "03_SIDE_BY_SIDE_SUMMARY/KEY_RESULTS_BY_METHOD.csv",
+    "rows": 10,
+    "columns": 5
+  },
+  {
+    "path": "03_SIDE_BY_SIDE_SUMMARY/METHOD_COMPARISON.csv",
+    "rows": 10,
+    "columns": 3
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/02_PROCESSED_INPUTS_FROM_WORKBOOK/abundance_input_log2.tsv",
+    "rows": 3714,
+    "columns": 21
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/02_PROCESSED_INPUTS_FROM_WORKBOOK/protein_annot.tsv",
+    "rows": 3714,
+    "columns": 3
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/02_PROCESSED_INPUTS_FROM_WORKBOOK/sample_meta.csv",
+    "rows": 20,
+    "columns": 9
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/intake_missingness_by_sample.tsv",
+    "rows": 20,
+    "columns": 3
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/intake_validation.tsv",
+    "rows": 4,
+    "columns": 5
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_D1_DM_vs_CTRL.tsv",
+    "rows": 3714,
+    "columns": 8
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_D2_PDM_vs_CTRL.tsv",
+    "rows": 3714,
+    "columns": 8
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_source_summary.tsv",
+    "rows": 4,
+    "columns": 6
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_T1_DM_Treated_vs_DM.tsv",
+    "rows": 3714,
+    "columns": 8
+  },
+  {
+    "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_T2_PDM_Treated_vs_PDM.tsv",
+    "rows": 3714,
+    "columns": 8
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/CONTENTS.csv",
+    "rows": 138,
+    "columns": 6
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/CSV_VALIDATION.csv",
+    "rows": 54,
+    "columns": 5
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/KEY_FINDINGS.csv",
+    "rows": 8,
+    "columns": 5
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/MANIFEST_SHA256.csv",
+    "rows": 140,
+    "columns": 3
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/08_REPRODUCIBILITY/file_manifest.tsv",
+    "rows": 109,
+    "columns": 3
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/abundance_analysis_log2.csv",
+    "rows": 3714,
+    "columns": 21
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/abundance_input_log2.csv",
+    "rows": 3714,
+    "columns": 21
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/protein_annot.csv",
+    "rows": 3714,
+    "columns": 3
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/sample_meta.csv",
+    "rows": 20,
+    "columns": 11
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/analysis_gates.csv",
+    "rows": 9,
+    "columns": 3
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/pca_scores.csv",
+    "rows": 20,
+    "columns": 7
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/protein_coverage.csv",
+    "rows": 3714,
+    "columns": 7
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/sample_correlations.csv",
+    "rows": 20,
+    "columns": 21
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/sample_qc.csv",
+    "rows": 20,
+    "columns": 11
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_all.csv",
+    "rows": 21708,
+    "columns": 18
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_DM.csv",
+    "rows": 10803,
+    "columns": 16
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_PreDM.csv",
+    "rows": 10905,
+    "columns": 16
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_summary.csv",
+    "rows": 6,
+    "columns": 9
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/02_three_group_omnibus/axis_omnibus_all.csv",
+    "rows": 7236,
+    "columns": 11
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/02_three_group_omnibus/axis_omnibus_DM.csv",
+    "rows": 3601,
+    "columns": 11
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/02_three_group_omnibus/axis_omnibus_PreDM.csv",
+    "rows": 3635,
+    "columns": 11
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_disease_axis_sample_scores.csv",
+    "rows": 24,
+    "columns": 5
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_disease_axis_treatment_tests.csv",
+    "rows": 2,
+    "columns": 10
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_all.csv",
+    "rows": 7236,
+    "columns": 15
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_DM.csv",
+    "rows": 3601,
+    "columns": 15
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_PreDM.csv",
+    "rows": 3635,
+    "columns": 15
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_summary.csv",
+    "rows": 2,
+    "columns": 9
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/04_pathways/axis_gsea_all.csv",
+    "rows": 4302,
+    "columns": 9
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/04_pathways/axis_gsea_summary.csv",
+    "rows": 12,
+    "columns": 6
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/panel_A_candidate_reversal_indices.csv",
+    "rows": 106,
+    "columns": 15
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/panel_B_selected_protein_reversal.csv",
+    "rows": 98,
+    "columns": 15
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/panel_C_selected_pathway_GSEA.csv",
+    "rows": 96,
+    "columns": 12
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/contrast_matrix.csv",
+    "rows": 5,
+    "columns": 10
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_D1_PreDM_vs_CTRL.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_D2_DM_vs_CTRL.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_I1_stage_by_dapa.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_master.csv",
+    "rows": 3714,
+    "columns": 30
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_R1_PreDM_Dapa_vs_CTRL.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_R2_DM_Dapa_vs_CTRL.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_S1_DM_vs_PreDM.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_S2_DM_Dapa_vs_PreDM_Dapa.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_summary.csv",
+    "rows": 9,
+    "columns": 8
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_T1_PreDM_Dapa_vs_PreDM.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_T2_DM_Dapa_vs_DM.csv",
+    "rows": 3714,
+    "columns": 19
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/design_matrix.csv",
+    "rows": 20,
+    "columns": 6
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/disease_axis_sample_scores.csv",
+    "rows": 40,
+    "columns": 6
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/disease_axis_treatment_tests.csv",
+    "rows": 2,
+    "columns": 10
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/reversal_DM.csv",
+    "rows": 3714,
+    "columns": 17
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/reversal_PreDM.csv",
+    "rows": 3714,
+    "columns": 17
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/reversal_summary.csv",
+    "rows": 2,
+    "columns": 7
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/candidate_ora_all.csv",
+    "rows": 2101,
+    "columns": 9
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_all.csv",
+    "rows": 4308,
+    "columns": 9
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_leave_one_sample_results.csv",
+    "rows": 72,
+    "columns": 9
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_leave_one_sample_stability.csv",
+    "rows": 9,
+    "columns": 10
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_summary.csv",
+    "rows": 12,
+    "columns": 6
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/04_robustness/candidate_leave_one_sample_stability.csv",
+    "rows": 584,
+    "columns": 5
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/04_robustness/leave_one_sample_summary.csv",
+    "rows": 80,
+    "columns": 6
+  },
+  {
+    "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/04_robustness/method_sensitivity_summary.csv",
+    "rows": 36,
+    "columns": 6
+  }
+]

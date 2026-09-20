@@ -1,0 +1,12 @@
+* text=auto
+.gitattributes text eol=lf
+*.R text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+
+# Recovered evidence must retain its original bytes for provenance verification.
+pipeline/** -text whitespace=cr-at-eol
+legacy/** -text whitespace=cr-at-eol
+docs/audit/** -text whitespace=cr-at-eol

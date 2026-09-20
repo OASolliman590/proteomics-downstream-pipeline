@@ -1,0 +1,289 @@
+{
+  "schema_version": "2.0.0",
+  "kit_status": "draft_awaiting_independent_audit_and_maintainer_freeze",
+  "packet_index": "specs/001-downstream-proteomics/packet-index.md",
+  "slices": [
+    {
+      "id": "R01",
+      "slice": "002-foundation",
+      "title": "Runtime, package and contract foundation",
+      "depends_on": [],
+      "tasks": [
+        "T001",
+        "T002",
+        "T003",
+        "T004",
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T009",
+        "T010"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r01--runtime-package-and-contract-foundation"
+    },
+    {
+      "id": "R02",
+      "slice": "003-intake",
+      "title": "Canonical protein input and biological identity",
+      "depends_on": [
+        "R01"
+      ],
+      "tasks": [
+        "T011",
+        "T012",
+        "T013",
+        "T014",
+        "T015",
+        "T016",
+        "T017",
+        "T018",
+        "T019",
+        "T020"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r02--canonical-protein-input-and-biological-identity"
+    },
+    {
+      "id": "R03",
+      "slice": "004-preprocessing-qc",
+      "title": "Preprocessing, missingness and quality control",
+      "depends_on": [
+        "R02"
+      ],
+      "tasks": [
+        "T021",
+        "T022",
+        "T023",
+        "T024",
+        "T025",
+        "T026",
+        "T027",
+        "T028",
+        "T029",
+        "T030"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r03--preprocessing-missingness-and-quality-control"
+    },
+    {
+      "id": "R04",
+      "slice": "005-design-contrasts",
+      "title": "Design validation, exact contrasts and blocking",
+      "depends_on": [
+        "R03"
+      ],
+      "tasks": [
+        "T031",
+        "T032",
+        "T033",
+        "T034",
+        "T035",
+        "T036",
+        "T037",
+        "T038",
+        "T039",
+        "T040"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r04--design-validation-exact-contrasts-and-blocking"
+    },
+    {
+      "id": "R05",
+      "slice": "006-limma-inference",
+      "title": "Core limma inference and multiplicity",
+      "depends_on": [
+        "R04"
+      ],
+      "tasks": [
+        "T041",
+        "T042",
+        "T043",
+        "T044",
+        "T045",
+        "T046",
+        "T047",
+        "T048",
+        "T049",
+        "T050"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r05--core-limma-inference-and-multiplicity"
+    },
+    {
+      "id": "R06",
+      "slice": "007-assay-engines",
+      "title": "Assay-qualified DEqMS and proDA backends",
+      "depends_on": [
+        "R05"
+      ],
+      "tasks": [
+        "T051",
+        "T052",
+        "T053",
+        "T054",
+        "T055",
+        "T056",
+        "T057",
+        "T058",
+        "T059",
+        "T060"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "parallel_group": "PG-01",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r06--assay-qualified-deqms-and-proda-backends"
+    },
+    {
+      "id": "R07",
+      "slice": "008-resources-mapping",
+      "title": "Versioned annotation, protein groups and gene sets",
+      "depends_on": [
+        "R05"
+      ],
+      "tasks": [
+        "T061",
+        "T062",
+        "T063",
+        "T064",
+        "T065",
+        "T066",
+        "T067",
+        "T068",
+        "T069",
+        "T070"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "parallel_group": "PG-01",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r07--versioned-annotation-protein-groups-and-gene-sets"
+    },
+    {
+      "id": "R08",
+      "slice": "009-enrichment",
+      "title": "Design-compatible pathways and enrichment",
+      "depends_on": [
+        "R06",
+        "R07"
+      ],
+      "tasks": [
+        "T071",
+        "T072",
+        "T073",
+        "T074",
+        "T075",
+        "T076",
+        "T077",
+        "T078",
+        "T079",
+        "T080"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r08--design-compatible-pathways-and-enrichment"
+    },
+    {
+      "id": "R09",
+      "slice": "010-treatment-response",
+      "title": "Treatment response, equivalence and independent scores",
+      "depends_on": [
+        "R05"
+      ],
+      "tasks": [
+        "T081",
+        "T082",
+        "T083",
+        "T084",
+        "T085",
+        "T086",
+        "T087",
+        "T088",
+        "T089",
+        "T090"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "parallel_group": "PG-01",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r09--treatment-response-equivalence-and-independent-scores"
+    },
+    {
+      "id": "R10",
+      "slice": "011-reporting",
+      "title": "Unified offline report and streamlined workflow",
+      "depends_on": [
+        "R03",
+        "R06",
+        "R08",
+        "R09"
+      ],
+      "tasks": [
+        "T091",
+        "T092",
+        "T093",
+        "T094",
+        "T095",
+        "T096",
+        "T097",
+        "T098",
+        "T099",
+        "T100"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r10--unified-offline-report-and-streamlined-workflow"
+    },
+    {
+      "id": "R11",
+      "slice": "012-validation",
+      "title": "Reproducibility, calibration and continuous validation",
+      "depends_on": [
+        "R10"
+      ],
+      "tasks": [
+        "T101",
+        "T102",
+        "T103",
+        "T104",
+        "T105",
+        "T106",
+        "T107",
+        "T108",
+        "T109",
+        "T110"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r11--reproducibility-calibration-and-continuous-validation"
+    },
+    {
+      "id": "R12",
+      "slice": "013-release",
+      "title": "Archived-study regression, documentation and versioned successor",
+      "depends_on": [
+        "R11"
+      ],
+      "tasks": [
+        "T111",
+        "T112",
+        "T113",
+        "T114",
+        "T115",
+        "T116",
+        "T117",
+        "T118",
+        "T119",
+        "T120"
+      ],
+      "status": "draft",
+      "risk": "high",
+      "documentation_owner": "documentation_contributor_under_maintainer_review",
+      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r12--archived-study-regression-documentation-and-versioned-successor"
+    }
+  ]
+}

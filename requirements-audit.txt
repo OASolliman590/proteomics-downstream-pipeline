@@ -1,0 +1,3 @@
+# Used only for independent archived-table checks, not the pipeline runner.
+numpy==2.3.5
+pandas==3.0.1

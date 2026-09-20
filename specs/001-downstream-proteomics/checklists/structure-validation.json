@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "Specification structure/traceability/links and preserved-source hashes; not implementation validation",
+  "slices": 12,
+  "requirements": 120,
+  "tasks": 120,
+  "acceptance_cases": 120,
+  "markdown_files_checked": 53,
+  "implementation_status": "NOT_STARTED",
+  "schema_note": "Draft 2020-12 schema and three examples separately validated with jsonschema 4.25.1; semantic/runtime validation remains an implementation task."
+}

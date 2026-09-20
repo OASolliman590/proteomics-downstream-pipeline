@@ -1,0 +1,24 @@
+# Configuration semantic rules beyond JSON Schema
+
+The structural schema is a first validation layer. Implement all rules below and give field-specific errors; passing JSON Schema alone does not mean a scientific plan is valid.
+
+1. IDs are unique in each collection and all design/model/contrast/resource references resolve. Validate path traversal and source-vs-output collisions.
+2. Observation and feature metadata align exactly with numeric values/masks; unknown source scale or incompatible prior-imputation state constrains inference according to the scientific contract.
+3. A primary hypothesis has exactly one authoritative primary engine/model per declared contrast/estimand. Sensitivities may duplicate a contrast but retain separate model IDs/families. No primary choice depends on results.
+4. A model's design matches each assigned contrast. Numeric contrast names resolve to the frozen coefficient map. Coefficient naming in examples (`group.control`) is the public encoded convention; escape arbitrary source levels deterministically and export their reversible mapping.
+5. Families cover every planned inferential endpoint exactly once as its authoritative central q definition; native engine q values are separate. No overlap/omission between primary and secondary contrast roles without an explicit endpoint-specific rationale. Resource/null-type families remain distinct.
+6. Hypothesis effect_threshold requires a positive log2 margin and an eligible limma/TREAT path. DEqMS/proDA reject unsupported threshold inference. Scale=ratio_log2 must retain its ratio estimand; standardized_unknown cannot produce abundance fold-change claims.
+7. technical aggregation requires a method and explicit replicate/biological-unit identities. Blocking mode none prohibits a stray block column; fixed_subject and duplicate_correlation require a valid subject column. Never encode the same subject as both fixed and random block.
+8. Validate full and featurewise design rank/df, independent-unit n, relevant observation masks and contrast estimability. Ordinary available-case and native-dropout eligibility differ. Unknown original coverage after imputation is not full observed coverage.
+9. DEqMS requires count evidence; actual fit counts are finite/strictly positive, source count_type/grain/aggregation/pseudocount policy is explicit and all feature IDs align.
+10. proDA requires eligible LFQ, original missingness and compatible normalization/imputation/design. Do not apply the available-case per-group filter blindly to its native-dropout model.
+11. Pathways enabled requires at least one method, mapping manifest, finite-matrix policy where needed, positive consistent set-size bounds and resolvable required resource manifests/hashes. A placeholder hash in an example is not a valid cached resource.
+12. CAMERA accepts only the supported independent/fixed-design capability; duplicateCorrelation-style covariance cannot be passed and ignored. Any paired/fixed-subject CAMERA route must be explicitly verified against its implemented design capability; the recommended paired/repeated default is ROAST with the correct fixed-versus-random block handling.
+13. ROAST production nrot≥9,999 and midp=false; lower counts require smoke_test profile and report labels. Directional/mixed family definitions are required. fgsea rank must match the engine/hypothesis and be finite with explicit tie handling.
+14. Response axes refer to coherent d/t/r contrasts in the same compatible model; verify r=d+t algebraically. Epsilon/minimum denominator are descriptive policies, not inferential equivalence margins.
+15. Equivalence enabled requires margin, alpha, supported model covariance and an assigned family. A conjunction restoration claim requires independent disease-direction evidence and a valid combined hypothesis; it cannot be produced just by list intersection.
+16. Score randomization other than none requires an independent score manifest, disjoint biological units/subjects or verified provenance, frozen transforms, admissible scheme, exchangeability evidence and tie tolerance. Monte Carlo additionally requires draws/seed and precision reporting. Current-data exploratory selection makes confirmatory score testing inapplicable.
+17. Runtime production is offline with no auto-installation, overwrite=false and resource/environment preflight. Warnings cannot silently lower a required stage's contract. Changing meaningful config creates a new plan/cache lineage.
+18. Report includes all planned contrasts and appropriate CI/hypothesis/family semantics. Source path redaction affects presentation/release metadata, never hash-based traceability or the data used for estimation.
+
+Each rule needs positive and negative contract tests and maps into its slice acceptance cases. Unknown future fields must be versioned rather than ignored.

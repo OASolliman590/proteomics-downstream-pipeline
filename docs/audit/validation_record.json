@@ -1,0 +1,85 @@
+{
+  "date": "2026-09-12",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "pandas": "3.0.1",
+  "method_a_rerun_comparisons": [
+    {
+      "table": "abundance_input_log2.tsv",
+      "status": "PASS",
+      "rows": 3714
+    },
+    {
+      "table": "protein_annot.tsv",
+      "status": "PASS",
+      "rows": 3714
+    },
+    {
+      "table": "intake_missingness_by_sample.tsv",
+      "status": "PASS",
+      "rows": 20
+    },
+    {
+      "table": "intake_validation.tsv",
+      "status": "PASS",
+      "rows": 4
+    },
+    {
+      "table": "dea_D1_DM_vs_CTRL.tsv",
+      "status": "PASS",
+      "rows": 3714
+    },
+    {
+      "table": "dea_D2_PDM_vs_CTRL.tsv",
+      "status": "PASS",
+      "rows": 3714
+    },
+    {
+      "table": "dea_source_summary.tsv",
+      "status": "PASS",
+      "rows": 4
+    },
+    {
+      "table": "dea_T1_DM_Treated_vs_DM.tsv",
+      "status": "PASS",
+      "rows": 3714
+    },
+    {
+      "table": "dea_T2_PDM_Treated_vs_PDM.tsv",
+      "status": "PASS",
+      "rows": 3714
+    }
+  ],
+  "method_b_prepared_inputs_equal": true,
+  "python_ast_files": [
+    "legacy/04_finalize.py",
+    "legacy/08_build_csv_export.py",
+    "pipeline/20_external_limma_intake.py",
+    "scripts/check_data.py",
+    "scripts/run_pipeline.py",
+    "tests/test_runner.py"
+  ],
+  "synthetic_unit_tests": {
+    "passed": 10,
+    "failed": 0,
+    "environment_note": "An initial temporary-directory permissions failure was environmental; a compatible rerun passed all 10."
+  },
+  "refit_contrasts_arithmetic_verified": 15,
+  "source_contrast_bh_verified": 4,
+  "pathway_bh_families_verified": 24,
+  "rectangular_tables": 75,
+  "rscript_preflight": {
+    "input_validation": "PASS",
+    "runtime": "UNAVAILABLE",
+    "full_r_run": "NOT_RUN"
+  },
+  "source_pattern_scan": {
+    "credential_like": [],
+    "personal_absolute_path": []
+  },
+  "limits": [
+    "Not a full secret/security audit",
+    "R runtime, R tests and GitHub CI not executed",
+    "Original MS processing and animal identity not independently established"
+  ]
+}

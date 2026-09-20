@@ -1,0 +1,24 @@
+# Recovery environment specification, not a historical lockfile.
+# Resolve on Linux/macOS; native Windows should use a separately installed R.
+name: dapagliflozin-proteomics
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - r-base=4.4
+  - bioconductor-limma
+  - bioconductor-impute
+  - bioconductor-fgsea
+  - r-readr
+  - r-dplyr
+  - r-tidyr
+  - r-purrr
+  - r-ggplot2
+  - r-ggrepel
+  - r-pheatmap
+  - r-matrixstats
+  - r-msigdbr
+  - r-patchwork
+  - r-scales
+  - r-statmod

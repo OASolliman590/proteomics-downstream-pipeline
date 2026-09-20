@@ -1,0 +1,833 @@
+{
+  "archive": "dapagliflozin_two_method_annotated_package_2026-07-21.zip",
+  "archive_sha256": "92d8500aac01bcd97f40fc9fe71ac8fb2a84f7b7dc290300eb9fd869a7949582",
+  "file_count": 165,
+  "uncompressed_bytes": 59355573,
+  "files": [
+    {
+      "path": "00_INDEX/CONTENTS.csv",
+      "bytes": 48656,
+      "sha256": "9f714b99c31df6a6d10e67bad7e818ea0d70a69802972e4c12bb8cd0084e80a8"
+    },
+    {
+      "path": "00_INDEX/CSV_VALIDATION.csv",
+      "bytes": 10945,
+      "sha256": "421079d5adf13a720810324b63ae304262a286231a020849495dbfacc7309f7d"
+    },
+    {
+      "path": "00_INDEX/KEY_RESULTS_BY_METHOD.csv",
+      "bytes": 1538,
+      "sha256": "faeb216d9ca686e2a87015455f5dea2dfb37b443601189bd7e43487a805f2883"
+    },
+    {
+      "path": "00_INDEX/MANIFEST_SHA256.csv",
+      "bytes": 30712,
+      "sha256": "dd6710367478dfaa235b175bb0ea901cef256c860f236db11a45e82f64107425"
+    },
+    {
+      "path": "00_INDEX/METHOD_COMPARISON.csv",
+      "bytes": 1289,
+      "sha256": "2f7939762b38a0d421b22c4c42d1fa791cd2d8509499f700c90172b60fc0fee2"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/00_METHOD_NOTE.md",
+      "bytes": 1021,
+      "sha256": "f6489c80b8d8713718a6e8832f80a4eff19f45e0fde177d3c7292cc7425561f5"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/01_RAW_SOURCE_WORKBOOK/limma_results.xlsx",
+      "bytes": 2341016,
+      "sha256": "318805e98f9035ce37d3ecb9b480d73862813c41c88e8d666daffe0e1584067d"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/02_PROCESSED_INPUTS_FROM_WORKBOOK/abundance_input_log2.tsv",
+      "bytes": 1270405,
+      "sha256": "a2667ee3a8e2f6ee01f33e1fcaf9c4fb7d63eaad3bdeb314c8b1831bbe949475"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/02_PROCESSED_INPUTS_FROM_WORKBOOK/protein_annot.tsv",
+      "bytes": 185305,
+      "sha256": "9552d35f2076769dd12d3f3143c8f2dd6b3d49f458c6a92973f7084b856410a6"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/02_PROCESSED_INPUTS_FROM_WORKBOOK/sample_meta.csv",
+      "bytes": 1210,
+      "sha256": "3fd8cbe7db0cdaa43ddb4b8e44599dd89b9e591166eaa91c40252428e09a3c5a"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/intake_missingness_by_sample.tsv",
+      "bytes": 755,
+      "sha256": "d4247050951ed7cb607f1353d7d86e5e59b61ba8db5fd3650f713dbfe5f39611"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/intake_validation.tsv",
+      "bytes": 416,
+      "sha256": "2131d34b7d4557e50713a15f056072deb5211ce6505c4befaf58c9a301f9dc81"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_D1_DM_vs_CTRL.tsv",
+      "bytes": 507618,
+      "sha256": "979b11b7e5a5bc714b92341b6552715bf935eee6bb09387975b3f9d7ea7d015b"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_D2_PDM_vs_CTRL.tsv",
+      "bytes": 511192,
+      "sha256": "74edacc74a2a9ec971dba9a66c3c3d9e0af2628542607388d9955455b470d0d0"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_T1_DM_Treated_vs_DM.tsv",
+      "bytes": 529198,
+      "sha256": "e90f0caebe74ebc0d9a04c8b489b1ae1f475aa54bc707b9af14d19369819abfc"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_T2_PDM_Treated_vs_PDM.tsv",
+      "bytes": 535996,
+      "sha256": "2e77132c053760117e42aa0ed3383e23abd928c2049e19038e1975e75725dd30"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/03_STANDARDIZED_SOURCE_LIMMA_RESULTS/tables/source_dea/dea_source_summary.tsv",
+      "bytes": 342,
+      "sha256": "f3a35a810ecd68bea083eca1e80bd4ca683141f6cb26ff59a071baadcf070f6b"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/04_REPORTS_AND_PROVENANCE/intake_compatibility_report.md",
+      "bytes": 2236,
+      "sha256": "797b52c4536bf98e728c05e7cbbfcf675280ab8117dd869895d549816175bab8"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/04_REPORTS_AND_PROVENANCE/intake_provenance.json",
+      "bytes": 440,
+      "sha256": "50ab77a7e917dc551ff25c54d0b925abb470014cb9d0f8f0fbd82c2f89313630"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/05_PIPELINE_AND_LOGS/20_external_limma_intake.log",
+      "bytes": 521,
+      "sha256": "4201dd992e9eda8f81e691b8bdd72d3dea27d255628bb56f23a15c2db74c4908"
+    },
+    {
+      "path": "01_METHOD_A_SOURCE_PRECOMPUTED_LIMMA_INTAKE/05_PIPELINE_AND_LOGS/20_external_limma_intake.py",
+      "bytes": 17732,
+      "sha256": "8be83937758872f9ee3928a518a66b0d22ccadeeb56c5576e92716022bb6b5c7"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/00_METHOD_NOTE.md",
+      "bytes": 1125,
+      "sha256": "fb303e98bae849419133c14197b35a030bf651986751e20ed573aaf864ab993b"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/CONTENTS.csv",
+      "bytes": 21696,
+      "sha256": "6a1ff64aa1c4dc84a0ec6fcce59204721bbe899c5d438dd344739c189bc66564"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/CSV_VALIDATION.csv",
+      "bytes": 6830,
+      "sha256": "b571668e322096de66f666552a198c9b6df9daf8a02cc001a00f55c3527757f7"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/KEY_FINDINGS.csv",
+      "bytes": 928,
+      "sha256": "53d7eeb9abbe80d3e9ddba13ac0b8f39b063f3039d55cc23bd36711914b26444"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/00_INDEX/MANIFEST_SHA256.csv",
+      "bytes": 17885,
+      "sha256": "1023b2dc7bb9ecfb6a8191e2926d07f9029ef42e3637207f30e49ce12af7d849"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/01_original_workbook/limma_results.xlsx",
+      "bytes": 2341016,
+      "sha256": "318805e98f9035ce37d3ecb9b480d73862813c41c88e8d666daffe0e1584067d"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/abundance_analysis_log2.csv",
+      "bytes": 1269815,
+      "sha256": "c7488ee16f3f3f6002cf986273670cda8531b2969c9fb3699840fa901e7a4233"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/abundance_input_log2.csv",
+      "bytes": 1266690,
+      "sha256": "55eeabc123aad6b95c4c42621c4800cb9e269d98f2e227cc69807b9f80b968da"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/protein_annot.csv",
+      "bytes": 182300,
+      "sha256": "87f9a5fcad974c94534c843fa99c9af0877a12163187835c36a5024065de7abe"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/01_INPUT_DATA/02_processed_rat_level/sample_meta.csv",
+      "bytes": 1531,
+      "sha256": "3ba060da1f8d249a5065cd28b6e0a628a3b2d375e26d177b2ccf060729ec1b24"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/figures/pca.pdf",
+      "bytes": 6838,
+      "sha256": "1d7e8e04bbcc2d14027120d95ea7b62e07902f2846faa7fa8781a6a9e710ab60"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/figures/pca.png",
+      "bytes": 83252,
+      "sha256": "0b699dbc725f1d62ce8f20265515ebfe2e9354bda1853e03f1d73d144b2b4c3f"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/figures/sample_correlation_heatmap.pdf",
+      "bytes": 9052,
+      "sha256": "caf34180f530cb70cf38070bdea6a2dba32a3cad123adbe9db8144ee5d09cd4a"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/figures/sample_missingness.pdf",
+      "bytes": 5388,
+      "sha256": "e122346e2b6599d6e992a7021b3d9f3bbd3ca49ada617da9e58a9b225015b819"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/analysis_gates.csv",
+      "bytes": 1099,
+      "sha256": "98b2b0d4ceaf9397b003b71654f1e9a174d570dae692f3c706dcb5027e41a182"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/pca_scores.csv",
+      "bytes": 2320,
+      "sha256": "0031a907973bb4fcdccc936b1925183dc8ac6f2d0ff6eff3d279788125c8c09e"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/protein_coverage.csv",
+      "bytes": 89272,
+      "sha256": "ccac6a3eeea30b82d2e4edca11de5b41d7ae675a88a2e6c27c69f9d91f8c20b2"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/sample_correlations.csv",
+      "bytes": 7744,
+      "sha256": "50e13bbd45a00a519f4c0295caf2e039c92f47166ef9940076b8fc7c347f13f0"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/02_QC/tables/sample_qc.csv",
+      "bytes": 3347,
+      "sha256": "ba03d800e427332def1e807d46b8e8427aeff423d6f89da20de2351911f69c14"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_DM.csv",
+      "bytes": 2215213,
+      "sha256": "5075ef4c1e5461d888892969677d503a296a766fa084ea9c0ca745c6ba48ce2e"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_PreDM.csv",
+      "bytes": 2275007,
+      "sha256": "aeb7799b5d398fc6dcb8604d751c50ad1160bb6e9dabae16dbd84521cd2bfa12"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_all.csv",
+      "bytes": 4620331,
+      "sha256": "79a190e316bfbda9a867ad462d3916204e370394ccac6a4399f14c7ab2bda974"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/01_differential_abundance/axis_dea_summary.csv",
+      "bytes": 570,
+      "sha256": "4240da3c04566635083dbe34cbd6c286ebd6c851d466aebb5ebd9a362b2e0bd0"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/02_three_group_omnibus/axis_omnibus_DM.csv",
+      "bytes": 627826,
+      "sha256": "2293cb503a96ddba439319ef62bec5d89b1f40407249987107af5260639c1c74"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/02_three_group_omnibus/axis_omnibus_PreDM.csv",
+      "bytes": 643058,
+      "sha256": "ed7d0351a4457d7ad6868b4fdca9ce21bb9ac145db1cc7d79f0de4c91af7c521"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/02_three_group_omnibus/axis_omnibus_all.csv",
+      "bytes": 1270782,
+      "sha256": "eff9bcdbd8261043deb25acca1bbfc0cb2b7c8b569b24e76e91090b732c7e0ee"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_disease_axis_sample_scores.csv",
+      "bytes": 1162,
+      "sha256": "ca9b5695d57573394177c482cae5caf3b24a96c1c871a00c29a0b8e91dd9ac81"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_disease_axis_treatment_tests.csv",
+      "bytes": 501,
+      "sha256": "46107926d3eab7151d1129975345d2da2d4310a11374653911c4f634457767b4"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_DM.csv",
+      "bytes": 755481,
+      "sha256": "0d3565fc0feca06e7fead56b755444d9f493eceaf91757d1a986238e6fbcfb05"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_PreDM.csv",
+      "bytes": 770250,
+      "sha256": "006a59a4c5d3e7132044ed99ab69df74972eba0ec7896122c40741273913c372"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_all.csv",
+      "bytes": 1525513,
+      "sha256": "f875d0f951f23901c0f6eb7ff4640348b981d6e95657615c65acfe3337a587f2"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/03_reversal/axis_reversal_summary.csv",
+      "bytes": 263,
+      "sha256": "0a0f99307fd87bfcee86df693ad59436180d7974cd2781f657c5fc8a82a3a583"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/04_pathways/axis_gsea_all.csv",
+      "bytes": 843670,
+      "sha256": "af5d0153bfbdb7da89fc7807dfd301281f8adf7a21b9542e7a9543b7511073ae"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/04_pathways/axis_gsea_summary.csv",
+      "bytes": 737,
+      "sha256": "bbcb00ce3c6a1cdf5fc7ed1662fca7380af667f12b74390c6540b5e350fee1e1"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/composite_figure_methods.md",
+      "bytes": 1058,
+      "sha256": "5bb6eab61bce1d75fa27f53dd988398212dfc606dd788c47fa801cec657ebd64"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/panel_A_candidate_reversal_indices.csv",
+      "bytes": 23432,
+      "sha256": "30a32112c28556237dbc212d5ae068baf75430596f03e1e2232d2b0e3948e4fb"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/panel_B_selected_protein_reversal.csv",
+      "bytes": 22333,
+      "sha256": "8baa4ff1518f7d09860e25b238e361ffa403e9325223125299e03649dcb655c2"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/05_figure_source_data/panel_C_selected_pathway_GSEA.csv",
+      "bytes": 33273,
+      "sha256": "bc7652c7f4f8b9d621be05487443b8ab74c102b6612a345df38f46c09237104d"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/axis_volcano_DM.pdf",
+      "bytes": 413795,
+      "sha256": "c586653405a3edec0263f325eda5c5dac4c2544873a105ee53a54ad184980135"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/axis_volcano_DM.png",
+      "bytes": 485975,
+      "sha256": "6e7a7ab370f2dcc3d29b9a8ffb55d11840e977e992034e798bf0e0e842fe6cfe"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/axis_volcano_PreDM.pdf",
+      "bytes": 419272,
+      "sha256": "1137b6c07f6e90a42f74d1fdaf1a38e8df456cbadd7365f1f3c1313d0f31c2d2"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/axis_volcano_PreDM.png",
+      "bytes": 560562,
+      "sha256": "904d325059e5b9bf9a4777ad6c2b483d3d6ddc73365f957de9ed69ae5c7c6cd9"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/stage_specific_reversal_pathway_composite.pdf",
+      "bytes": 47808,
+      "sha256": "daa4c8a13720a65daee9a3860d0d05dcd142d793dd91882eab33ad2b251ed336"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/stage_specific_reversal_pathway_composite.png",
+      "bytes": 848586,
+      "sha256": "9c3162c687611200b7255bba35ea353a2dd9b6cd2e7b36323cea77b04355b1fb"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/03_AXIS_SPECIFIC_PRIMARY/06_figures/stage_specific_reversal_pathway_composite.tiff",
+      "bytes": 3796116,
+      "sha256": "b5d96459a353f7eeb24fee6636fd55bc3a9f49de589161608c355de624a1a353"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/contrast_matrix.csv",
+      "bytes": 314,
+      "sha256": "c737a25220c411d394a13b391fa3ba2e27f65d053892b816a3f014a4aac322df"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_D1_PreDM_vs_CTRL.csv",
+      "bytes": 827080,
+      "sha256": "b392b4793ec3e931ae6bc6468f19eecdc9a8a406d91913f4d96a34b32f14b965"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_D2_DM_vs_CTRL.csv",
+      "bytes": 816507,
+      "sha256": "b97f8585a4e8f8770c1f5cae9601979e1ec42b5358fcbbd2a849eb9abe41b264"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_I1_stage_by_dapa.csv",
+      "bytes": 827406,
+      "sha256": "8e01646ee8638d3bf6a2869b46de37027212143660cc04b5763c985b3c5450e3"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_R1_PreDM_Dapa_vs_CTRL.csv",
+      "bytes": 847293,
+      "sha256": "9530544ec2f0e55104ec12585edb0f93bf3186f48659f87cbcd077445256aad5"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_R2_DM_Dapa_vs_CTRL.csv",
+      "bytes": 835437,
+      "sha256": "6f60c534183ae21af56ecb97c437b4e53f177397f7cf699b75bbd83a30d91c22"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_S1_DM_vs_PreDM.csv",
+      "bytes": 820076,
+      "sha256": "aec483c655bb32c81375fbaaef73749c9d1564cd520c993c3f37095dc26979d6"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_S2_DM_Dapa_vs_PreDM_Dapa.csv",
+      "bytes": 858782,
+      "sha256": "5609bc742bc13d8c7d8cc0119e7731b7a82822cac8d122d0a703f71ebc32bd17"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_T1_PreDM_Dapa_vs_PreDM.csv",
+      "bytes": 851969,
+      "sha256": "b1115858963d69995cc777869e4c8cecd9e0af800147289219a79514ce020f43"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_T2_DM_Dapa_vs_DM.csv",
+      "bytes": 828585,
+      "sha256": "f2412adbfbc40c2ac5d50172f018e1321ead219a0d230717a9682590d08f547e"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_master.csv",
+      "bytes": 2132910,
+      "sha256": "9e74ebed18000ddc4de453908187d15afabf032b36bac4646c80bc761f26c3e3"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/dea_summary.csv",
+      "bytes": 782,
+      "sha256": "df802dcb3ba1c65df9ece1d4edf748588d4eb6d2d603805f1e57af42d74d9794"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/01_differential_abundance/design_matrix.csv",
+      "bytes": 294,
+      "sha256": "55546b85cbde8b9fedf08b518d3e20b61daaab215a2eaca5b5a40a02d06ccbdf"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/disease_axis_sample_scores.csv",
+      "bytes": 3195,
+      "sha256": "257b29e05a32d94e81ac3adff1a5bdb978f96883b8b3b863e2a4406bf0858c79"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/disease_axis_treatment_tests.csv",
+      "bytes": 444,
+      "sha256": "63d046315e423942ac02329c863239c0dad7c7fab1ffdb227dcca210d3398c66"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/reversal_DM.csv",
+      "bytes": 873973,
+      "sha256": "46f8ad81db3bf4c67ea34c740beaec98d4041a483484839b168092f4a795dd0b"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/reversal_PreDM.csv",
+      "bytes": 885737,
+      "sha256": "cbdb2a9885dbc4b6079c026874f6e3de2c69e75b6617d0ac65787a0c6e0cdabc"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/02_reversal/reversal_summary.csv",
+      "bytes": 252,
+      "sha256": "c31bdc3d449649484ea59003f1b9e0c2892b43f839f328a3a7e24dc78845b8ce"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/candidate_ora_all.csv",
+      "bytes": 242217,
+      "sha256": "7fb074646190ec0255028fd3d3be02c3d5fa7764f82c4d29175b011e6daf3606"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_all.csv",
+      "bytes": 831620,
+      "sha256": "f1dd7648b06e7fd129b19f492a2ae43991f9db9d7c4f76614aa760174f573970"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_leave_one_sample_results.csv",
+      "bytes": 12620,
+      "sha256": "668ebaf266e511ae60d8814aea43ff173ba8d53500293f68de53c10ca992ab10"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_leave_one_sample_stability.csv",
+      "bytes": 1571,
+      "sha256": "6acff14417cc2d30189b30204cacb13d6909f355d13e246ff315ec005c65851f"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/03_pathways/gsea_summary.csv",
+      "bytes": 722,
+      "sha256": "3d080efd1295c655ba746606fc07be4c1ecb940377db9a70843a1533a523c00a"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/04_robustness/candidate_leave_one_sample_stability.csv",
+      "bytes": 24248,
+      "sha256": "2038d25a7234a10f3551fe42b3aa5aa2bdc3b3bd17b6476af8dbdacc4166a86d"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/04_robustness/leave_one_sample_summary.csv",
+      "bytes": 4761,
+      "sha256": "0a5127f4f4ce91a605d2bf0ad8f779ff7eb7c3acf054b6cb4de994a53758f155"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/04_robustness/method_sensitivity_summary.csv",
+      "bytes": 2453,
+      "sha256": "8e63c3656661a559083f85bd3b749e0724e480a13e942e05384814266a016442"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/top_candidate_heatmap.pdf",
+      "bytes": 14905,
+      "sha256": "658de20bd3f790899ffca85ab3301d6cc82fe363e1815126dc6a65d2a8e94003"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_D1_PreDM_vs_CTRL.pdf",
+      "bytes": 216006,
+      "sha256": "26a0229a1530e5ce9a3ca9e3264ae6fafef24963f12376d2d4023871540003bd"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_D2_DM_vs_CTRL.pdf",
+      "bytes": 216158,
+      "sha256": "3c41b33821f88f71747a734672d880538554f7f9612b510fb56ee3ad52951edd"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_I1_stage_by_dapa.pdf",
+      "bytes": 215763,
+      "sha256": "2b3f4416071c384df762815bc77eb2e41d7b71bf820562d39bfe6dcc3994905d"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_R1_PreDM_Dapa_vs_CTRL.pdf",
+      "bytes": 216316,
+      "sha256": "f87bd9a9730a1727f6e5f362461ceba1d7efb174993db6b8e6e731680a04573e"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_R2_DM_Dapa_vs_CTRL.pdf",
+      "bytes": 216781,
+      "sha256": "dfc03cc0e7242403b9234450c1178852d44002acba12a0b5401281633386d93c"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_S1_DM_vs_PreDM.pdf",
+      "bytes": 216148,
+      "sha256": "543081525c0ecc8dc15779b639da3a74acb0fa90dd06c0dc56d7e66cb2c22b25"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_S2_DM_Dapa_vs_PreDM_Dapa.pdf",
+      "bytes": 217011,
+      "sha256": "17524d1f5e6bacf2c85231204519eb740d9cc9a5034f302c09ea1e0d9fe7b35c"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_T1_PreDM_Dapa_vs_PreDM.pdf",
+      "bytes": 217429,
+      "sha256": "f532ae60af2dc096230130f79c634ce9bb162c9a7e4c83f60297205b18ef1034"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/dea/volcano_T2_DM_Dapa_vs_DM.pdf",
+      "bytes": 216121,
+      "sha256": "26996205d178671f88b4d2f5919bd07faa3b2ade2eabbeaf72dd5cfe2bc3d6fc"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/enrichment/top_gsea_pathways.pdf",
+      "bytes": 12158,
+      "sha256": "d610d90496388582007bc8635e0243608dbe0585de7cdbab956a60b0c0b194ed"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/enrichment/top_gsea_pathways.png",
+      "bytes": 208000,
+      "sha256": "48bd866c467b93e038ba5550de7ed127ee42101561095a7571cca45e64716e45"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/reversal/disease_axis_scores.pdf",
+      "bytes": 8483,
+      "sha256": "fb37e0007b4b2d6b7fb6009205d52750b1b698d901a6bf081c77d63b2dfc52ea"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/reversal/reversal_scatter_DM.pdf",
+      "bytes": 213056,
+      "sha256": "7267d4c72dfdc396ed2f93f9e889507584078de498f731bf37f0c71bc741fc43"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/04_JOINT_MODEL_SENSITIVITY/05_figures/reversal/reversal_scatter_PreDM.pdf",
+      "bytes": 211519,
+      "sha256": "0a564e7d05bb6cf31a8d5c8c658db208844a038d305952a9c3a506cf826c8edf"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/axis_volcano_DM.pdf",
+      "bytes": 413795,
+      "sha256": "c586653405a3edec0263f325eda5c5dac4c2544873a105ee53a54ad184980135"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/axis_volcano_DM.png",
+      "bytes": 485975,
+      "sha256": "6e7a7ab370f2dcc3d29b9a8ffb55d11840e977e992034e798bf0e0e842fe6cfe"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/axis_volcano_PreDM.pdf",
+      "bytes": 419272,
+      "sha256": "1137b6c07f6e90a42f74d1fdaf1a38e8df456cbadd7365f1f3c1313d0f31c2d2"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/axis_volcano_PreDM.png",
+      "bytes": 560562,
+      "sha256": "904d325059e5b9bf9a4777ad6c2b483d3d6ddc73365f957de9ed69ae5c7c6cd9"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/stage_specific_reversal_pathway_composite.pdf",
+      "bytes": 47808,
+      "sha256": "daa4c8a13720a65daee9a3860d0d05dcd142d793dd91882eab33ad2b251ed336"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/stage_specific_reversal_pathway_composite.png",
+      "bytes": 848586,
+      "sha256": "9c3162c687611200b7255bba35ea353a2dd9b6cd2e7b36323cea77b04355b1fb"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/axis_specific/stage_specific_reversal_pathway_composite.tiff",
+      "bytes": 3796116,
+      "sha256": "b5d96459a353f7eeb24fee6636fd55bc3a9f49de589161608c355de624a1a353"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/top_candidate_heatmap.pdf",
+      "bytes": 14905,
+      "sha256": "658de20bd3f790899ffca85ab3301d6cc82fe363e1815126dc6a65d2a8e94003"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_D1_PreDM_vs_CTRL.pdf",
+      "bytes": 216006,
+      "sha256": "26a0229a1530e5ce9a3ca9e3264ae6fafef24963f12376d2d4023871540003bd"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_D2_DM_vs_CTRL.pdf",
+      "bytes": 216158,
+      "sha256": "3c41b33821f88f71747a734672d880538554f7f9612b510fb56ee3ad52951edd"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_I1_stage_by_dapa.pdf",
+      "bytes": 215763,
+      "sha256": "2b3f4416071c384df762815bc77eb2e41d7b71bf820562d39bfe6dcc3994905d"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_R1_PreDM_Dapa_vs_CTRL.pdf",
+      "bytes": 216316,
+      "sha256": "f87bd9a9730a1727f6e5f362461ceba1d7efb174993db6b8e6e731680a04573e"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_R2_DM_Dapa_vs_CTRL.pdf",
+      "bytes": 216781,
+      "sha256": "dfc03cc0e7242403b9234450c1178852d44002acba12a0b5401281633386d93c"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_S1_DM_vs_PreDM.pdf",
+      "bytes": 216148,
+      "sha256": "543081525c0ecc8dc15779b639da3a74acb0fa90dd06c0dc56d7e66cb2c22b25"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_S2_DM_Dapa_vs_PreDM_Dapa.pdf",
+      "bytes": 217011,
+      "sha256": "17524d1f5e6bacf2c85231204519eb740d9cc9a5034f302c09ea1e0d9fe7b35c"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_T1_PreDM_Dapa_vs_PreDM.pdf",
+      "bytes": 217429,
+      "sha256": "f532ae60af2dc096230130f79c634ce9bb162c9a7e4c83f60297205b18ef1034"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/dea/volcano_T2_DM_Dapa_vs_DM.pdf",
+      "bytes": 216121,
+      "sha256": "26996205d178671f88b4d2f5919bd07faa3b2ade2eabbeaf72dd5cfe2bc3d6fc"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/enrichment/top_gsea_pathways.pdf",
+      "bytes": 12158,
+      "sha256": "d610d90496388582007bc8635e0243608dbe0585de7cdbab956a60b0c0b194ed"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/enrichment/top_gsea_pathways.png",
+      "bytes": 208000,
+      "sha256": "48bd866c467b93e038ba5550de7ed127ee42101561095a7571cca45e64716e45"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/qc/pca.pdf",
+      "bytes": 6838,
+      "sha256": "1d7e8e04bbcc2d14027120d95ea7b62e07902f2846faa7fa8781a6a9e710ab60"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/qc/pca.png",
+      "bytes": 83252,
+      "sha256": "0b699dbc725f1d62ce8f20265515ebfe2e9354bda1853e03f1d73d144b2b4c3f"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/qc/sample_correlation_heatmap.pdf",
+      "bytes": 9052,
+      "sha256": "caf34180f530cb70cf38070bdea6a2dba32a3cad123adbe9db8144ee5d09cd4a"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/qc/sample_missingness.pdf",
+      "bytes": 5388,
+      "sha256": "e122346e2b6599d6e992a7021b3d9f3bbd3ca49ada617da9e58a9b225015b819"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/reversal/disease_axis_scores.pdf",
+      "bytes": 8483,
+      "sha256": "fb37e0007b4b2d6b7fb6009205d52750b1b698d901a6bf081c77d63b2dfc52ea"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/reversal/reversal_scatter_DM.pdf",
+      "bytes": 213056,
+      "sha256": "7267d4c72dfdc396ed2f93f9e889507584078de498f731bf37f0c71bc741fc43"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/05_ALL_FIGURES/reversal/reversal_scatter_PreDM.pdf",
+      "bytes": 211519,
+      "sha256": "0a564e7d05bb6cf31a8d5c8c658db208844a038d305952a9c3a506cf826c8edf"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/06_REPORTS/PIPELINE_README.md",
+      "bytes": 1362,
+      "sha256": "b1c7a8a899b23783f8c7583f0cd86b7159c09fcb6ab836ed4e0612514b20f28a"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/06_REPORTS/analysis_report.md",
+      "bytes": 10098,
+      "sha256": "a7313b08b71256dcc69e7a749d94d23e1b88dcf30051281f71e04f45e594e8d5"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/06_REPORTS/enrichment_notes.md",
+      "bytes": 1715,
+      "sha256": "20da9d25673023ece8f3c5def00898a7529e63f868498ea531ea86d627c6a40f"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/06_REPORTS/qc_dea_notes.md",
+      "bytes": 649,
+      "sha256": "3f1c39deaf9de6f2f3f1bd5a458d3f81b4fcb5ad059f6ed740c22c74dcfe7277"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/06_REPORTS/reversal_notes.md",
+      "bytes": 1738,
+      "sha256": "327f4bcd2224a0ebb1cbf7cd34b4279b27a65eb9dec2f194a9f1f39f8102d711"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/06_REPORTS/sessionInfo.txt",
+      "bytes": 588,
+      "sha256": "cecb363af116471996e7721d30cbe9491ad1c0f733cb5cf2c9db816c3b746660"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/01_qc_dea.log",
+      "bytes": 645,
+      "sha256": "293828bbf8e093d63fa5ea9070e81a92ab9fe7112278345186f28ca3d347c5ea"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/02_reversal.log",
+      "bytes": 61,
+      "sha256": "4a44b47339d0b57d31d574a0e6252f27b9122c665ccd5fedef55e621e983cbb1"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/03_enrichment.log",
+      "bytes": 656,
+      "sha256": "98118f43d35596347dc70852cfc66945ba327a78442df056a857606e515c3389"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/04_finalize.log",
+      "bytes": 172,
+      "sha256": "825f9204fd98d4eca6da402285d6aa2b03ad5a476d8bad924d79657e76038b57"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/05_axis_specific_limma.log",
+      "bytes": 52,
+      "sha256": "32e130269def93147b508d667e4d934646d1b7a796bb82010b59fb2b99d55b10"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/06_axis_specific_enrichment.log",
+      "bytes": 128,
+      "sha256": "a6f2008f54d773952dd9be2a08a20ebbe611b50506dde8731e5becac431b590c"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/logs/07_reference_reversal_figure.log",
+      "bytes": 856,
+      "sha256": "4c8f389789a24477df62be63c06f665fa49ffbe6187b37895d2c29523f448e17"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/01_qc_dea.R",
+      "bytes": 15068,
+      "sha256": "26d986950e30494e8d82c6512508d73756ecd37683295f720d05e90e72f231a4"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/02_reversal.R",
+      "bytes": 8396,
+      "sha256": "e0bd6586f25233572e47a4d420902cda31b26800a587c305a247b0e3352432ca"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/03_enrichment.R",
+      "bytes": 9281,
+      "sha256": "5f728785462e31eae082790772295de01712068f2d90b43c5092779ee6fc44e7"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/04_finalize.py",
+      "bytes": 13297,
+      "sha256": "a3ef261e233e8d1f792d64635098812e693ef690ec6e1506bfa2712fe630ca67"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/05_axis_specific_limma.R",
+      "bytes": 10042,
+      "sha256": "710a3259de19840e22df5301715ef16621e2a70192ddcf6a44085998b2894ff2"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/06_axis_specific_enrichment.R",
+      "bytes": 2538,
+      "sha256": "7809f19b48ce18512c1fa08c99681b7eccaecde3c2e2aeb6fe7eca816fc853a3"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/07_reference_reversal_figure.R",
+      "bytes": 10790,
+      "sha256": "020b67408bf95a1d931adc70e60ffd5377c43b6d34eafbc1ccb1b025dab54035"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/pipeline/08_build_csv_export.py",
+      "bytes": 16639,
+      "sha256": "211d8959951c3c0b9d7e72db8b843f9e0a394c3b47b9633451510e23b3cc144e"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/07_PIPELINE_AND_LOGS/run_all.sh",
+      "bytes": 1277,
+      "sha256": "c0b7c6774b7925801ac26dcc713a080c8ccda8bfbbcf0b04506ef7cb433d98d4"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/08_REPRODUCIBILITY/environment.yml",
+      "bytes": 231,
+      "sha256": "b2037520e82d6a00b4b9ddbc0d974e13aa47ca489e49a2e4bcbfe304aa7796a4"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/08_REPRODUCIBILITY/file_manifest.tsv",
+      "bytes": 12489,
+      "sha256": "3af343fb8bf7fbe3f1ebd6900906502b5e6f191042cf23ace8de64804b0edc49"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/08_REPRODUCIBILITY/native_objects/joint_limma_fit.rds",
+      "bytes": 1269629,
+      "sha256": "fab64da77f641552a3d52a944379a7072727921579157b180f96f6905b7ce490"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/08_REPRODUCIBILITY/ro-crate-metadata.json",
+      "bytes": 358,
+      "sha256": "725aeac39e81a36b67d87dbc56ef2ab5ae5c192741f61a846d2c09602c85dc07"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/08_REPRODUCIBILITY/runtime.txt",
+      "bytes": 55,
+      "sha256": "300f20f806d0afd85f45ac67d249d70ea2ca6ebedc12956fd7c457b1564f5cf5"
+    },
+    {
+      "path": "02_METHOD_B_ABUNDANCE_REFIT_FULL_PIPELINE/01_FULL_VERIFIED_EXPORT/README.md",
+      "bytes": 1970,
+      "sha256": "88b24a775146e71f14fd4f91000a0a633029f54e7457acb5d04376d0e70beca5"
+    },
+    {
+      "path": "03_SIDE_BY_SIDE_SUMMARY/KEY_RESULTS_BY_METHOD.csv",
+      "bytes": 1538,
+      "sha256": "faeb216d9ca686e2a87015455f5dea2dfb37b443601189bd7e43487a805f2883"
+    },
+    {
+      "path": "03_SIDE_BY_SIDE_SUMMARY/METHOD_COMPARISON.csv",
+      "bytes": 1289,
+      "sha256": "2f7939762b38a0d421b22c4c42d1fa791cd2d8509499f700c90172b60fc0fee2"
+    },
+    {
+      "path": "03_SIDE_BY_SIDE_SUMMARY/two_method_summary.md",
+      "bytes": 2109,
+      "sha256": "4d2c34fbf6537f1558b0bbd584a3bcc1fae9778eb7b2c4313a4a3ee6a6968a17"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1012,
+      "sha256": "6808e27388c9ea0ebf37478311908694c1dd2e90bb0349f8c54183fd73691967"
+    }
+  ]
+}

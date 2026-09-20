@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0.0",
+  "study": {
+    "id": "synthetic-threshold",
+    "title": "Synthetic independent protein abundance example",
+    "assay": "processed_protein",
+    "taxonomy_id": 10116,
+    "experimental_unit": "independent specimen",
+    "design_evidence": "randomized_recorded",
+    "tissue": null
+  },
+  "input": {
+    "matrix": "fixtures/abundance.tsv",
+    "format": "wide_tsv",
+    "profile": "canonical_protein",
+    "observations": "fixtures/observations.tsv",
+    "features": "fixtures/features.tsv",
+    "scale": "log2",
+    "normalization_state": "normalized_documented",
+    "prior_imputation": "none_documented",
+    "missing_values": [
+      "NA",
+      ""
+    ],
+    "source_provenance": "fixtures/provenance.json"
+  },
+  "preprocessing": {
+    "normalization": "preserve",
+    "technical_replicates": {
+      "mode": "none",
+      "biological_unit_column": "biological_unit_id"
+    },
+    "new_primary_imputation": "none"
+  },
+  "designs": [
+    {
+      "id": "joint",
+      "group_column": "group",
+      "group_levels": [
+        "control",
+        "disease",
+        "treated"
+      ],
+      "continuous_covariates": [],
+      "categorical_covariates": [],
+      "interactions": [],
+      "intercept": false,
+      "blocking": {
+        "mode": "none"
+      }
+    }
+  ],
+  "contrasts": [
+    {
+      "id": "disease-control",
+      "design_id": "joint",
+      "label": "Disease vs control",
+      "estimand": "Mean log2 abundance difference",
+      "weights": {
+        "group.disease": 1,
+        "group.control": -1
+      },
+      "role": "primary",
+      "required_groups": [
+        "disease",
+        "control"
+      ]
+    },
+    {
+      "id": "treated-disease",
+      "design_id": "joint",
+      "label": "Treated vs disease",
+      "estimand": "Mean log2 abundance difference",
+      "weights": {
+        "group.treated": 1,
+        "group.disease": -1
+      },
+      "role": "primary",
+      "required_groups": [
+        "treated",
+        "disease"
+      ]
+    },
+    {
+      "id": "treated-control",
+      "design_id": "joint",
+      "label": "Treated vs control",
+      "estimand": "Residual mean log2 abundance difference",
+      "weights": {
+        "group.treated": 1,
+        "group.control": -1
+      },
+      "role": "secondary",
+      "required_groups": [
+        "treated",
+        "control"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "limma-main",
+      "design_id": "joint",
+      "engine": "limma",
+      "role": "primary",
+      "hypothesis": "effect_threshold",
+      "trend": true,
+      "robust": true,
+      "coverage": {
+        "policy": "available_case",
+        "minimum_observed_per_group": 2,
+        "minimum_fraction": 0.5,
+        "mask_source": "original_observed"
+      },
+      "effect_threshold_log2": 0.5
+    }
+  ],
+  "families": [
+    {
+      "id": "protein-primary",
+      "endpoint": "protein_effect_threshold",
+      "model_ids": [
+        "limma-main"
+      ],
+      "contrast_ids": [
+        "disease-control",
+        "treated-disease"
+      ],
+      "adjustment": "BH",
+      "denominator": "finite_eligible",
+      "q_cutoff": 0.05,
+      "role": "primary"
+    },
+    {
+      "id": "protein-secondary",
+      "endpoint": "protein_effect_threshold",
+      "model_ids": [
+        "limma-main"
+      ],
+      "contrast_ids": [
+        "treated-control"
+      ],
+      "adjustment": "BH",
+      "denominator": "finite_eligible",
+      "q_cutoff": 0.05,
+      "role": "secondary"
+    }
+  ],
+  "pathways": {
+    "enabled": false
+  },
+  "response": {
+    "enabled": true,
+    "axes": [
+      {
+        "id": "disease-axis",
+        "model_id": "limma-main",
+        "disease_contrast": "disease-control",
+        "treatment_contrast": "treated-disease",
+        "residual_contrast": "treated-control"
+      }
+    ],
+    "selection": "all_eligible",
+    "ri_minimum_abs_disease_effect": 0.25,
+    "near_control_epsilon": 0.2,
+    "ratio_uncertainty": "descriptive_only",
+    "equivalence": {
+      "enabled": false
+    },
+    "randomization": {
+      "mode": "none"
+    }
+  },
+  "runtime": {
+    "seed": 4812026,
+    "threads": 1,
+    "network": "offline",
+    "overwrite": false,
+    "execution_profile": "production"
+  },
+  "report": {
+    "html": true,
+    "figure_formats": [
+      "pdf",
+      "png"
+    ],
+    "ci_level": 0.95,
+    "include_all_planned_contrasts": true,
+    "public_path_redaction": true
+  }
+}

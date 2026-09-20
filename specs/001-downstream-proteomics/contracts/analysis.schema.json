@@ -1,0 +1,1098 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "study": {
+      "$ref": "#/$defs/study"
+    },
+    "input": {
+      "$ref": "#/$defs/input"
+    },
+    "preprocessing": {
+      "$ref": "#/$defs/preprocessing"
+    },
+    "designs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/design"
+      },
+      "minItems": 1
+    },
+    "contrasts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/contrast"
+      },
+      "minItems": 1
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/model"
+      },
+      "minItems": 1
+    },
+    "families": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/family"
+      },
+      "minItems": 1
+    },
+    "pathways": {
+      "$ref": "#/$defs/pathways"
+    },
+    "response": {
+      "$ref": "#/$defs/response"
+    },
+    "runtime": {
+      "$ref": "#/$defs/runtime"
+    },
+    "report": {
+      "$ref": "#/$defs/report"
+    }
+  },
+  "required": [
+    "schema_version",
+    "study",
+    "input",
+    "preprocessing",
+    "designs",
+    "contrasts",
+    "models",
+    "families",
+    "pathways",
+    "response",
+    "runtime",
+    "report"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:proteomics-pipeline:analysis:1.0.0",
+  "$defs": {
+    "study": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assay": {
+          "enum": [
+            "lfq_dda",
+            "lfq_dia",
+            "tmt",
+            "processed_protein"
+          ]
+        },
+        "taxonomy_id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "experimental_unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "design_evidence": {
+          "enum": [
+            "randomized_recorded",
+            "observational",
+            "unknown"
+          ]
+        },
+        "tissue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "metadata_notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "assay",
+        "taxonomy_id",
+        "experimental_unit",
+        "design_evidence"
+      ]
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "matrix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format": {
+          "enum": [
+            "wide_tsv",
+            "wide_csv",
+            "long_tsv",
+            "long_csv",
+            "legacy_workbook",
+            "vendor_mapped"
+          ]
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mapping_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "features": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scale": {
+          "enum": [
+            "linear_positive",
+            "log2",
+            "ratio_log2",
+            "standardized_unknown"
+          ]
+        },
+        "normalization_state": {
+          "enum": [
+            "unnormalized",
+            "normalized_documented",
+            "normalized_unknown_method",
+            "unknown"
+          ]
+        },
+        "prior_imputation": {
+          "enum": [
+            "none_documented",
+            "known_with_mask",
+            "known_without_mask",
+            "unknown"
+          ]
+        },
+        "observed_mask": {
+          "type": "string",
+          "minLength": 1
+        },
+        "imputed_mask": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_values": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ]
+          },
+          "minItems": 0
+        },
+        "linear_zero_policy": {
+          "enum": [
+            "reject",
+            "missing_by_source_contract"
+          ]
+        },
+        "source_provenance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "counts": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "matrix",
+        "format",
+        "profile",
+        "observations",
+        "features",
+        "scale",
+        "normalization_state",
+        "prior_imputation",
+        "missing_values"
+      ]
+    },
+    "technical": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "aggregate"
+          ]
+        },
+        "method": {
+          "enum": [
+            "linear_mean",
+            "log2_mean"
+          ]
+        },
+        "replicate_column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "biological_unit_column": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "mode",
+        "biological_unit_column"
+      ]
+    },
+    "preprocessing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "normalization": {
+          "enum": [
+            "preserve",
+            "median_center",
+            "reference_features",
+            "quantile_sensitivity",
+            "tmt_loading_bridge",
+            "tmt_loading_plex_model"
+          ]
+        },
+        "reference_features": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "tmt_reference_channel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "technical_replicates": {
+          "$ref": "#/$defs/technical"
+        },
+        "new_primary_imputation": {
+          "const": "none"
+        },
+        "sensitivity_imputation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "method": {
+                "enum": [
+                  "mindet_deterministic",
+                  "left_shift_gaussian",
+                  "knn",
+                  "complete_case"
+                ]
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                }
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "minItems": 0
+        },
+        "exclude_observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "observation_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "observation_id",
+              "reason"
+            ]
+          },
+          "minItems": 0
+        },
+        "feature_flags": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "decoy",
+              "contaminant"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "normalization",
+        "technical_replicates",
+        "new_primary_imputation"
+      ]
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "group_column": {
+          "type": "string",
+          "minLength": 1
+        },
+        "group_levels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 2
+        },
+        "continuous_covariates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "categorical_covariates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 2
+          },
+          "minItems": 0
+        },
+        "intercept": {
+          "type": "boolean"
+        },
+        "subset": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "column": {
+              "type": "string",
+              "minLength": 1
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "column",
+            "values"
+          ]
+        },
+        "blocking": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "none",
+                "fixed_subject",
+                "duplicate_correlation"
+              ]
+            },
+            "column": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "mode"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "intercept",
+        "blocking"
+      ]
+    },
+    "contrast": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "design_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estimand": {
+          "type": "string",
+          "minLength": 1
+        },
+        "weights": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "secondary"
+          ]
+        },
+        "required_groups": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "direction_reference": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "design_id",
+        "label",
+        "estimand",
+        "weights",
+        "role"
+      ]
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "design_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "engine": {
+          "enum": [
+            "limma",
+            "deqms",
+            "proda"
+          ]
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "sensitivity"
+          ]
+        },
+        "hypothesis": {
+          "enum": [
+            "zero_null",
+            "effect_threshold"
+          ]
+        },
+        "effect_threshold_log2": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "trend": {
+          "type": "boolean"
+        },
+        "robust": {
+          "type": "boolean"
+        },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "policy": {
+              "enum": [
+                "available_case",
+                "dropout_native"
+              ]
+            },
+            "minimum_observed_per_group": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "minimum_fraction": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "mask_source": {
+              "enum": [
+                "original_observed",
+                "numeric_availability_with_limitation"
+              ]
+            }
+          },
+          "required": [
+            "policy",
+            "mask_source"
+          ]
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "enum": [
+                "psm",
+                "unique_peptides",
+                "unique_plus_razor_peptides"
+              ]
+            },
+            "aggregation": {
+              "enum": [
+                "source_feature_level",
+                "minimum_across_declared_plexes",
+                "declared_custom"
+              ]
+            },
+            "pseudocount": {
+              "type": "number",
+              "minimum": 0
+            },
+            "justification": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "type",
+            "aggregation",
+            "pseudocount",
+            "justification"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "design_id",
+        "engine",
+        "role",
+        "hypothesis",
+        "coverage"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "hypothesis": {
+                "const": "effect_threshold"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "effect_threshold_log2"
+            ],
+            "properties": {
+              "engine": {
+                "const": "limma"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "engine": {
+                "const": "deqms"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "counts"
+            ]
+          }
+        }
+      ]
+    },
+    "family": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "endpoint": {
+          "enum": [
+            "protein_zero_null",
+            "protein_effect_threshold",
+            "protein_omnibus",
+            "detection",
+            "competitive_directional",
+            "rotation_directional",
+            "rotation_mixed",
+            "preranked",
+            "ora_up",
+            "ora_down",
+            "equivalence",
+            "restoration_conjunction",
+            "independent_score"
+          ]
+        },
+        "model_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+          },
+          "minItems": 1
+        },
+        "contrast_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+          },
+          "minItems": 1
+        },
+        "resource_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+          },
+          "minItems": 0
+        },
+        "adjustment": {
+          "enum": [
+            "BH",
+            "BY"
+          ]
+        },
+        "denominator": {
+          "enum": [
+            "finite_eligible",
+            "explicit_planned"
+          ]
+        },
+        "q_cutoff": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "secondary",
+            "exploratory"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "endpoint",
+        "model_ids",
+        "contrast_ids",
+        "adjustment",
+        "denominator",
+        "q_cutoff",
+        "role"
+      ]
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "manifest",
+        "sha256",
+        "required"
+      ]
+    },
+    "pathways": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "camera",
+              "mroast",
+              "fgsea",
+              "ora"
+            ]
+          },
+          "minItems": 0
+        },
+        "mapping_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "representative_rule": {
+          "enum": [
+            "coverage_median_id",
+            "median_aggregation_sensitivity"
+          ]
+        },
+        "ambiguous_groups": {
+          "const": "exclude_default"
+        },
+        "minimum_set_size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximum_set_size": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "finite_matrix_policy": {
+          "const": "complete_rows_required_design"
+        },
+        "camera_intergene_correlation": {
+          "enum": [
+            "estimate"
+          ]
+        },
+        "roast_nrot": {
+          "type": "integer",
+          "minimum": 99
+        },
+        "roast_midp": {
+          "const": false
+        },
+        "fgsea_rank": {
+          "enum": [
+            "native_zero_null_statistic",
+            "legacy_signed_logp"
+          ]
+        },
+        "fgsea_eps": {
+          "type": "number",
+          "minimum": 0
+        },
+        "ora_foreground": {
+          "enum": [
+            "declared_fdr_up_down",
+            "raw_p_exploratory"
+          ]
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resource"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "axis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "model_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "disease_contrast": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "treatment_contrast": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "residual_contrast": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,79}$"
+        },
+        "independent_direction_manifest": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "model_id",
+        "disease_contrast",
+        "treatment_contrast",
+        "residual_contrast"
+      ]
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "axes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/axis"
+          },
+          "minItems": 0
+        },
+        "selection": {
+          "enum": [
+            "all_eligible",
+            "external_prespecified",
+            "current_data_exploratory"
+          ]
+        },
+        "selection_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ri_minimum_abs_disease_effect": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "near_control_epsilon": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "ratio_uncertainty": {
+          "enum": [
+            "descriptive_only",
+            "joint_covariance_fieller",
+            "joint_covariance_parametric"
+          ]
+        },
+        "equivalence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "margin_log2": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "alpha": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 0.5
+            }
+          },
+          "required": [
+            "enabled"
+          ]
+        },
+        "independent_score_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "randomization": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "none",
+                "exact",
+                "monte_carlo"
+              ]
+            },
+            "scheme": {
+              "enum": [
+                "independent_labels",
+                "paired_sign_flip",
+                "within_block"
+              ]
+            },
+            "exchangeability_evidence": {
+              "type": "string",
+              "minLength": 1
+            },
+            "draws": {
+              "type": "integer",
+              "minimum": 99
+            },
+            "tie_tolerance": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "mode"
+          ]
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "network": {
+          "const": "offline"
+        },
+        "required_environment_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "overwrite": {
+          "const": false
+        },
+        "execution_profile": {
+          "enum": [
+            "production",
+            "smoke_test",
+            "calibration"
+          ]
+        },
+        "stage_timeout_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "seed",
+        "threads",
+        "network",
+        "overwrite",
+        "execution_profile"
+      ]
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "html": {
+          "type": "boolean"
+        },
+        "figure_formats": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "pdf",
+              "svg",
+              "png"
+            ]
+          },
+          "minItems": 0
+        },
+        "ci_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "include_all_planned_contrasts": {
+          "const": true
+        },
+        "public_path_redaction": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "html",
+        "figure_formats",
+        "ci_level",
+        "include_all_planned_contrasts",
+        "public_path_redaction"
+      ]
+    }
+  },
+  "description": "Normative structural configuration contract. Method eligibility, ID references, rank/contrasts, resource hashes and family coverage require additional semantic validation."
+}
