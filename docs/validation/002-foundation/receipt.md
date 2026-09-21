@@ -7,7 +7,7 @@ Packet R01 (foundation, FR-001–FR-010 / T001–T010 / V001–V010) was indepen
 - Frozen contract manifest: `0619003741ee23f93ed08c332c1bfce3e21b446f277073be7010fa68286a6ffa`.
 - Prerequisite working-source manifest: `84149fd7526e07346ba914d349939f9945cd3f0f0e6653fc1591f8b807101120`.
 - Accepted R01 source manifest: `ecfaf907a0e7194977729900642850e953dd2142d2d03eeea300c61e471da5f3` over 51 existing R01-allowlisted source, test, fixture, bootstrap, and stable validation files. The mutable `receipt.md` and `solved-versions.json` evidence records are excluded; lines are `sha256  repository-relative-path`, sorted lexicographically with LF termination.
-- `verified_commit`: null. No commit or push was authorized or created.
+- `verified_commit`: `bd64c42a3c652beb22986b5e2c8f9114542362a1`. This is the reviewed R01 source commit; the later evidence-only commit records this identity without changing the reviewed source manifest.
 
 ## Maintainer verification
 
