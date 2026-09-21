@@ -27,7 +27,7 @@
         "tests/contract/foundation/test_cli_contract.py",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V001"
     },
     {
@@ -54,7 +54,7 @@
         "tests/contract/foundation/test_config_contract.py",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V002"
     },
     {
@@ -81,7 +81,7 @@
         "tests/unit/foundation/test_runtime_contract.py",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V003"
     },
     {
@@ -109,7 +109,7 @@
         "r/proteomicsCore/tests/testthat/test-foundation.R",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V004"
     },
     {
@@ -136,7 +136,7 @@
         "tests/contract/foundation/test_verify_contract.py",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V005"
     },
     {
@@ -164,7 +164,7 @@
         "docs/validation/002-foundation/solved-versions.json",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V006"
     },
     {
@@ -191,7 +191,7 @@
         "r/proteomicsCore/tests/testthat/test-foundation.R",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V007"
     },
     {
@@ -219,7 +219,7 @@
         "r/proteomicsCore/tests/testthat/test-foundation.R",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V008"
     },
     {
@@ -247,7 +247,7 @@
         "docs/validation/baseline-hashes.json",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V009"
     },
     {
@@ -276,7 +276,7 @@
         "docs/validation/002-foundation/solved-versions.json",
         "docs/validation/002-foundation/receipt.md"
       ],
-      "verified_commit": "bd64c42a3c652beb22986b5e2c8f9114542362a1",
+      "verified_commit": "88e7fb6773ab9403e8b57037a017204357ba75cd",
       "acceptance_spec": "specs/002-foundation/spec.md#V010"
     },
     {

@@ -6,8 +6,8 @@ Packet R01 (foundation, FR-001–FR-010 / T001–T010 / V001–V010) was indepen
 
 - Frozen contract manifest: `0619003741ee23f93ed08c332c1bfce3e21b446f277073be7010fa68286a6ffa`.
 - Prerequisite working-source manifest: `84149fd7526e07346ba914d349939f9945cd3f0f0e6653fc1591f8b807101120`.
-- Accepted R01 source manifest: `ecfaf907a0e7194977729900642850e953dd2142d2d03eeea300c61e471da5f3` over 51 existing R01-allowlisted source, test, fixture, bootstrap, and stable validation files. The mutable `receipt.md` and `solved-versions.json` evidence records are excluded; lines are `sha256  repository-relative-path`, sorted lexicographically with LF termination.
-- `verified_commit`: `bd64c42a3c652beb22986b5e2c8f9114542362a1`. This is the reviewed R01 source commit; the later evidence-only commit records this identity without changing the reviewed source manifest.
+- Accepted R01 source manifest: `f11d471cec610469c26eafa23b2aa91e80d1941cdabcfe3691b117eb620f2e5c` over 51 existing R01-allowlisted source, test, fixture, bootstrap, and stable validation files. The mutable `receipt.md` and `solved-versions.json` evidence records and generated `__pycache__` files are excluded; lines are `sha256  repository-relative-path`, sorted lexicographically with LF termination.
+- `verified_commit`: `88e7fb6773ab9403e8b57037a017204357ba75cd`. This is the reviewed R01 source commit; the later evidence-only commit records this identity without changing the reviewed source manifest.
 
 ## Maintainer verification
 
@@ -26,6 +26,7 @@ Packet R01 (foundation, FR-001–FR-010 / T001–T010 / V001–V010) was indepen
 
 - The bounded cloud-derived source/test delta received an Astra audit. Two P2 harness defects were corrected: the negative now exercises a real failing `testthat` assertion through the maintained runner, and child script/input paths are quoted and exercised under spaces/metacharacters.
 - A fresh Astra re-audit found no gaps within the corrected harness scope; runtime verification remained the Maintainer's responsibility and was rerun afterward.
+- A clean Linux clone exposed and reproduced a CRLF-derived baseline-registry trust hash. The test-first correction trusts the committed LF content while permitting only CRLF/LF checkout equivalence; a fresh Astra audit found no gap, and Linux verification then passed the registry, Python, R and specification gates.
 
 ## Acceptance
 
