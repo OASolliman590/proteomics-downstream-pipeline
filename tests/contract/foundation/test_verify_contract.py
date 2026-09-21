@@ -2,6 +2,16 @@ import hashlib,json,sys
 from pathlib import Path
 from proteomics_pipeline import runtime
 from proteomics_pipeline.cli import main
+from scripts.maintained import check_baseline
+
+def test_default_baseline_registry_uses_committed_lf_bytes():
+    registry = check_baseline.REGISTRY
+    canonical = registry.read_bytes().replace(b"\r\n", b"\n")
+    expected = "289afd374e6d0159eb181526a9724c80833facb195f42d6a427fc4b15a90d9bd"
+    assert hashlib.sha256(canonical).hexdigest() == expected
+    assert check_baseline.TRUSTED_REGISTRY_SHA256 == expected
+    ok, mismatches = check_baseline.check(registry, check_baseline.ROOT, enforce_trust=True)
+    assert ok, mismatches
 
 def _status(root, state="FAILED", exit_code=7):
     artifact=root/"value.txt"; artifact.write_text("real")

@@ -3,15 +3,18 @@ from __future__ import annotations
 import argparse,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]; REGISTRY=ROOT/"docs"/"validation"/"baseline-hashes.json"
-TRUSTED_REGISTRY_SHA256="a634351e0f2692d65bc6c6786e0b20b79594bde18c48485424b16255a9513a80"
+TRUSTED_REGISTRY_SHA256="289afd374e6d0159eb181526a9724c80833facb195f42d6a427fc4b15a90d9bd"
 def sha256(path):
  import hashlib
  digest=hashlib.sha256()
  with Path(path).open("rb") as handle:
   for chunk in iter(lambda:handle.read(1024*1024),b""):digest.update(chunk)
  return digest.hexdigest()
+def canonical_registry_sha256(path):
+ import hashlib
+ return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n",b"\n")).hexdigest()
 def check(registry_path=REGISTRY,root=ROOT,enforce_trust=False):
- registry_path=Path(registry_path); trusted=(registry_path.resolve()==REGISTRY.resolve() and sha256(registry_path)==TRUSTED_REGISTRY_SHA256)
+ registry_path=Path(registry_path); trusted=(registry_path.resolve()==REGISTRY.resolve() and canonical_registry_sha256(registry_path)==TRUSTED_REGISTRY_SHA256)
  data=json.loads(registry_path.read_text(encoding="utf-8")); mismatches=[]
  if enforce_trust and not trusted: mismatches.append({"path":str(registry_path),"reason":"untrusted_registry"})
  for item in data.get("files",[]):
