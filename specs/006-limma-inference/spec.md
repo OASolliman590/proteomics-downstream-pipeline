@@ -1,102 +1,166 @@
 # Feature Specification: Core limma inference and multiplicity
 
-**Feature Branch:** `spec/006-limma-inference` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R05**. Deliver core limma inference and multiplicity for user journey US2.
+**Phase:** 1. **Packet:** R05. **Status:** 1.2.0-frozen; implementation pending prerequisite acceptance and explicit authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US2 — Core limma inference and multiplicity (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R04 (`specs/005-design-contrasts/`).
+Deliver only FR-041–FR-050 for US2. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-041**: The system MUST provide observed-data limma adapter. Eligible fixtures match direct lmFit/eBayes calls for effects/SE/df/P; primary input retains NA and declared normalization.
-- **FR-042**: The system MUST provide exact sparse and weighted contrasts. General designs use validated contrast reparametrization/direct covariance; nonorthogonal sparse example matches a separate oracle.
-- **FR-043**: The system MUST provide robust/trend diagnostics. Settings, prior/posterior variance and trend diagnostics are saved; robust eBayes is not mislabeled robust sample regression.
-- **FR-044**: The system MUST provide effect-threshold treat endpoint. Boundary effects compare to direct TREAT; true threshold-null evidence is distinct from observed effect filtering and zero-null results.
-- **FR-045**: The system MUST provide backend-correct confidence intervals. Intervals use correct moderated variance/df, match independent calculations and preserve unbounded/unavailable cases with reason.
-- **FR-046**: The system MUST provide declared multiple-testing families. Finite-P BH/BY matches analytic and R references; separate endpoints/primary/sensitivity sets do not accidentally pool or omit rows.
-- **FR-047**: The system MUST provide omnibus and interaction outputs. F tests have distinct hypotheses/families, complete planned contrasts are exported and no unadjusted post-hoc claims appear.
-- **FR-048**: The system MUST provide complete typed differential tables. Every planned feature-contrast row is tested or explicitly excluded/nonestimable; no zero/NA ambiguity or mislabeled q fields.
-- **FR-049**: The system MUST provide biological-unit influence diagnostics. Whole subjects/technical sets are omitted appropriately; relevant omission counts are correct and influence stays descriptive.
-- **FR-050**: The system MUST provide core inference golden suite. Complete/sparse/paired/blocked fixtures match pinned direct references and no-null/no-discovery result paths pass.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-041 — Observed-data limma adapter:** The system MUST match effects, moderated SE/df/statistic/P within frozen backend tolerance; retain original NA and no newly imputed primary cells.
+- **FR-042 — Exact sparse and weighted contrasts:** The system MUST match exact effects/SE/P and block/weight provenance through export, not only inside a helper.
+- **FR-043 — Robust/trend diagnostics:** The system MUST save requested/actual settings and prior/posterior variance diagnostics and match reference values; report robust eBayes as hyperparameter robustness, not robust sample regression.
+- **FR-044 — Effect-threshold TREAT endpoint:** The system MUST preserve distinct raw P/q and hypothesis_type for protein_treat versus protein_zero_null; display abs(effect) filtering never changes either P or its family.
+- **FR-045 — Backend-correct confidence intervals:** The system MUST match 95% effect intervals and report actual CI method/df; unsupported/unavailable uncertainty stays NA with a reason.
+- **FR-046 — Declared multiple-testing families:** The system MUST pool every planned primary zero-null contrast-feature test once, keep secondary separate and report complete planned/eligible/finite counts.
+- **FR-047 — Omnibus and interaction outputs:** The system MUST export distinct omnibus hypothesis/family and all planned pairwise/interaction endpoints without unadjusted post-hoc claims.
+- **FR-048 — Complete typed differential tables:** The system MUST retain every planned endpoint or explicit row-level exclusion/nonestimability; export hypothesis_type/family_id/engine/estimable/n_obs_by_required_group and mark a numerical-failure family incomplete.
+- **FR-049 — Biological-unit influence diagnostics:** The system MUST report whole-subject influence with correct relevant omission counts and descriptive effect changes; do not turn it into held-out validation.
+- **FR-050 — Core inference golden suite:** The system MUST pass all reference comparisons; zero discoveries remain COMPLETED when required work finishes; show Cov(d,t)=−.25 and Var(d+t)=.5, not 1; Phase 1 emits no score P-value artifact.
 
 ## Acceptance Scenarios
 
+<a id="V041"></a>
+
 ### V041: Observed-data limma adapter
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** eligible fixtures match direct lmFit/eBayes calls for effects/SE/df/P; primary input retains NA and declared normalization.
+**Fixture:** Complete and two-NA 8×12 matrices with declared log2 scale and one primary zero-null model.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Separate pinned lmFit/eBayes reference using exactly the declared fitting universe/settings.
+
+**Exact assertion:** Match effects, moderated SE/df/statistic/P within frozen backend tolerance; retain original NA and no newly imputed primary cells.
+
+**Negative case:** An adapter that silently fills NA or uses a different fit universe fails even if selected P values look similar.
+
+**Contract:** SM09; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V042"></a>
 
 ### V042: Exact sparse and weighted contrasts
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** general designs use validated contrast reparametrization/direct covariance; nonorthogonal sparse example matches a separate oracle.
+**Fixture:** The V037 general-design fixtures fitted through the full limma adapter.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct reparameterized limma coefficients plus independent featurewise unscaled covariance.
+
+**Exact assertion:** Match exact effects/SE/P and block/weight provenance through export, not only inside a helper.
+
+**Negative case:** Dropping weights, missing rows or block correlation to obtain a complete-matrix shortcut fails.
+
+**Contract:** SM08; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V043"></a>
 
 ### V043: Robust/trend diagnostics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** settings, prior/posterior variance and trend diagnostics are saved; robust eBayes is not mislabeled robust sample regression.
+**Fixture:** A ≤20-feature variance/abundance trend fixture with a hypervariable feature and explicit trend/robust flags.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Separate direct eBayes calls with the same flags and package versions.
+
+**Exact assertion:** Save requested/actual settings and prior/posterior variance diagnostics and match reference values; report robust eBayes as hyperparameter robustness, not robust sample regression.
+
+**Negative case:** Missing statmod with robust=true fails dependency preflight; silently changing robust=false is forbidden.
+
+**Contract:** SM09; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V044"></a>
 
 ### V044: Effect-threshold TREAT endpoint
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** boundary effects compare to direct TREAT; true threshold-null evidence is distinct from observed effect filtering and zero-null results.
+**Fixture:** Effects below/on/above tau=.5 in an otherwise eligible synthetic fit, with separately declared zero-null and TREAT families.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct limma::treat with lfc=.5 and separate eBayes zero-null call.
+
+**Exact assertion:** Preserve distinct raw P/q and hypothesis_type for protein_treat versus protein_zero_null; display abs(effect) filtering never changes either P or its family.
+
+**Negative case:** A zero-null q table filtered by abs(logFC)≥.5 cannot be exported as ProteinTreatResult.
+
+**Contract:** SM11; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V045"></a>
 
 ### V045: Backend-correct confidence intervals
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** intervals use correct moderated variance/df, match independent calculations and preserve unbounded/unavailable cases with reason.
+**Fixture:** Known coefficient SE, posterior variance and inference df from a direct limma fit.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** effect ± qt(.975,df_inference)×moderated_SE, computed independently.
+
+**Exact assertion:** Match 95% effect intervals and report actual CI method/df; unsupported/unavailable uncertainty stays NA with a reason.
+
+**Negative case:** A normal-quantile or residual-df interval substituted for the declared moderated-t interval fails its numerical oracle.
+
+**Contract:** SM13; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V046"></a>
 
 ### V046: Declared multiple-testing families
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** finite-P BH/BY matches analytic and R references; separate endpoints/primary/sensitivity sets do not accidentally pool or omit rows.
+**Fixture:** Raw primary P values [.01,.02,.5,.8] spanning two contrasts; separate secondary P=.001.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** BH primary q=[.04,.04,2/3,.8]; secondary one-test q=.001; BY uses the independent harmonic factor.
+
+**Exact assertion:** Pool every planned primary zero-null contrast-feature test once, keep secondary separate and report complete planned/eligible/finite counts.
+
+**Negative case:** Computing primary BH separately per contrast or adding secondary P into primary fails expected q/family membership.
+
+**Contract:** SM12; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V047"></a>
 
 ### V047: Omnibus and interaction outputs
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** f tests have distinct hypotheses/families, complete planned contrasts are exported and no unadjusted post-hoc claims appear.
+**Fixture:** Two-coefficient omnibus and a direct treatment×stage contrast with all primary/auxiliary effects requested.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Pinned joint F test/reduced-model reference and explicit interaction vector.
+
+**Exact assertion:** Export distinct omnibus hypothesis/family and all planned pairwise/interaction endpoints without unadjusted post-hoc claims.
+
+**Negative case:** One significant and one nonsignificant treatment contrast cannot produce an interaction-significant flag.
+
+**Contract:** SM11; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V048"></a>
 
 ### V048: Complete typed differential tables
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** every planned feature-contrast row is tested or explicitly excluded/nonestimable; no zero/NA ambiguity or mislabeled q fields.
+**Fixture:** Eight features×three contrasts with one coverage exclusion and one deliberately failed eligible numerical test.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Cartesian planned keys and data-model field types.
+
+**Exact assertion:** Retain every planned endpoint or explicit row-level exclusion/nonestimability; export hypothesis_type/family_id/engine/estimable/n_obs_by_required_group and mark a numerical-failure family incomplete.
+
+**Negative case:** A missing eligible row, NA→0 coercion or native-q-as-central-q fails table verification.
+
+**Contract:** SM12; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V049"></a>
 
 ### V049: Biological-unit influence diagnostics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** whole subjects/technical sets are omitted appropriately; relevant omission counts are correct and influence stays descriptive.
+**Fixture:** Three subjects each with two visits and two technical observations (12 observations), aggregated before fitting.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit omission of all records of one subject and direct model refit.
+
+**Exact assertion:** Report whole-subject influence with correct relevant omission counts and descriptive effect changes; do not turn it into held-out validation.
+
+**Negative case:** Dropping only one injection/visit or omitting an unrelated group in a relevant-group count fails.
+
+**Contract:** SM13; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V050"></a>
 
 ### V050: Core inference golden suite
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** complete/sparse/paired/blocked fixtures match pinned direct references and no-null/no-discovery result paths pass.
+**Fixture:** Complete/sparse/paired/blocked direct-reference fixtures; a symmetric equal-group-means null matrix; a C/U/T mean-covariance fixture diag(.25,.25,.25).
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent limma references; algebra using d=[−1,1,0], t=[0,−1,1], r=[−1,0,1].
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Pass all reference comparisons; zero discoveries remain COMPLETED when required work finishes; show Cov(d,t)=−.25 and Var(d+t)=.5, not 1; Phase 1 emits no score P-value artifact.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** A shared-control opposition claim labeled independent confirmation, a score P column in Phase 1, or zero discoveries mapped to FAILED fails this gate.
 
-## Assumptions and Scope Boundary
+**Contract:** SM19; **owner:** R05; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

@@ -1,5 +1,7 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.2.0",
+  "kit_status": "frozen",
+  "baseline_commit": "3aefdd95c46a1c56dae89e79ddf441b6cc978148",
   "requirements": [
     {
       "requirement": "FR-001",
@@ -7,15 +9,26 @@
       "acceptance": "V001",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Installable maintained CLI",
-      "implementation_paths": [
-        "src/proteomics_pipeline/cli.py",
-        "pyproject.toml"
+      "criterion": "Expose proteomics and python -m proteomics_pipeline; --help and --version exit 0 with identical version and list the five Phase 1 commands without reading data or invoking R.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/cli.py"
       ],
-      "criterion": "An isolated install exposes proteomics and python -m entry points; --help/version never require R or data.",
-      "evidence": "docs/validation/002-foundation/V001.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V001",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/foundation/test_cli_contract.py",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V001"
     },
     {
       "requirement": "FR-002",
@@ -23,15 +36,26 @@
       "acceptance": "V002",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Strict versioned configuration",
-      "implementation_paths": [
-        "src/proteomics_pipeline/config.py",
-        "schemas/analysis.schema.json"
+      "criterion": "Accept the three resolved examples; reject unknown fields, old versions, malformed contrasts and conflicting primary fields with a JSON pointer and typed error; insert only the four documented defaults.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
+        "src/proteomics_pipeline/config.py"
       ],
-      "criterion": "Valid examples pass; unknown keys, malformed contrasts and conflicting modes fail with field paths.",
-      "evidence": "docs/validation/002-foundation/V002.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V002",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/foundation/test_config_contract.py",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V002"
     },
     {
       "requirement": "FR-003",
@@ -39,15 +63,26 @@
       "acceptance": "V003",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Typed run and stage states",
-      "implementation_paths": [
-        "src/proteomics_pipeline/runtime.py",
-        "schemas/stage-result.schema.json"
+      "criterion": "Keep failed child as FAILED, missing implementation as NOT_RUN and scientific inapplicability as INAPPLICABLE; no such stage becomes COMPLETED or PASS.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/runtime.py"
       ],
-      "criterion": "A simulated failure cannot become COMPLETED; optional inapplicability has an eligibility reason.",
-      "evidence": "docs/validation/002-foundation/V003.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V003",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/unit/foundation/test_runtime_contract.py",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V003"
     },
     {
       "requirement": "FR-004",
@@ -55,15 +90,27 @@
       "acceptance": "V004",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Safe Python-to-R bridge",
-      "implementation_paths": [
-        "scripts/maintained/run_stage.R",
+      "criterion": "Pass literal argv with shell=false; roundtrip exact UTF-8 paths and preserve stdout/stderr, nonzero child exit and authentic session metadata.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "src/proteomics_pipeline/runtime.py"
       ],
-      "criterion": "Arguments with spaces are passed literally, nonzero R exit fails the stage, and stdout/stderr/session metadata survive.",
-      "evidence": "docs/validation/002-foundation/V004.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V004",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/unit/foundation/test_runtime_contract.py",
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V004"
     },
     {
       "requirement": "FR-005",
@@ -71,14 +118,26 @@
       "acceptance": "V005",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Atomic artifact publication",
-      "implementation_paths": [
+      "criterion": "Permit at most one exclusive writer; an interrupted temporary never appears as a completed artifact or reusable cache; promotion preserves the verified hash.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "src/proteomics_pipeline/provenance.py"
       ],
-      "criterion": "An interrupted writer leaves no apparently completed artifact and a second writer cannot corrupt the run.",
-      "evidence": "docs/validation/002-foundation/V005.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V005",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/foundation/test_verify_contract.py",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V005"
     },
     {
       "requirement": "FR-006",
@@ -86,14 +145,27 @@
       "acceptance": "V006",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Environment doctor",
-      "implementation_paths": [
+      "criterion": "Report actual paths/versions and per-capability availability; required missing R/package/resource exits 3; --help remains independent of doctor.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
         "src/proteomics_pipeline/doctor.py"
       ],
-      "criterion": "Doctor lists actual binaries/package/resource versions; missing R/package is NOT_AVAILABLE and exits nonzero when required.",
-      "evidence": "docs/validation/002-foundation/V006.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V006",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/unit/foundation/test_doctor_contract.py",
+        "docs/validation/002-foundation/solved-versions.json",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V006"
     },
     {
       "requirement": "FR-007",
@@ -101,16 +173,26 @@
       "acceptance": "V007",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Maintained R package skeleton",
-      "implementation_paths": [
-        "r/proteomicsCore/DESCRIPTION",
-        "r/proteomicsCore/NAMESPACE",
-        "scripts/maintained/test_r.R"
+      "criterion": "Install the real package where prerequisites permit; dispatch io_roundtrip and reproduce IDs, values, NA and metadata exactly; export no fabricated analysis function.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "r/proteomicsCore/DESCRIPTION"
       ],
-      "criterion": "A real minimal R package installs and its executable test entry runs a nonmocked I/O roundtrip; it returns no fabricated analysis.",
-      "evidence": "docs/validation/002-foundation/V007.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V007",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V007"
     },
     {
       "requirement": "FR-008",
@@ -118,16 +200,27 @@
       "acceptance": "V008",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Independent test harness",
-      "implementation_paths": [
-        "tests/contract/",
-        "tests/unit/",
-        "r/proteomicsCore/tests/testthat/"
+      "criterion": "Retain all ten historical tests unchanged; the new harness discovers its actual tests, returns nonzero for a failing assertion and records missing R as NOT_RUN.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "tests/contract/foundation/**"
       ],
-      "criterion": "Existing ten tests remain intact; pytest/testthat invoke real future test locations and missing prerequisites are not recorded as passes.",
-      "evidence": "docs/validation/002-foundation/V008.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V008",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/foundation/test_harness_contract.py",
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V008"
     },
     {
       "requirement": "FR-009",
@@ -135,15 +228,27 @@
       "acceptance": "V009",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "Baseline preservation registry",
-      "implementation_paths": [
-        "docs/validation/baseline-hashes.json",
+      "criterion": "Verify all pipeline/legacy/audit bytes against baseline; mutation of any protected file is detected without changing the original registry.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "scripts/maintained/check_baseline.py"
       ],
-      "criterion": "All recovered pipeline/legacy/audit hashes match and tests fail on a deliberate scratch-copy mutation.",
-      "evidence": "docs/validation/002-foundation/V009.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V009",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/foundation/test_harness_contract.py",
+        "docs/validation/baseline-hashes.json",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V009"
     },
     {
       "requirement": "FR-010",
@@ -151,16 +256,28 @@
       "acceptance": "V010",
       "slice": "002-foundation",
       "story": "US1",
+      "packet": "R01",
+      "phase": 1,
       "capability": "One-command developer bootstrap",
-      "implementation_paths": [
-        "scripts/maintained/bootstrap.ps1",
-        "scripts/maintained/bootstrap.sh",
-        "docs/development.md"
+      "criterion": "Bootstrap only project-local dependencies, record solved versions and invoke the real baseline/foundation gates; analysis commands never bootstrap automatically.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "scripts/maintained/bootstrap.sh"
       ],
-      "criterion": "Fresh documented setup provisions only project-local environments, records solved versions and runs baseline plus foundation gates.",
-      "evidence": "docs/validation/002-foundation/V010.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/foundation/**",
+        "case_id": "V010",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "scripts/maintained/bootstrap.sh",
+        "scripts/maintained/bootstrap.ps1",
+        "docs/validation/002-foundation/solved-versions.json",
+        "docs/validation/002-foundation/receipt.md"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/002-foundation/spec.md#V010"
     },
     {
       "requirement": "FR-011",
@@ -168,14 +285,23 @@
       "acceptance": "V011",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Canonical wide and long intake",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/canonical.py"
+      "criterion": "Produce exactly the same ordered values and masks from both formats, with no duplicate or missing key silently accepted.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/wide_long.py"
       ],
-      "criterion": "Equivalent shuffled wide/long tables yield identical aligned numeric values and masks; duplicate feature-observation pairs fail.",
-      "evidence": "docs/validation/003-intake/V011.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V011",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V011"
     },
     {
       "requirement": "FR-012",
@@ -183,14 +309,23 @@
       "acceptance": "V012",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Explicit scale and missing encoding",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/scale.py"
+      "criterion": "Transform positive linear values once; preserve log2 zero/negative values; distinguish explicitly encoded linear missing zero from invalid nonpositive observations.",
+      "scientific_rule": "SM02",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/service.py"
       ],
-      "criterion": "Linear-positive input is transformed once; log2 zero is retained; configured linear zero-as-missing and invalid negative values are distinguished.",
-      "evidence": "docs/validation/003-intake/V012.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V012",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V012"
     },
     {
       "requirement": "FR-013",
@@ -198,14 +333,23 @@
       "acceptance": "V013",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Biological observation hierarchy",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/samples.py"
+      "criterion": "Report injections=4 and biological n=1 for the first specimen; paired visits retain four subjects and do not become eight independent subjects.",
+      "scientific_rule": "SM03",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/hierarchy.py"
       ],
-      "criterion": "Technical injections never inflate biological n; paired and repeated observations retain subject identity; invalid shared IDs fail.",
-      "evidence": "docs/validation/003-intake/V013.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V013",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V013"
     },
     {
       "requirement": "FR-014",
@@ -213,15 +357,23 @@
       "acceptance": "V014",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Explicit technical aggregation",
-      "implementation_paths": [
-        "r/proteomicsCore/R/intake.R",
-        "tests/scientific/test_technical_units.py"
+      "criterion": "Match the two different means within transform tolerance and retain one biological unit with source coverage/lineage.",
+      "scientific_rule": "SM03",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/hierarchy.py"
       ],
-      "criterion": "Linear-mean and log-mean produce hand-calculated different results; coverage and specimen counts are preserved.",
-      "evidence": "docs/validation/003-intake/V014.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V014",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V014"
     },
     {
       "requirement": "FR-015",
@@ -229,14 +381,23 @@
       "acceptance": "V015",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Feature annotations and protein groups",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/features.py"
+      "criterion": "Keep three unique feature rows, complete constituent members and unknown flags; do not use gene symbols as unique protein IDs.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/service.py"
       ],
-      "criterion": "Opaque row IDs remain unique while repeated accessions/gene mappings remain explicit; contaminant/decoy flags distinguish unknown from false.",
-      "evidence": "docs/validation/003-intake/V015.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V015",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V015"
     },
     {
       "requirement": "FR-016",
@@ -244,15 +405,23 @@
       "acceptance": "V016",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Versioned vendor mappings",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/vendor.py",
-        "configs/mappings/"
+      "criterion": "Validate the named profile/version and map only its declared protein-level columns without inferring a vendor version from similar names.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/vendor.py"
       ],
-      "criterion": "Synthetic DIA-NN, MaxQuant, FragPipe protein and Spectronaut protein fixtures exercise declared mapping/version; unsupported peptide grain fails.",
-      "evidence": "docs/validation/003-intake/V016.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V016",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V016"
     },
     {
       "requirement": "FR-017",
@@ -260,14 +429,23 @@
       "acceptance": "V017",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Historical workbook importer",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/legacy.py"
+      "criterion": "Wrap the existing parser without source edits; retain sheet identities and require explicit noninterchangeable Method A/B naming.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/legacy_workbook.py"
       ],
-      "criterion": "The existing parser is wrapped without editing its source; source-sheet contrast and Method A/B naming are mapped by biological meaning.",
-      "evidence": "docs/validation/003-intake/V017.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V017",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V017"
     },
     {
       "requirement": "FR-018",
@@ -275,14 +453,23 @@
       "acceptance": "V018",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Immutable canonical bundle",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/bundle.py"
+      "criterion": "Publish a self-consistent canonical manifest; roundtrip values/masks exactly; refuse collisions and changed source bytes.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/service.py"
       ],
-      "criterion": "Matrix, masks, annotations, observation metadata and hashes roundtrip without numerical change; reruns refuse collisions.",
-      "evidence": "docs/validation/003-intake/V018.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V018",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V018"
     },
     {
       "requirement": "FR-019",
@@ -290,14 +477,23 @@
       "acceptance": "V019",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Intake validation report",
-      "implementation_paths": [
-        "src/proteomics_pipeline/intake/validation.py"
+      "criterion": "Export grain, scale, biological/technical n, missingness, errors and provenance gaps with no asserted confirmation of unknown biological facts.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "src/proteomics_pipeline/intake/service.py"
       ],
-      "criterion": "Reports include grain, scale, n, missingness, duplicate keys, provenance gaps and errors; no hardcoded biological confirmation.",
-      "evidence": "docs/validation/003-intake/V019.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V019",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V019"
     },
     {
       "requirement": "FR-020",
@@ -305,15 +501,23 @@
       "acceptance": "V020",
       "slice": "003-intake",
       "story": "US1",
+      "packet": "R02",
+      "phase": 1,
       "capability": "Input edge-case fixtures",
-      "implementation_paths": [
-        "tests/contract/test_intake.py",
-        "tests/fixtures/synthetic/"
+      "criterion": "Reject each invalid file with a specific field/row reason; correctly roundtrip a valid quoted delimiter and Unicode identifier.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
+        "tests/contract/intake/**"
       ],
-      "criterion": "Exercise ragged files, duplicate IDs, mismatched columns, empty values, Inf, quoted delimiters, unknown encoding and unsupported assay scope.",
-      "evidence": "docs/validation/003-intake/V020.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/intake/**",
+        "case_id": "V020",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/003-intake/spec.md#V020"
     },
     {
       "requirement": "FR-021",
@@ -321,14 +525,23 @@
       "acceptance": "V021",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "Preserve processed abundance by default",
-      "implementation_paths": [
+      "criterion": "Leave the primary preserve input unchanged and issue a distinct output artifact for any requested transformation.",
+      "scientific_rule": "SM02",
+      "implementation_targets": [
         "r/proteomicsCore/R/preprocess.R"
       ],
-      "criterion": "An already normalized log2 fixture remains unchanged; every optional transform has a new artifact and recorded policy.",
-      "evidence": "docs/validation/004-preprocessing-qc/V021.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V021",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V021"
     },
     {
       "requirement": "FR-022",
@@ -336,14 +549,23 @@
       "acceptance": "V022",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "LFQ normalization policies",
-      "implementation_paths": [
+      "criterion": "Match analytic median/reference factors, preserve NA, and keep quantile normalization explicitly sensitivity-only.",
+      "scientific_rule": "SM04",
+      "implementation_targets": [
         "r/proteomicsCore/R/normalization.R"
       ],
-      "criterion": "Median/reference normalization factors match analytic fixtures; quantile is explicit sensitivity; missing reference coverage is not silently ignored.",
-      "evidence": "docs/validation/004-preprocessing-qc/V022.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V022",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V022"
     },
     {
       "requirement": "FR-023",
@@ -351,14 +573,23 @@
       "acceptance": "V023",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "TMT plex and bridge policies",
-      "implementation_paths": [
+      "criterion": "Recover the declared normalization/estimand in both qualified strategies, preserving reference-channel provenance.",
+      "scientific_rule": "SM04",
+      "implementation_targets": [
         "r/proteomicsCore/R/tmt.R"
       ],
-      "criterion": "Two-plex synthetic bridges align loading offsets; missing bridge blocks bridge mode, while identifiable no-bridge plex-covariate inference is separately supported and confounding fails.",
-      "evidence": "docs/validation/004-preprocessing-qc/V023.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V023",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V023"
     },
     {
       "requirement": "FR-024",
@@ -366,14 +597,23 @@
       "acceptance": "V024",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "Contrast-aware coverage masks",
-      "implementation_paths": [
+      "criterion": "With minimum two and fraction .5, mark 4/4 and 2/4 eligible, 1/4 ineligible and 0/4 nonestimable for ordinary available-case inference; retain all reasons.",
+      "scientific_rule": "SM04",
+      "implementation_targets": [
         "r/proteomicsCore/R/filtering.R"
       ],
-      "criterion": "Original observed coverage is computed at biological-unit grain; ordinary available-case all-missing groups are nonestimable while eligible proDA follows native dropout rules with explicit uncertainty.",
-      "evidence": "docs/validation/004-preprocessing-qc/V024.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V024",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V024"
     },
     {
       "requirement": "FR-025",
@@ -381,14 +621,23 @@
       "acceptance": "V025",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "Missingness mechanism diagnostics",
-      "implementation_paths": [
+      "criterion": "Distinguish observed coverage, prior fill and numeric availability; show group/observation/abundance summaries without asserting MCAR/MAR/MNAR from a cutoff.",
+      "scientific_rule": "SM04",
+      "implementation_targets": [
         "r/proteomicsCore/R/missingness.R"
       ],
-      "criterion": "Observation/group/abundance summaries distinguish observed versus previously imputed values and do not assert MCAR/MNAR from a threshold.",
-      "evidence": "docs/validation/004-preprocessing-qc/V025.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V025",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V025"
     },
     {
       "requirement": "FR-026",
@@ -396,14 +645,23 @@
       "acceptance": "V026",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "PCA and correlation diagnostics",
-      "implementation_paths": [
+      "criterion": "Match eigenvalues/explained variance and aligned scores up to sign; retain pairwise n; constant/empty inputs yield explanatory QC states without fake variance.",
+      "scientific_rule": "SM06",
+      "implementation_targets": [
         "r/proteomicsCore/R/qc.R"
       ],
-      "criterion": "PCA-only fill is isolated; constant/empty/small matrices return valid diagnostic states; variance and feature/sample identities match direct calculations.",
-      "evidence": "docs/validation/004-preprocessing-qc/V026.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V026",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V026"
     },
     {
       "requirement": "FR-027",
@@ -411,15 +669,23 @@
       "acceptance": "V027",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "Prespecified exclusions and watchlists",
-      "implementation_paths": [
-        "src/proteomics_pipeline/planning.py",
-        "r/proteomicsCore/R/qc.R"
+      "criterion": "Flag the extreme sample without dropping it; honor only declared exclusions and change the plan hash when policy/reason changes.",
+      "scientific_rule": "SM06",
+      "implementation_targets": [
+        "r/proteomicsCore/R/preprocess.R"
       ],
-      "criterion": "Outlier flags never auto-delete observations; a changed exclusion reason/policy creates a new plan and sensitivity lineage.",
-      "evidence": "docs/validation/004-preprocessing-qc/V027.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V027",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V027"
     },
     {
       "requirement": "FR-028",
@@ -427,14 +693,23 @@
       "acceptance": "V028",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "Explicit imputation sensitivities",
-      "implementation_paths": [
+      "criterion": "Use exact algorithm names and secondary models; deterministic replacement equals the observed feature minimum, seeded Gaussian repeats, and primary values/masks remain unchanged.",
+      "scientific_rule": "SM05",
+      "implementation_targets": [
         "r/proteomicsCore/R/sensitivity.R"
       ],
-      "criterion": "Deterministic minimum, stochastic Gaussian and KNN have correct names/seeds/masks, remain secondary and never alter the primary matrix.",
-      "evidence": "docs/validation/004-preprocessing-qc/V028.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V028",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V028"
     },
     {
       "requirement": "FR-029",
@@ -442,14 +717,23 @@
       "acceptance": "V029",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "Detection-only exploratory endpoint",
-      "implementation_paths": [
+      "criterion": "Match the exact detection P values and separate detection family; never substitute that endpoint for continuous abundance inference.",
+      "scientific_rule": "SM04",
+      "implementation_targets": [
         "r/proteomicsCore/R/detection.R"
       ],
-      "criterion": "Independent two-group detection uses exact 2x2 counts and a separate BH family; paired/complex detection requests are marked unsupported.",
-      "evidence": "docs/validation/004-preprocessing-qc/V029.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V029",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V029"
     },
     {
       "requirement": "FR-030",
@@ -457,15 +741,23 @@
       "acceptance": "V030",
       "slice": "004-preprocessing-qc",
       "story": "US1",
+      "packet": "R03",
+      "phase": 1,
       "capability": "QC source data and stage report",
-      "implementation_paths": [
-        "src/proteomics_pipeline/reporting/qc_data.py",
-        "tests/integration/test_qc.py"
+      "criterion": "Complete the declared QC-only scope without any model fit or discovery requirement; every displayed numerical QC value has an exact source table.",
+      "scientific_rule": "SM06",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/qc_data.py"
       ],
-      "criterion": "All plots have exact source tables; QC-only run completes without R modeling or any significant features.",
-      "evidence": "docs/validation/004-preprocessing-qc/V030.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_qc.py",
+        "case_id": "V030",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V030"
     },
     {
       "requirement": "FR-031",
@@ -473,15 +765,23 @@
       "acceptance": "V031",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Safe declarative design grammar",
-      "implementation_paths": [
-        "src/proteomics_pipeline/planning.py",
+      "criterion": "Match the frozen coefficient map and numeric design, using the documented escaping/interaction convention and no arbitrary R evaluation.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
         "r/proteomicsCore/R/design.R"
       ],
-      "criterion": "Groups, continuous covariates and interactions generate expected matrices; arbitrary function calls/code strings fail before R evaluation.",
-      "evidence": "docs/validation/005-design-contrasts/V031.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V031",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V031"
     },
     {
       "requirement": "FR-032",
@@ -489,14 +789,23 @@
       "acceptance": "V032",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Stable levels and aligned matrices",
-      "implementation_paths": [
+      "criterion": "Preserve aligned coefficients and reference meanings across row/column reorderings.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
         "r/proteomicsCore/R/design.R"
       ],
-      "criterion": "Sample order shuffling with metadata alignment preserves coefficients; absent references and missing covariates give explicit errors.",
-      "evidence": "docs/validation/005-design-contrasts/V032.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V032",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V032"
     },
     {
       "requirement": "FR-033",
@@ -504,14 +813,23 @@
       "acceptance": "V033",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Rank and confounding diagnostics",
-      "implementation_paths": [
-        "r/proteomicsCore/R/estimability.R"
+      "criterion": "Reject the confounded model before fit with E_DESIGN_CONFOUNDED and aliased terms; accept the full-rank crossed design.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
+        "r/proteomicsCore/R/design.R"
       ],
-      "criterion": "Batch=treatment fixture is detected, with aliased terms; no pseudoinverse silently manufactures an interpretable treatment effect.",
-      "evidence": "docs/validation/005-design-contrasts/V033.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V033",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V033"
     },
     {
       "requirement": "FR-034",
@@ -519,14 +837,23 @@
       "acceptance": "V034",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Independent, paired and repeated plans",
-      "implementation_paths": [
+      "criterion": "Preserve subject identity, pass the correct fixed or random representation and record actual consensus correlation for the repeated fit.",
+      "scientific_rule": "SM08",
+      "implementation_targets": [
         "r/proteomicsCore/R/design.R"
       ],
-      "criterion": "Subject-fixed and eligible duplicateCorrelation designs preserve the experimental unit and reject invalid/unidentified blocks.",
-      "evidence": "docs/validation/005-design-contrasts/V034.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V034",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V034"
     },
     {
       "requirement": "FR-035",
@@ -534,14 +861,23 @@
       "acceptance": "V035",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Numeric contrasts and interaction semantics",
-      "implementation_paths": [
+      "criterion": "Match d/t/r and r=d+t; calculate the interaction directly from coefficient weights, not from P-value comparisons.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
         "r/proteomicsCore/R/contrasts.R"
       ],
-      "criterion": "Known disease/treatment/residual/interaction coefficients match analytic expectations; significance difference is never used as interaction.",
-      "evidence": "docs/validation/005-design-contrasts/V035.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V035",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V035"
     },
     {
       "requirement": "FR-036",
@@ -549,14 +885,23 @@
       "acceptance": "V036",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Featurewise estimability and df",
-      "implementation_paths": [
+      "criterion": "Export correct featurewise n/df/estimability and named reasons for ordinary available-case failure; retain excluded rows.",
+      "scientific_rule": "SM08",
+      "implementation_targets": [
         "r/proteomicsCore/R/estimability.R"
       ],
-      "criterion": "Sparse features get engine-specific n/df/reason records; ordinary available-case all-missing groups are nonestimable and eligible native-dropout estimates retain their prior-dependence caveat.",
-      "evidence": "docs/validation/005-design-contrasts/V036.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V036",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V036"
     },
     {
       "requirement": "FR-037",
@@ -564,14 +909,23 @@
       "acceptance": "V037",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Exact contrast covariance strategy",
-      "implementation_paths": [
+      "criterion": "Match exact SE/covariance within backend tolerance and record the exact path; demonstrate the approximate shortcut differs on at least one chosen fixture.",
+      "scientific_rule": "SM08",
+      "implementation_targets": [
         "r/proteomicsCore/R/contrasts.R"
       ],
-      "criterion": "Sparse nonorthogonal weighted designs match direct coefficient-refit SE/P; exact shortcut is restricted to proven eligible designs.",
-      "evidence": "docs/validation/005-design-contrasts/V037.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V037",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V037"
     },
     {
       "requirement": "FR-038",
@@ -579,15 +933,23 @@
       "acceptance": "V038",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Method-design applicability registry",
-      "implementation_paths": [
-        "r/proteomicsCore/R/capabilities.R",
-        "src/proteomics_pipeline/planning.py"
+      "criterion": "Return each documented eligibility/error type before execution and retain one authoritative primary engine.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "r/proteomicsCore/R/capabilities.R"
       ],
-      "criterion": "Unsupported proDA/DEqMS block or threshold combinations fail explicitly and no engine is silently substituted.",
-      "evidence": "docs/validation/005-design-contrasts/V038.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V038",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V038"
     },
     {
       "requirement": "FR-039",
@@ -595,14 +957,23 @@
       "acceptance": "V039",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Frozen analysis plan and matrices",
-      "implementation_paths": [
-        "src/proteomics_pipeline/planning.py"
+      "criterion": "Write plan, masks, evaluated design/contrasts, hypotheses and families before any fit; each meaningful change produces a different plan hash.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
+        "src/proteomics_pipeline/design_service.py"
       ],
-      "criterion": "Plan saves configuration, inclusion masks, matrices, hypotheses, families and hashes before fitting; config changes invalidate the plan.",
-      "evidence": "docs/validation/005-design-contrasts/V039.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V039",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V039"
     },
     {
       "requirement": "FR-040",
@@ -610,15 +981,23 @@
       "acceptance": "V040",
       "slice": "005-design-contrasts",
       "story": "US2",
+      "packet": "R04",
+      "phase": 1,
       "capability": "Design adversarial verification",
-      "implementation_paths": [
-        "tests/scientific/test_design_contract.py",
-        "r/proteomicsCore/tests/testthat/test-design.R"
+      "criterion": "Accept only identifiable sufficiently replicated contrasts; exact key alignment makes reordering invariant; singleton inference fails while descriptive QC remains available.",
+      "scientific_rule": "SM07",
+      "implementation_targets": [
+        "tests/scientific/test_design_contract.py"
       ],
-      "criterion": "Unequal n, singletons, missing factor levels, repeated-unit imbalance and reordered IDs have reference-backed expected behavior.",
-      "evidence": "docs/validation/005-design-contrasts/V040.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_design_contract.py",
+        "case_id": "V040",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V040"
     },
     {
       "requirement": "FR-041",
@@ -626,14 +1005,23 @@
       "acceptance": "V041",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Observed-data limma adapter",
-      "implementation_paths": [
+      "criterion": "Match effects, moderated SE/df/statistic/P within frozen backend tolerance; retain original NA and no newly imputed primary cells.",
+      "scientific_rule": "SM09",
+      "implementation_targets": [
         "r/proteomicsCore/R/model_limma.R"
       ],
-      "criterion": "Eligible fixtures match direct lmFit/eBayes calls for effects/SE/df/P; primary input retains NA and declared normalization.",
-      "evidence": "docs/validation/006-limma-inference/V041.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V041",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V041"
     },
     {
       "requirement": "FR-042",
@@ -641,14 +1029,23 @@
       "acceptance": "V042",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Exact sparse and weighted contrasts",
-      "implementation_paths": [
-        "r/proteomicsCore/R/model_limma.R"
+      "criterion": "Match exact effects/SE/P and block/weight provenance through export, not only inside a helper.",
+      "scientific_rule": "SM08",
+      "implementation_targets": [
+        "r/proteomicsCore/R/inference.R"
       ],
-      "criterion": "General designs use validated contrast reparametrization/direct covariance; nonorthogonal sparse example matches a separate oracle.",
-      "evidence": "docs/validation/006-limma-inference/V042.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V042",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V042"
     },
     {
       "requirement": "FR-043",
@@ -656,14 +1053,23 @@
       "acceptance": "V043",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Robust/trend diagnostics",
-      "implementation_paths": [
+      "criterion": "Save requested/actual settings and prior/posterior variance diagnostics and match reference values; report robust eBayes as hyperparameter robustness, not robust sample regression.",
+      "scientific_rule": "SM09",
+      "implementation_targets": [
         "r/proteomicsCore/R/diagnostics.R"
       ],
-      "criterion": "Settings, prior/posterior variance and trend diagnostics are saved; robust eBayes is not mislabeled robust sample regression.",
-      "evidence": "docs/validation/006-limma-inference/V043.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V043",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V043"
     },
     {
       "requirement": "FR-044",
@@ -671,14 +1077,23 @@
       "acceptance": "V044",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Effect-threshold TREAT endpoint",
-      "implementation_paths": [
-        "r/proteomicsCore/R/inference.R"
+      "criterion": "Preserve distinct raw P/q and hypothesis_type for protein_treat versus protein_zero_null; display abs(effect) filtering never changes either P or its family.",
+      "scientific_rule": "SM11",
+      "implementation_targets": [
+        "r/proteomicsCore/R/model_limma.R"
       ],
-      "criterion": "Boundary effects compare to direct TREAT; true threshold-null evidence is distinct from observed effect filtering and zero-null results.",
-      "evidence": "docs/validation/006-limma-inference/V044.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V044",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V044"
     },
     {
       "requirement": "FR-045",
@@ -686,14 +1101,23 @@
       "acceptance": "V045",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Backend-correct confidence intervals",
-      "implementation_paths": [
+      "criterion": "Match 95% effect intervals and report actual CI method/df; unsupported/unavailable uncertainty stays NA with a reason.",
+      "scientific_rule": "SM13",
+      "implementation_targets": [
         "r/proteomicsCore/R/inference.R"
       ],
-      "criterion": "Intervals use correct moderated variance/df, match independent calculations and preserve unbounded/unavailable cases with reason.",
-      "evidence": "docs/validation/006-limma-inference/V045.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V045",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V045"
     },
     {
       "requirement": "FR-046",
@@ -701,14 +1125,23 @@
       "acceptance": "V046",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Declared multiple-testing families",
-      "implementation_paths": [
+      "criterion": "Pool every planned primary zero-null contrast-feature test once, keep secondary separate and report complete planned/eligible/finite counts.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
         "r/proteomicsCore/R/multiplicity.R"
       ],
-      "criterion": "Finite-P BH/BY matches analytic and R references; separate endpoints/primary/sensitivity sets do not accidentally pool or omit rows.",
-      "evidence": "docs/validation/006-limma-inference/V046.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V046",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V046"
     },
     {
       "requirement": "FR-047",
@@ -716,14 +1149,23 @@
       "acceptance": "V047",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Omnibus and interaction outputs",
-      "implementation_paths": [
+      "criterion": "Export distinct omnibus hypothesis/family and all planned pairwise/interaction endpoints without unadjusted post-hoc claims.",
+      "scientific_rule": "SM11",
+      "implementation_targets": [
         "r/proteomicsCore/R/inference.R"
       ],
-      "criterion": "F tests have distinct hypotheses/families, complete planned contrasts are exported and no unadjusted post-hoc claims appear.",
-      "evidence": "docs/validation/006-limma-inference/V047.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V047",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V047"
     },
     {
       "requirement": "FR-048",
@@ -731,15 +1173,23 @@
       "acceptance": "V048",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Complete typed differential tables",
-      "implementation_paths": [
-        "schemas/differential-result.schema.json",
+      "criterion": "Retain every planned endpoint or explicit row-level exclusion/nonestimability; export hypothesis_type/family_id/engine/estimable/n_obs_by_required_group and mark a numerical-failure family incomplete.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
         "r/proteomicsCore/R/export.R"
       ],
-      "criterion": "Every planned feature-contrast row is tested or explicitly excluded/nonestimable; no zero/NA ambiguity or mislabeled q fields.",
-      "evidence": "docs/validation/006-limma-inference/V048.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V048",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V048"
     },
     {
       "requirement": "FR-049",
@@ -747,14 +1197,23 @@
       "acceptance": "V049",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Biological-unit influence diagnostics",
-      "implementation_paths": [
+      "criterion": "Report whole-subject influence with correct relevant omission counts and descriptive effect changes; do not turn it into held-out validation.",
+      "scientific_rule": "SM13",
+      "implementation_targets": [
         "r/proteomicsCore/R/influence.R"
       ],
-      "criterion": "Whole subjects/technical sets are omitted appropriately; relevant omission counts are correct and influence stays descriptive.",
-      "evidence": "docs/validation/006-limma-inference/V049.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V049",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V049"
     },
     {
       "requirement": "FR-050",
@@ -762,15 +1221,23 @@
       "acceptance": "V050",
       "slice": "006-limma-inference",
       "story": "US2",
+      "packet": "R05",
+      "phase": 1,
       "capability": "Core inference golden suite",
-      "implementation_paths": [
-        "tests/scientific/",
-        "r/proteomicsCore/tests/testthat/test-limma.R"
+      "criterion": "Pass all reference comparisons; zero discoveries remain COMPLETED when required work finishes; show Cov(d,t)=−.25 and Var(d+t)=.5, not 1; Phase 1 emits no score P-value artifact.",
+      "scientific_rule": "SM19",
+      "implementation_targets": [
+        "tests/scientific/test_limma.py"
       ],
-      "criterion": "Complete/sparse/paired/blocked fixtures match pinned direct references and no-null/no-discovery result paths pass.",
-      "evidence": "docs/validation/006-limma-inference/V050.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_limma.py",
+        "case_id": "V050",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V050"
     },
     {
       "requirement": "FR-051",
@@ -778,15 +1245,23 @@
       "acceptance": "V051",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "Count evidence schema",
-      "implementation_paths": [
-        "schemas/count-evidence.schema.json",
-        "src/proteomics_pipeline/intake/counts.py"
+      "criterion": "Accept genuine declared count evidence only; preserve original zeros/missing values and require positive actual fit counts after any explicit justified policy.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "src/proteomics_pipeline/count_evidence.py"
       ],
-      "criterion": "True peptide/PSM count grain and provenance validate; observed-sample count or abundance proxy is rejected as unsupported evidence.",
-      "evidence": "docs/validation/007-assay-engines/V051.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V051",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V051"
     },
     {
       "requirement": "FR-052",
@@ -794,14 +1269,23 @@
       "acceptance": "V052",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "DEqMS fit pipeline",
-      "implementation_paths": [
+      "criterion": "Match count-adjusted statistics and P values at frozen backend tolerance, with actual call/version evidence.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
         "r/proteomicsCore/R/model_deqms.R"
       ],
-      "criterion": "Installed official fit/eBayes/count/spectraCounteBayes sequence reproduces reference count-adjusted statistics.",
-      "evidence": "docs/validation/007-assay-engines/V052.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V052",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V052"
     },
     {
       "requirement": "FR-053",
@@ -809,14 +1293,23 @@
       "acceptance": "V053",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "DEqMS statistic alignment",
-      "implementation_paths": [
+      "criterion": "Align counts by identity and retain sca.P.Value/statistic/variance distinctly from original limma fields; compute central q from sca raw P.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
         "r/proteomicsCore/R/model_deqms.R"
       ],
-      "criterion": "sca P/statistic/variance fields are kept separate from original limma fields; shuffled count IDs align or fail, never silently reorder.",
-      "evidence": "docs/validation/007-assay-engines/V053.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V053",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V053"
     },
     {
       "requirement": "FR-054",
@@ -824,14 +1317,23 @@
       "acceptance": "V054",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "DEqMS hypotheses and design guard",
-      "implementation_paths": [
-        "r/proteomicsCore/R/capabilities.R"
+      "criterion": "Qualify the sparse exact route numerically and reject unqualified block/precision-weight/TREAT combinations before backend execution.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "r/proteomicsCore/R/assay_eligibility.R"
       ],
-      "criterion": "Unsupported block/precision-weight/threshold-null requests are rejected with explicit contract; eligible sparse exact-contrast use is verified.",
-      "evidence": "docs/validation/007-assay-engines/V054.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V054",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V054"
     },
     {
       "requirement": "FR-055",
@@ -839,15 +1341,23 @@
       "acceptance": "V055",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "LFQ dropout provenance gate",
-      "implementation_paths": [
-        "src/proteomics_pipeline/planning.py",
-        "r/proteomicsCore/R/model_proda.R"
+      "criterion": "Permit only the qualified LFQ independent fixed-model path; preserve actual original observations and native missingness.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "r/proteomicsCore/R/assay_eligibility.R"
       ],
-      "criterion": "proDA accepts qualified unimputed LFQ data and rejects TMT, unknown incompatible imputation and unsupported repeated models.",
-      "evidence": "docs/validation/007-assay-engines/V055.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V055",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V055"
     },
     {
       "requirement": "FR-056",
@@ -855,14 +1365,23 @@
       "acceptance": "V056",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "proDA fitting and test_diff",
-      "implementation_paths": [
+      "criterion": "Match native effects, P and native uncertainty/diagnostics where reference results exist; retain n_obs and prior/dropout dependence for all-missing-group estimates.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
         "r/proteomicsCore/R/model_proda.R"
       ],
-      "criterion": "Zero-null/reduced-model reference calls match native output and retain model-specific uncertainty and dropout diagnostics.",
-      "evidence": "docs/validation/007-assay-engines/V056.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V056",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V056"
     },
     {
       "requirement": "FR-057",
@@ -870,14 +1389,23 @@
       "acceptance": "V057",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "Alternative-engine uncertainty",
-      "implementation_paths": [
-        "r/proteomicsCore/R/inference.R"
+      "criterion": "Export only justified intervals/statistics with correct native names/df; unsupported quantities stay unavailable with reasons.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "r/proteomicsCore/R/assay_comparison.R"
       ],
-      "criterion": "Engine-appropriate intervals/statistics are verified against native/reference calculations; no borrowed limma df or fake TREAT output.",
-      "evidence": "docs/validation/007-assay-engines/V057.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V057",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V057"
     },
     {
       "requirement": "FR-058",
@@ -885,15 +1413,23 @@
       "acceptance": "V058",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "Method sensitivity comparison",
-      "implementation_paths": [
-        "r/proteomicsCore/R/sensitivity.R",
-        "src/proteomics_pipeline/reporting/model_data.py"
+      "criterion": "Compare matched effects and disclose unmatched universes; keep model/hypothesis families distinct and never promote the larger hit count to primary.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "r/proteomicsCore/R/assay_comparison.R"
       ],
-      "criterion": "Matched-universe effects/discoveries are displayed as sensitivities, with unmatched universes explained; no hit-count winner changes primary.",
-      "evidence": "docs/validation/007-assay-engines/V058.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V058",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V058"
     },
     {
       "requirement": "FR-059",
@@ -901,15 +1437,23 @@
       "acceptance": "V059",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "Dependencies and failure propagation",
-      "implementation_paths": [
-        "src/proteomics_pipeline/doctor.py",
-        "r/proteomicsCore/R/capabilities.R"
+      "criterion": "Distinguish scientific inapplicability from missing installation and numerical failure; required failure blocks the run, optional operational failure is PARTIAL/nonzero.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "src/proteomics_pipeline/assay_service.py"
       ],
-      "criterion": "Missing package/backend error is visible, required analysis fails, optional applicability is distinguished from installation failure.",
-      "evidence": "docs/validation/007-assay-engines/V059.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V059",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V059"
     },
     {
       "requirement": "FR-060",
@@ -917,15 +1461,23 @@
       "acceptance": "V060",
       "slice": "007-assay-engines",
       "story": "US2",
+      "packet": "R06",
+      "phase": 2,
       "capability": "Assay-engine golden/calibration fixtures",
-      "implementation_paths": [
-        "tests/scientific/test_assay_engines.py",
-        "r/proteomicsCore/tests/testthat/test-assay-engines.R"
+      "criterion": "Prespecify reference calls/expected statuses and save actual diagnostics, precision and eligibility outcomes; no tiny-fixture claim of calibrated FDR.",
+      "scientific_rule": "SM10",
+      "implementation_targets": [
+        "tests/scientific/test_assay_engines.py"
       ],
-      "criterion": "Count-dependent variance and LFQ dropout simulations have pinned reference comparisons, unsuitable-input negative cases and recorded diagnostics.",
-      "evidence": "docs/validation/007-assay-engines/V060.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_assay_engines.py",
+        "case_id": "V060",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V060"
     },
     {
       "requirement": "FR-061",
@@ -933,15 +1485,23 @@
       "acceptance": "V061",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Local resource snapshot registry",
-      "implementation_paths": [
-        "src/proteomics_pipeline/resources.py",
-        "schemas/resource.schema.json"
+      "criterion": "Verify every required snapshot before analysis; preserve terms and original source/target organism identity.",
+      "scientific_rule": "SM14",
+      "implementation_targets": [
+        "src/proteomics_pipeline/resources.py"
       ],
-      "criterion": "Snapshots identify source/release/species/terms/hash; changed content or missing required files fails before production analysis.",
-      "evidence": "docs/validation/008-resources-mapping/V061.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V061",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V061"
     },
     {
       "requirement": "FR-062",
@@ -949,15 +1509,23 @@
       "acceptance": "V062",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Explicit resource preparation command",
-      "implementation_paths": [
-        "src/proteomics_pipeline/resources.py",
-        "configs/resources/"
+      "criterion": "Acquire/build only during the requested preparation action; record source version/hash/terms, then consume a local verified snapshot offline.",
+      "scientific_rule": "SM14",
+      "implementation_targets": [
+        "src/proteomics_pipeline/resources.py"
       ],
-      "criterion": "Fetch/build occurs only in a separate explicit preparation action, records exact versions and never auto-fetches during a frozen run.",
-      "evidence": "docs/validation/008-resources-mapping/V062.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V062",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V062"
     },
     {
       "requirement": "FR-063",
@@ -965,14 +1533,23 @@
       "acceptance": "V063",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Species-aware identifier mapping",
-      "implementation_paths": [
+      "criterion": "Map only the declared taxonomy/ID namespace and retain retired/unmapped records with reasons.",
+      "scientific_rule": "SM15",
+      "implementation_targets": [
         "r/proteomicsCore/R/mapping.R"
       ],
-      "criterion": "Stable IDs/species keys align; symbol collisions, retired IDs and missing mappings have explicit records.",
-      "evidence": "docs/validation/008-resources-mapping/V063.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V063",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V063"
     },
     {
       "requirement": "FR-064",
@@ -980,14 +1557,23 @@
       "acceptance": "V064",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Orthology evidence preservation",
-      "implementation_paths": [
+      "criterion": "Retain projection evidence/version and label the collection ortholog-projected, not rat-native.",
+      "scientific_rule": "SM14",
+      "implementation_targets": [
         "r/proteomicsCore/R/mapping.R"
       ],
-      "criterion": "Source/target species and mapping evidence/version are retained; projected sets are labeled projected and ambiguous mappings are reported.",
-      "evidence": "docs/validation/008-resources-mapping/V064.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V064",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V064"
     },
     {
       "requirement": "FR-065",
@@ -995,14 +1581,23 @@
       "acceptance": "V065",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Label-independent gene representatives",
-      "implementation_paths": [
+      "criterion": "Select the exact winner at each tie stage and keep the winner unchanged under every group-label permutation.",
+      "scientific_rule": "SM15",
+      "implementation_targets": [
         "r/proteomicsCore/R/gene_matrix.R"
       ],
-      "criterion": "Coverage/median/ID representative choice is invariant to sample-label permutation and never chooses minimum P or maximum statistic.",
-      "evidence": "docs/validation/008-resources-mapping/V065.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V065",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V065"
     },
     {
       "requirement": "FR-066",
@@ -1010,14 +1605,23 @@
       "acceptance": "V066",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Ambiguous protein-group policy",
-      "implementation_paths": [
-        "r/proteomicsCore/R/gene_matrix.R"
+      "criterion": "Exclude the multi-gene group from the default gene matrix with a reason; retain an unambiguous same-gene group and separate any median-aggregation sensitivity universe.",
+      "scientific_rule": "SM15",
+      "implementation_targets": [
+        "r/proteomicsCore/R/mapping.R"
       ],
-      "criterion": "Multi-gene groups are excluded from default mapping with reasons; declared aggregation sensitivity retains its own universe and estimand.",
-      "evidence": "docs/validation/008-resources-mapping/V066.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V066",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V066"
     },
     {
       "requirement": "FR-067",
@@ -1025,14 +1629,23 @@
       "acceptance": "V067",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Finite pathway matrix and model",
-      "implementation_paths": [
+      "criterion": "Use the finite measured subset without imputation, quantify lost genes/set coverage and fit the corresponding gene model consistently.",
+      "scientific_rule": "SM15",
+      "implementation_targets": [
         "r/proteomicsCore/R/gene_matrix.R"
       ],
-      "criterion": "Gene matrix is finite for required design, models are refit consistently and missing-value loss is quantified rather than silently imputed.",
-      "evidence": "docs/validation/008-resources-mapping/V067.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V067",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V067"
     },
     {
       "requirement": "FR-068",
@@ -1040,14 +1653,23 @@
       "acceptance": "V068",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Gene-set overlap eligibility",
-      "implementation_paths": [
+      "criterion": "Retain full/mapped/eligible membership counts and select only the size-3 set before testing; test-only bounds remain labeled.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "r/proteomicsCore/R/genesets.R"
       ],
-      "criterion": "Declared overlap-size filters are applied before tests, full/eligible/mapped membership counts are retained and tiny universe is explicit.",
-      "evidence": "docs/validation/008-resources-mapping/V068.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V068",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V068"
     },
     {
       "requirement": "FR-069",
@@ -1055,14 +1677,23 @@
       "acceptance": "V069",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Measured gene background for ORA",
-      "implementation_paths": [
+      "criterion": "Use those six genes as ORA universe and document predictable universe changes under declared filtering.",
+      "scientific_rule": "SM17",
+      "implementation_targets": [
         "r/proteomicsCore/R/genesets.R"
       ],
-      "criterion": "Universe equals eligible tested mapped genes and changes predictably under filtering; whole-genome background is never default.",
-      "evidence": "docs/validation/008-resources-mapping/V069.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V069",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V069"
     },
     {
       "requirement": "FR-070",
@@ -1070,15 +1701,23 @@
       "acceptance": "V070",
       "slice": "008-resources-mapping",
       "story": "US3",
+      "packet": "R07",
+      "phase": 2,
       "capability": "Resource/mapping regression fixtures",
-      "implementation_paths": [
-        "tests/contract/test_resources.py",
-        "r/proteomicsCore/tests/testthat/test-mapping.R"
+      "criterion": "Reproduce mapping/representative/universe identities offline, retaining each loss and corrupted-resource failure.",
+      "scientific_rule": "SM14",
+      "implementation_targets": [
+        "tests/contract/test_resources.py"
       ],
-      "criterion": "Tests cover one-to-many mapping, duplicated symbols, zero overlap, ortholog projection, offline checksum errors and stable representative selection.",
-      "evidence": "docs/validation/008-resources-mapping/V070.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/contract/test_resources.py",
+        "case_id": "V070",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V070"
     },
     {
       "requirement": "FR-071",
@@ -1086,14 +1725,23 @@
       "acceptance": "V071",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Pathway null and method dispatcher",
-      "implementation_paths": [
+      "criterion": "Select CAMERA only for eligible independent matrix designs and ROAST for paired/blocked designs; label fgsea exploratory gene-set null and ORA separately.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathways.R"
       ],
-      "criterion": "Plan distinguishes competitive, rotation self-contained, preranked and ORA nulls and rejects unsupported method/design combinations.",
-      "evidence": "docs/validation/009-enrichment/V071.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V071",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V071"
     },
     {
       "requirement": "FR-072",
@@ -1101,14 +1749,23 @@
       "acceptance": "V072",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Independent-design CAMERA",
-      "implementation_paths": [
+      "criterion": "Match native statistic/P/direction within tolerance and retain correlation/universe diagnostics plus separate central q.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathway_camera.R"
       ],
-      "criterion": "Finite gene matrix/design/contrast match official CAMERA with estimated correlation; block/correlation arguments cannot be ignored.",
-      "evidence": "docs/validation/009-enrichment/V072.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V072",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V072"
     },
     {
       "requirement": "FR-073",
@@ -1116,14 +1773,23 @@
       "acceptance": "V073",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Blocked-design ROAST",
-      "implementation_paths": [
+      "criterion": "Match reference endpoints with the same RNG; record correct covariance route, nrot and smoke label.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathway_roast.R"
       ],
-      "criterion": "Fixed-subject pairing passes its design only; duplicateCorrelation passes block/correlation without duplicate subject encoding; midpFALSE/rotation settings and reference outputs match.",
-      "evidence": "docs/validation/009-enrichment/V073.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V073",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V073"
     },
     {
       "requirement": "FR-074",
@@ -1131,14 +1797,23 @@
       "acceptance": "V074",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Directional and mixed rotation endpoints",
-      "implementation_paths": [
+      "criterion": "Export separate self_contained_directional and self_contained_mixed rows/families and recompute each declared central q from its correct raw P.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathway_roast.R"
       ],
-      "criterion": "Directional and mixed raw P/statistics/families remain distinct; central adjustment uses correct columns rather than package-native FDR mislabeled global.",
-      "evidence": "docs/validation/009-enrichment/V074.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V074",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V074"
     },
     {
       "requirement": "FR-075",
@@ -1146,14 +1821,23 @@
       "acceptance": "V075",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Exploratory fgsea adapter",
-      "implementation_paths": [
+      "criterion": "Retain ES/NES/P/native q/central q/log2err/leading-edge/size and warnings with preranked_gene_set hypothesis and exploratory status.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathway_fgsea.R"
       ],
-      "criterion": "Declared native ranks, ties, seeds and eps settings are honored; NES/log2err/warnings/leading edges and nonfinite tests are retained.",
-      "evidence": "docs/validation/009-enrichment/V075.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V075",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V075"
     },
     {
       "requirement": "FR-076",
@@ -1161,14 +1845,23 @@
       "acceptance": "V076",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Exact background-aware ORA",
-      "implementation_paths": [
+      "criterion": "Match exact raw and adjusted values and retain the k=0 set until after BH; empty foreground gives p=1 for every eligible set.",
+      "scientific_rule": "SM17",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathway_ora.R"
       ],
-      "criterion": "Hand-enumerated hypergeometric examples match; all eligible sets enter the family and empty foreground gives a valid explanation.",
-      "evidence": "docs/validation/009-enrichment/V076.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V076",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V076"
     },
     {
       "requirement": "FR-077",
@@ -1176,14 +1869,23 @@
       "acceptance": "V077",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Pathway family adjustment",
-      "implementation_paths": [
-        "r/proteomicsCore/R/multiplicity.R"
+      "criterion": "Keep method/null/role and declared collection/contrast membership exact; preserve native adjusted values separately from central q.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
+        "r/proteomicsCore/R/pathways.R"
       ],
-      "criterion": "Collections/contrasts/null types/primary status obey the frozen families; original and central q fields remain distinguishable.",
-      "evidence": "docs/validation/009-enrichment/V077.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V077",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V077"
     },
     {
       "requirement": "FR-078",
@@ -1191,14 +1893,23 @@
       "acceptance": "V078",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Alternative-engine pathway sensitivity",
-      "implementation_paths": [
-        "r/proteomicsCore/R/pathways.R"
+      "criterion": "Label fgsea exploratory and linear CAMERA/ROAST results as a separate sensitivity, never same-likelihood primary-engine confirmation.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
+        "src/proteomics_pipeline/pathway_service.py"
       ],
-      "criterion": "proDA/DEqMS ranks and linear gene-model sensitivity are labeled correctly and never sold as equivalent correlation-adjusted primary-engine inference.",
-      "evidence": "docs/validation/009-enrichment/V078.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V078",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V078"
     },
     {
       "requirement": "FR-079",
@@ -1206,14 +1917,23 @@
       "acceptance": "V079",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Leading-edge redundancy and diagnostics",
-      "implementation_paths": [
+      "criterion": "Display overlap relations while preserving every original hypothesis ID, P/q and universe; no causal mechanism or independent-discovery count is created from clustering.",
+      "scientific_rule": "SM18",
+      "implementation_targets": [
         "r/proteomicsCore/R/pathway_summary.R"
       ],
-      "criterion": "Overlap relationships preserve original set IDs/P values and do not merge independent discoveries or invent causal mechanisms.",
-      "evidence": "docs/validation/009-enrichment/V079.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V079",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V079"
     },
     {
       "requirement": "FR-080",
@@ -1221,15 +1941,23 @@
       "acceptance": "V080",
       "slice": "009-enrichment",
       "story": "US3",
+      "packet": "R08",
+      "phase": 2,
       "capability": "Enrichment golden and failure suite",
-      "implementation_paths": [
-        "tests/scientific/test_pathways.py",
-        "r/proteomicsCore/tests/testthat/test-pathways.R"
+      "criterion": "Produce honest complete empty/no-discovery results where appropriate, and explicit failures for missing prerequisites or all eligible numerical tests failing.",
+      "scientific_rule": "SM18",
+      "implementation_targets": [
+        "tests/scientific/test_pathways.py"
       ],
-      "criterion": "Exact ORA, reference CAMERA/ROAST/fgsea, missing snapshots, NA/Inf matrix, all nonfinite tests and no discoveries exercise honest statuses.",
-      "evidence": "docs/validation/009-enrichment/V080.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pathways.py",
+        "case_id": "V080",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/009-enrichment/spec.md#V080"
     },
     {
       "requirement": "FR-081",
@@ -1237,14 +1965,23 @@
       "acceptance": "V081",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Explicit disease-treatment-residual axes",
-      "implementation_paths": [
+      "criterion": "Export coherent axes and covariance and verify r=d+t with preserved contrast signs and model ID.",
+      "scientific_rule": "SM19",
+      "implementation_targets": [
         "r/proteomicsCore/R/response.R"
       ],
-      "criterion": "d, t, r and interaction estimates align to planned contrasts with covariance; r=d+t matches analytic fixtures.",
-      "evidence": "docs/validation/010-treatment-response/V081.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V081",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V081"
     },
     {
       "requirement": "FR-082",
@@ -1252,14 +1989,23 @@
       "acceptance": "V082",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Descriptive reversal without double dipping",
-      "implementation_paths": [
-        "r/proteomicsCore/R/response.R"
+      "criterion": "Export only DescriptiveScore with hypothesis_type=descriptive_score and physically no P/q/test-statistic columns; record the overlap reason.",
+      "scientific_rule": "SM23",
+      "implementation_targets": [
+        "r/proteomicsCore/R/scores.R"
       ],
-      "criterion": "Current-data selected features can be displayed but produce no confirmatory score P or rescue label; selection provenance is explicit.",
-      "evidence": "docs/validation/010-treatment-response/V082.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V082",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V082"
     },
     {
       "requirement": "FR-083",
@@ -1267,14 +2013,23 @@
       "acceptance": "V083",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Bounded response categories",
-      "implementation_paths": [
+      "criterion": "Assign exact boundary classes, NA for an invalid denominator, crossed_control for RI>1 and overshoot only for RI>1.2; RI=3 is never restoration.",
+      "scientific_rule": "SM20",
+      "implementation_targets": [
         "r/proteomicsCore/R/response.R"
       ],
-      "criterion": "Configured epsilon classes handle zero/small d, RI=1, RI>1+epsilon and RI=3; old unlimited full-reversal label is absent.",
-      "evidence": "docs/validation/010-treatment-response/V083.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V083",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V083"
     },
     {
       "requirement": "FR-084",
@@ -1282,14 +2037,23 @@
       "acceptance": "V084",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Ratio uncertainty contract",
-      "implementation_paths": [
+      "criterion": "Match bounded or unbounded/disjoint confidence sets and retain interval kind; descriptive-only emits no interval and no ratio P value.",
+      "scientific_rule": "SM20",
+      "implementation_targets": [
         "r/proteomicsCore/R/response_uncertainty.R"
       ],
-      "criterion": "Supported joint-covariance method handles unstable/unbounded RI intervals; dividing CI endpoints is rejected and descriptive-only mode is explicit.",
-      "evidence": "docs/validation/010-treatment-response/V084.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V084",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V084"
     },
     {
       "requirement": "FR-085",
@@ -1297,14 +2061,23 @@
       "acceptance": "V085",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Model-correct residual equivalence",
-      "implementation_paths": [
+      "criterion": "Both zero-null tests can be nonsignificant, but only the narrow-interval fixture passes unadjusted alpha=.05 TOST; export p_lower/p_upper/max-P and separate family q.",
+      "scientific_rule": "SM21",
+      "implementation_targets": [
         "r/proteomicsCore/R/equivalence.R"
       ],
-      "criterion": "Analytic TOST examples match both one-sided tests/max-P and 90% equivalence intervals; a nonsignificant zero-null test alone cannot pass.",
-      "evidence": "docs/validation/010-treatment-response/V085.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V085",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V085"
     },
     {
       "requirement": "FR-086",
@@ -1312,14 +2085,23 @@
       "acceptance": "V086",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Conjunction claim eligibility",
-      "implementation_paths": [
+      "criterion": "Retain components, direction-source hash and joint endpoint in FormalRescueResult only when independence and model eligibility pass.",
+      "scientific_rule": "SM22",
+      "implementation_targets": [
         "r/proteomicsCore/R/equivalence.R"
       ],
-      "criterion": "Only independently defined direction and valid model-supported conjunction yield adjusted restoration endpoints; FDR-list intersection is not labeled rescue FDR.",
-      "evidence": "docs/validation/010-treatment-response/V086.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V086",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V086"
     },
     {
       "requirement": "FR-087",
@@ -1327,15 +2109,23 @@
       "acceptance": "V087",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Independent fixed-score artifacts",
-      "implementation_paths": [
-        "schemas/independent-score.schema.json",
+      "criterion": "Apply exactly the training transforms, preserve missing-feature policy and emit inferential eligibility only for verified disjoint subjects/units.",
+      "scientific_rule": "SM23",
+      "implementation_targets": [
         "r/proteomicsCore/R/scores.R"
       ],
-      "criterion": "Training identity/weights/transforms are frozen and checked; validation-outcome-derived selection or refitting produces descriptive-only eligibility.",
-      "evidence": "docs/validation/010-treatment-response/V087.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V087",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V087"
     },
     {
       "requirement": "FR-088",
@@ -1343,14 +2133,23 @@
       "acceptance": "V088",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Exact and Monte Carlo randomization",
-      "implementation_paths": [
+      "criterion": "Compute exact k/70 using the frozen tie rule; top-four versus bottom-four gives k=2 and 2/70. MC uses the full-space-with-replacement protocol and (k+1)/(B+1), separately labeled with precision.",
+      "scientific_rule": "SM24",
+      "implementation_targets": [
         "r/proteomicsCore/R/randomization.R"
       ],
-      "criterion": "All 70 four-versus-four allocations use k/N; Monte Carlo +1 and interval are distinct; paired/restricted permutations honor blocks and ties.",
-      "evidence": "docs/validation/010-treatment-response/V088.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V088",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V088"
     },
     {
       "requirement": "FR-089",
@@ -1358,14 +2157,23 @@
       "acceptance": "V089",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Score/equivalence reporting semantics",
-      "implementation_paths": [
+      "criterion": "Keep descriptive movement, overshoot, equivalence, formal conjunction and independent score test distinct in tables/prose; never generate causal rescue language.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "src/proteomics_pipeline/reporting/response_data.py"
       ],
-      "criterion": "Report distinguishes movement, overshoot, equivalence, conjunction evidence and unknown training overlap; no causal rescue prose is generated.",
-      "evidence": "docs/validation/010-treatment-response/V089.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V089",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V089"
     },
     {
       "requirement": "FR-090",
@@ -1373,15 +2181,23 @@
       "acceptance": "V090",
       "slice": "010-treatment-response",
       "story": "US4",
+      "packet": "R09",
+      "phase": 2,
       "capability": "Circularity/null/overshoot tests",
-      "implementation_paths": [
-        "tests/scientific/test_response.py",
-        "r/proteomicsCore/tests/testthat/test-response.R"
+      "criterion": "Demonstrate shared-control negative covariance and prevent every in-sample-score P route; classify RI=3 as overshoot and preserve the correct exact denominators.",
+      "scientific_rule": "SM19",
+      "implementation_targets": [
+        "tests/scientific/test_response.py"
       ],
-      "criterion": "Shared-untreated null exposes negative effect covariance but cannot yield a spurious inferential score path; exact old examples and RI overshoot regressions pass.",
-      "evidence": "docs/validation/010-treatment-response/V090.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/scientific/test_response.py",
+        "case_id": "V090",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V090"
     },
     {
       "requirement": "FR-091",
@@ -1389,15 +2205,23 @@
       "acceptance": "V091",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10a",
+      "phase": 1,
       "capability": "Typed report data assembler",
-      "implementation_paths": [
-        "src/proteomics_pipeline/reporting/data.py",
-        "schemas/report.schema.json"
+      "criterion": "Assemble only verified executed values; zero real discoveries remain zero, missing values remain unknown and failures remain failed; core methods/status summary derives actual metadata.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/assemble.py"
       ],
-      "criterion": "All sections derive from validated artifact statuses/counts and missing inputs never become healthy zero or PASS.",
-      "evidence": "docs/validation/011-reporting/V091.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_report_stub.py",
+        "case_id": "V091",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V091"
     },
     {
       "requirement": "FR-092",
@@ -1405,15 +2229,23 @@
       "acceptance": "V092",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10a",
+      "phase": 1,
       "capability": "One-run command integration",
-      "implementation_paths": [
-        "src/proteomics_pipeline/cli.py",
-        "src/proteomics_pipeline/runtime.py"
+      "criterion": "Execute the valid Phase 1 DAG and R10a report from one command; stop required dependants on failure, retain a useful partial report and correct nonzero exit.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/stub.py"
       ],
-      "criterion": "Single run executes the valid DAG, stops failed required stages and assembles a useful partial report with failed stage evidence.",
-      "evidence": "docs/validation/011-reporting/V092.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_report_stub.py",
+        "case_id": "V092",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V092"
     },
     {
       "requirement": "FR-093",
@@ -1421,15 +2253,23 @@
       "acceptance": "V093",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10a",
+      "phase": 1,
       "capability": "Offline HTML report",
-      "implementation_paths": [
-        "src/proteomics_pipeline/reporting/templates/",
-        "src/proteomics_pipeline/reporting/render.py"
+      "criterion": "Render readable offline HTML with clear scope/status, navigation and accessible tables, and redact private absolute input paths in presentation.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/stub_template.html"
       ],
-      "criterion": "Report opens without external assets/network, has clear navigation and accessible tables, and no paths expose private content in source release.",
-      "evidence": "docs/validation/011-reporting/V093.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_report_stub.py",
+        "case_id": "V093",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V093"
     },
     {
       "requirement": "FR-094",
@@ -1437,14 +2277,23 @@
       "acceptance": "V094",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10a",
+      "phase": 1,
       "capability": "QC and inclusion/exclusion sections",
-      "implementation_paths": [
-        "src/proteomics_pipeline/reporting/qc_data.py"
+      "criterion": "Show biological versus technical n, scale, missingness, normalization and exclusion rationale with exact source links; no sample silently disappears.",
+      "scientific_rule": "SM06",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/assemble.py"
       ],
-      "criterion": "Observation hierarchy, n, scale, missingness, normalization and exclusion rationale are visible with source-table links.",
-      "evidence": "docs/validation/011-reporting/V094.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_report_stub.py",
+        "case_id": "V094",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V094"
     },
     {
       "requirement": "FR-095",
@@ -1452,14 +2301,23 @@
       "acceptance": "V095",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10b",
+      "phase": 3,
       "capability": "Complete differential results views",
-      "implementation_paths": [
-        "src/proteomics_pipeline/reporting/model_data.py"
+      "criterion": "Display every planned contrast/hypothesis, effects/CI/q-family and estimability, including auxiliary comparisons without highlighting only significant subsets.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/full.py"
       ],
-      "criterion": "All planned contrasts/hypotheses appear, including nonsignificant/auxiliary contrasts; estimates, CI, q family and estimability are clear.",
-      "evidence": "docs/validation/011-reporting/V095.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_reports.py",
+        "case_id": "V095",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V095"
     },
     {
       "requirement": "FR-096",
@@ -1467,15 +2325,23 @@
       "acceptance": "V096",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10b",
+      "phase": 3,
       "capability": "Pathway and response views",
-      "implementation_paths": [
-        "src/proteomics_pipeline/reporting/pathway_data.py",
-        "response_data.py"
+      "criterion": "Show null types, mapped universe, leading edges, exploratory labels and response restrictions with no cross-null confirmation language.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/pathway_data.py"
       ],
-      "criterion": "Null type, resource universe, leading edges, exploratory status, response caveats and unavailable inference remain explicit.",
-      "evidence": "docs/validation/011-reporting/V096.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_reports.py",
+        "case_id": "V096",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V096"
     },
     {
       "requirement": "FR-097",
@@ -1483,14 +2349,23 @@
       "acceptance": "V097",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10b",
+      "phase": 3,
       "capability": "Publication figure and source exports",
-      "implementation_paths": [
+      "criterion": "Export requested PDF/SVG/PNG with readable units, independent n, thresholds and complete source data; no unexplained significance stars.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "r/proteomicsCore/R/plots.R"
       ],
-      "criterion": "Vector PDF/SVG and raster PNG as appropriate have exact plotted data, units/n/thresholds and readable labels without unexplained stars.",
-      "evidence": "docs/validation/011-reporting/V097.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_reports.py",
+        "case_id": "V097",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V097"
     },
     {
       "requirement": "FR-098",
@@ -1498,14 +2373,23 @@
       "acceptance": "V098",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10b",
+      "phase": 3,
       "capability": "Methods and limitations generation",
-      "implementation_paths": [
+      "criterion": "Generate methods naming actual inputs/scale/models/hypotheses/families/resources and uncertainty limits, keeping unknown provenance explicit.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "src/proteomics_pipeline/reporting/methods.py"
       ],
-      "criterion": "Methods derive actual config/packages/hypotheses; unknown tissue/batch/provenance restricts language and no canned study claim appears.",
-      "evidence": "docs/validation/011-reporting/V098.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_reports.py",
+        "case_id": "V098",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V098"
     },
     {
       "requirement": "FR-099",
@@ -1513,14 +2397,23 @@
       "acceptance": "V099",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10b",
+      "phase": 3,
       "capability": "Null/empty/partial report robustness",
-      "implementation_paths": [
-        "tests/integration/test_reports.py"
+      "criterion": "Render truthful full reports for all cases without upgrading partial/failed/cancelled analysis to COMPLETED; preserve valid zero-row tables where a stage actually completed.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/full.py"
       ],
-      "criterion": "No DEPs, no pathways, tiny cohorts, inapplicable methods, failed backend and interrupted stage yield valid honest reports.",
-      "evidence": "docs/validation/011-reporting/V099.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_reports.py",
+        "case_id": "V099",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V099"
     },
     {
       "requirement": "FR-100",
@@ -1528,15 +2421,23 @@
       "acceptance": "V100",
       "slice": "011-reporting",
       "story": "US5",
+      "packet": "R10b",
+      "phase": 3,
       "capability": "Quickstart and user workflow",
-      "implementation_paths": [
-        "docs/user-guide/",
-        "configs/examples/"
+      "criterion": "Exercise validate, plan, run, inspect/report, verify and compare without manual R stage orchestration and document only implemented capabilities.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "docs/user-guide/usage.md"
       ],
-      "criterion": "A fresh user can validate, plan, run, inspect, verify and compare examples without manually invoking individual R scripts; commands are actually exercised.",
-      "evidence": "docs/validation/011-reporting/V100.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_reports.py",
+        "case_id": "V100",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/011-reporting/spec.md#V100"
     },
     {
       "requirement": "FR-101",
@@ -1544,16 +2445,23 @@
       "acceptance": "V101",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Pinned compatible environments",
-      "implementation_paths": [
-        "renv.lock",
-        "Python lockfile",
-        "containers/"
+      "criterion": "Restore compatible Python/R/Bioconductor environments and exercise the declared APIs; environment.yml alone is not a lock.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "renv.lock"
       ],
-      "criterion": "Clean Python/R/Bioconductor restore is tested; version pair is compatible and installed package APIs match adapters.",
-      "evidence": "docs/validation/012-validation/V101.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V101",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V101"
     },
     {
       "requirement": "FR-102",
@@ -1561,15 +2469,23 @@
       "acceptance": "V102",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Immutable resource-offline reproduction",
-      "implementation_paths": [
-        "src/proteomics_pipeline/provenance.py",
-        "tests/integration/test_offline.py"
+      "criterion": "Reproduce semantic tables/masks/universes using unchanged resource/code/environment hashes; separate timestamps/cosmetic image metadata from scientific values.",
+      "scientific_rule": "SM14",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reproduction.py"
       ],
-      "criterion": "A run with cached snapshots completes without network and semantic output hashes match the documented tolerance.",
-      "evidence": "docs/validation/012-validation/V102.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V102",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V102"
     },
     {
       "requirement": "FR-103",
@@ -1577,15 +2493,23 @@
       "acceptance": "V103",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Resume and cache invalidation",
-      "implementation_paths": [
-        "src/proteomics_pipeline/runtime.py",
-        "tests/integration/test_resume.py"
+      "criterion": "Reuse only compatible verified stage outputs; invalidate each affected stage and dependant; never reuse an incomplete temporary.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/cache.py"
       ],
-      "criterion": "Code/config/data/resource changes invalidate dependent stages; compatible verified outputs reuse safely and partial artifacts never count as cache.",
-      "evidence": "docs/validation/012-validation/V103.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V103",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V103"
     },
     {
       "requirement": "FR-104",
@@ -1593,15 +2517,23 @@
       "acceptance": "V104",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Scientific golden reference matrix",
-      "implementation_paths": [
-        "tests/scientific/reference/",
-        "docs/validation/reference-matrix.json"
+      "criterion": "Freeze versions/tolerances before candidate comparison and record actual fieldwise differences and unsupported combinations.",
+      "scientific_rule": "SM08",
+      "implementation_targets": [
+        "tests/scientific/reference/**"
       ],
-      "criterion": "Independent calls cover every backend/hypothesis/design eligibility; tolerances/versions are frozen before candidate comparison.",
-      "evidence": "docs/validation/012-validation/V104.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V104",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V104"
     },
     {
       "requirement": "FR-105",
@@ -1609,15 +2541,23 @@
       "acceptance": "V105",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Null and mixture calibration",
-      "implementation_paths": [
-        "scripts/maintained/run_calibration.py",
+      "criterion": "Meet prespecified core error upper-bound ≤.075 and CI-coverage target .93–.97 with adequate independent-dataset precision, reporting power/bias/failures as well; retain failed qualifications.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
         "r/proteomicsCore/R/simulate.R"
       ],
-      "criterion": "Prespecified all-null/mixture scenarios calculate actual error/coverage metrics with Monte Carlo uncertainty; failing methods are not labeled validated.",
-      "evidence": "docs/validation/012-validation/V105.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V105",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V105"
     },
     {
       "requirement": "FR-106",
@@ -1625,14 +2565,23 @@
       "acceptance": "V106",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Correlated pathway calibration",
-      "implementation_paths": [
+      "criterion": "Assess CAMERA/ROAST under their actual hypotheses and record Monte Carlo precision; retain fgsea exploratory gene-set-null limits.",
+      "scientific_rule": "SM16",
+      "implementation_targets": [
         "tests/scientific/calibration_pathways.R"
       ],
-      "criterion": "Known correlated null and spike-in pathways assess method-null-specific error/power; fgsea caveat is retained rather than demanding a false universal guarantee.",
-      "evidence": "docs/validation/012-validation/V106.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V106",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V106"
     },
     {
       "requirement": "FR-107",
@@ -1640,15 +2589,23 @@
       "acceptance": "V107",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Cross-platform CI",
-      "implementation_paths": [
-        ".github/workflows/maintained.yml",
-        "scripts/maintained/"
+      "criterion": "Run real core Python/R examples on both systems and distinguish expensive release calibration from smoke CI; absent jobs remain NOT_RUN.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        ".github/workflows/maintained.yml"
       ],
-      "criterion": "Windows/Linux core Python+R jobs execute real examples; expensive release calibration is distinct and not silently skipped as passing CI.",
-      "evidence": "docs/validation/012-validation/V107.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V107",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V107"
     },
     {
       "requirement": "FR-108",
@@ -1656,15 +2613,23 @@
       "acceptance": "V108",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Performance and resource benchmark",
-      "implementation_paths": [
-        "scripts/maintained/benchmark.py",
-        "docs/validation/benchmarks/"
+      "criterion": "Assess ≤30 minutes and ≤8 GiB with hardware/settings recorded, timing specialized engines/calibration separately; report any target failure.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "scripts/maintained/benchmark.py"
       ],
-      "criterion": "20k x100 medium case logs time/peak memory/hardware, specialized engine cost separately; targets are assessed on actual work.",
-      "evidence": "docs/validation/012-validation/V108.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V108",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V108"
     },
     {
       "requirement": "FR-109",
@@ -1672,15 +2637,23 @@
       "acceptance": "V109",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Report numerical/visual validation",
-      "implementation_paths": [
-        "tests/integration/test_report_artifacts.py",
-        "docs/validation/"
+      "criterion": "Verify numeric labels/coordinates/source links and record actual visual inspection, readability and failed-layout findings.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "tests/integration/test_report_artifacts.py"
       ],
-      "criterion": "Plot-data values and references match tables; representative rendered reports/figures are visually inspected with explicit evidence.",
-      "evidence": "docs/validation/012-validation/V109.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V109",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V109"
     },
     {
       "requirement": "FR-110",
@@ -1688,15 +2661,23 @@
       "acceptance": "V110",
       "slice": "012-validation",
       "story": "US6",
+      "packet": "R11",
+      "phase": 3,
       "capability": "Machine-readable validation ledger",
-      "implementation_paths": [
-        "schemas/validation-evidence.schema.json",
+      "criterion": "Record requirement/task/acceptance IDs, expected oracle, actual evidence and reviewed tree; preserve distinct PASS/FAIL/NOT_RUN.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "docs/validation/acceptance.json"
       ],
-      "criterion": "Every requirement/test records command, versions, artifact hash, result and limitations; NOT_RUN/SKIPPED is not PASS.",
-      "evidence": "docs/validation/012-validation/V110.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/integration/test_offline.py",
+        "case_id": "V110",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/012-validation/spec.md#V110"
     },
     {
       "requirement": "FR-111",
@@ -1704,14 +2685,23 @@
       "acceptance": "V111",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Private local legacy adapter regression",
-      "implementation_paths": [
+      "criterion": "Verify private reconstruction locally without exposing private inputs/logs to implementers/reviewers/docs workers and without modifying originals.",
+      "scientific_rule": "SM01",
+      "implementation_targets": [
         "scripts/maintained/legacy_regression.py"
       ],
-      "criterion": "Maintainer locally reconstructs archive values/masks/meta and confirms original source hashes without exposing study data to Packet Implementer, Independent Reviewer or any documentation worker.",
-      "evidence": "docs/validation/013-release/V111.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V111",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V111"
     },
     {
       "requirement": "FR-112",
@@ -1719,15 +2709,23 @@
       "acceptance": "V112",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Legacy core numerical comparison",
-      "implementation_paths": [
-        "tests/regression/",
-        "docs/validation/legacy-comparison.md"
+      "criterion": "Compare declared coefficients/BH/settings, preserve differences and record NOT_RUN/NOT_REPRODUCED when historical runtime/resources are unavailable.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
+        "scripts/maintained/legacy_regression.py"
       ],
-      "criterion": "Matched-universe legacy mode compares coefficients/BH/declared settings; missing historical environment is explicit NOT_REPRODUCED, not an invented success.",
-      "evidence": "docs/validation/013-release/V112.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V112",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V112"
     },
     {
       "requirement": "FR-113",
@@ -1735,14 +2733,23 @@
       "acceptance": "V113",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Scientific-change reconciliation",
-      "implementation_paths": [
+      "criterion": "Explain the Negr1 auxiliary exception, 2/70 versus 3/71 and 6/70 versus 7/71 arithmetic, and intentional model/pathway/response differences without production constants.",
+      "scientific_rule": "SM19",
+      "implementation_targets": [
         "docs/validation/legacy-comparison.md"
       ],
-      "criterion": "Negr1 auxiliary result, exact permutation discrepancy, different filters/families/pathway nulls and corrected response labels are explained without hardcoding outputs.",
-      "evidence": "docs/validation/013-release/V113.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V113",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V113"
     },
     {
       "requirement": "FR-114",
@@ -1750,15 +2757,23 @@
       "acceptance": "V114",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Full maintained study run",
-      "implementation_paths": [
-        "configs/local example template",
-        "scripts/maintained/legacy_regression.py"
+      "criterion": "Execute and verify the local study as new artifacts, retaining inherited unknown metadata and separation from the archived analysis.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/legacy_service.py"
       ],
-      "criterion": "Qualified local study runs new pipeline, reports inherited unknown metadata and returns new independent artifacts without modifying originals.",
-      "evidence": "docs/validation/013-release/V114.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V114",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V114"
     },
     {
       "requirement": "FR-115",
@@ -1766,16 +2781,23 @@
       "acceptance": "V115",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Comprehensive usage and methods docs",
-      "implementation_paths": [
-        "docs/user-guide/",
-        "docs/methods/",
-        "README.md"
+      "criterion": "Document supported assays/designs/engines, rejection messages and exact tested commands; separate phase milestones from completed v1.0.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "docs/user-guide/release.md"
       ],
-      "criterion": "Supported assays/engines/designs/unsupported combinations and exact command examples reflect implemented behavior and actual validation.",
-      "evidence": "docs/validation/013-release/V115.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V115",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V115"
     },
     {
       "requirement": "FR-116",
@@ -1783,15 +2805,23 @@
       "acceptance": "V116",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Spec-task-evidence reconciliation",
-      "implementation_paths": [
-        "specs/001-downstream-proteomics/traceability.json",
-        "progress.md"
+      "criterion": "Retain exactly 120 unique requirement/task/acceptance identities, reviewed evidence or explicit unresolved status, and no silently retired ID.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "docs/validation/final-acceptance.md"
       ],
-      "criterion": "Every requirement maps to a reviewed task/test/evidence/commit; unchecked or unverified work remains visible.",
-      "evidence": "docs/validation/013-release/V116.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V116",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V116"
     },
     {
       "requirement": "FR-117",
@@ -1799,15 +2829,23 @@
       "acceptance": "V117",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Source release hygiene",
-      "implementation_paths": [
-        "scripts/maintained/build_release.py",
-        ".gitignore"
+      "criterion": "Exclude private data, credentials, environments and private execution logs; retain only permitted resource content/terms and explicitly unresolved ownership/license.",
+      "scientific_rule": "SM14",
+      "implementation_targets": [
+        "scripts/maintained/build_release.py"
       ],
-      "criterion": "Artifact whitelist excludes private data, credentials, environments and execution logs; ownership/license is not invented and resource terms are recorded.",
-      "evidence": "docs/validation/013-release/V117.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V117",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V117"
     },
     {
       "requirement": "FR-118",
@@ -1815,15 +2853,23 @@
       "acceptance": "V118",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Versioned successor export",
-      "implementation_paths": [
-        "scripts/maintained/build_release.py",
-        "docs/validation/delivery.json"
+      "criterion": "Export only a new versioned successor directory after gates and permission; never overwrite the recovered archive package.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "scripts/maintained/build_release.py"
       ],
-      "criterion": "New releases/version folder receives verified source/spec/tests/docs/manifests; original archive package files and private archive hashes are unchanged.",
-      "evidence": "docs/validation/013-release/V118.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V118",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V118"
     },
     {
       "requirement": "FR-119",
@@ -1831,14 +2877,23 @@
       "acceptance": "V119",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Final integrated acceptance run",
-      "implementation_paths": [
+      "criterion": "Re-execute release gates on that exact tree, including R10a compatibility, and report external limits separately without calling missing core work complete.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
         "docs/validation/final-acceptance.md"
       ],
-      "criterion": "All runnable core/golden/integration/scientific gates rerun on the final reviewed tree, clean setup is demonstrated and residual external limits are explicit.",
-      "evidence": "docs/validation/013-release/V119.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V119",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V119"
     },
     {
       "requirement": "FR-120",
@@ -1846,15 +2901,25 @@
       "acceptance": "V120",
       "slice": "013-release",
       "story": "US6",
+      "packet": "R12",
+      "phase": 3,
       "capability": "Review-and-handoff completion",
-      "implementation_paths": [
-        "CHANGELOG.md",
-        "specs/001-downstream-proteomics/progress.md"
+      "criterion": "Close only verified requested scope, record real delivery paths and remaining blockers, and perform no unauthorized commit/push/license/private-data action.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "docs/validation/delivery.json"
       ],
-      "criterion": "Maintainer reviews final staged/unstaged/untracked diff, records verified commits and delivery paths; no unsupported completion claim or unauthorized release action occurs.",
-      "evidence": "docs/validation/013-release/V120.json",
-      "status": "specified",
-      "verified_commit": null
+      "proposed_test_target": {
+        "path": "tests/regression/**",
+        "case_id": "V120",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/013-release/spec.md#V120"
     }
-  ]
+  ],
+  "redirects": [],
+  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution."
 }

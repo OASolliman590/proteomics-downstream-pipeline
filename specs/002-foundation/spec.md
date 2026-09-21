@@ -1,102 +1,168 @@
 # Feature Specification: Runtime, package and contract foundation
 
-**Feature Branch:** `spec/002-foundation` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R01**. Deliver runtime, package and contract foundation for user journey US1.
+**Phase:** 1. **Packet:** R01. **Status:** 1.2.0-frozen; implementation pending explicit GO.
 
-## User Scenarios & Testing
+## Scope
 
-### US1 — Runtime, package and contract foundation (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** Recovered baseline and approved parent contracts only.
+Deliver only FR-001–FR-010 for US1. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-001**: The system MUST provide installable maintained cli. An isolated install exposes proteomics and python -m entry points; --help/version never require R or data.
-- **FR-002**: The system MUST provide strict versioned configuration. Valid examples pass; unknown keys, malformed contrasts and conflicting modes fail with field paths.
-- **FR-003**: The system MUST provide typed run and stage states. A simulated failure cannot become COMPLETED; optional inapplicability has an eligibility reason.
-- **FR-004**: The system MUST provide safe python-to-r bridge. Arguments with spaces are passed literally, nonzero R exit fails the stage, and stdout/stderr/session metadata survive.
-- **FR-005**: The system MUST provide atomic artifact publication. An interrupted writer leaves no apparently completed artifact and a second writer cannot corrupt the run.
-- **FR-006**: The system MUST provide environment doctor. Doctor lists actual binaries/package/resource versions; missing R/package is NOT_AVAILABLE and exits nonzero when required.
-- **FR-007**: The system MUST provide maintained r package skeleton. A real minimal R package installs and its executable test entry runs a nonmocked I/O roundtrip; it returns no fabricated analysis.
-- **FR-008**: The system MUST provide independent test harness. Existing ten tests remain intact; pytest/testthat invoke real future test locations and missing prerequisites are not recorded as passes.
-- **FR-009**: The system MUST provide baseline preservation registry. All recovered pipeline/legacy/audit hashes match and tests fail on a deliberate scratch-copy mutation.
-- **FR-010**: The system MUST provide one-command developer bootstrap. Fresh documented setup provisions only project-local environments, records solved versions and runs baseline plus foundation gates.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-001 — Installable maintained CLI:** The system MUST expose proteomics and python -m proteomics_pipeline; --help and --version exit 0 with identical version and list the five Phase 1 commands without reading data or invoking R.
+- **FR-002 — Strict versioned configuration:** The system MUST accept the three resolved examples; reject unknown fields, old versions, malformed contrasts and conflicting primary fields with a JSON pointer and typed error; insert only the four documented defaults.
+- **FR-003 — Typed run and stage states:** The system MUST keep failed child as FAILED, missing implementation as NOT_RUN and scientific inapplicability as INAPPLICABLE; no such stage becomes COMPLETED or PASS.
+- **FR-004 — Safe Python-to-R bridge:** The system MUST pass literal argv with shell=false; roundtrip exact UTF-8 paths and preserve stdout/stderr, nonzero child exit and authentic session metadata.
+- **FR-005 — Atomic artifact publication:** The system MUST permit at most one exclusive writer; an interrupted temporary never appears as a completed artifact or reusable cache; promotion preserves the verified hash.
+- **FR-006 — Environment doctor:** The system MUST report actual paths/versions and per-capability availability; required missing R/package/resource exits 3; --help remains independent of doctor.
+- **FR-007 — Maintained R package skeleton:** The system MUST install the real package where prerequisites permit; dispatch io_roundtrip and reproduce IDs, values, NA and metadata exactly; export no fabricated analysis function.
+- **FR-008 — Independent test harness:** The system MUST retain all ten historical tests unchanged; the new harness discovers its actual tests, returns nonzero for a failing assertion and records missing R as NOT_RUN.
+- **FR-009 — Baseline preservation registry:** The system MUST verify all pipeline/legacy/audit bytes against baseline; mutation of any protected file is detected without changing the original registry.
+- **FR-010 — One-command developer bootstrap:** The system MUST bootstrap only project-local dependencies, record solved versions and invoke the real baseline/foundation gates; analysis commands never bootstrap automatically.
 
 ## Acceptance Scenarios
 
+<a id="V001"></a>
+
 ### V001: Installable maintained CLI
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** an isolated install exposes proteomics and python -m entry points; --help/version never require R or data.
+**Fixture:** Fresh temporary Python environment, installed project, empty working directory and PATH without R.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Subprocess return code/stdout from both installed entry points.
+
+**Exact assertion:** Expose proteomics and python -m proteomics_pipeline; --help and --version exit 0 with identical version and list the five Phase 1 commands without reading data or invoking R.
+
+**Negative case:** An unknown command exits 2; a missing future run capability exits 3/NOT_RUN rather than 0.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V002"></a>
 
 ### V002: Strict versioned configuration
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** valid examples pass; unknown keys, malformed contrasts and conflicting modes fail with field paths.
+**Fixture:** The three contract examples; copies with typo primary_engnie, old schema_version, duplicate IDs and mismatched primary model.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Draft202012Validator plus explicit reference/primary-role checks in semantic-validation.
+
+**Exact assertion:** Accept the three resolved examples; reject unknown fields, old versions, malformed contrasts and conflicting primary fields with a JSON pointer and typed error; insert only the four documented defaults.
+
+**Negative case:** Remove score_test: it resolves to off; explicitly set invalid score_test: reject rather than replacing it with off.
+
+**Contract:** SM07; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V003"></a>
 
 ### V003: Typed run and stage states
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** a simulated failure cannot become COMPLETED; optional inapplicability has an eligibility reason.
+**Fixture:** A foundation stage with a real child exit 7, an unavailable capability and a scientifically inapplicable optional request.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** The CLI/state transition table and actual subprocess exit.
+
+**Exact assertion:** Keep failed child as FAILED, missing implementation as NOT_RUN and scientific inapplicability as INAPPLICABLE; no such stage becomes COMPLETED or PASS.
+
+**Negative case:** A forged COMPLETED record with exit_code=7 fails stage schema/semantic verification.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V004"></a>
 
 ### V004: Safe Python-to-R bridge
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** arguments with spaces are passed literally, nonzero R exit fails the stage, and stdout/stderr/session metadata survive.
+**Fixture:** Real R I/O stage in a directory named space Ω ; literal.txt, followed by an R stop() fixture.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** R-reported normalized argv and real stderr/sessionInfo from the same process.
+
+**Exact assertion:** Pass literal argv with shell=false; roundtrip exact UTF-8 paths and preserve stdout/stderr, nonzero child exit and authentic session metadata.
+
+**Negative case:** A metacharacter path cannot create a sentinel file outside the temp directory; missing R is NOT_RUN, not a mocked pass.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V005"></a>
 
 ### V005: Atomic artifact publication
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** an interrupted writer leaves no apparently completed artifact and a second writer cannot corrupt the run.
+**Fixture:** Two actual subprocess writers target the same temporary run; terminate the first before promotion.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Filesystem inspection plus independently computed SHA-256.
+
+**Exact assertion:** Permit at most one exclusive writer; an interrupted temporary never appears as a completed artifact or reusable cache; promotion preserves the verified hash.
+
+**Negative case:** Mutate a promoted artifact: verify exits 5 and downstream consumption is refused.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V006"></a>
 
 ### V006: Environment doctor
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** doctor lists actual binaries/package/resource versions; missing R/package is NOT_AVAILABLE and exits nonzero when required.
+**Fixture:** Actual foundation Python/R installation; repeat with R removed from PATH and with a configured missing resource.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent which/version calls and resource SHA-256 calculation.
+
+**Exact assertion:** Report actual paths/versions and per-capability availability; required missing R/package/resource exits 3; --help remains independent of doctor.
+
+**Negative case:** A package name in configuration is not evidence of installation and must not be reported AVAILABLE without inspection.
+
+**Contract:** SM10; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V007"></a>
 
 ### V007: Maintained R package skeleton
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** a real minimal R package installs and its executable test entry runs a nonmocked I/O roundtrip; it returns no fabricated analysis.
+**Fixture:** Minimal real proteomicsCore package, an 8×12 TSV containing NA and a UTF-8 metadata field.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** R CMD INSTALL exit and independent read/write comparison, not a Python mock.
+
+**Exact assertion:** Install the real package where prerequisites permit; dispatch io_roundtrip and reproduce IDs, values, NA and metadata exactly; export no fabricated analysis function.
+
+**Negative case:** Invoke limma capability before R05: typed unavailable failure. Missing runtime or installer-required unresolved metadata remains NOT_RUN, never invented license content.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V008"></a>
 
 ### V008: Independent test harness
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** existing ten tests remain intact; pytest/testthat invoke real future test locations and missing prerequisites are not recorded as passes.
+**Fixture:** Existing tests/test_runner.py and a temporary intentionally failing assertion in an isolated harness fixture.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** unittest, pytest and real R testthat exit codes and collected test IDs.
+
+**Exact assertion:** Retain all ten historical tests unchanged; the new harness discovers its actual tests, returns nonzero for a failing assertion and records missing R as NOT_RUN.
+
+**Negative case:** An empty test selection is not a passed scientific suite; absent testthat cannot be converted to skipped-as-PASS.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V009"></a>
 
 ### V009: Baseline preservation registry
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** all recovered pipeline/legacy/audit hashes match and tests fail on a deliberate scratch-copy mutation.
+**Fixture:** Fresh baseline files plus a scratch-only copy with one byte changed under each protected tree.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** SHA-256 of actual bytes compared with source_provenance and an independently captured protected-tree inventory.
+
+**Exact assertion:** Verify all pipeline/legacy/audit bytes against baseline; mutation of any protected file is detected without changing the original registry.
+
+**Negative case:** A copied registry regenerated from the mutated tree is rejected as an untrusted baseline replacement.
+
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V010"></a>
 
 ### V010: One-command developer bootstrap
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** fresh documented setup provisions only project-local environments, records solved versions and runs baseline plus foundation gates.
+**Fixture:** Clean project-local environment with an available documented R binary and network-enabled installation explicitly requested by the developer.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Actual installation commands, solved-version inventory and foundation/baseline tests.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Bootstrap only project-local dependencies, record solved versions and invoke the real baseline/foundation gates; analysis commands never bootstrap automatically.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** Missing R/permission/license-required metadata exits nonzero with unresolved/NOT_RUN and leaves global configuration unchanged.
 
-## Assumptions and Scope Boundary
+**Contract:** SM25; **owner:** R01; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.
+
+The first real files and commands are fixed in [IMPLEMENTATION_BRIEF_R01.md](../001-downstream-proteomics/IMPLEMENTATION_BRIEF_R01.md). Do not begin a later packet to make R01 look complete.

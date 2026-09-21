@@ -1,66 +1,66 @@
-# Canonical data model v1.0.0
+# Canonical data model v1.2.0
 
-This is the normative logical model. JSON schemas and TSV field contracts implement it; R internal fit structures are not the public API. Strings are UTF-8, missing TSV values use `NA`, and actual empty annotations remain distinguishable from missing numeric measurements. Do not coerce identifiers to floating point. Store file paths relative to the configuration/run root when possible; hashes identify content.
+Status: frozen preimplementation contract; all maintained artifacts below are future outputs. [Scientific meaning](contracts/scientific-methods.md), [configuration](contracts/analysis.schema.json) and [CLI/state protocol](contracts/cli-and-artifacts.md) are authoritative in their respective domains.
 
-## Identity and lineage
+## Identity and serialization
 
-| Entity | Key | Required meaning / relationships |
+UTF-8 text; TSV delimiter is TAB and newline LF. Numeric missing values serialize as NA; JSON uses null, never NaN/Infinity. Identifiers remain strings. JSON arrays embedded in TSV encode accessions and membership without splitting ambiguous delimiters. Annotation missingness is separate from numeric missingness. Numeric tables retain full double precision (17 significant digits); formatting belongs to a report copy. Stable sort keys and column order are part of each artifact schema. Unknown flags use unknown, not false.
+
+| Entity | Key | Fields and meaning |
 |---|---|---|
-| Study | study_id | Assay, taxonomy_id, experimental unit, stated design/provenance, optional tissue and treatment details; absent knowledge is null/unknown |
-| Observation | observation_id | One quantified measurement column; references biological_unit_id; optional subject_id, technical_replicate_id, multiplex/channel/batch/acquisition fields |
-| BiologicalUnit | biological_unit_id | Independent unit for sampling/replication; may have multiple technical observations and may belong to a repeated-measures subject |
-| Feature | feature_id | Unique measured protein/group row; accession list, protein-group ambiguity, source flags and annotations; gene_symbol is never the primary key |
-| MatrixArtifact | artifact_id | Numeric feature×observation matrix plus ordered IDs, scale, origin hash, missing mask, prior-imputation mask/state and preprocessing lineage |
-| AnalysisPlan | plan_hash | Canonicalized validated config, inclusion/exclusion policies, design matrices, model/contrast definitions, hypothesis families, resources and code/environment identity |
-| Design | design_id | Ordered observations, encoded coefficient names, finite evaluated design, term map, rank, block mode and covariate preprocessing |
-| Model | model_id | Design ID, engine/version, primary/sensitivity status, coverage policy, fit settings and supported hypothesis |
-| Contrast | contrast_id | Named coefficient-weight vector, estimand text, direction, biological groups/covariates involved and role; never inferred from D1/T1 prefix |
-| FitArtifact | fit_id | RDS reference, model/design/plan IDs, featurewise n/df/estimability, covariance/uncertainty sufficient for downstream eligible tests |
-| HypothesisFamily | family_id | Prespecified endpoint/model/contrast/universe membership, adjustment method, planned/eligible/finite counts and completeness |
-| DifferentialResult | model_id+contrast_id+feature_id+hypothesis_id | Effect, SE/CI/df/statistic, P/q, eligibility reason, counts, primary/sensitivity role and family identity |
-| ResourceSnapshot | resource_id+version+sha256 | Source/database/release/species/schema/terms, retrieval and mapping evidence; immutable local contents |
-| GeneMapping | mapping_id+feature_id+gene_id | Source and target IDs/species, evidence, ambiguity, label-independent representative status and reason |
-| GeneSetResult | model_id+contrast_id+set_id+endpoint+method | Null type, eligible universe, set overlaps, native statistic/P/q, centrally adjusted q/family and diagnostics |
-| ResponseSummary | axis_id+feature_id+model_id | d/t/r with intervals/covariance, RI eligibility, descriptive category, optional valid equivalence/conjunction evidence |
-| IndependentScore | score_id+training_hash | Fixed features/weights/transforms, training biological units/subjects or verifiable disjointness evidence, missing-feature rule and validation eligibility |
-| Run | run_id | Frozen plan, execution directory, stage DAG, state, environment, resource checksums, start/end times and overall limitations |
-| StageResult | run_id+stage_id | Inputs, outputs, status/reason, warning/error evidence, code/package hashes, RNG and duration/exit |
-| ValidationEvidence | acceptance_id+commit | Test/command, independent expected result, fixture hash, actual result, runtime/package versions, reviewer and PASS/FAIL/NOT_RUN |
+| Study | study.id | Explicit assay, organism taxonomy, experimental-unit/provenance statement, optional tissue. |
+| Observation | observation_id | biological_unit_id, subject_id (nullable), technical_replicate_id (nullable), group and declared covariates; assay-specific plex/channel/reference fields when needed. |
+| Feature | feature_id | Stable protein/group ID, constituent accessions, gene IDs/symbols, ambiguity and tri-state source flags. Gene symbol is not a row key. |
+| MatrixArtifact | artifact_id | Ordered feature/observation IDs, matrix path/hash, scale state, numeric-availability mask, original-observed mask or unavailability reason, prior-imputed mask/state and transform lineage. |
+| AnalysisPlan | plan_hash | Resolved config, retained IDs/masks, evaluated designs/contrasts, requested capabilities with explicit required/optional intent and separately inspected availability, model/hypothesis/family definitions, input/code/environment/resource hashes and runtime seeds. |
+| Design | design_id | Observation order, reversible coefficient map, design/contrast matrices, rank/alias/estimability records, blocking mode and fixed centering values. |
+| ModelFit | model_id + plan_hash | Engine/version, design, fitting universe, weights/block correlation, exactness path, featurewise n/df and native fit artifact. |
+| HypothesisFamily | family_id + plan_hash | Prespecified endpoint membership, adjustment, universe hash, planned/eligible/finite/failure counts, completeness and rejection count. |
+| DifferentialResult | model_id + contrast_id + feature_id + hypothesis_type | Typed endpoint, full-precision estimate/uncertainty, family and estimability. See fields below. |
+| ResourceSnapshot | resource_id + version + sha256 | Local source bytes, source/target taxonomy, ID type, source/release/build/terms and orthology evidence. |
+| GeneMapping / GeneMatrix | feature_id + gene_id + mapping_hash | Candidate/representative/excluded state, deterministic tie keys, memberships, finite-matrix universe and model lineage. |
+| GeneSetResult | model_id + contrast_id + set_id + hypothesis_type + engine | Actual null/statistic, mapped/eligible set membership, universe, native and central adjusted values and diagnostics. |
+| DescriptiveResponse | axis_id + model_id + feature_id | d/t/r with covariance reference, RI/class/flags and interval availability; no inferential P/q fields. |
+| IndependentScore | score_id + resource_hash | Frozen feature weights/signs, training centers/scales, missing-feature policy, selection/training participant provenance and independent-validation eligibility. |
+| StageResult / RunStatus | run_id + stage_id / run_id | Executed state and typed reason, command/exit/timestamps, requested phase/capabilities, inputs/outputs and warnings. |
+| ValidationEvidence | acceptance_id + reviewed_tree | Expected fixture/oracle, command/versions, actual observations, artifacts/hashes and review conclusion. Missing artifacts remain an empty array. |
 
-## Matrix and metadata contracts
+## Canonical tables and masks
 
-Canonical abundance TSV: first column `feature_id`, then exact observation IDs. No duplicate columns or repeated feature IDs. Numeric cells are finite or NA. The feature and observation dimensions are aligned by ID, not incidental row order. Canonical long input contains feature_id, observation_id, abundance and can be losslessly pivoted only when each pair is unique.
+Wide matrix: feature_id followed by observation IDs. Long matrix: feature_id, observation_id, abundance; pairs are unique. Feature and observation metadata must align by key, not row order. Minimum observation columns are observation_id, biological_unit_id, subject_id, technical_replicate_id, group, plus every configured covariate. Technical IDs may be missing only when no technical replicate exists. Additional columns are retained as annotations but not silently promoted to covariates. Paired visits are distinct biological specimens but share subject_id; technical injections of a specimen share biological_unit_id and condition.
 
-Observation metadata TSV fields: observation_id, biological_unit_id, subject_id (nullable), technical_replicate_id (nullable), group (nullable for continuous-only designs), batch (nullable), assay_batch, acquisition_run, multiplex_id, channel, is_reference_channel and arbitrary declared covariate columns. Semantic validation checks each design's required fields and does not require irrelevant TMT fields for LFQ. Biological-unit/subject role is explicitly declared rather than inferred from string prefixes. Technical duplicates require the configured aggregation rule before inferential count calculation.
+Minimum feature columns are feature_id, accessions, gene_ids, gene_symbols, is_decoy, is_contaminant, protein_group_ambiguous. Unknown accessions/genes are empty JSON arrays, not invented annotations. Counts are a separate evidence table with feature_id, optional observation_id/plex_id, count_type (peptide or psm), count_value, count_source, count_aggregation and pseudocount_policy. Configured model count aggregation/zero policy must agree with these recorded provenance fields. The table never treats missing count as zero.
 
-Feature metadata TSV: feature_id, accessions (JSON array or escaped delimiter with schema), gene_ids, gene_symbols, description, is_decoy, is_contaminant, protein_group_ambiguous, source_database and annotation_version. Flags allow true/false/unknown. Count evidence is separate: feature_id, optional observation_id/plex_id, count_type, count_value, count_source, count_aggregation and pseudocount_policy. Missing counts are not zero.
+All masks have identical matrix keys/order. A genuine original mask is derived only for documented nonimputed input or supplied/validated otherwise. Aggregation retains the source-to-specimen map and coverage rule. Every transform has source_artifact_id, output_artifact_id, input_scale, output_scale, parameters, source/output hashes and changed-mask diagnostics.
 
-Masks have identical shape/ordered IDs to the matrix. `observed_mask` records genuinely observed measurements if known; `input_numeric_available_mask` records finite input cells; `imputed_mask` records declared replacements. If original observation information is unavailable for imputed data, observed_mask is unavailable, never all true by assumption. Every transform emits new artifact IDs and a transform record with input scale/output scale/parameters/factors/mask changes.
+## Shared scientific result-row envelope
 
-## Differential export fields
+Every scientific endpoint row (differential, detection, pathway, response, score) includes:
 
-Required identifiers: run_id, plan_hash, model_id, design_id, contrast_id, feature_id, hypothesis_id, engine, engine_version, role, family_id. Required states: eligibility (`tested`, `excluded`, `nonestimable`, `numerical_failure`), reason_code, input_scale, effect_scale and n_biological/observed counts per relevant group (structured companion table allowed).
+`schema_version`, `run_id`, `plan_hash`, `result_type`, `hypothesis_type`, `family_id`, `engine`, `engine_version`, `model_id`, `contrast_id` (nullable for an axis), `estimable`, `n_obs_by_required_group`, `eligibility`, `reason_code`.
 
-Numeric fields: effect, effect_se, ci_lower, ci_upper, ci_level, ci_method, statistic, statistic_type, df_residual, df_inference, p_value, q_value, native_q_value, effect_threshold (nullable), null_value/null_region and mean_abundance. Backend-unavailable quantities are NA with field-level reason; unsupported hypotheses fail eligibility. proDA uncertainty may have distinct variance/df meaning and must not be mislabeled limma. TREAT's threshold P is distinct from the zero-null moderated P. Preserve any native engine fields in a namespaced sidecar to avoid losing provenance.
+`n_obs_by_required_group` is a JSON object embedded in TSV; counts refer to genuine observed biological units. Unknown counts are null plus a reason, never numeric availability mislabeled observed. `family_id=null` for descriptive results, which cannot carry p_value/q_value/native_q_value. Input/QC/mapping diagnostics are not inferential result rows and have their own keys; they do not acquire a fake family or hypothesis.
 
-Family summary: family_id, definition_hash, adjustment, dependence_assumption, n_planned, n_eligible, n_finite, n_numerical_failure, completeness, q_cutoff and rejection_count. Numeric failures in eligible planned tests make completeness false and constrain claims. A missing test is never silently removed from the scientific report.
+`eligibility` is tested, excluded, nonestimable, inapplicable, not_run or numerical_failure. `estimable` states whether the declared endpoint is mathematically identifiable, not whether it was run. Nonexecuted mathematical eligibility not evaluated is null with a reason; tested results have true; rank/coverage failures have false. JSON boolean/null is rendered true/false/NA in TSV.
 
-## Pathway exports
+## Differential outputs
 
-Fields: run/plan/model/contrast IDs, method, null_type, endpoint (`competitive_directional`, `rotation_directional`, `rotation_mixed`, `preranked`, `ora_up`, `ora_down`), resource_snapshot/hash, source/target_taxonomy, mapping_hash, universe_hash/universe_size, set_id/name, original_size, mapped_size, eligible_overlap_size, statistic/statistic_type, direction, p_value, native_q_value, q_value, family_id, status/reason, and diagnostic sidecar.
+Identifiers additionally include design_id and feature_id. Required numeric/semantic fields: effect, effect_scale, effect_se, ci_lower, ci_upper, ci_level, ci_method, statistic, statistic_type, df_residual, df_inference, p_value, q_value, native_q_value, effect_threshold, null_region, mean_abundance, role. Unavailable numeric values are NA with field-reason entries in the diagnostics sidecar. A zero-null row uses result_type=ProteinZeroNullResult and hypothesis_type=protein_zero_null; TREAT uses ProteinTreatResult/protein_treat; omnibus uses ProteinOmnibusResult/protein_omnibus. Model-native fields are preserved in a namespaced sidecar. An ordinary 95% effect interval does not become a TREAT significance interval.
 
-fgsea diagnostics include ES, NES, log2err, leading-edge membership, finite rank/tie counts and seed. CAMERA includes estimated/fixed inter-gene correlation and gene-model details. mroast preserves NGenes, PropDown/PropUp, Direction, directional P and mixed P in unambiguous fields; raw endpoints are adjusted under declared families rather than confusing native FDR with central q. ORA retains N/K/n/k and foreground/background/overlap gene IDs. Every set result links to membership lists used, not only a label.
+Every planned feature/contrast endpoint remains in the table, including excluded/nonestimable rows with reasons. A model failure writes a stage failure, not fabricated “tested” rows. Family summaries include family_id, definition_hash, adjustment, dependence_assumption, n_planned, n_eligible, n_finite, n_numerical_failure, completeness, q_cutoff, rejection_count and universe_hash. Do not pool sensitivity/primary or different nulls.
 
-## Response and score exports
+## Pathway outputs
 
-Response includes axis definition, disease/treatment/residual contrast IDs, their effect vectors and covariance hash, d/t/r intervals, denominator minimum, epsilon, RI/RI_method/RI_status/interval status, descriptive_class and overshoot flags. Inference fields identify hypothesis/independent_direction_source/equivalence_margin, both one-sided P values, max-P, interval level, family/q and applicability reason. Do not represent `not tested`, `not significant`, and `equivalent` with the same boolean.
+Add set_id, set_name, resource_id/hash, source_taxonomy_id, target_taxonomy_id, mapping_hash, universe_hash/size, original_size, mapped_size, eligible_overlap_size, direction, statistic/statistic_type, p_value, native_q_value, q_value and diagnostic reference. CAMERA uses competitive_enrichment; ROAST separate self_contained_directional and self_contained_mixed rows; fgsea preranked_gene_set; ORA ora_up/ora_down. Preserve ES/NES/log2err/leading-edge for fgsea, correlation for CAMERA, native directional/mixed fields for ROAST, and N/K/n/k plus actual gene IDs for ORA.
 
-A fixed score lists each feature_id, weight, training_center, training_scale, training_missing_rule and training source identifier/hash. Metadata states biological-unit/subject independence evidence. Score output includes validation-unit IDs, missing-feature fraction, applied fixed transforms, score and eligibility. The test artifact records null/randomization unit/block scheme, all versus sampled allocations, tail definition, tie tolerance, k, N/B, seed, P and Monte Carlo uncertainty. No inferential score artifact is emitted for current-data-selected weights unless a separate approved inference contract exists.
+## Response, equivalence and score outputs
 
-## Versioning and serialization
+`DescriptiveResponse`/`descriptive_reversal` stores axis_id, disease/treatment/residual contrast IDs, d/t/r, covariance artifact/hash, dmin, RI, descriptive_class, crossed_control, residual_exceeds_disease and ratio interval kind. It has no P/q fields. A requested `RatioInterval` may be bounded, unbounded, disjoint or unavailable; disjoint limits serialize as an array of intervals, not a misleading single finite CI.
 
-Schemas reject unknown top-level scientific fields to catch typos. Metadata covariate maps are explicitly extensible with declared types; this does not authorize unknown model methods. Additive fields require schema/minor-version handling; changed meaning requires major version and migration tests. Use deterministic column order and stable sorting for semantic comparison, with proper CSV/TSV escaping and roundtrip tests for Unicode, commas, semicolons and NA strings in annotations. Float serialization preserves meaningful precision; reports format copies, never round underlying tables before inference.
+`EquivalenceResult`/`equivalence` is a separate table with margin, alpha, residual estimate/SE/df, p_lower, p_upper, p_value=max(one-sided P), q_value and equivalence CI/level. `FormalRescueResult`/`formal_rescue` is another table with independent-direction resource/hash, named component P values and their maximum, family and eligibility. Neither is a boolean pasted onto a descriptive class.
 
-## Artifact state and trust
+`DescriptiveScore`/`descriptive_score` has validation-unit ID, value, observed-feature fraction, transform/selection hashes and score_eligibility_reason, but physically no inferential P/q/statistic columns. `IndependentScoreTest`/`independent_score_test` is separate: score_id, admissible scheme/unit/block, exact N or Monte Carlo B, extreme count k, observed/forced allocation count, tie rule, RNG, p_value/q_value and Monte Carlo interval. Selection/train/test overlap or unknown provenance prohibits that inferential object.
 
-Only a completed stage with validated output schema/hash can feed downstream analysis. A directory existing or a CSV having rows does not prove completion. Statistics do not read their terminal validation ledger to select a successful result; validation observes computation and may block release, not alter the method to make a gate green. Private source locations are resolved at runtime and omitted/redacted from public release metadata while their content hashes and abstract provenance remain available.
+## Pending evidence
+
+`traceability.json` separates implementation_targets and proposed_test_target from actual evidence. Prior to execution: status=pending-after-freeze, evidence=[], verified_commit=null. Expected file names in a packet are creation targets, not proof that the maintained software or results exist. State transitions and artifact promotion are defined only in [cli-and-artifacts.md](contracts/cli-and-artifacts.md).

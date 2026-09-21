@@ -1,102 +1,166 @@
 # Feature Specification: Versioned annotation, protein groups and gene sets
 
-**Feature Branch:** `spec/008-resources-mapping` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R07**. Deliver versioned annotation, protein groups and gene sets for user journey US3.
+**Phase:** 2. **Packet:** R07. **Status:** 1.2.0-frozen; implementation pending Phase 1 acceptance and separate authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US3 — Versioned annotation, protein groups and gene sets (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R05 (`specs/006-limma-inference/`).
+Deliver only FR-061–FR-070 for US3. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-061**: The system MUST provide local resource snapshot registry. Snapshots identify source/release/species/terms/hash; changed content or missing required files fails before production analysis.
-- **FR-062**: The system MUST provide explicit resource preparation command. Fetch/build occurs only in a separate explicit preparation action, records exact versions and never auto-fetches during a frozen run.
-- **FR-063**: The system MUST provide species-aware identifier mapping. Stable IDs/species keys align; symbol collisions, retired IDs and missing mappings have explicit records.
-- **FR-064**: The system MUST provide orthology evidence preservation. Source/target species and mapping evidence/version are retained; projected sets are labeled projected and ambiguous mappings are reported.
-- **FR-065**: The system MUST provide label-independent gene representatives. Coverage/median/ID representative choice is invariant to sample-label permutation and never chooses minimum P or maximum statistic.
-- **FR-066**: The system MUST provide ambiguous protein-group policy. Multi-gene groups are excluded from default mapping with reasons; declared aggregation sensitivity retains its own universe and estimand.
-- **FR-067**: The system MUST provide finite pathway matrix and model. Gene matrix is finite for required design, models are refit consistently and missing-value loss is quantified rather than silently imputed.
-- **FR-068**: The system MUST provide gene-set overlap eligibility. Declared overlap-size filters are applied before tests, full/eligible/mapped membership counts are retained and tiny universe is explicit.
-- **FR-069**: The system MUST provide measured gene background for ora. Universe equals eligible tested mapped genes and changes predictably under filtering; whole-genome background is never default.
-- **FR-070**: The system MUST provide resource/mapping regression fixtures. Tests cover one-to-many mapping, duplicated symbols, zero overlap, ortholog projection, offline checksum errors and stable representative selection.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-061 — Local resource snapshot registry:** The system MUST verify every required snapshot before analysis; preserve terms and original source/target organism identity.
+- **FR-062 — Explicit resource preparation command:** The system MUST acquire/build only during the requested preparation action; record source version/hash/terms, then consume a local verified snapshot offline.
+- **FR-063 — Species-aware identifier mapping:** The system MUST map only the declared taxonomy/ID namespace and retain retired/unmapped records with reasons.
+- **FR-064 — Orthology evidence preservation:** The system MUST retain projection evidence/version and label the collection ortholog-projected, not rat-native.
+- **FR-065 — Label-independent gene representatives:** The system MUST select the exact winner at each tie stage and keep the winner unchanged under every group-label permutation.
+- **FR-066 — Ambiguous protein-group policy:** The system MUST exclude the multi-gene group from the default gene matrix with a reason; retain an unambiguous same-gene group and separate any median-aggregation sensitivity universe.
+- **FR-067 — Finite pathway matrix and model:** The system MUST use the finite measured subset without imputation, quantify lost genes/set coverage and fit the corresponding gene model consistently.
+- **FR-068 — Gene-set overlap eligibility:** The system MUST retain full/mapped/eligible membership counts and select only the size-3 set before testing; test-only bounds remain labeled.
+- **FR-069 — Measured gene background for ORA:** The system MUST use those six genes as ORA universe and document predictable universe changes under declared filtering.
+- **FR-070 — Resource/mapping regression fixtures:** The system MUST reproduce mapping/representative/universe identities offline, retaining each loss and corrupted-resource failure.
 
 ## Acceptance Scenarios
 
+<a id="V061"></a>
+
 ### V061: Local resource snapshot registry
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** snapshots identify source/release/species/terms/hash; changed content or missing required files fails before production analysis.
+**Fixture:** A tiny local mapping/gene-set snapshot with actual SHA-256, release/taxonomy/source/terms metadata.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent hash of actual local bytes and explicit manifest fields.
+
+**Exact assertion:** Verify every required snapshot before analysis; preserve terms and original source/target organism identity.
+
+**Negative case:** One-byte mutation or missing file fails E_RESOURCE_HASH/E_RESOURCE_MISSING; an all-zero placeholder digest cannot pass.
+
+**Contract:** SM14; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V062"></a>
 
 ### V062: Explicit resource preparation command
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** fetch/build occurs only in a separate explicit preparation action, records exact versions and never auto-fetches during a frozen run.
+**Fixture:** Small permissibly redistributable source and an explicit prepare invocation, followed by a network-disabled production run.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Preparation manifest and observable absence of analysis-time network calls.
+
+**Exact assertion:** Acquire/build only during the requested preparation action; record source version/hash/terms, then consume a local verified snapshot offline.
+
+**Negative case:** Running analysis with no cached snapshot fails rather than invoking msigdbr or downloading latest content.
+
+**Contract:** SM14; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V063"></a>
 
 ### V063: Species-aware identifier mapping
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** stable IDs/species keys align; symbol collisions, retired IDs and missing mappings have explicit records.
+**Fixture:** Identical gene symbols in two taxonomy namespaces, one retired ID and one unmapped feature.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Hand-authored species-keyed mapping relations.
+
+**Exact assertion:** Map only the declared taxonomy/ID namespace and retain retired/unmapped records with reasons.
+
+**Negative case:** A cross-species symbol-only join fails E_RESOURCE_TAXONOMY instead of merging unrelated genes.
+
+**Contract:** SM15; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V064"></a>
 
 ### V064: Orthology evidence preservation
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** source/target species and mapping evidence/version are retained; projected sets are labeled projected and ambiguous mappings are reported.
+**Fixture:** Tiny human→rat projection with one ambiguous ortholog and one unambiguous counterpart.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit source/target IDs and evidence from the fixture manifest.
+
+**Exact assertion:** Retain projection evidence/version and label the collection ortholog-projected, not rat-native.
+
+**Negative case:** Missing source taxonomy or an unsupported rat-native label fails provenance/report validation.
+
+**Contract:** SM14; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V065"></a>
 
 ### V065: Label-independent gene representatives
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** coverage/median/ID representative choice is invariant to sample-label permutation and never chooses minimum P or maximum statistic.
+**Fixture:** Three proteins per one gene: differing coverage; then equal coverage/differing median; then both tied/differing stable IDs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Lexicographic key (descending overall coverage, descending overall median, ascending feature_id), calculated without labels.
+
+**Exact assertion:** Select the exact winner at each tie stage and keep the winner unchanged under every group-label permutation.
+
+**Negative case:** A max-abs(t), minimum-P or disease-group-specific coverage winner fails even if it yields more significant pathways.
+
+**Contract:** SM15; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V066"></a>
 
 ### V066: Ambiguous protein-group policy
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** multi-gene groups are excluded from default mapping with reasons; declared aggregation sensitivity retains its own universe and estimand.
+**Fixture:** One unique single-gene feature, one multi-accession same-gene group and one group mapping to two genes.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Complete mapping cardinality and explicitly declared aggregation sensitivity.
+
+**Exact assertion:** Exclude the multi-gene group from the default gene matrix with a reason; retain an unambiguous same-gene group and separate any median-aggregation sensitivity universe.
+
+**Negative case:** Duplicating a multi-gene protein into both genes in the default matrix fails.
+
+**Contract:** SM15; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V067"></a>
 
 ### V067: Finite pathway matrix and model
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** gene matrix is finite for required design, models are refit consistently and missing-value loss is quantified rather than silently imputed.
+**Fixture:** Gene matrix with one required-observation NA and a distinct complete-case subset.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Exact complete-row mask and a direct refit on that same finite gene matrix.
+
+**Exact assertion:** Use the finite measured subset without imputation, quantify lost genes/set coverage and fit the corresponding gene model consistently.
+
+**Negative case:** Using maximum protein ranks from discarded representatives or a silently imputed CAMERA/ROAST matrix fails.
+
+**Contract:** SM15; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V068"></a>
 
 ### V068: Gene-set overlap eligibility
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** declared overlap-size filters are applied before tests, full/eligible/mapped membership counts are retained and tiny universe is explicit.
+**Fixture:** A 12-gene universe and sets with intersections of sizes 0,1,3 and 6, using declared test bounds 2–5.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Hand intersections of each set with the eligible universe.
+
+**Exact assertion:** Retain full/mapped/eligible membership counts and select only the size-3 set before testing; test-only bounds remain labeled.
+
+**Negative case:** Selecting eligible sets after inspecting their foreground hits or P values fails.
+
+**Contract:** SM16; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V069"></a>
 
 ### V069: Measured gene background for ORA
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** universe equals eligible tested mapped genes and changes predictably under filtering; whole-genome background is never default.
+**Fixture:** Eight measured mapped genes, of which six pass model eligibility, and two unmeasured genes in a resource.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Exact set of six eligible measured mapped IDs.
+
+**Exact assertion:** Use those six genes as ORA universe and document predictable universe changes under declared filtering.
+
+**Negative case:** Adding the resource genome or unmeasured genes to increase apparent enrichment fails.
+
+**Contract:** SM17; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V070"></a>
 
 ### V070: Resource/mapping regression fixtures
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** tests cover one-to-many mapping, duplicated symbols, zero overlap, ortholog projection, offline checksum errors and stable representative selection.
+**Fixture:** One-to-many, duplicate-symbol, projected and zero-overlap cases plus an intentionally corrupted local snapshot.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Hand mappings, overlap counts and direct SHA-256.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Reproduce mapping/representative/universe identities offline, retaining each loss and corrupted-resource failure.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** Reordering labels or repeated execution cannot alter representative membership; a corrupt snapshot cannot be silently refreshed.
 
-## Assumptions and Scope Boundary
+**Contract:** SM14; **owner:** R07; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

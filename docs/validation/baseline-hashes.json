@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "protected_roots": [
+    "pipeline",
+    "legacy",
+    "docs/audit"
+  ],
+  "files": [
+    {
+      "path": "pipeline/01_qc_dea.R",
+      "sha256": "26d986950e30494e8d82c6512508d73756ecd37683295f720d05e90e72f231a4"
+    },
+    {
+      "path": "docs/audit/TECHNICAL_AUDIT.md",
+      "sha256": "bc9cf5448011beaba9396a68e01faad082df3cdf33faeb3a759471b2af077aa1"
+    },
+    {
+      "path": "docs/audit/table_inventory.json",
+      "sha256": "f74be2361135a6873740cba8c5856c7e800aaeddcaafa38caebbccd29b77e6a7"
+    },
+    {
+      "path": "docs/audit/source_provenance.json",
+      "sha256": "71c7a740235298ab1129e5b69b2020f256ae981418b6df94202b371323c1e68a"
+    },
+    {
+      "path": "docs/audit/SCIENTIFIC_AUDIT.md",
+      "sha256": "962bbcccfaa6ac3057c7c3af7e0499f363fd2f49ce10b28c44bbc4d31b3f1289"
+    },
+    {
+      "path": "docs/audit/data_checks.json",
+      "sha256": "5b9360489efccd5527550e217afac0e38e55261539b5d439dd14729f77663b88"
+    },
+    {
+      "path": "docs/audit/archive_inventory.json",
+      "sha256": "ca20f6933272dbf12342f1d224ce0316591d67f1ce82900967e607309b546f8c"
+    },
+    {
+      "path": "docs/audit/APPRAISAL.md",
+      "sha256": "d8f915b64b239a0938c6eb2a02c1b1de51e4ef732ae5defafcc56853c63a61d8"
+    },
+    {
+      "path": "legacy/08_build_csv_export.py",
+      "sha256": "211d8959951c3c0b9d7e72db8b843f9e0a394c3b47b9633451510e23b3cc144e"
+    },
+    {
+      "path": "legacy/04_finalize.py",
+      "sha256": "a3ef261e233e8d1f792d64635098812e693ef690ec6e1506bfa2712fe630ca67"
+    },
+    {
+      "path": "pipeline/20_external_limma_intake.py",
+      "sha256": "dc7f34eb5ece3180d401d7ab243395267923377c233fdfe346678eb0e4ac6fd2"
+    },
+    {
+      "path": "pipeline/07_reference_reversal_figure.R",
+      "sha256": "020b67408bf95a1d931adc70e60ffd5377c43b6d34eafbc1ccb1b025dab54035"
+    },
+    {
+      "path": "pipeline/06_axis_specific_enrichment.R",
+      "sha256": "7809f19b48ce18512c1fa08c99681b7eccaecde3c2e2aeb6fe7eca816fc853a3"
+    },
+    {
+      "path": "pipeline/05_axis_specific_limma.R",
+      "sha256": "710a3259de19840e22df5301715ef16621e2a70192ddcf6a44085998b2894ff2"
+    },
+    {
+      "path": "pipeline/03_enrichment.R",
+      "sha256": "5f728785462e31eae082790772295de01712068f2d90b43c5092779ee6fc44e7"
+    },
+    {
+      "path": "pipeline/02_reversal.R",
+      "sha256": "e0bd6586f25233572e47a4d420902cda31b26800a587c305a247b0e3352432ca"
+    },
+    {
+      "path": "docs/audit/validation_record.json",
+      "sha256": "4d349c4b54aeef57b416bec8957463e4f38fc4eea10564cc2466e10d684d0e0a"
+    },
+    {
+      "path": "docs/audit/VALIDATION.md",
+      "sha256": "54534822595c808f7eebc2cce8ddc2c45e926e21be5099dfb19f6f2258d11904"
+    }
+  ]
+}

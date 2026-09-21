@@ -1,102 +1,168 @@
 # Feature Specification: Archived-study regression, documentation and versioned successor
 
-**Feature Branch:** `spec/013-release` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R12**. Deliver archived-study regression, documentation and versioned successor for user journey US6.
+**Phase:** 3. **Packet:** R12. **Status:** 1.2.0-frozen; implementation pending prerequisites and separate authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US6 — Archived-study regression, documentation and versioned successor (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R11 (`specs/012-validation/`).
+Deliver only FR-111–FR-120 for US6. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-111**: The system MUST provide private local legacy adapter regression. Maintainer locally reconstructs archive values/masks/meta and confirms original source hashes without exposing study data to Packet Implementer, Independent Reviewer or any documentation worker.
-- **FR-112**: The system MUST provide legacy core numerical comparison. Matched-universe legacy mode compares coefficients/BH/declared settings; missing historical environment is explicit NOT_REPRODUCED, not an invented success.
-- **FR-113**: The system MUST provide scientific-change reconciliation. Negr1 auxiliary result, exact permutation discrepancy, different filters/families/pathway nulls and corrected response labels are explained without hardcoding outputs.
-- **FR-114**: The system MUST provide full maintained study run. Qualified local study runs new pipeline, reports inherited unknown metadata and returns new independent artifacts without modifying originals.
-- **FR-115**: The system MUST provide comprehensive usage and methods docs. Supported assays/engines/designs/unsupported combinations and exact command examples reflect implemented behavior and actual validation.
-- **FR-116**: The system MUST provide spec-task-evidence reconciliation. Every requirement maps to a reviewed task/test/evidence/commit; unchecked or unverified work remains visible.
-- **FR-117**: The system MUST provide source release hygiene. Artifact whitelist excludes private data, credentials, environments and execution logs; ownership/license is not invented and resource terms are recorded.
-- **FR-118**: The system MUST provide versioned successor export. New releases/version folder receives verified source/spec/tests/docs/manifests; original archive package files and private archive hashes are unchanged.
-- **FR-119**: The system MUST provide final integrated acceptance run. All runnable core/golden/integration/scientific gates rerun on the final reviewed tree, clean setup is demonstrated and residual external limits are explicit.
-- **FR-120**: The system MUST provide review-and-handoff completion. Maintainer reviews final staged/unstaged/untracked diff, records verified commits and delivery paths; no unsupported completion claim or unauthorized release action occurs.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-111 — Private local legacy adapter regression:** The system MUST verify private reconstruction locally without exposing private inputs/logs to implementers/reviewers/docs workers and without modifying originals.
+- **FR-112 — Legacy core numerical comparison:** The system MUST compare declared coefficients/BH/settings, preserve differences and record NOT_RUN/NOT_REPRODUCED when historical runtime/resources are unavailable.
+- **FR-113 — Scientific-change reconciliation:** The system MUST explain the Negr1 auxiliary exception, 2/70 versus 3/71 and 6/70 versus 7/71 arithmetic, and intentional model/pathway/response differences without production constants.
+- **FR-114 — Full maintained study run:** The system MUST execute and verify the local study as new artifacts, retaining inherited unknown metadata and separation from the archived analysis.
+- **FR-115 — Comprehensive usage and methods docs:** The system MUST document supported assays/designs/engines, rejection messages and exact tested commands; separate phase milestones from completed v1.0.
+- **FR-116 — Spec-task-evidence reconciliation:** The system MUST retain exactly 120 unique requirement/task/acceptance identities, reviewed evidence or explicit unresolved status, and no silently retired ID.
+- **FR-117 — Source release hygiene:** The system MUST exclude private data, credentials, environments and private execution logs; retain only permitted resource content/terms and explicitly unresolved ownership/license.
+- **FR-118 — Versioned successor export:** The system MUST export only a new versioned successor directory after gates and permission; never overwrite the recovered archive package.
+- **FR-119 — Final integrated acceptance run:** The system MUST re-execute release gates on that exact tree, including R10a compatibility, and report external limits separately without calling missing core work complete.
+- **FR-120 — Review-and-handoff completion:** The system MUST close only verified requested scope, record real delivery paths and remaining blockers, and perform no unauthorized commit/push/license/private-data action.
 
 ## Acceptance Scenarios
 
+<a id="V111"></a>
+
 ### V111: Private local legacy adapter regression
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** Maintainer locally reconstructs archive values/masks/meta and confirms original source hashes without exposing study data to Packet Implementer, Independent Reviewer or any documentation worker.
+**Fixture:** Maintainer-only external original archive/manifest; absent from worker inputs and source checkout.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Maintainer local original ZIP/165-file hashes and actual recovered input values/masks/metadata.
+
+**Exact assertion:** Verify private reconstruction locally without exposing private inputs/logs to implementers/reviewers/docs workers and without modifying originals.
+
+**Negative case:** Missing archive or permission is NOT_RUN, not an invented reconstructed matrix or requested private-data upload.
+
+**Contract:** SM01; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V112"></a>
 
 ### V112: Legacy core numerical comparison
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** matched-universe legacy mode compares coefficients/BH/declared settings; missing historical environment is explicit NOT_REPRODUCED, not an invented success.
+**Fixture:** Maintainer-local matched-universe legacy settings and an actually provisioned compatible historical R/resource environment.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent historical table arithmetic and real reference fits when reproducible.
+
+**Exact assertion:** Compare declared coefficients/BH/settings, preserve differences and record NOT_RUN/NOT_REPRODUCED when historical runtime/resources are unavailable.
+
+**Negative case:** Old stored values are not evidence that R was rerun; copying them into a new result fails.
+
+**Contract:** SM12; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V113"></a>
 
 ### V113: Scientific-change reconciliation
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** negr1 auxiliary result, exact permutation discrepancy, different filters/families/pathway nulls and corrected response labels are explained without hardcoding outputs.
+**Fixture:** Public audit findings plus Maintainer-approved local comparison summaries, never raw private logs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit change ledger linking old versus corrected hypotheses, family/filter/mapping and response definitions.
+
+**Exact assertion:** Explain the Negr1 auxiliary exception, 2/70 versus 3/71 and 6/70 versus 7/71 arithmetic, and intentional model/pathway/response differences without production constants.
+
+**Negative case:** Calling the Negr1 treated-versus-control significance rescue, or principal null results positive discoveries, fails.
+
+**Contract:** SM19; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V114"></a>
 
 ### V114: Full maintained study run
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** qualified local study runs new pipeline, reports inherited unknown metadata and returns new independent artifacts without modifying originals.
+**Fixture:** Maintainer-only qualified local study inputs in a fresh output directory after all required engines are implemented.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Actual maintained run manifest, independent fit checks and unchanged original hashes.
+
+**Exact assertion:** Execute and verify the local study as new artifacts, retaining inherited unknown metadata and separation from the archived analysis.
+
+**Negative case:** Unavailable private study or R produces NOT_RUN; synthetic data cannot substitute for this acceptance record.
+
+**Contract:** SM25; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V115"></a>
 
 ### V115: Comprehensive usage and methods docs
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** supported assays/engines/designs/unsupported combinations and exact command examples reflect implemented behavior and actual validation.
+**Fixture:** Final implemented capability inventory and real examples/method reports.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Documentation claims compared with actual accepted handlers and tests.
+
+**Exact assertion:** Document supported assays/designs/engines, rejection messages and exact tested commands; separate phase milestones from completed v1.0.
+
+**Negative case:** Any unsupported method/backend or unselected license described as shipped/selected fails.
+
+**Contract:** SM25; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V116"></a>
 
 ### V116: Spec-task-evidence reconciliation
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** every requirement maps to a reviewed task/test/evidence/commit; unchecked or unverified work remains visible.
+**Fixture:** All FR-001–120/T001–120/V001–120 rows, including R10a/b ownership and unresolved evidence.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent set/cardinality/key checks against specs/tasks and reviewed evidence.
+
+**Exact assertion:** Retain exactly 120 unique requirement/task/acceptance identities, reviewed evidence or explicit unresolved status, and no silently retired ID.
+
+**Negative case:** A rename/merge/split without redirect and ADR, or a pending path represented as evidence, fails.
+
+**Contract:** SM25; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V117"></a>
 
 ### V117: Source release hygiene
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** artifact whitelist excludes private data, credentials, environments and execution logs; ownership/license is not invented and resource terms are recorded.
+**Fixture:** Source export whitelist plus deliberately seeded dummy secret/private-path files in a scratch test directory.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent file inventory and exact whitelist/protected-source comparison.
+
+**Exact assertion:** Exclude private data, credentials, environments and private execution logs; retain only permitted resource content/terms and explicitly unresolved ownership/license.
+
+**Negative case:** A fake open-source license, private workbook or unapproved artifact in the package blocks public release.
+
+**Contract:** SM14; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V118"></a>
 
 ### V118: Versioned successor export
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** new releases/version folder receives verified source/spec/tests/docs/manifests; original archive package files and private archive hashes are unchanged.
+**Fixture:** Verified source/spec/test/docs tree and an explicitly selected fresh release-root destination.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent full file manifest/checksums and unchanged historical/private original hashes.
+
+**Exact assertion:** Export only a new versioned successor directory after gates and permission; never overwrite the recovered archive package.
+
+**Negative case:** Existing destination collision, absent release authorization or unresolved required license/disclosure gate blocks public export/publication.
+
+**Contract:** SM25; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V119"></a>
 
 ### V119: Final integrated acceptance run
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** all runnable core/golden/integration/scientific gates rerun on the final reviewed tree, clean setup is demonstrated and residual external limits are explicit.
+**Fixture:** Final reviewed tree in a clean environment with all eligible real core/golden/integration/calibration gates.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent rerun of documented commands and final acceptance ledger.
+
+**Exact assertion:** Re-execute release gates on that exact tree, including R10a compatibility, and report external limits separately without calling missing core work complete.
+
+**Negative case:** A prior-commit green result or a Phase 1 suite alone cannot support v1.0 completion.
+
+**Contract:** SM25; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V120"></a>
 
 ### V120: Review-and-handoff completion
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** the maintainer reviews the final staged/unstaged/untracked diff, records verified commits and delivery paths; no unsupported completion claim or unauthorized release action occurs.
+**Fixture:** Actual final staged/unstaged/untracked diff, verified tree/commit identities and delivery manifest.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Maintainer review of all changes, evidence and authorization records.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Close only verified requested scope, record real delivery paths and remaining blockers, and perform no unauthorized commit/push/license/private-data action.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** A worker completion receipt or an uncreated delivery path cannot close the roadmap.
 
-## Assumptions and Scope Boundary
+**Contract:** SM25; **owner:** R12; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.
+
+**Private regression:** V111 and V114 are Maintainer-only. The original archive and private logs never enter a worker context. Any public summary requires explicit disclosure review; missing private access remains NOT_RUN.

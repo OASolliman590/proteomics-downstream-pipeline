@@ -1,102 +1,166 @@
 # Feature Specification: Preprocessing, missingness and quality control
 
-**Feature Branch:** `spec/004-preprocessing-qc` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R03**. Deliver preprocessing, missingness and quality control for user journey US1.
+**Phase:** 1. **Packet:** R03. **Status:** 1.2.0-frozen; implementation pending prerequisite acceptance and explicit authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US1 — Preprocessing, missingness and quality control (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R02 (`specs/003-intake/`).
+Deliver only FR-021–FR-030 for US1. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-021**: The system MUST provide preserve processed abundance by default. An already normalized log2 fixture remains unchanged; every optional transform has a new artifact and recorded policy.
-- **FR-022**: The system MUST provide lfq normalization policies. Median/reference normalization factors match analytic fixtures; quantile is explicit sensitivity; missing reference coverage is not silently ignored.
-- **FR-023**: The system MUST provide tmt plex and bridge policies. Two-plex synthetic bridges align loading offsets; missing bridge blocks bridge mode, while identifiable no-bridge plex-covariate inference is separately supported and confounding fails.
-- **FR-024**: The system MUST provide contrast-aware coverage masks. Original observed coverage is computed at biological-unit grain; ordinary available-case all-missing groups are nonestimable while eligible proDA follows native dropout rules with explicit uncertainty.
-- **FR-025**: The system MUST provide missingness mechanism diagnostics. Observation/group/abundance summaries distinguish observed versus previously imputed values and do not assert MCAR/MNAR from a threshold.
-- **FR-026**: The system MUST provide pca and correlation diagnostics. PCA-only fill is isolated; constant/empty/small matrices return valid diagnostic states; variance and feature/sample identities match direct calculations.
-- **FR-027**: The system MUST provide prespecified exclusions and watchlists. Outlier flags never auto-delete observations; a changed exclusion reason/policy creates a new plan and sensitivity lineage.
-- **FR-028**: The system MUST provide explicit imputation sensitivities. Deterministic minimum, stochastic Gaussian and KNN have correct names/seeds/masks, remain secondary and never alter the primary matrix.
-- **FR-029**: The system MUST provide detection-only exploratory endpoint. Independent two-group detection uses exact 2x2 counts and a separate BH family; paired/complex detection requests are marked unsupported.
-- **FR-030**: The system MUST provide qc source data and stage report. All plots have exact source tables; QC-only run completes without R modeling or any significant features.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-021 — Preserve processed abundance by default:** The system MUST leave the primary preserve input unchanged and issue a distinct output artifact for any requested transformation.
+- **FR-022 — LFQ normalization policies:** The system MUST match analytic median/reference factors, preserve NA, and keep quantile normalization explicitly sensitivity-only.
+- **FR-023 — TMT plex and bridge policies:** The system MUST recover the declared normalization/estimand in both qualified strategies, preserving reference-channel provenance.
+- **FR-024 — Contrast-aware coverage masks:** The system MUST with minimum two and fraction .5, mark 4/4 and 2/4 eligible, 1/4 ineligible and 0/4 nonestimable for ordinary available-case inference; retain all reasons.
+- **FR-025 — Missingness mechanism diagnostics:** The system MUST distinguish observed coverage, prior fill and numeric availability; show group/observation/abundance summaries without asserting MCAR/MAR/MNAR from a cutoff.
+- **FR-026 — PCA and correlation diagnostics:** The system MUST match eigenvalues/explained variance and aligned scores up to sign; retain pairwise n; constant/empty inputs yield explanatory QC states without fake variance.
+- **FR-027 — Prespecified exclusions and watchlists:** The system MUST flag the extreme sample without dropping it; honor only declared exclusions and change the plan hash when policy/reason changes.
+- **FR-028 — Explicit imputation sensitivities:** The system MUST use exact algorithm names and secondary models; deterministic replacement equals the observed feature minimum, seeded Gaussian repeats, and primary values/masks remain unchanged.
+- **FR-029 — Detection-only exploratory endpoint:** The system MUST match the exact detection P values and separate detection family; never substitute that endpoint for continuous abundance inference.
+- **FR-030 — QC source data and stage report:** The system MUST complete the declared QC-only scope without any model fit or discovery requirement; every displayed numerical QC value has an exact source table.
 
 ## Acceptance Scenarios
 
+<a id="V021"></a>
+
 ### V021: Preserve processed abundance by default
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** an already normalized log2 fixture remains unchanged; every optional transform has a new artifact and recorded policy.
+**Fixture:** The normalized log2 example with preserve/none and one separately requested median normalization.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Exact input array/mask equality, independently calculated transformation hash.
+
+**Exact assertion:** Leave the primary preserve input unchanged and issue a distinct output artifact for any requested transformation.
+
+**Negative case:** A second log or hidden normalization fails its guard; primary data never become the PCA display matrix.
+
+**Contract:** SM02; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V022"></a>
 
 ### V022: LFQ normalization policies
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** median/reference normalization factors match analytic fixtures; quantile is explicit sensitivity; missing reference coverage is not silently ignored.
+**Fixture:** Two columns offset by +2 log2 with complete references; then one column lacking required reference coverage.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Observed median subtraction relative to median of column medians; declared reference medians.
+
+**Exact assertion:** Match analytic median/reference factors, preserve NA, and keep quantile normalization explicitly sensitivity-only.
+
+**Negative case:** Missing required reference coverage raises E_REFERENCE_COVERAGE; do not silently use all proteins instead.
+
+**Contract:** SM04; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V023"></a>
 
 ### V023: TMT plex and bridge policies
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** two-plex synthetic bridges align loading offsets; missing bridge blocks bridge mode, while identifiable no-bridge plex-covariate inference is separately supported and confounding fails.
+**Fixture:** Two tiny plexes with known loading offsets and bridge labels; a separate balanced no-bridge design.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Hand-calculated within-plex offsets and full-rank within-plex effect design.
+
+**Exact assertion:** Recover the declared normalization/estimand in both qualified strategies, preserving reference-channel provenance.
+
+**Negative case:** Missing bridge in bridge mode fails E_TMT_BRIDGE_REQUIRED; plex=treatment confounding fails rather than being corrected away.
+
+**Contract:** SM04; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V024"></a>
 
 ### V024: Contrast-aware coverage masks
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** original observed coverage is computed at biological-unit grain; ordinary available-case all-missing groups are nonestimable while eligible proDA follows native dropout rules with explicit uncertainty.
+**Fixture:** Eight features with observed counts 4/4, 2/4, 1/4 and 0/4 in a required group, plus prior-imputed cells.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Count genuine observed biological units from the original mask, not numeric availability.
+
+**Exact assertion:** With minimum two and fraction .5, mark 4/4 and 2/4 eligible, 1/4 ineligible and 0/4 nonestimable for ordinary available-case inference; retain all reasons.
+
+**Negative case:** An all-missing target group is not filled for limma. A native-dropout request is deferred to the separately qualified R06 route, not prematurely credited in Phase 1.
+
+**Contract:** SM04; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V025"></a>
 
 ### V025: Missingness mechanism diagnostics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** observation/group/abundance summaries distinguish observed versus previously imputed values and do not assert MCAR/MNAR from a threshold.
+**Fixture:** Same numeric matrix with none_documented versus masked prior imputation, then unknown original mask.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit original-observed/imputed/numeric masks and missingness tallies.
+
+**Exact assertion:** Distinguish observed coverage, prior fill and numeric availability; show group/observation/abundance summaries without asserting MCAR/MAR/MNAR from a cutoff.
+
+**Negative case:** Unknown original mask blocks primary observed-coverage inference with E_ORIGINAL_MASK_REQUIRED; it cannot become all true.
+
+**Contract:** SM04; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V026"></a>
 
 ### V026: PCA and correlation diagnostics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** pCA-only fill is isolated; constant/empty/small matrices return valid diagnostic states; variance and feature/sample identities match direct calculations.
+**Fixture:** A nonconstant 4×4 matrix, its one-NA variant, an all-constant matrix and zero retained features.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent SVD after exactly declared display centering/fill; pairwise correlation on shared observed cells.
+
+**Exact assertion:** Match eigenvalues/explained variance and aligned scores up to sign; retain pairwise n; constant/empty inputs yield explanatory QC states without fake variance.
+
+**Negative case:** Hash primary input before/after PCA: unchanged; feeding display-fill artifact to the model is rejected.
+
+**Contract:** SM06; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V027"></a>
 
 ### V027: Prespecified exclusions and watchlists
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** outlier flags never auto-delete observations; a changed exclusion reason/policy creates a new plan and sensitivity lineage.
+**Fixture:** One isolated extreme sample plus a config with an explicit exclusion/reason and a changed-reason replan.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Retained observation IDs plus R01 `canonical_json_sha256` applied to two otherwise identical complete synthetic plan envelopes containing the R03-resolved exclusion fragment. R04/V039 later repeats the check on the actual AnalysisPlan before Phase 1 advancement.
+
+**Exact assertion:** Flag the extreme sample without dropping it; honor only declared exclusions. R03 emits a canonical resolved exclusion/watchlist fragment and proves with the R01 canonical hash utility that changing policy/reason changes a complete plan-envelope hash. R03 does not claim to create the actual AnalysisPlan; after R04, V027 is rerun with V039 and the real plan hash must change.
+
+**Negative case:** An exclusion without a nonblank reason fails E_EXCLUSION_REASON_REQUIRED; a post-fit exclusion cannot mutate the existing plan. Treating the R03 fragment hash as the final plan hash, or advancing Phase 1 without the R04/V039 integration rerun, fails.
+
+**Contract:** SM06; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V028"></a>
 
 ### V028: Explicit imputation sensitivities
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** deterministic minimum, stochastic Gaussian and KNN have correct names/seeds/masks, remain secondary and never alter the primary matrix.
+**Fixture:** Tiny matrix with internal NA, a known feature minimum and enough features for configured KNN; two identical seeded Gaussian runs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** SM05 algorithms; direct pinned impute::impute.knn invocation for the named KNN configuration.
+
+**Exact assertion:** Use exact algorithm names and secondary models; deterministic replacement equals the observed feature minimum, seeded Gaussian repeats, and primary values/masks remain unchanged.
+
+**Negative case:** Name MinDet with stochastic parameters is rejected; zero SD Gaussian fill fails E_IMPUTATION_DISTRIBUTION instead of arbitrary replacement.
+
+**Contract:** SM05; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V029"></a>
 
 ### V029: Detection-only exploratory endpoint
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** independent two-group detection uses exact 2x2 counts and a separate BH family; paired/complex detection requests are marked unsupported.
+**Fixture:** Independent binary counts 3 observed/1 missing versus 1 observed/3 missing; two features in a declared detection family.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Two-sided Fisher exact enumeration of fixed-margin 2×2 tables and independently authored BH. The production endpoint is the R03-owned detection-only Fisher/BH implementation in `detection.R`, not the later R05 general family-adjustment API.
+
+**Exact assertion:** Match the exact detection P values and detection-only BH values in a separate declared family; never substitute that endpoint for continuous abundance inference. R05 later reruns V029 as an integration regression and must not merge detection P values into a protein abundance family.
+
+**Negative case:** Paired or repeated-design detection request yields E_DETECTION_DESIGN_UNSUPPORTED with no detection P column. Calling a not-yet-existing R05 adjustment service, or merging detection and abundance P values during later integration, fails.
+
+**Contract:** SM04; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V030"></a>
 
 ### V030: QC source data and stage report
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** all plots have exact source tables; QC-only run completes without R modeling or any significant features.
+**Fixture:** QC-only config, zero retained variable features and a second ordinary eight-feature example.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Published QC dimensions/tables compared with the plotted input data.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Complete the declared QC-only scope without any model fit or discovery requirement; every displayed numerical QC value has an exact source table.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** An unavailable QC computation is a typed NOT_RUN/FAILED diagnostic, not a fabricated zero-valued PCA panel.
 
-## Assumptions and Scope Boundary
+**Contract:** SM06; **owner:** R03; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

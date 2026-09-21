@@ -1,102 +1,166 @@
 # Feature Specification: Unified offline report and streamlined workflow
 
-**Feature Branch:** `spec/011-reporting` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R10**. Deliver unified offline report and streamlined workflow for user journey US5.
+**Phase:** 1 (R10a: 091–094); 3 (R10b: 095–100). **Packet:** R10. **Status:** 1.2.0-frozen; implementation pending exact prerequisites and authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US5 — Unified offline report and streamlined workflow (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R03 (`specs/004-preprocessing-qc/`), R06 (`specs/007-assay-engines/`), R08 (`specs/009-enrichment/`) and R09 (`specs/010-treatment-response/`).
+Deliver only FR-091–FR-100 for US5. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-091**: The system MUST provide typed report data assembler. All sections derive from validated artifact statuses/counts and missing inputs never become healthy zero or PASS.
-- **FR-092**: The system MUST provide one-run command integration. Single run executes the valid DAG, stops failed required stages and assembles a useful partial report with failed stage evidence.
-- **FR-093**: The system MUST provide offline html report. Report opens without external assets/network, has clear navigation and accessible tables, and no paths expose private content in source release.
-- **FR-094**: The system MUST provide qc and inclusion/exclusion sections. Observation hierarchy, n, scale, missingness, normalization and exclusion rationale are visible with source-table links.
-- **FR-095**: The system MUST provide complete differential results views. All planned contrasts/hypotheses appear, including nonsignificant/auxiliary contrasts; estimates, CI, q family and estimability are clear.
-- **FR-096**: The system MUST provide pathway and response views. Null type, resource universe, leading edges, exploratory status, response caveats and unavailable inference remain explicit.
-- **FR-097**: The system MUST provide publication figure and source exports. Vector PDF/SVG and raster PNG as appropriate have exact plotted data, units/n/thresholds and readable labels without unexplained stars.
-- **FR-098**: The system MUST provide methods and limitations generation. Methods derive actual config/packages/hypotheses; unknown tissue/batch/provenance restricts language and no canned study claim appears.
-- **FR-099**: The system MUST provide null/empty/partial report robustness. No DEPs, no pathways, tiny cohorts, inapplicable methods, failed backend and interrupted stage yield valid honest reports.
-- **FR-100**: The system MUST provide quickstart and user workflow. A fresh user can validate, plan, run, inspect, verify and compare examples without manually invoking individual R scripts; commands are actually exercised.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-091 — Typed report data assembler:** The system MUST assemble only verified executed values; zero real discoveries remain zero, missing values remain unknown and failures remain failed; core methods/status summary derives actual metadata.
+- **FR-092 — One-run command integration:** The system MUST execute the valid Phase 1 DAG and R10a report from one command; stop required dependants on failure, retain a useful partial report and correct nonzero exit.
+- **FR-093 — Offline HTML report:** The system MUST render readable offline HTML with clear scope/status, navigation and accessible tables, and redact private absolute input paths in presentation.
+- **FR-094 — QC and inclusion/exclusion sections:** The system MUST show biological versus technical n, scale, missingness, normalization and exclusion rationale with exact source links; no sample silently disappears.
+- **FR-095 — Complete differential results views:** The system MUST display every planned contrast/hypothesis, effects/CI/q-family and estimability, including auxiliary comparisons without highlighting only significant subsets.
+- **FR-096 — Pathway and response views:** The system MUST show null types, mapped universe, leading edges, exploratory labels and response restrictions with no cross-null confirmation language.
+- **FR-097 — Publication figure and source exports:** The system MUST export requested PDF/SVG/PNG with readable units, independent n, thresholds and complete source data; no unexplained significance stars.
+- **FR-098 — Methods and limitations generation:** The system MUST generate methods naming actual inputs/scale/models/hypotheses/families/resources and uncertainty limits, keeping unknown provenance explicit.
+- **FR-099 — Null/empty/partial report robustness:** The system MUST render truthful full reports for all cases without upgrading partial/failed/cancelled analysis to COMPLETED; preserve valid zero-row tables where a stage actually completed.
+- **FR-100 — Quickstart and user workflow:** The system MUST exercise validate, plan, run, inspect/report, verify and compare without manual R stage orchestration and document only implemented capabilities.
 
 ## Acceptance Scenarios
 
+<a id="V091"></a>
+
 ### V091: Typed report data assembler
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** all sections derive from validated artifact statuses/counts and missing inputs never become healthy zero or PASS.
+**Fixture:** Real stage manifests for completed QC/DEA with zero rejections, a missing DEA stage and a failed required stage.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Manifest states, actual table row/count values and strict ReportData schema.
+
+**Exact assertion:** Assemble only verified executed values; zero real discoveries remain zero, missing values remain unknown and failures remain failed; core methods/status summary derives actual metadata.
+
+**Negative case:** Hardcoded PASS, absent DEA interpreted as healthy zero, or an unverified artifact included as completed fails.
+
+**Contract:** SM25; **owner:** R10a; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V092"></a>
 
 ### V092: One-run command integration
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** single run executes the valid DAG, stops failed required stages and assembles a useful partial report with failed stage evidence.
+**Fixture:** Phase 1 synthetic configuration through the actual Python→R stages, repeated with a genuine R failure.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Observed stage order, plan timestamp/hash before first fit, actual child exits and resulting manifest.
+
+**Exact assertion:** Execute the valid Phase 1 DAG and R10a report from one command; stop required dependants on failure, retain a useful partial report and correct nonzero exit.
+
+**Negative case:** A Phase 1 score request fails eligibility rather than running a hidden score backend or emitting score P values.
+
+**Contract:** SM25; **owner:** R10a; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V093"></a>
 
 ### V093: Offline HTML report
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** report opens without external assets/network, has clear navigation and accessible tables, and no paths expose private content in source release.
+**Fixture:** Thin R10a report with embedded CSS, plain tables, local source links and no JavaScript/network dependency.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Open with networking disabled and inspect DOM/resource references.
+
+**Exact assertion:** Render readable offline HTML with clear scope/status, navigation and accessible tables, and redact private absolute input paths in presentation.
+
+**Negative case:** Any external CSS/font/script request or a broken mandatory local table link fails.
+
+**Contract:** SM25; **owner:** R10a; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V094"></a>
 
 ### V094: QC and inclusion/exclusion sections
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** observation hierarchy, n, scale, missingness, normalization and exclusion rationale are visible with source-table links.
+**Fixture:** QC with four injections aggregated to one specimen, a justified exclusion and missing upstream metadata.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Actual ObservationHierarchy, ExclusionDecision and QC source TSV values.
+
+**Exact assertion:** Show biological versus technical n, scale, missingness, normalization and exclusion rationale with exact source links; no sample silently disappears.
+
+**Negative case:** A display count based on injections or a missing exclusion reason rendered as confirmed removal fails.
+
+**Contract:** SM06; **owner:** R10a; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V095"></a>
 
 ### V095: Complete differential results views
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** all planned contrasts/hypotheses appear, including nonsignificant/auxiliary contrasts; estimates, CI, q family and estimability are clear.
+**Fixture:** Complete all-contrast tables including secondary treated-control, nonsignificant and nonestimable rows.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Keyed comparison of rendered ReportData and full DEA tables.
+
+**Exact assertion:** Display every planned contrast/hypothesis, effects/CI/q-family and estimability, including auxiliary comparisons without highlighting only significant subsets.
+
+**Negative case:** Dropping an auxiliary contrast or substituting display-filtered counts for total tested family counts fails.
+
+**Contract:** SM12; **owner:** R10b; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V096"></a>
 
 ### V096: Pathway and response views
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** null type, resource universe, leading edges, exploratory status, response caveats and unavailable inference remain explicit.
+**Fixture:** Mixed CAMERA/ROAST/fgsea/ORA artifacts plus descriptive response, equivalence and unavailable score inference.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Each typed result/null/resource/universe and eligibility artifact.
+
+**Exact assertion:** Show null types, mapped universe, leading edges, exploratory labels and response restrictions with no cross-null confirmation language.
+
+**Negative case:** fgsea presented as sample-level replication or descriptive-score P columns in the report fails.
+
+**Contract:** SM16; **owner:** R10b; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V097"></a>
 
 ### V097: Publication figure and source exports
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** vector PDF/SVG and raster PNG as appropriate have exact plotted data, units/n/thresholds and readable labels without unexplained stars.
+**Fixture:** A small contrast plot and pathway/response plot with finite/NA and no discoveries.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Exact plotted coordinates/labels versus saved figure-source tables plus actual file format headers.
+
+**Exact assertion:** Export requested PDF/SVG/PNG with readable units, independent n, thresholds and complete source data; no unexplained significance stars.
+
+**Negative case:** A figure with altered rounded data used for inference, fabricated points, unreadable labels or no source table fails visual/numeric review.
+
+**Contract:** SM25; **owner:** R10b; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V098"></a>
 
 ### V098: Methods and limitations generation
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** methods derive actual config/packages/hypotheses; unknown tissue/batch/provenance restricts language and no canned study claim appears.
+**Fixture:** Two actual runs differing in hypothesis/engine and one with unknown tissue/batch provenance.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Resolved configs, executed package inventory and method eligibility/status, not study-specific boilerplate.
+
+**Exact assertion:** Generate methods naming actual inputs/scale/models/hypotheses/families/resources and uncertainty limits, keeping unknown provenance explicit.
+
+**Negative case:** Mentioning an unexecuted engine, unverified tissue or canned biological rescue claim fails.
+
+**Contract:** SM25; **owner:** R10b; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V099"></a>
 
 ### V099: Null/empty/partial report robustness
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** no DEPs, no pathways, tiny cohorts, inapplicable methods, failed backend and interrupted stage yield valid honest reports.
+**Fixture:** No discoveries, empty pathway foreground, tiny QC-only cohort, optional method missing, required backend crash and interrupted stage.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Stage/RunStatus and expected numerical section availability for each scenario.
+
+**Exact assertion:** Render truthful full reports for all cases without upgrading partial/failed/cancelled analysis to COMPLETED; preserve valid zero-row tables where a stage actually completed.
+
+**Negative case:** An exception-handling path that silently substitutes zeros or hardcoded healthy prose fails.
+
+**Contract:** SM25; **owner:** R10b; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V100"></a>
 
 ### V100: Quickstart and user workflow
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** a fresh user can validate, plan, run, inspect, verify and compare examples without manually invoking individual R scripts; commands are actually exercised.
+**Fixture:** Fresh documented setup and all three public synthetic examples; one run comparison through real later commands.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Copy documented commands verbatim in a clean environment and inspect actual outputs.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Exercise validate, plan, run, inspect/report, verify and compare without manual R stage orchestration and document only implemented capabilities.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** A command present only in prose, an undisclosed missing prerequisite or a README claiming unshipped phases fails.
 
-## Assumptions and Scope Boundary
+**Contract:** SM25; **owner:** R10b; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

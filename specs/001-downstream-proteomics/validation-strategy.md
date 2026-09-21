@@ -1,67 +1,65 @@
-# Validation strategy and acceptance thresholds
+# Validation strategy — phased gates
 
-Validation is designed before implementation. Correctness, calibration, reproducibility, portability and scientific provenance are separate outcomes. A passing test suite is not proof the old study's biological conclusions are true.
-
-## Layers and independent oracles
-
-1. **Contract tests:** schemas/IDs/masks/grain and roundtrip behavior. Reference values are hand-calculated fixtures or fixed files authored independently from implementation.
-2. **Mathematical tests:** means, contrast algebra, exact finite permutations, hypergeometric tails, BH/BY and TOST on small examples. Compare against independent Python/SciPy/R references as appropriate; a wrapper invoking itself is not an oracle.
-3. **Backend golden tests:** call pinned limma/TREAT, DEqMS, proDA, CAMERA, mroast and fgsea directly in minimal reference scripts separate from the production adapter. Save input, output, version and purpose. Do not require unrelated engines to agree statistically.
-4. **Scientific simulations:** assess error, effect/interval behavior and applicability across declared data-generating assumptions. Preserve expected limitations for misspecified models instead of tuning implementation to conceal them.
-5. **Integration:** run canonical examples through the real Python→R→files→HTML path, including no discoveries, no eligible pathways and failed stages.
-6. **Historical regression:** Maintainer locally runs the archive conversion/comparison and maintained analysis, without giving private data to Packet Implementer, Independent Reviewer or any documentation worker. Preserve historical ambiguities and exact expected intentional changes.
-7. **Clean-environment reproduction and final visual inspection:** independently restore locks, execute offline cached resources, inspect actual report/figures and compare semantic outputs.
+Status: 1.2.0-frozen. All maintained implementation tests remain pending. Document/schema checks performed during hardening are not evidence that a statistical engine exists.
 
 ## Numeric tolerances
 
-- ID alignment, masks, group counts, rank/contrast structure, output statuses, selected family membership and exact permutation counts: exact equality.
-- Deterministic scalar transforms, logFC and BH on the same finite input: absolute ≤1e-10 and relative ≤1e-8 where appropriate. Underflow P values compare on log scale with a documented finite floor; do not silently turn tiny positive P into zero.
-- Backend reference SE/statistic/P under identical versions and input: absolute ≤1e-8 or relative ≤1e-6, stated fieldwise. Ill-conditioned cases require explicit conditioning diagnostics, not blanket widened tolerances.
-- Stochastic enrichment/rotation: seed/RNG/backend/thread/package settings must be fixed. Compare native deterministic output where the engine guarantees it; otherwise prespecify repeated-run Monte Carlo tolerances/intervals and retain numerical diagnostics. Never widen tolerance after a failure without diagnosis and an ADR.
-- Figure data: exact keys/counts and numeric table tolerance. PDF/PNG metadata/timestamps are not scientific differences; rendered layout must still be inspected.
+IDs, masks, counts, ranks, declared family membership, state and integer permutation counts require exact equality. Deterministic transforms, effects and BH on identical inputs require abs_error≤1e-10 plus a fieldwise relative tolerance 1e-8 where magnitude comparison is meaningful. Backend SE/statistic/P references use fieldwise abs≤1e-8 or rel≤1e-6, prespecified before candidate comparison; near-zero comparisons use the absolute condition rather than dividing by zero. Ill conditioning gets a diagnostic/rejection, not an unannounced larger tolerance. Tiny positive P values use documented log-scale comparison rather than silent underflow coercion.
 
-## Mandatory scenario matrix
+Stochastic references fix seed, RNG kind, threads, package and input. Where exact repeated output is not guaranteed, prescribe a Monte Carlo interval/precision gate before candidate results. Figure source keys/counts are exact and numerical coordinates use their table's tolerance; image metadata timestamps are not scientific differences. Actual rendered figures still require visual inspection.
 
-| Scenario | Expected behavior |
-|---|---|
-| Complete independent Gaussian log2 protein data | limma estimates and uncertainty match direct reference; null calibration assessed |
-| Unequal n + continuous covariate + batch | Exact identifiable contrast matches direct fit; coefficient meanings preserved |
-| Missing values + nonorthogonal design + weights | Exact refit/covariance path required; demonstrate old approximate shortcut differs on a constructed case |
-| Fixed paired subject and duplicateCorrelation repeated model | Correct design/block handling; whole biological-unit influence; CAMERA incompatibility tested |
-| Confounded batch/treatment | Plan rejects unidentifiable estimand, no correction claiming recovery |
-| Technical replicates per specimen | Known aggregation and biological n, no pseudoreplication |
-| Upstream imputed versus true observed input | Masks and coverage language differ; ineligible dropout fit rejected |
-| Qualified LFQ dropout including a group with no observations for some features | proDA reference behavior, observed counts and prior-driven uncertainty preserved; limma nonestimability is distinct |
-| Count-dependent variance with peptide/PSM evidence | DEqMS uses strictly positive aligned count covariate and sca statistics; missing/proxy counts rejected |
-| TMT with bridge and balanced no-bridge design | Explicit intended normalization/plex model, confounding test and no fabricated bridge |
-| Correlated genes within sets | CAMERA/ROAST evaluated under their actual nulls; fgsea remains appropriately exploratory |
-| Duplicate/multi-gene mappings and orthology | Label-independent representative rule, mapping loss and finite universe correctly reported |
-| Zero significant proteins/pathways | Valid complete analysis and honest report with zero discoveries |
-| Shared untreated group in disease/treatment contrasts | Negative noise covariance demonstrable; no current-selected confirmatory score route |
-| RI near 0/1 and >2; disease denominator near zero | Descriptive categories/eligibility and uncertainty handle boundaries without full-rescue claims |
-| Equivalence versus nonsignificance | A broad interval overlapping zero fails equivalence; narrow interval inside margin passes correct TOST |
-| Four vs four exact score test | 70 assignments; cases with k=2 and k=6 yield 2/70 and 6/70, not 3/71 or 7/71 |
-| Paired/restricted score randomization | Exact admissible permutations/sign flips only; independence evidence required |
-| Resource mismatch, dependency missing, R crash, killed stage | Nonzero/honest state, preserved logs, no stale cache accepted and no report PASS fiction |
+## Independent oracle layers
 
-## Calibration protocol
+Use structural/identity/roundtrip tests, hand arithmetic (scale, contrast covariance, finite permutations, BH, hypergeometric, TOST), separate direct package calls, real Python→R→files→HTML integration, independent locked offline reproduction and explicitly scoped simulation. A reference that imports the production adapter under test is not independent. Private historical work remains Maintainer-only and is not required to author public synthetic tests.
 
-Freeze simulator configuration, seed bank and expected methods before reading candidate results. Use independent seeds from the unit/golden fixtures. Release profile uses at least 1,000 independently generated datasets for fast core all-null and mixture scenarios (e.g., 2,000 features, 4–10 biological units per group), with a separately recorded smaller smoke profile for CI. Specialized slow engine profiles may use a prespecified smaller number only when their Monte Carlo intervals are correspondingly reported; insufficient precision cannot support the same validation claim.
+## Phase 1 must-pass
 
-Under an eligible all-null independent Gaussian scenario at declared alpha=.05, measure P(any rejection), because all discoveries are false. Require its one-sided 95% binomial upper confidence limit ≤0.075 for the release core profile. For prespecified mixtures, measure the mean false-discovery proportion across simulations, setting FDP=0 when there are no rejections; require a prespecified bootstrap/Monte Carlo one-sided 95% upper bound ≤0.075 under the supported model assumptions. Report achieved power, bias, uncertainty coverage, nonestimability and failures as well. Do not use empirical false-positive rate among proteins as a substitute for FDR.
+All V001–V050 and V091–V094 are required for v0.1-limma-core. R10 remains partially complete, not completed as a whole.
 
-For nominal 95% effect CIs, report coverage by effect/abundance/missingness strata and require aggregate coverage within the prespecified Monte Carlo acceptance interval around 0.95 (release core target 0.93–0.97 with enough independent simulation units). Correlated features do not create independent biological replicates for CI coverage uncertainty; estimate uncertainty by simulated dataset/block. Effect-threshold tests include true effects at 0, below, at and above the margin. Equivalence simulations include values inside, on and outside both margins.
+| Scenario | Exact gate / oracle | Cases |
+|---|---|---|
+| No second log | log2 zero preserved; requested log2→log2 hard-fails before transformation. | V012, V021 |
+| Anti-pseudoreplication | Four injections of one specimen yield n=1; whole subjects retained for paired/repeated inference. | V013–V014, V034, V049 |
+| Confounded batch | Independent QR/SVD rejects batch=treatment with aliases; no pseudoinverse effect claim. | V031–V033, V040 |
+| Exact SE | Sparse/nonorthogonal/weighted/blocked contrast matches direct coefficient refit and independent covariance; approximate shortcut is explicitly insufficient. | V037, V042 |
+| Primary missingness/QC | No new primary imputation, original mask counts, display-only PCA fill and no silent sample removal. | V024–V030, V041 |
+| Hypothesis/family separation | TREAT distinct from zero-null and display filtering; pooled primary BH, secondary auxiliary contrasts exported. | V044–V048 |
+| Zero discoveries | Actual completed fit with zero rejections and thin report is COMPLETED/0; no “no biological effect” inference. | V050, V091–V094 |
+| Shared-control covariance | For independent C/U/T covariance diag(.25,.25,.25), calculate Cov(U−C,T−U)=−.25 and Var(T−C)=.5, not 1. This is a Phase 1 contrast-algebra fixture, not an R09 score module. | V035, V050 |
+| No score P values | Phase 1 config rejects score testing and produces no score-test/P-value artifact, including empty score-P tables. | V050, V092 |
+| Environment/state failure | Actual missing R, child failure, collision and interrupted stage stay nonzero/unavailable/failed and render honestly. | V003–V010, V091–V094 |
+| Requested capability requiredness | Every model declares required or optional independently of installed software; primary is required. Eligible missing optional engine remains in the plan and yields PARTIAL/nonzero, while the same required absence yields FAILED/nonzero. | V003, V006, V038, V059 |
 
-Additional stress scenarios include heavy-tailed outliers, unequal variances, MAR/MNAR dropout and correlation. These are applicability/robustness diagnostics; an engine need not be guaranteed under every misspecified scenario. Document where validation does not support nominal error and restrict the claimed capability or default accordingly. Do not silently relabel a failed core assumption test “stress-only” after observing it.
+R03/R04 enforce adapter eligibility boundaries and deferred capability states; they do not have to run nonexistent R06 engines to pass Phase 1. V027 is executable in R03 against R01 canonical hashing with a complete synthetic plan envelope, then is rerun against R04's actual AnalysisPlan under V039. V029 uses R03's narrow detection-only Fisher/BH implementation and is rerun after R05 to prove family separation. These integration reruns are mandatory Phase 1 barriers without creating backward implementation dependencies. All other science assigned to R02–R05 remains in Phase 1, including explicit vendor mappings, TMT bridge/no-bridge eligibility, detection sensitivity and qualified paired/repeated limma. No 1,000-dataset calibration requirement is imposed on Phase 1. Actual solved environment and direct numerical references are still necessary; it cannot claim R11 lock/calibration acceptance.
 
-Pathway calibration uses constructed membership and correlation structures with stated competitive versus self-contained nulls. ROAST and CAMERA do not test interchangeable hypotheses. Gene-set permutation limitations are retained for fgsea rather than demanding or advertising sample-randomization guarantees it does not provide.
+## Phase 2 must-pass
 
-## Historical validation boundaries
+V051–V090 cover real DEqMS/proDA references and failures, hashed offline snapshots, species/orthology/multi-gene mapping, label-independent representatives, finite pathway refits, CAMERA/ROAST design dispatch, fgsea null labeling, ORA all-set multiplicity, covariance-aware response classes, TOST/conjunction eligibility and independent-score selection/randomization. Repeat Phase 1 gates for regression without changing their ownership.
 
-Verify the original ZIP hash, all 165 preserved files, matrix 3,714×20, 1,345 missing entries, Method A/B input equivalence and source contrast identities. Legacy-mode expected core comparisons include six axis and nine joint contrast effects/BH, the Negr1 auxiliary joint contrast exception and exact fixed-score arithmetic. These are fixture expectations in regression, never production constants. New primary families/filtering/models/pathway nulls may change results; compare with a table explaining each expected change. Historical moderated P values and fgsea exact values cannot be declared reproduced without an executed compatible environment/resource version.
+The exact k=2 score fixture uses [1,2,3,4,5,6,7,8] with the top four versus bottom four: enumerate all 70 allocations. A distinct k=6 fixture uses [1,2,4,8,16,32,64,128] with observed group [4,32,64,128]; enumerate all 70 and compute the absolute mean-difference tail. Expected arithmetic is 2/70 and 6/70. These are independently authored synthetic oracle cases, not instructions to return those numbers on other data. Score selection-overlap negatives must physically lack P/q columns.
 
-## Evidence and completion
+## Phase 3 must-pass
 
-Each V001…V120 artifact records acceptance ID, requirement/task ID, git commit/tree hash, exact command, fixture hashes, expected behavior/oracle source, actual result, exit code, versions, artifact paths, timestamp, status and reviewer conclusion. PASS requires inspection of assertions and actual output. NOT_RUN, SKIPPED, INAPPLICABLE and external study-provenance limitations are separate. Maintainer independently reruns gates after each Packet Implementer receipt and records its review; Independent Reviewer never receives test logs.
+V095–V120, with compatibility reruns of V091–V094, complete full report/figures, actual environment lock restoration, semantic offline/cache behavior, independent reference matrix, calibration, cross-platform CI, performance and Maintainer-only legacy reconciliation. R12 public-release authorization/ownership/license and private validation remain explicit external gates; absence is never PASS.
 
-Final acceptance includes clean setup, supported examples, all eligible engine paths, report content/visual inspection, scientific release profile, source/data separation and SSD checksum delivery. A code-only handoff may truthfully list remaining external study limitations, but missing core implementation/testing cannot be hidden behind them.
+## R11 release calibration protocol
+
+Freeze simulator configuration, seed bank and expected methods before reading candidate outputs. Fast core all-null and mixture scenarios each use at least 1,000 independent datasets; a separately labeled CI smoke profile may be smaller. Future release generators may create the required larger datasets (for example 2,000 features and 4–10 biological units per group); no such matrix is included or fabricated in this hardening pass. Slow specialized profiles may use a prespecified smaller count only with their Monte Carlo precision/limitations made explicit; insufficient precision cannot support the same validation claim.
+
+At alpha=.05 under the supported independent Gaussian all-null scenario, measure P(any rejection); require its one-sided 95% exact binomial upper confidence limit≤.075. For mixtures use mean dataset-level FDP, FDP=0 when no rejections; require the prespecified one-sided 95% Monte Carlo/bootstrap upper bound≤.075. Do not replace FDR by the fraction of null proteins falsely rejected. Report power, effect bias, nonestimability and failures, not only passing summaries.
+
+For nominal 95% effect intervals, report stratified coverage and dataset-level uncertainty with a core aggregate target .93–.97 at adequate Monte Carlo precision. Proteins correlated within a simulated dataset are not independent replication units for the coverage interval. Include true effects below/on/above the TREAT margin and residual effects inside/on/outside both equivalence margins.
+
+Heavy tails, unequal variances, MAR/MNAR dropout and other misspecifications are prespecified stress/applicability scenarios, not a universal nominal-error promise. Preserve their failures and restrict claims accordingly; do not move a failed core scenario into stress-only after results. Correlated pathway simulations define competitive and self-contained nulls separately. fgsea remains exploratory gene-set-null analysis, not a sample-label permutation test.
+
+## R11 benchmark and report gates
+
+Measure the 20,000-feature×100-observation/eight-contrast/2,000-set QC+limma+CAMERA+report workload on documented four-core hardware: targets≤8 GiB peak process-tree memory and≤30 minutes. Record actual hardware/time/memory and assess failures; do not extrapolate from a smaller matrix. Specialized engines and expensive release calibration are timed separately. Execute real Windows/Linux Python/R examples. Inspect actual full/null/failed reports and source-linked figures, not just file existence.
+
+## R12 historical boundary
+
+Maintainer alone verifies the original ZIP, 165-file preserved evidence, 3,714×20 matrix, 1,345 missing entries and Method A/B semantic crosswalk against actual private inputs. Compare six axis and nine joint contrasts where compatible runtime/resources permit. Negr1/A0A8I6AJV3's auxiliary treated-disease-versus-control result and old permutation fractions are regression/audit cases, never production constants or rescue proof. Missing historical R/resources yields NOT_RUN and, for numerical reproduction, NOT_REPRODUCED; the recovery did not itself rerun R. Changed families/filters/mappings/nulls legitimately require explicit reconciliation, not forced numeric matching.
+
+## Evidence contract
+
+For each acceptance ID record requirement/task ID, actual reviewed tree/commit, command, fixture hashes, independent oracle/expected values, observed differences, exit code, software/R session, artifact hashes, timestamp and reviewer conclusion. A passing process exit is not enough without inspected assertions. PASS, FAIL, NOT_RUN, INAPPLICABLE and SKIPPED remain distinct; none of the latter three is a passing software acceptance gate. Private logs stay local. Candidate traceability contains empty evidence arrays until execution.

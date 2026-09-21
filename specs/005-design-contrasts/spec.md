@@ -1,102 +1,166 @@
 # Feature Specification: Design validation, exact contrasts and blocking
 
-**Feature Branch:** `spec/005-design-contrasts` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R04**. Deliver design validation, exact contrasts and blocking for user journey US2.
+**Phase:** 1. **Packet:** R04. **Status:** 1.2.0-frozen; implementation pending prerequisite acceptance and explicit authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US2 — Design validation, exact contrasts and blocking (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R03 (`specs/004-preprocessing-qc/`).
+Deliver only FR-031–FR-040 for US2. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-031**: The system MUST provide safe declarative design grammar. Groups, continuous covariates and interactions generate expected matrices; arbitrary function calls/code strings fail before R evaluation.
-- **FR-032**: The system MUST provide stable levels and aligned matrices. Sample order shuffling with metadata alignment preserves coefficients; absent references and missing covariates give explicit errors.
-- **FR-033**: The system MUST provide rank and confounding diagnostics. Batch=treatment fixture is detected, with aliased terms; no pseudoinverse silently manufactures an interpretable treatment effect.
-- **FR-034**: The system MUST provide independent, paired and repeated plans. Subject-fixed and eligible duplicateCorrelation designs preserve the experimental unit and reject invalid/unidentified blocks.
-- **FR-035**: The system MUST provide numeric contrasts and interaction semantics. Known disease/treatment/residual/interaction coefficients match analytic expectations; significance difference is never used as interaction.
-- **FR-036**: The system MUST provide featurewise estimability and df. Sparse features get engine-specific n/df/reason records; ordinary available-case all-missing groups are nonestimable and eligible native-dropout estimates retain their prior-dependence caveat.
-- **FR-037**: The system MUST provide exact contrast covariance strategy. Sparse nonorthogonal weighted designs match direct coefficient-refit SE/P; exact shortcut is restricted to proven eligible designs.
-- **FR-038**: The system MUST provide method-design applicability registry. Unsupported proDA/DEqMS block or threshold combinations fail explicitly and no engine is silently substituted.
-- **FR-039**: The system MUST provide frozen analysis plan and matrices. Plan saves configuration, inclusion masks, matrices, hypotheses, families and hashes before fitting; config changes invalidate the plan.
-- **FR-040**: The system MUST provide design adversarial verification. Unequal n, singletons, missing factor levels, repeated-unit imbalance and reordered IDs have reference-backed expected behavior.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-031 — Safe declarative design grammar:** The system MUST match the frozen coefficient map and numeric design, using the documented escaping/interaction convention and no arbitrary R evaluation.
+- **FR-032 — Stable levels and aligned matrices:** The system MUST preserve aligned coefficients and reference meanings across row/column reorderings.
+- **FR-033 — Rank and confounding diagnostics:** The system MUST reject the confounded model before fit with E_DESIGN_CONFOUNDED and aliased terms; accept the full-rank crossed design.
+- **FR-034 — Independent, paired and repeated plans:** The system MUST preserve subject identity, pass the correct fixed or random representation and record actual consensus correlation for the repeated fit.
+- **FR-035 — Numeric contrasts and interaction semantics:** The system MUST match d/t/r and r=d+t; calculate the interaction directly from coefficient weights, not from P-value comparisons.
+- **FR-036 — Featurewise estimability and df:** The system MUST export correct featurewise n/df/estimability and named reasons for ordinary available-case failure; retain excluded rows.
+- **FR-037 — Exact contrast covariance strategy:** The system MUST match exact SE/covariance within backend tolerance and record the exact path; demonstrate the approximate shortcut differs on at least one chosen fixture.
+- **FR-038 — Method-design applicability registry:** The system MUST return each documented eligibility/error type before execution and retain one authoritative primary engine.
+- **FR-039 — Frozen analysis plan and matrices:** The system MUST write plan, masks, evaluated design/contrasts, hypotheses and families before any fit; each meaningful change produces a different plan hash.
+- **FR-040 — Design adversarial verification:** The system MUST accept only identifiable sufficiently replicated contrasts; exact key alignment makes reordering invariant; singleton inference fails while descriptive QC remains available.
 
 ## Acceptance Scenarios
 
+<a id="V031"></a>
+
 ### V031: Safe declarative design grammar
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** groups, continuous covariates and interactions generate expected matrices; arbitrary function calls/code strings fail before R evaluation.
+**Fixture:** Two groups, a numeric age covariate, one batch factor and group×age interaction; malicious function-call text as a term.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit design rows from indicators/centered covariates and product columns.
+
+**Exact assertion:** Match the frozen coefficient map and numeric design, using the documented escaping/interaction convention and no arbitrary R evaluation.
+
+**Negative case:** system(), source(), path traversal or undeclared term expressions fail E_DESIGN_TERM before R evaluates them.
+
+**Contract:** SM07; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V032"></a>
 
 ### V032: Stable levels and aligned matrices
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** sample order shuffling with metadata alignment preserves coefficients; absent references and missing covariates give explicit errors.
+**Fixture:** Independent fixture with shuffled columns/metadata and explicit factor references.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Keyed alignment plus direct design-matrix construction.
+
+**Exact assertion:** Preserve aligned coefficients and reference meanings across row/column reorderings.
+
+**Negative case:** Missing reference level or a required nonfinite covariate produces a field-specific error, not silent complete-case sample removal.
+
+**Contract:** SM07; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V033"></a>
 
 ### V033: Rank and confounding diagnostics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** batch=treatment fixture is detected, with aliased terms; no pseudoinverse silently manufactures an interpretable treatment effect.
+**Fixture:** Eight observations with batch exactly equal to treatment; matched nonconfounded crossed version.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent QR/SVD rank and alias computation.
+
+**Exact assertion:** Reject the confounded model before fit with E_DESIGN_CONFOUNDED and aliased terms; accept the full-rank crossed design.
+
+**Negative case:** A pseudoinverse result must not be published as an identifiable treatment effect for the confounded fixture.
+
+**Contract:** SM07; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V034"></a>
 
 ### V034: Independent, paired and repeated plans
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** subject-fixed and eligible duplicateCorrelation designs preserve the experimental unit and reject invalid/unidentified blocks.
+**Fixture:** Four independent pairs under fixed-subject design and a separate repeated model with known subject IDs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct full-rank fixed-subject fit and pinned limma duplicateCorrelation/lmFit calls.
+
+**Exact assertion:** Preserve subject identity, pass the correct fixed or random representation and record actual consensus correlation for the repeated fit.
+
+**Negative case:** Missing subject IDs or simultaneous fixed and random encoding of the same subject fail; visits do not inflate independent n.
+
+**Contract:** SM08; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V035"></a>
 
 ### V035: Numeric contrasts and interaction semantics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** known disease/treatment/residual/interaction coefficients match analytic expectations; significance difference is never used as interaction.
+**Fixture:** C/U/T group means 10/12/11 and a two-stage treatment effect example.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** d=2, t=−1, r=1; interaction equals the difference of treatment-effect contrasts.
+
+**Exact assertion:** Match d/t/r and r=d+t; calculate the interaction directly from coefficient weights, not from P-value comparisons.
+
+**Negative case:** A contrast with reversed weights/mislabeled numerator or one unknown coefficient fails rather than silently changing sign.
+
+**Contract:** SM07; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V036"></a>
 
 ### V036: Featurewise estimability and df
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** sparse features get engine-specific n/df/reason records; ordinary available-case all-missing groups are nonestimable and eligible native-dropout estimates retain their prior-dependence caveat.
+**Fixture:** Eight-sample nonconfounded design with one sparse feature losing an entire target group and another losing one observation.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Observed-row QR rank, n−rank and contrast row-space membership.
+
+**Exact assertion:** Export correct featurewise n/df/estimability and named reasons for ordinary available-case failure; retain excluded rows.
+
+**Negative case:** Do not supply zero effects/P=1 for an unestimable feature or borrow a proDA estimate to fill the limma table.
+
+**Contract:** SM08; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V037"></a>
 
 ### V037: Exact contrast covariance strategy
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** sparse nonorthogonal weighted designs match direct coefficient-refit SE/P; exact shortcut is restricted to proven eligible designs.
+**Fixture:** A ≤12-observation nonorthogonal covariate design with unequal weights, one feature-specific missing row and a blocked variant.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct featurewise GLS covariance and contrast-as-coefficient refit, independently authored from the adapter.
+
+**Exact assertion:** Match exact SE/covariance within backend tolerance and record the exact path; demonstrate the approximate shortcut differs on at least one chosen fixture.
+
+**Negative case:** Calling contrasts.fit alone on the general fixture fails this gate even when a convenient complete one-way case happened to agree.
+
+**Contract:** SM08; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V038"></a>
 
 ### V038: Method-design applicability registry
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** unsupported proDA/DEqMS block or threshold combinations fail explicitly and no engine is silently substituted.
+**Fixture:** Valid limma independent/paired requests; DEqMS weights/block/treat and proDA TMT/block/treat requests.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Frozen adapter/dispatch tables, independent of hit counts and package availability.
+
+**Exact assertion:** Return each documented eligibility/error type before execution and retain one authoritative primary engine.
+
+**Negative case:** Failure of a DEqMS/proDA capability cannot invoke limma under that engine name; an absent adapter is NOT_RUN, not scientifically INAPPLICABLE.
+
+**Contract:** SM10; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V039"></a>
 
 ### V039: Frozen analysis plan and matrices
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** plan saves configuration, inclusion masks, matrices, hypotheses, families and hashes before fitting; config changes invalidate the plan.
+**Fixture:** Independent fixture with two otherwise identical configs differing in one contrast weight/resource hash/exclusion.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Canonical sorted JSON hash plus referenced actual artifacts.
+
+**Exact assertion:** Write plan, masks, evaluated design/contrasts, hypotheses and families before any fit; each meaningful change produces a different plan hash.
+
+**Negative case:** Intercept a fit request with no valid plan or a changed input hash: reject rather than refreeze after seeing its result.
+
+**Contract:** SM07; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V040"></a>
 
 ### V040: Design adversarial verification
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** unequal n, singletons, missing factor levels, repeated-unit imbalance and reordered IDs have reference-backed expected behavior.
+**Fixture:** Unequal group n, singleton group, absent factor level, repeated-unit imbalance and reordered IDs, each in its own tiny fixture.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit n/rank/df/estimability calculations and independent reference designs.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Accept only identifiable sufficiently replicated contrasts; exact key alignment makes reordering invariant; singleton inference fails while descriptive QC remains available.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** A missing group level cannot silently disappear from the planned contrast/family coverage.
 
-## Assumptions and Scope Boundary
+**Contract:** SM07; **owner:** R04; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

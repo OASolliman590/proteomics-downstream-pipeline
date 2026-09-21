@@ -1,0 +1,13 @@
+observation_id	biological_unit_id	subject_id	technical_replicate_id	group	batch
+C1	unit_C1	unit_C1	NA	control	B1
+C2	unit_C2	unit_C2	NA	control	B1
+C3	unit_C3	unit_C3	NA	control	B2
+C4	unit_C4	unit_C4	NA	control	B2
+U1	unit_U1	unit_U1	NA	disease	B1
+U2	unit_U2	unit_U2	NA	disease	B1
+U3	unit_U3	unit_U3	NA	disease	B2
+U4	unit_U4	unit_U4	NA	disease	B2
+T1	unit_T1	unit_T1	NA	treated	B1
+T2	unit_T2	unit_T2	NA	treated	B1
+T3	unit_T3	unit_T3	NA	treated	B2
+T4	unit_T4	unit_T4	NA	treated	B2

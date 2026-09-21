@@ -1,289 +1,341 @@
 {
-  "schema_version": "2.0.0",
-  "kit_status": "draft_awaiting_independent_audit_and_maintainer_freeze",
-  "packet_index": "specs/001-downstream-proteomics/packet-index.md",
+  "schema_version": "1.2.0",
+  "status": "frozen",
+  "dependency_semantics": "depends_on on a slice means full slice completion dependencies; R10 subpacket dispatch is defined separately in packet-ownership.json",
   "slices": [
     {
       "id": "R01",
       "slice": "002-foundation",
       "title": "Runtime, package and contract foundation",
+      "story": "US1",
       "depends_on": [],
-      "tasks": [
-        "T001",
-        "T002",
-        "T003",
-        "T004",
-        "T005",
-        "T006",
-        "T007",
-        "T008",
-        "T009",
-        "T010"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-001",
+        "FR-002",
+        "FR-003",
+        "FR-004",
+        "FR-005",
+        "FR-006",
+        "FR-007",
+        "FR-008",
+        "FR-009",
+        "FR-010"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r01--runtime-package-and-contract-foundation"
+      "phase": 1
     },
     {
       "id": "R02",
       "slice": "003-intake",
       "title": "Canonical protein input and biological identity",
+      "story": "US1",
       "depends_on": [
         "R01"
       ],
-      "tasks": [
-        "T011",
-        "T012",
-        "T013",
-        "T014",
-        "T015",
-        "T016",
-        "T017",
-        "T018",
-        "T019",
-        "T020"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-011",
+        "FR-012",
+        "FR-013",
+        "FR-014",
+        "FR-015",
+        "FR-016",
+        "FR-017",
+        "FR-018",
+        "FR-019",
+        "FR-020"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r02--canonical-protein-input-and-biological-identity"
+      "phase": 1
     },
     {
       "id": "R03",
       "slice": "004-preprocessing-qc",
       "title": "Preprocessing, missingness and quality control",
+      "story": "US1",
       "depends_on": [
         "R02"
       ],
-      "tasks": [
-        "T021",
-        "T022",
-        "T023",
-        "T024",
-        "T025",
-        "T026",
-        "T027",
-        "T028",
-        "T029",
-        "T030"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-021",
+        "FR-022",
+        "FR-023",
+        "FR-024",
+        "FR-025",
+        "FR-026",
+        "FR-027",
+        "FR-028",
+        "FR-029",
+        "FR-030"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r03--preprocessing-missingness-and-quality-control"
+      "phase": 1
     },
     {
       "id": "R04",
       "slice": "005-design-contrasts",
       "title": "Design validation, exact contrasts and blocking",
+      "story": "US2",
       "depends_on": [
         "R03"
       ],
-      "tasks": [
-        "T031",
-        "T032",
-        "T033",
-        "T034",
-        "T035",
-        "T036",
-        "T037",
-        "T038",
-        "T039",
-        "T040"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-031",
+        "FR-032",
+        "FR-033",
+        "FR-034",
+        "FR-035",
+        "FR-036",
+        "FR-037",
+        "FR-038",
+        "FR-039",
+        "FR-040"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r04--design-validation-exact-contrasts-and-blocking"
+      "phase": 1
     },
     {
       "id": "R05",
       "slice": "006-limma-inference",
       "title": "Core limma inference and multiplicity",
+      "story": "US2",
       "depends_on": [
         "R04"
       ],
-      "tasks": [
-        "T041",
-        "T042",
-        "T043",
-        "T044",
-        "T045",
-        "T046",
-        "T047",
-        "T048",
-        "T049",
-        "T050"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-041",
+        "FR-042",
+        "FR-043",
+        "FR-044",
+        "FR-045",
+        "FR-046",
+        "FR-047",
+        "FR-048",
+        "FR-049",
+        "FR-050"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r05--core-limma-inference-and-multiplicity"
+      "phase": 1
     },
     {
       "id": "R06",
       "slice": "007-assay-engines",
       "title": "Assay-qualified DEqMS and proDA backends",
+      "story": "US2",
       "depends_on": [
         "R05"
       ],
-      "tasks": [
-        "T051",
-        "T052",
-        "T053",
-        "T054",
-        "T055",
-        "T056",
-        "T057",
-        "T058",
-        "T059",
-        "T060"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-051",
+        "FR-052",
+        "FR-053",
+        "FR-054",
+        "FR-055",
+        "FR-056",
+        "FR-057",
+        "FR-058",
+        "FR-059",
+        "FR-060"
       ],
-      "status": "draft",
-      "risk": "high",
-      "parallel_group": "PG-01",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r06--assay-qualified-deqms-and-proda-backends"
+      "phase": 2
     },
     {
       "id": "R07",
       "slice": "008-resources-mapping",
       "title": "Versioned annotation, protein groups and gene sets",
+      "story": "US3",
       "depends_on": [
         "R05"
       ],
-      "tasks": [
-        "T061",
-        "T062",
-        "T063",
-        "T064",
-        "T065",
-        "T066",
-        "T067",
-        "T068",
-        "T069",
-        "T070"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-061",
+        "FR-062",
+        "FR-063",
+        "FR-064",
+        "FR-065",
+        "FR-066",
+        "FR-067",
+        "FR-068",
+        "FR-069",
+        "FR-070"
       ],
-      "status": "draft",
-      "risk": "high",
-      "parallel_group": "PG-01",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r07--versioned-annotation-protein-groups-and-gene-sets"
+      "phase": 2
     },
     {
       "id": "R08",
       "slice": "009-enrichment",
       "title": "Design-compatible pathways and enrichment",
+      "story": "US3",
       "depends_on": [
         "R06",
         "R07"
       ],
-      "tasks": [
-        "T071",
-        "T072",
-        "T073",
-        "T074",
-        "T075",
-        "T076",
-        "T077",
-        "T078",
-        "T079",
-        "T080"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-071",
+        "FR-072",
+        "FR-073",
+        "FR-074",
+        "FR-075",
+        "FR-076",
+        "FR-077",
+        "FR-078",
+        "FR-079",
+        "FR-080"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r08--design-compatible-pathways-and-enrichment"
+      "phase": 2
     },
     {
       "id": "R09",
       "slice": "010-treatment-response",
       "title": "Treatment response, equivalence and independent scores",
+      "story": "US4",
       "depends_on": [
         "R05"
       ],
-      "tasks": [
-        "T081",
-        "T082",
-        "T083",
-        "T084",
-        "T085",
-        "T086",
-        "T087",
-        "T088",
-        "T089",
-        "T090"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-081",
+        "FR-082",
+        "FR-083",
+        "FR-084",
+        "FR-085",
+        "FR-086",
+        "FR-087",
+        "FR-088",
+        "FR-089",
+        "FR-090"
       ],
-      "status": "draft",
-      "risk": "high",
-      "parallel_group": "PG-01",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r09--treatment-response-equivalence-and-independent-scores"
+      "phase": 2
     },
     {
       "id": "R10",
       "slice": "011-reporting",
       "title": "Unified offline report and streamlined workflow",
+      "story": "US5",
       "depends_on": [
-        "R03",
-        "R06",
+        "R05",
         "R08",
         "R09"
       ],
-      "tasks": [
-        "T091",
-        "T092",
-        "T093",
-        "T094",
-        "T095",
-        "T096",
-        "T097",
-        "T098",
-        "T099",
-        "T100"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-091",
+        "FR-092",
+        "FR-093",
+        "FR-094",
+        "FR-095",
+        "FR-096",
+        "FR-097",
+        "FR-098",
+        "FR-099",
+        "FR-100"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r10--unified-offline-report-and-streamlined-workflow"
+      "phase": [
+        1,
+        3
+      ],
+      "subpackets": [
+        {
+          "id": "R10a",
+          "phase": 1,
+          "depends_on": [
+            "R05"
+          ],
+          "acceptance": [
+            "V091",
+            "V092",
+            "V093",
+            "V094"
+          ]
+        },
+        {
+          "id": "R10b",
+          "phase": 3,
+          "depends_on": [
+            "R10a",
+            "R08",
+            "R09"
+          ],
+          "acceptance": [
+            "V095",
+            "V096",
+            "V097",
+            "V098",
+            "V099",
+            "V100"
+          ]
+        }
+      ]
     },
     {
       "id": "R11",
       "slice": "012-validation",
       "title": "Reproducibility, calibration and continuous validation",
+      "story": "US6",
       "depends_on": [
         "R10"
       ],
-      "tasks": [
-        "T101",
-        "T102",
-        "T103",
-        "T104",
-        "T105",
-        "T106",
-        "T107",
-        "T108",
-        "T109",
-        "T110"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-101",
+        "FR-102",
+        "FR-103",
+        "FR-104",
+        "FR-105",
+        "FR-106",
+        "FR-107",
+        "FR-108",
+        "FR-109",
+        "FR-110"
       ],
-      "status": "draft",
-      "risk": "high",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r11--reproducibility-calibration-and-continuous-validation"
+      "phase": 3
     },
     {
       "id": "R12",
       "slice": "013-release",
       "title": "Archived-study regression, documentation and versioned successor",
+      "story": "US6",
       "depends_on": [
         "R11"
       ],
-      "tasks": [
-        "T111",
-        "T112",
-        "T113",
-        "T114",
-        "T115",
-        "T116",
-        "T117",
-        "T118",
-        "T119",
-        "T120"
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-111",
+        "FR-112",
+        "FR-113",
+        "FR-114",
+        "FR-115",
+        "FR-116",
+        "FR-117",
+        "FR-118",
+        "FR-119",
+        "FR-120"
       ],
-      "status": "draft",
-      "risk": "high",
-      "documentation_owner": "documentation_contributor_under_maintainer_review",
-      "packet_definition": "specs/001-downstream-proteomics/packet-index.md#r12--archived-study-regression-documentation-and-versioned-successor"
+      "phase": 3
+    }
+  ],
+  "phases": [
+    {
+      "phase": 0,
+      "release": "baseline-recovered",
+      "meaning": "Recovered study scripts and audit; not a maintained successor."
+    },
+    {
+      "phase": 1,
+      "release": "v0.1-limma-core",
+      "meaning": "R01–R05 and R10a: intake, QC, frozen design, limma, and a thin truthful offline report."
+    },
+    {
+      "phase": 2,
+      "release": "v0.2-qualified-methods",
+      "meaning": "R06, R07, R08 and R09: qualified adapters, frozen resources, enrichment and response."
+    },
+    {
+      "phase": 3,
+      "release": "v1.0-defensible",
+      "meaning": "R10b, R11 and R12: full report, locked reproduction, calibration and legacy reconciliation."
     }
   ]
 }

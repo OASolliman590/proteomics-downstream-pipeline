@@ -1,102 +1,177 @@
 # Feature Specification: Design-compatible pathways and enrichment
 
-**Feature Branch:** `spec/009-enrichment` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R08**. Deliver design-compatible pathways and enrichment for user journey US3.
+**Phase:** 2. **Packet:** R08. **Status:** 1.2.0-frozen; implementation pending whole-group acceptance and separate authorization.
 
-## User Scenarios & Testing
+## Dispatch before enrichment
 
-### US3 — Design-compatible pathways and enrichment (Priority P1)
+| Design | Required primary matrix method | Rejected / exploratory |
+|---|---|---|
+| Independent finite linear | CAMERA | No block ignored. |
+| Paired fixed-subject | ROAST with fixed-subject design | CAMERA rejected. |
+| Repeated duplicateCorrelation | ROAST with validated block/correlation | CAMERA rejected; no double subject encoding. |
+| Native ranks only / alternative primary engine | No automatically equivalent matrix test | fgsea exploratory; separate linear sensitivity explicitly named. |
 
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
+This is a navigation summary; the normative [SM16 dispatch table](../001-downstream-proteomics/contracts/scientific-methods.md#design-method-dispatch) controls eligibility/nulls.
 
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R06 (`specs/007-assay-engines/`) and R07 (`specs/008-resources-mapping/`).
+## Scope
+
+Deliver only FR-071–FR-080 for US3. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-071**: The system MUST provide pathway null and method dispatcher. Plan distinguishes competitive, rotation self-contained, preranked and ORA nulls and rejects unsupported method/design combinations.
-- **FR-072**: The system MUST provide independent-design camera. Finite gene matrix/design/contrast match official CAMERA with estimated correlation; block/correlation arguments cannot be ignored.
-- **FR-073**: The system MUST provide blocked-design roast. Fixed-subject pairing passes its design only; duplicateCorrelation passes block/correlation without duplicate subject encoding; midpFALSE/rotation settings and reference outputs match.
-- **FR-074**: The system MUST provide directional and mixed rotation endpoints. Directional and mixed raw P/statistics/families remain distinct; central adjustment uses correct columns rather than package-native FDR mislabeled global.
-- **FR-075**: The system MUST provide exploratory fgsea adapter. Declared native ranks, ties, seeds and eps settings are honored; NES/log2err/warnings/leading edges and nonfinite tests are retained.
-- **FR-076**: The system MUST provide exact background-aware ora. Hand-enumerated hypergeometric examples match; all eligible sets enter the family and empty foreground gives a valid explanation.
-- **FR-077**: The system MUST provide pathway family adjustment. Collections/contrasts/null types/primary status obey the frozen families; original and central q fields remain distinguishable.
-- **FR-078**: The system MUST provide alternative-engine pathway sensitivity. proDA/DEqMS ranks and linear gene-model sensitivity are labeled correctly and never sold as equivalent correlation-adjusted primary-engine inference.
-- **FR-079**: The system MUST provide leading-edge redundancy and diagnostics. Overlap relationships preserve original set IDs/P values and do not merge independent discoveries or invent causal mechanisms.
-- **FR-080**: The system MUST provide enrichment golden and failure suite. Exact ORA, reference CAMERA/ROAST/fgsea, missing snapshots, NA/Inf matrix, all nonfinite tests and no discoveries exercise honest statuses.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-071 — Pathway null and method dispatcher:** The system MUST select CAMERA only for eligible independent matrix designs and ROAST for paired/blocked designs; label fgsea exploratory gene-set null and ORA separately.
+- **FR-072 — Independent-design CAMERA:** The system MUST match native statistic/P/direction within tolerance and retain correlation/universe diagnostics plus separate central q.
+- **FR-073 — Blocked-design ROAST:** The system MUST match reference endpoints with the same RNG; record correct covariance route, nrot and smoke label.
+- **FR-074 — Directional and mixed rotation endpoints:** The system MUST export separate self_contained_directional and self_contained_mixed rows/families and recompute each declared central q from its correct raw P.
+- **FR-075 — Exploratory fgsea adapter:** The system MUST retain ES/NES/P/native q/central q/log2err/leading-edge/size and warnings with preranked_gene_set hypothesis and exploratory status.
+- **FR-076 — Exact background-aware ORA:** The system MUST match exact raw and adjusted values and retain the k=0 set until after BH; empty foreground gives p=1 for every eligible set.
+- **FR-077 — Pathway family adjustment:** The system MUST keep method/null/role and declared collection/contrast membership exact; preserve native adjusted values separately from central q.
+- **FR-078 — Alternative-engine pathway sensitivity:** The system MUST label fgsea exploratory and linear CAMERA/ROAST results as a separate sensitivity, never same-likelihood primary-engine confirmation.
+- **FR-079 — Leading-edge redundancy and diagnostics:** The system MUST display overlap relations while preserving every original hypothesis ID, P/q and universe; no causal mechanism or independent-discovery count is created from clustering.
+- **FR-080 — Enrichment golden and failure suite:** The system MUST produce honest complete empty/no-discovery results where appropriate, and explicit failures for missing prerequisites or all eligible numerical tests failing.
 
 ## Acceptance Scenarios
 
+<a id="V071"></a>
+
 ### V071: Pathway null and method dispatcher
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** plan distinguishes competitive, rotation self-contained, preranked and ORA nulls and rejects unsupported method/design combinations.
+**Fixture:** Independent, paired fixed-subject, duplicate-correlation and native-rank-only plans.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** The SM16 design × method dispatch table.
+
+**Exact assertion:** Select CAMERA only for eligible independent matrix designs and ROAST for paired/blocked designs; label fgsea exploratory gene-set null and ORA separately.
+
+**Negative case:** Any paired/fixed-subject CAMERA exception, ignored block or sample-level fgsea claim fails.
+
+**Contract:** SM16; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V072"></a>
 
 ### V072: Independent-design CAMERA
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** finite gene matrix/design/contrast match official CAMERA with estimated correlation; block/correlation arguments cannot be ignored.
+**Fixture:** Finite independent gene matrix with two overlapping sets and an identifiable contrast.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct pinned limma::camera using inter.gene.cor=NA and identical gene matrix/design/contrast.
+
+**Exact assertion:** Match native statistic/P/direction within tolerance and retain correlation/universe diagnostics plus separate central q.
+
+**Negative case:** Supplying a subject block causes E_CAMERA_BLOCKED_DESIGN instead of being passed and ignored.
+
+**Contract:** SM16; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V073"></a>
 
 ### V073: Blocked-design ROAST
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** fixed-subject pairing passes its design only; duplicateCorrelation passes block/correlation without duplicate subject encoding; midpFALSE/rotation settings and reference outputs match.
+**Fixture:** Four-subject paired finite matrix and a separate eligible duplicate-correlation model; fixed seed and smoke nrot=199.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct pinned mroast/roast calls: fixed-subject design alone versus verified block/correlation, midp=FALSE.
+
+**Exact assertion:** Match reference endpoints with the same RNG; record correct covariance route, nrot and smoke label.
+
+**Negative case:** Double-encoded subjects, ignored block or production nrot=199 fails eligibility/resolution checks.
+
+**Contract:** SM16; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V074"></a>
 
 ### V074: Directional and mixed rotation endpoints
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** directional and mixed raw P/statistics/families remain distinct; central adjustment uses correct columns rather than package-native FDR mislabeled global.
+**Fixture:** A set containing opposing effects and another with concordant effects in the same rotation reference run.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Native directional versus mixed raw columns, retained before central adjustment.
+
+**Exact assertion:** Export separate self_contained_directional and self_contained_mixed rows/families and recompute each declared central q from its correct raw P.
+
+**Negative case:** Swapping mixed/directional P or labeling native per-call FDR as global central q fails.
+
+**Contract:** SM16; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V075"></a>
 
 ### V075: Exploratory fgsea adapter
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** declared native ranks, ties, seeds and eps settings are honored; NES/log2err/warnings/leading edges and nonfinite tests are retained.
+**Fixture:** A finite unique-gene rank list with ties, tiny fixed gene sets, explicit eps and fixed RNG/thread settings.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Separate pinned fgsea call with stable gene-ID tie order and identical settings.
+
+**Exact assertion:** Retain ES/NES/P/native q/central q/log2err/leading-edge/size and warnings with preranked_gene_set hypothesis and exploratory status.
+
+**Negative case:** Nonfinite/duplicate ranks or a TREAT P transformed into a purported native zero-null rank fail E_FGSEA_RANK_INVALID.
+
+**Contract:** SM16; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V076"></a>
 
 ### V076: Exact background-aware ORA
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** hand-enumerated hypergeometric examples match; all eligible sets enter the family and empty foreground gives a valid explanation.
+**Fixture:** Universe N=10, foreground n=2, eligible sets K=2 with k=2 and K=2 with k=0; bounds explicitly 1–10.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Hypergeometric tail: p1=1/45, p2=1; BH across both gives q1=2/45, q2=1.
+
+**Exact assertion:** Match exact raw and adjusted values and retain the k=0 set until after BH; empty foreground gives p=1 for every eligible set.
+
+**Negative case:** Dropping the zero-hit set before adjustment changes q1 to 1/45 and must fail this gate.
+
+**Contract:** SM17; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V077"></a>
 
 ### V077: Pathway family adjustment
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** collections/contrasts/null types/primary status obey the frozen families; original and central q fields remain distinguishable.
+**Fixture:** Two contrasts, two collections and multiple null types with small explicit raw-P arrays.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Prespecified family membership expansion and independent BH/BY on each selected array.
+
+**Exact assertion:** Keep method/null/role and declared collection/contrast membership exact; preserve native adjusted values separately from central q.
+
+**Negative case:** Pooling ROAST mixed with CAMERA competitive or omitting a tested zero-hit ORA set fails.
+
+**Contract:** SM12; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V078"></a>
 
 ### V078: Alternative-engine pathway sensitivity
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** proDA/DEqMS ranks and linear gene-model sensitivity are labeled correctly and never sold as equivalent correlation-adjusted primary-engine inference.
+**Fixture:** A proDA primary model with native zero-null ranks and an explicitly named complete-case limma gene-model sensitivity.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Actual model IDs, likelihood/null labels and corresponding direct method calls.
+
+**Exact assertion:** Label fgsea exploratory and linear CAMERA/ROAST results as a separate sensitivity, never same-likelihood primary-engine confirmation.
+
+**Negative case:** A CAMERA row carrying engine=proda or the primary proDA model identity fails E_PATHWAY_ENGINE_MISMATCH.
+
+**Contract:** SM16; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V079"></a>
 
 ### V079: Leading-edge redundancy and diagnostics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** overlap relationships preserve original set IDs/P values and do not merge independent discoveries or invent causal mechanisms.
+**Fixture:** Three sets with shared leading-edge genes and distinct set IDs/P values.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Hand Jaccard/intersection counts from the exported memberships.
+
+**Exact assertion:** Display overlap relations while preserving every original hypothesis ID, P/q and universe; no causal mechanism or independent-discovery count is created from clustering.
+
+**Negative case:** Merging sets and summing them as independent confirmations or changing their original P values fails.
+
+**Contract:** SM18; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V080"></a>
 
 ### V080: Enrichment golden and failure suite
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** exact ORA, reference CAMERA/ROAST/fgsea, missing snapshots, NA/Inf matrix, all nonfinite tests and no discoveries exercise honest statuses.
+**Fixture:** V072–V076 references plus missing snapshot, NA/Inf matrix, no foreground and all-nonfinite eligible test outputs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct references, schema/state contract and hand empty-set behavior.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Produce honest complete empty/no-discovery results where appropriate, and explicit failures for missing prerequisites or all eligible numerical tests failing.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** All-nonfinite tests cannot become a successful zero-discovery family or a blank healthy report section.
 
-## Assumptions and Scope Boundary
+**Contract:** SM18; **owner:** R08; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

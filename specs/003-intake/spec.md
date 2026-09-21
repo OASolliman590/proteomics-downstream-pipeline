@@ -1,102 +1,166 @@
 # Feature Specification: Canonical protein input and biological identity
 
-**Feature Branch:** `spec/003-intake` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R02**. Deliver canonical protein input and biological identity for user journey US1.
+**Phase:** 1. **Packet:** R02. **Status:** 1.2.0-frozen; implementation pending prerequisite acceptance and explicit authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US1 — Canonical protein input and biological identity (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R01 (`specs/002-foundation/`).
+Deliver only FR-011–FR-020 for US1. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-011**: The system MUST provide canonical wide and long intake. Equivalent shuffled wide/long tables yield identical aligned numeric values and masks; duplicate feature-observation pairs fail.
-- **FR-012**: The system MUST provide explicit scale and missing encoding. Linear-positive input is transformed once; log2 zero is retained; configured linear zero-as-missing and invalid negative values are distinguished.
-- **FR-013**: The system MUST provide biological observation hierarchy. Technical injections never inflate biological n; paired and repeated observations retain subject identity; invalid shared IDs fail.
-- **FR-014**: The system MUST provide explicit technical aggregation. Linear-mean and log-mean produce hand-calculated different results; coverage and specimen counts are preserved.
-- **FR-015**: The system MUST provide feature annotations and protein groups. Opaque row IDs remain unique while repeated accessions/gene mappings remain explicit; contaminant/decoy flags distinguish unknown from false.
-- **FR-016**: The system MUST provide versioned vendor mappings. Synthetic DIA-NN, MaxQuant, FragPipe protein and Spectronaut protein fixtures exercise declared mapping/version; unsupported peptide grain fails.
-- **FR-017**: The system MUST provide historical workbook importer. The existing parser is wrapped without editing its source; source-sheet contrast and Method A/B naming are mapped by biological meaning.
-- **FR-018**: The system MUST provide immutable canonical bundle. Matrix, masks, annotations, observation metadata and hashes roundtrip without numerical change; reruns refuse collisions.
-- **FR-019**: The system MUST provide intake validation report. Reports include grain, scale, n, missingness, duplicate keys, provenance gaps and errors; no hardcoded biological confirmation.
-- **FR-020**: The system MUST provide input edge-case fixtures. Exercise ragged files, duplicate IDs, mismatched columns, empty values, Inf, quoted delimiters, unknown encoding and unsupported assay scope.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-011 — Canonical wide and long intake:** The system MUST produce exactly the same ordered values and masks from both formats, with no duplicate or missing key silently accepted.
+- **FR-012 — Explicit scale and missing encoding:** The system MUST transform positive linear values once; preserve log2 zero/negative values; distinguish explicitly encoded linear missing zero from invalid nonpositive observations.
+- **FR-013 — Biological observation hierarchy:** The system MUST report injections=4 and biological n=1 for the first specimen; paired visits retain four subjects and do not become eight independent subjects.
+- **FR-014 — Explicit technical aggregation:** The system MUST match the two different means within transform tolerance and retain one biological unit with source coverage/lineage.
+- **FR-015 — Feature annotations and protein groups:** The system MUST keep three unique feature rows, complete constituent members and unknown flags; do not use gene symbols as unique protein IDs.
+- **FR-016 — Versioned vendor mappings:** The system MUST validate the named profile/version and map only its declared protein-level columns without inferring a vendor version from similar names.
+- **FR-017 — Historical workbook importer:** The system MUST wrap the existing parser without source edits; retain sheet identities and require explicit noninterchangeable Method A/B naming.
+- **FR-018 — Immutable canonical bundle:** The system MUST publish a self-consistent canonical manifest; roundtrip values/masks exactly; refuse collisions and changed source bytes.
+- **FR-019 — Intake validation report:** The system MUST export grain, scale, biological/technical n, missingness, errors and provenance gaps with no asserted confirmation of unknown biological facts.
+- **FR-020 — Input edge-case fixtures:** The system MUST reject each invalid file with a specific field/row reason; correctly roundtrip a valid quoted delimiter and Unicode identifier.
 
 ## Acceptance Scenarios
 
+<a id="V011"></a>
+
 ### V011: Canonical wide and long intake
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** equivalent shuffled wide/long tables yield identical aligned numeric values and masks; duplicate feature-observation pairs fail.
+**Fixture:** 8×12 independent fixture and equivalent shuffled long form, including its two NA cells.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Pivot/alignment from explicit feature-observation keys.
+
+**Exact assertion:** Produce exactly the same ordered values and masks from both formats, with no duplicate or missing key silently accepted.
+
+**Negative case:** Add a duplicate feature-observation pair or duplicate header: E_ID_DUPLICATE and no canonical publication.
+
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V012"></a>
 
 ### V012: Explicit scale and missing encoding
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** linear-positive input is transformed once; log2 zero is retained; configured linear zero-as-missing and invalid negative values are distinguished.
+**Fixture:** One-row values [1,2,4,0,-1] under separate linear/log2 configurations and explicit zero-encoding variants.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** log2([1,2,4])=[0,1,2] and the SM02 transition table.
+
+**Exact assertion:** Transform positive linear values once; preserve log2 zero/negative values; distinguish explicitly encoded linear missing zero from invalid nonpositive observations.
+
+**Negative case:** source_scale=log2 with transform=log2 fails E_SCALE_SECOND_LOG before a transform is executed.
+
+**Contract:** SM02; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V013"></a>
 
 ### V013: Biological observation hierarchy
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** technical injections never inflate biological n; paired and repeated observations retain subject identity; invalid shared IDs fail.
+**Fixture:** Four injections of one specimen and a four-subject paired fixture with distinct visit specimens.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Unique biological-unit counts within group and unique subject IDs.
+
+**Exact assertion:** Report injections=4 and biological n=1 for the first specimen; paired visits retain four subjects and do not become eight independent subjects.
+
+**Negative case:** Unaggregated injections with technical mode none fail E_TECHNICAL_REPLICATION_UNMODELED.
+
+**Contract:** SM03; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V014"></a>
 
 ### V014: Explicit technical aggregation
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** linear-mean and log-mean produce hand-calculated different results; coverage and specimen counts are preserved.
+**Fixture:** Two injections with linear abundances [4,16], plus a distinct visit that must remain separate.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** mean_linear→log2(10); mean_log2→3.
+
+**Exact assertion:** Match the two different means within transform tolerance and retain one biological unit with source coverage/lineage.
+
+**Negative case:** An aggregation group spanning before and after or different specimens fails instead of averaging the biological effect away.
+
+**Contract:** SM03; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V015"></a>
 
 ### V015: Feature annotations and protein groups
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** opaque row IDs remain unique while repeated accessions/gene mappings remain explicit; contaminant/decoy flags distinguish unknown from false.
+**Fixture:** Three opaque features sharing an accession/symbol, one multi-gene group and unknown decoy flags.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit input members and tri-state flag values.
+
+**Exact assertion:** Keep three unique feature rows, complete constituent members and unknown flags; do not use gene symbols as unique protein IDs.
+
+**Negative case:** A duplicate feature_id fails even when its annotations differ; unknown decoy is not coerced to false.
+
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V016"></a>
 
 ### V016: Versioned vendor mappings
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** synthetic DIA-NN, MaxQuant, FragPipe protein and Spectronaut protein fixtures exercise declared mapping/version; unsupported peptide grain fails.
+**Fixture:** Separate ≤8-feature synthetic protein-level exports with documented header sets for DIA-NN, MaxQuant, FragPipe and Spectronaut.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** The frozen per-profile column maps and canonical expected rows, authored before adapter output.
+
+**Exact assertion:** Validate the named profile/version and map only its declared protein-level columns without inferring a vendor version from similar names.
+
+**Negative case:** A peptide/precursor/phosphosite-grain table fails E_UNSUPPORTED_SCOPE; unknown vendor headers need an explicit mapping, not a guessed one.
+
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V017"></a>
 
 ### V017: Historical workbook importer
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** the existing parser is wrapped without editing its source; source-sheet contrast and Method A/B naming are mapped by biological meaning.
+**Fixture:** A tiny synthetic four-sheet workbook and explicit Method A/Method B contrast/group crosswalk.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Read-only recovered parser behavior and crosswalk by biological numerator/denominator, not D1/T1 ordering.
+
+**Exact assertion:** Wrap the existing parser without source edits; retain sheet identities and require explicit noninterchangeable Method A/B naming.
+
+**Negative case:** Swap D1/D2 or T1/T2 without updating the semantic crosswalk: fail contrast identity validation rather than relabeling results.
+
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V018"></a>
 
 ### V018: Immutable canonical bundle
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** matrix, masks, annotations, observation metadata and hashes roundtrip without numerical change; reruns refuse collisions.
+**Fixture:** Canonical matrix/masks/metadata from V011 and an attempted same-output rerun.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Roundtrip IDs/values plus independent SHA-256.
+
+**Exact assertion:** Publish a self-consistent canonical manifest; roundtrip values/masks exactly; refuse collisions and changed source bytes.
+
+**Negative case:** Delete a mask or change one observation ID: verify fails integrity and no downstream fit starts.
+
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V019"></a>
 
 ### V019: Intake validation report
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** reports include grain, scale, n, missingness, duplicate keys, provenance gaps and errors; no hardcoded biological confirmation.
+**Fixture:** Small input with unknown tissue/upstream normalization and declared technical units.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Input declarations, independent dimensions and missing-cell counts.
+
+**Exact assertion:** Export grain, scale, biological/technical n, missingness, errors and provenance gaps with no asserted confirmation of unknown biological facts.
+
+**Negative case:** Missing tissue/assay evidence remains unknown or blocks its dependent analysis; it does not become a hardcoded healthy/PASS statement.
+
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V020"></a>
 
 ### V020: Input edge-case fixtures
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** exercise ragged files, duplicate IDs, mismatched columns, empty values, Inf, quoted delimiters, unknown encoding and unsupported assay scope.
+**Fixture:** Individually malformed tiny files: ragged row, duplicated ID, mismatched mask, Inf, quoted TAB, unknown encoding, unsupported assay.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Parser error location and correct CSV/TSV escaping roundtrip.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Reject each invalid file with a specific field/row reason; correctly roundtrip a valid quoted delimiter and Unicode identifier.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** Reject Inf/nonfinite observed numeric data, rather than silently treating it as missing or clipping it.
 
-## Assumptions and Scope Boundary
+**Contract:** SM01; **owner:** R02; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

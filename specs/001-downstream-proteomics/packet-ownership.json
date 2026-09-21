@@ -1,0 +1,329 @@
+{
+  "schema_version": "1.2.0",
+  "status": "frozen",
+  "forbidden": [
+    "pipeline/**",
+    "legacy/**",
+    "docs/audit/**",
+    "private_evidence/**",
+    ".specify/**",
+    "specs/**"
+  ],
+  "packets": {
+    "R01": {
+      "phase": 1,
+      "risk": "high",
+      "depends_on": [],
+      "write_allowlist": [
+        "pyproject.toml",
+        "src/proteomics_pipeline/__init__.py",
+        "src/proteomics_pipeline/__main__.py",
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/config.py",
+        "src/proteomics_pipeline/doctor.py",
+        "src/proteomics_pipeline/errors.py",
+        "src/proteomics_pipeline/paths.py",
+        "src/proteomics_pipeline/provenance.py",
+        "src/proteomics_pipeline/runtime.py",
+        "src/proteomics_pipeline/py.typed",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "src/proteomics_pipeline/schemas/stage-request.schema.json",
+        "src/proteomics_pipeline/schemas/stage-result.schema.json",
+        "r/proteomicsCore/DESCRIPTION",
+        "r/proteomicsCore/NAMESPACE",
+        "r/proteomicsCore/.Rbuildignore",
+        "r/proteomicsCore/R/io.R",
+        "r/proteomicsCore/R/dispatch.R",
+        "r/proteomicsCore/tests/testthat.R",
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "scripts/maintained/run_stage.R",
+        "scripts/maintained/test_r.R",
+        "scripts/maintained/check_baseline.py",
+        "scripts/maintained/write_solved_versions.py",
+        "scripts/maintained/bootstrap.ps1",
+        "scripts/maintained/bootstrap.sh",
+        "configs/examples/example-independent.json",
+        "configs/examples/example-paired.json",
+        "configs/examples/example-effect-threshold.json",
+        "configs/examples/fixtures/**",
+        "tests/contract/foundation/**",
+        "tests/unit/foundation/**",
+        "tests/fixtures/foundation/**",
+        "docs/development.md",
+        "docs/validation/baseline-hashes.json",
+        "docs/validation/002-foundation/**",
+        "src/proteomics_pipeline/schemas/run-status.schema.json"
+      ]
+    },
+    "R02": {
+      "phase": 1,
+      "risk": "high",
+      "depends_on": [
+        "R01"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/intake/__init__.py",
+        "src/proteomics_pipeline/intake/service.py",
+        "src/proteomics_pipeline/intake/wide_long.py",
+        "src/proteomics_pipeline/intake/hierarchy.py",
+        "src/proteomics_pipeline/intake/vendor.py",
+        "src/proteomics_pipeline/intake/legacy_workbook.py",
+        "r/proteomicsCore/R/intake.R",
+        "configs/mappings/**",
+        "tests/contract/intake/**",
+        "tests/scientific/test_technical_units.py",
+        "tests/fixtures/intake/**",
+        "docs/validation/003-intake/**"
+      ]
+    },
+    "R03": {
+      "phase": 1,
+      "risk": "high",
+      "depends_on": [
+        "R02"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/preprocessing_service.py",
+        "src/proteomics_pipeline/reporting/qc_data.py",
+        "r/proteomicsCore/R/preprocess.R",
+        "r/proteomicsCore/R/normalization.R",
+        "r/proteomicsCore/R/tmt.R",
+        "r/proteomicsCore/R/filtering.R",
+        "r/proteomicsCore/R/missingness.R",
+        "r/proteomicsCore/R/qc.R",
+        "r/proteomicsCore/R/sensitivity.R",
+        "r/proteomicsCore/R/detection.R",
+        "tests/integration/test_qc.py",
+        "tests/fixtures/preprocessing/**",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/**"
+      ]
+    },
+    "R04": {
+      "phase": 1,
+      "risk": "high",
+      "depends_on": [
+        "R03"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/design_service.py",
+        "r/proteomicsCore/R/design.R",
+        "r/proteomicsCore/R/estimability.R",
+        "r/proteomicsCore/R/contrasts.R",
+        "r/proteomicsCore/R/capabilities.R",
+        "tests/scientific/test_design_contract.py",
+        "tests/fixtures/design/**",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/**"
+      ]
+    },
+    "R05": {
+      "phase": 1,
+      "risk": "high",
+      "depends_on": [
+        "R04"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/inference_service.py",
+        "src/proteomics_pipeline/schemas/differential-result.schema.json",
+        "r/proteomicsCore/R/model_limma.R",
+        "r/proteomicsCore/R/diagnostics.R",
+        "r/proteomicsCore/R/inference.R",
+        "r/proteomicsCore/R/multiplicity.R",
+        "r/proteomicsCore/R/export.R",
+        "r/proteomicsCore/R/influence.R",
+        "tests/scientific/test_limma.py",
+        "tests/fixtures/limma/**",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/**"
+      ]
+    },
+    "R06": {
+      "phase": 2,
+      "risk": "high",
+      "depends_on": [
+        "R05",
+        "R10a"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/assay_service.py",
+        "src/proteomics_pipeline/count_evidence.py",
+        "src/proteomics_pipeline/reporting/model_data.py",
+        "src/proteomics_pipeline/schemas/count-evidence.schema.json",
+        "r/proteomicsCore/R/model_deqms.R",
+        "r/proteomicsCore/R/model_proda.R",
+        "r/proteomicsCore/R/assay_eligibility.R",
+        "r/proteomicsCore/R/assay_comparison.R",
+        "tests/scientific/test_assay_engines.py",
+        "tests/fixtures/assay_engines/**",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/**"
+      ]
+    },
+    "R07": {
+      "phase": 2,
+      "risk": "high",
+      "depends_on": [
+        "R05",
+        "R10a"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/resources.py",
+        "src/proteomics_pipeline/schemas/resource.schema.json",
+        "configs/resources/**",
+        "r/proteomicsCore/R/mapping.R",
+        "r/proteomicsCore/R/gene_matrix.R",
+        "r/proteomicsCore/R/genesets.R",
+        "tests/contract/test_resources.py",
+        "tests/fixtures/resources/**",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "resources/snapshots/**",
+        "docs/validation/008-resources-mapping/**"
+      ]
+    },
+    "R08": {
+      "phase": 2,
+      "risk": "high",
+      "depends_on": [
+        "R06",
+        "R07",
+        "R09"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/pathway_service.py",
+        "r/proteomicsCore/R/pathways.R",
+        "r/proteomicsCore/R/pathway_camera.R",
+        "r/proteomicsCore/R/pathway_roast.R",
+        "r/proteomicsCore/R/pathway_fgsea.R",
+        "r/proteomicsCore/R/pathway_ora.R",
+        "r/proteomicsCore/R/pathway_summary.R",
+        "tests/scientific/test_pathways.py",
+        "tests/fixtures/pathways/**",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/**"
+      ]
+    },
+    "R09": {
+      "phase": 2,
+      "risk": "high",
+      "depends_on": [
+        "R05",
+        "R10a"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/response_service.py",
+        "src/proteomics_pipeline/reporting/response_data.py",
+        "src/proteomics_pipeline/schemas/independent-score.schema.json",
+        "r/proteomicsCore/R/response.R",
+        "r/proteomicsCore/R/response_uncertainty.R",
+        "r/proteomicsCore/R/equivalence.R",
+        "r/proteomicsCore/R/scores.R",
+        "r/proteomicsCore/R/randomization.R",
+        "tests/scientific/test_response.py",
+        "tests/fixtures/response/**",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/**"
+      ]
+    },
+    "R10a": {
+      "phase": 1,
+      "risk": "high",
+      "depends_on": [
+        "R05"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/reporting/__init__.py",
+        "src/proteomics_pipeline/reporting/stub.py",
+        "src/proteomics_pipeline/reporting/assemble.py",
+        "src/proteomics_pipeline/reporting/stub_methods.py",
+        "src/proteomics_pipeline/reporting/stub_template.html",
+        "src/proteomics_pipeline/schemas/report-data.schema.json",
+        "tests/integration/test_report_stub.py",
+        "tests/fixtures/report_stub/**",
+        "docs/validation/011-reporting/stub/**"
+      ]
+    },
+    "R10b": {
+      "phase": 3,
+      "risk": "high",
+      "depends_on": [
+        "R10a",
+        "R08",
+        "R09"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/reporting/full.py",
+        "src/proteomics_pipeline/reporting/comparison.py",
+        "src/proteomics_pipeline/reporting/methods.py",
+        "src/proteomics_pipeline/reporting/pathway_data.py",
+        "src/proteomics_pipeline/reporting/full_templates/**",
+        "r/proteomicsCore/R/plots.R",
+        "tests/integration/test_reports.py",
+        "tests/fixtures/reports/**",
+        "docs/user-guide/usage.md",
+        "configs/examples/README.md",
+        "docs/validation/011-reporting/full/**"
+      ]
+    },
+    "R11": {
+      "phase": 3,
+      "risk": "high",
+      "depends_on": [
+        "R10b"
+      ],
+      "write_allowlist": [
+        "renv.lock",
+        "requirements.lock",
+        "containers/**",
+        "src/proteomics_pipeline/reproduction.py",
+        "src/proteomics_pipeline/cache.py",
+        "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/**",
+        "tests/scientific/calibration_pathways.R",
+        "scripts/maintained/run_calibration.py",
+        "scripts/maintained/benchmark.py",
+        ".github/workflows/maintained.yml",
+        "r/proteomicsCore/R/simulate.R",
+        "docs/validation/reference-matrix.json",
+        "docs/validation/acceptance.json",
+        "docs/validation/benchmarks/**",
+        "docs/validation/012-validation/**"
+      ]
+    },
+    "R12": {
+      "phase": 3,
+      "risk": "high",
+      "depends_on": [
+        "R11"
+      ],
+      "write_allowlist": [
+        "src/proteomics_pipeline/legacy_service.py",
+        "scripts/maintained/legacy_regression.py",
+        "scripts/maintained/build_release.py",
+        "tests/regression/**",
+        "configs/local-legacy.template.json",
+        "docs/validation/legacy-comparison.md",
+        "docs/validation/delivery.json",
+        "docs/validation/final-acceptance.md",
+        "docs/validation/013-release/**",
+        "docs/user-guide/release.md",
+        "docs/methods/**",
+        "README.md",
+        "CHANGELOG.md",
+        ".gitignore"
+      ]
+    }
+  },
+  "parallel_groups": [
+    [
+      "R06",
+      "R07",
+      "R09"
+    ]
+  ],
+  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization."
+}

@@ -1,102 +1,168 @@
 # Feature Specification: Treatment response, equivalence and independent scores
 
-**Feature Branch:** `spec/010-treatment-response` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R09**. Deliver treatment response, equivalence and independent scores for user journey US4.
+**Phase:** 2. **Packet:** R09. **Status:** 1.2.0-frozen; implementation pending Phase 1 acceptance and separate authorization.
 
-## User Scenarios & Testing
+**No p-value on in-sample selected scores.** See [SM23–SM24](../001-downstream-proteomics/contracts/scientific-methods.md#treatment-response-and-scores); descriptive-score output physically lacks inferential columns.
 
-### US4 — Treatment response, equivalence and independent scores (Priority P1)
+## Scope
 
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R05 (`specs/006-limma-inference/`).
+Deliver only FR-081–FR-090 for US4. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-081**: The system MUST provide explicit disease-treatment-residual axes. d, t, r and interaction estimates align to planned contrasts with covariance; r=d+t matches analytic fixtures.
-- **FR-082**: The system MUST provide descriptive reversal without double dipping. Current-data selected features can be displayed but produce no confirmatory score P or rescue label; selection provenance is explicit.
-- **FR-083**: The system MUST provide bounded response categories. Configured epsilon classes handle zero/small d, RI=1, RI>1+epsilon and RI=3; old unlimited full-reversal label is absent.
-- **FR-084**: The system MUST provide ratio uncertainty contract. Supported joint-covariance method handles unstable/unbounded RI intervals; dividing CI endpoints is rejected and descriptive-only mode is explicit.
-- **FR-085**: The system MUST provide model-correct residual equivalence. Analytic TOST examples match both one-sided tests/max-P and 90% equivalence intervals; a nonsignificant zero-null test alone cannot pass.
-- **FR-086**: The system MUST provide conjunction claim eligibility. Only independently defined direction and valid model-supported conjunction yield adjusted restoration endpoints; FDR-list intersection is not labeled rescue FDR.
-- **FR-087**: The system MUST provide independent fixed-score artifacts. Training identity/weights/transforms are frozen and checked; validation-outcome-derived selection or refitting produces descriptive-only eligibility.
-- **FR-088**: The system MUST provide exact and monte carlo randomization. All 70 four-versus-four allocations use k/N; Monte Carlo +1 and interval are distinct; paired/restricted permutations honor blocks and ties.
-- **FR-089**: The system MUST provide score/equivalence reporting semantics. Report distinguishes movement, overshoot, equivalence, conjunction evidence and unknown training overlap; no causal rescue prose is generated.
-- **FR-090**: The system MUST provide circularity/null/overshoot tests. Shared-untreated null exposes negative effect covariance but cannot yield a spurious inferential score path; exact old examples and RI overshoot regressions pass.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-081 — Explicit disease-treatment-residual axes:** The system MUST export coherent axes and covariance and verify r=d+t with preserved contrast signs and model ID.
+- **FR-082 — Descriptive reversal without double dipping:** The system MUST export only DescriptiveScore with hypothesis_type=descriptive_score and physically no P/q/test-statistic columns; record the overlap reason.
+- **FR-083 — Bounded response categories:** The system MUST assign exact boundary classes, NA for an invalid denominator, crossed_control for RI>1 and overshoot only for RI>1.2; RI=3 is never restoration.
+- **FR-084 — Ratio uncertainty contract:** The system MUST match bounded or unbounded/disjoint confidence sets and retain interval kind; descriptive-only emits no interval and no ratio P value.
+- **FR-085 — Model-correct residual equivalence:** The system MUST both zero-null tests can be nonsignificant, but only the narrow-interval fixture passes unadjusted alpha=.05 TOST; export p_lower/p_upper/max-P and separate family q.
+- **FR-086 — Conjunction claim eligibility:** The system MUST retain components, direction-source hash and joint endpoint in FormalRescueResult only when independence and model eligibility pass.
+- **FR-087 — Independent fixed-score artifacts:** The system MUST apply exactly the training transforms, preserve missing-feature policy and emit inferential eligibility only for verified disjoint subjects/units.
+- **FR-088 — Exact and Monte Carlo randomization:** The system MUST compute exact k/70 using the frozen tie rule; top-four versus bottom-four gives k=2 and 2/70. MC uses the full-space-with-replacement protocol and (k+1)/(B+1), separately labeled with precision.
+- **FR-089 — Score/equivalence reporting semantics:** The system MUST keep descriptive movement, overshoot, equivalence, formal conjunction and independent score test distinct in tables/prose; never generate causal rescue language.
+- **FR-090 — Circularity/null/overshoot tests:** The system MUST demonstrate shared-control negative covariance and prevent every in-sample-score P route; classify RI=3 as overshoot and preserve the correct exact denominators.
 
 ## Acceptance Scenarios
 
+<a id="V081"></a>
+
 ### V081: Explicit disease-treatment-residual axes
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** d, t, r and interaction estimates align to planned contrasts with covariance; r=d+t matches analytic fixtures.
+**Fixture:** Independent means C/U/T=10/12/11 with covariance diag(.25,.25,.25).
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Linear algebra d=2, t=−1, r=1; Cov(d,t)=−.25, Var(d)=Var(t)=Var(r)=.5.
+
+**Exact assertion:** Export coherent axes and covariance and verify r=d+t with preserved contrast signs and model ID.
+
+**Negative case:** Contrasts from incompatible models or residual weights not equal to d+t fail E_AXIS_INCOHERENT.
+
+**Contract:** SM19; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V082"></a>
 
 ### V082: Descriptive reversal without double dipping
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** current-data selected features can be displayed but produce no confirmatory score P or rescue label; selection provenance is explicit.
+**Fixture:** A score whose selected features/signs use one or more of the tested contrast samples.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Set intersection of training/selection and validation biological-unit/subject IDs.
+
+**Exact assertion:** Export only DescriptiveScore with hypothesis_type=descriptive_score and physically no P/q/test-statistic columns; record the overlap reason.
+
+**Negative case:** A request to permute already-selected scores cannot produce IndependentScoreTest or a rescue label.
+
+**Contract:** SM23; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V083"></a>
 
 ### V083: Bounded response categories
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** configured epsilon classes handle zero/small d, RI=1, RI>1+epsilon and RI=3; old unlimited full-reversal label is absent.
+**Fixture:** d=1, t=−RI for RI in [−.1,0,.299999,.3,.799999,.8,1,1.2,1.200001,3]; also d=0 and abs(d)<dmin.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Literal SM20 class inequalities and r=d×(1−RI).
+
+**Exact assertion:** Assign exact boundary classes, NA for an invalid denominator, crossed_control for RI>1 and overshoot only for RI>1.2; RI=3 is never restoration.
+
+**Negative case:** An unlimited full_reversal class or rounding 1.200001 into near_restoration fails.
+
+**Contract:** SM20; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V084"></a>
 
 ### V084: Ratio uncertainty contract
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** supported joint-covariance method handles unstable/unbounded RI intervals; dividing CI endpoints is rejected and descriptive-only mode is explicit.
+**Fixture:** Two bivariate normal contrast estimates with known covariance: one stable denominator and one whose uncertainty crosses zero.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent Fieller quadratic inequality solution using the declared covariance/critical value.
+
+**Exact assertion:** Match bounded or unbounded/disjoint confidence sets and retain interval kind; descriptive-only emits no interval and no ratio P value.
+
+**Negative case:** Dividing separate interval endpoints or truncating an unbounded interval to a finite range fails.
+
+**Contract:** SM20; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V085"></a>
 
 ### V085: Model-correct residual equivalence
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** analytic TOST examples match both one-sided tests/max-P and 90% equivalence intervals; a nonsignificant zero-null test alone cannot pass.
+**Fixture:** Residual r=0 with df=20, delta=.2, and SE=.05 versus SE=1.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct Student-t CDF one-sided tests and qt(.95,20) for the 90% interval.
+
+**Exact assertion:** Both zero-null tests can be nonsignificant, but only the narrow-interval fixture passes unadjusted alpha=.05 TOST; export p_lower/p_upper/max-P and separate family q.
+
+**Negative case:** Nonsignificance alone, 95%-effect-CI substitution or recycled zero-null q cannot produce equivalence.
+
+**Contract:** SM21; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V086"></a>
 
 ### V086: Conjunction claim eligibility
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** only independently defined direction and valid model-supported conjunction yield adjusted restoration endpoints; FDR-list intersection is not labeled rescue FDR.
+**Fixture:** Externally fixed positive disease direction, disease/treatment margins, residual margin and four valid one-sided component P values [.01,.02,.03,.04].
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Intersection-union joint P=max=.04, followed by the declared conjunction-family adjustment.
+
+**Exact assertion:** Retain components, direction-source hash and joint endpoint in FormalRescueResult only when independence and model eligibility pass.
+
+**Negative case:** Direction selected on tested disease samples or intersection of separately BH-filtered lists cannot claim formal_rescue/FDR.
+
+**Contract:** SM22; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V087"></a>
 
 ### V087: Independent fixed-score artifacts
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** training identity/weights/transforms are frozen and checked; validation-outcome-derived selection or refitting produces descriptive-only eligibility.
+**Fixture:** A two-feature score manifest with fixed weights/centers/scales and training subjects disjoint from four tested pairs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Direct application of the fixed transform and participant-set disjointness check.
+
+**Exact assertion:** Apply exactly the training transforms, preserve missing-feature policy and emit inferential eligibility only for verified disjoint subjects/units.
+
+**Negative case:** A reused subject at another visit, unknown selection cohort or refitted validation transform degrades to descriptive_score with no P columns.
+
+**Contract:** SM23; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V088"></a>
 
 ### V088: Exact and Monte Carlo randomization
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** all 70 four-versus-four allocations use k/N; Monte Carlo +1 and interval are distinct; paired/restricted permutations honor blocks and ties.
+**Fixture:** Eight fixed scores [1,2,3,4,5,6,7,8], every 4-vs-4 allocation and a separate fixed-seed Monte Carlo draw stream.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent itertools combinations and absolute mean differences; exactly 70 allocations, observed split once.
+
+**Exact assertion:** Compute exact k/70 using the frozen tie rule; top-four versus bottom-four gives k=2 and 2/70. MC uses the full-space-with-replacement protocol and (k+1)/(B+1), separately labeled with precision.
+
+**Negative case:** 3/71 for the exhaustive k=2 fixture fails; unrestricted permutation of paired subjects or exclusion of the observed allocation from an unbounded with-replacement MC space fails.
+
+**Contract:** SM24; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V089"></a>
 
 ### V089: Score/equivalence reporting semantics
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** report distinguishes movement, overshoot, equivalence, conjunction evidence and unknown training overlap; no causal rescue prose is generated.
+**Fixture:** A descriptive near_restoration feature failing TOST, an overshoot feature and an in-sample-selected score.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Typed input objects and SM20–SM24 vocabulary, with a separate eligible score test for comparison.
+
+**Exact assertion:** Keep descriptive movement, overshoot, equivalence, formal conjunction and independent score test distinct in tables/prose; never generate causal rescue language.
+
+**Negative case:** A near_restoration class cannot be labeled statistically equivalent without its passing eligible EquivalenceResult.
+
+**Contract:** SM25; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V090"></a>
 
 ### V090: Circularity/null/overshoot tests
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** shared-untreated null exposes negative effect covariance but cannot yield a spurious inferential score path; exact old examples and RI overshoot regressions pass.
+**Fixture:** The V081 covariance fixture, V082 overlap fixture and independent 70-allocation arithmetic cases with extreme counts 2 and 6.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Exact algebra and enumeration; 2/70 and 6/70 are fixture arithmetic, not constants returned by production.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Demonstrate shared-control negative covariance and prevent every in-sample-score P route; classify RI=3 as overshoot and preserve the correct exact denominators.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** Historical 3/71 or 7/71, hardcoded answers for arbitrary input, or a selected-score null permutation labeled confirmatory fails.
 
-## Assumptions and Scope Boundary
+**Contract:** SM19; **owner:** R09; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

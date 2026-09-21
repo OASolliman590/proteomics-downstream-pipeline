@@ -1,25 +1,15 @@
-# Target quickstart and implementation verification
+# Quickstart status
 
-This describes the maintained workflow to be built. The commands are not yet implemented at specification delivery. Maintainer must execute the finished versions and replace proposed examples with tested commands in the maintained user guide.
+The maintained CLI is not implemented at the recovered baseline. The commands below are **future Phase 1 acceptance targets**, not instructions claiming they work today:
 
-## New analysis
+```bash
+proteomics doctor --json --config specs/001-downstream-proteomics/contracts/example-independent.json
+proteomics validate --config specs/001-downstream-proteomics/contracts/example-independent.json --json
+proteomics plan --config specs/001-downstream-proteomics/contracts/example-independent.json --output plan.json
+proteomics run --config specs/001-downstream-proteomics/contracts/example-independent.json --output runs/example
+proteomics verify --run runs/example --json
+```
 
-1. Install the project-local pinned Python and R environments using the implemented bootstrap for the platform; run `proteomics doctor --json`.
-2. Generate a canonical LFQ/TMT/processed-protein configuration. Supply abundance, observation metadata, feature annotations and provenance. Declare scale, upstream normalization/imputation, biological-unit hierarchy, primary contrasts/hypothesis/families and optional eligible methods.
-3. If pathways are requested, explicitly prepare pinned resource/mapping snapshots and verify their hashes. Production execution will remain offline.
-4. Run `proteomics validate --config analysis.yml`, inspect the design/applicability report and fix input errors without altering source measurements.
-5. Run `proteomics plan --config analysis.yml --output plan.json`; inspect the frozen estimands, biological n, filters, model method and testing families.
-6. Run `proteomics run --config analysis.yml --output runs/run-01`; open the generated offline report.
-7. Run `proteomics verify --run runs/run-01`. For a declared sensitivity configuration, use a different run folder and compare with `proteomics compare`.
+Paths inside each config resolve from its file directory. [Tiny fixtures](contracts/fixtures/README.md) are actual public synthetic specification examples, not private study data or fitted references. R01 creates only the real foundation; it must not pretend to fit these examples before R02–R05/R10a exist. Current recovery usage is in the root [README](../../README.md) and unchanged [pipeline documentation](../../docs/PIPELINE.md).
 
-The three JSON examples in contracts are schema examples with intentionally local fixture paths, not shipped study data. Foundation/intake slices create matching synthetic fixtures and YAML runnable examples. They demonstrate independent, paired and effect-threshold designs. The descriptive response epsilon and denominator floor are explicitly example policies, not universally optimal biological thresholds.
-
-## Archived project
-
-Only Maintainer accesses `<private-archive-root>/private_evidence/original`. It runs the maintained import-legacy/regression command locally after implementation. Packet Implementer, Independent Reviewer and any documentation worker receive only synthetic/redistributable fixtures and non-private contract facts. New outputs go to a separate run directory. No original file or report is modified.
-
-The importer records that sample/treatment/tissue/preprocessing provenance is partly inherited or unknown. It does not transform the historical assertions into externally confirmed biological facts. A legacy comparison uses matched settings/universes when possible, then documents scientifically intentional differences in the maintained default.
-
-## Developer acceptance
-
-Follow the exact gates in plan.md and each completed slice. Validate configuration structure and semantics, exercise the real R bridge, compare numerical outputs against independent reference calls, run scientific calibration, render actual reports and verify final archive hashes. Missing R or resource access must be resolved or explicitly recorded as a remaining prerequisite, never hidden behind a successful Python-only test suite.
+Read [START_HERE.md](START_HERE.md) and [IMPLEMENTATION_BRIEF_R01.md](IMPLEMENTATION_BRIEF_R01.md). Independent review and Maintainer freeze precede implementation. No slash-command installation or specify init --force is part of this workflow.

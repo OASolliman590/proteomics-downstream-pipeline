@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.2.0",
+  "files": [
+    {
+      "path": "analysis.schema.json",
+      "sha256": "a5e305c6f8a1ca09ee167ddfbb2cfb1b25201a398ce28e2202d91d2b728294f2"
+    },
+    {
+      "path": "run-status.schema.json",
+      "sha256": "cecabd011c989489abbebbc7699aef96e4dc88d027ecf7e40f2eff4c8e1c67ff"
+    },
+    {
+      "path": "stage-request.schema.json",
+      "sha256": "a80eee2d1949d00a56860beabc00c76119dda57422aaa072b88d5b21beaa032a"
+    },
+    {
+      "path": "stage-result.schema.json",
+      "sha256": "b85150b5262bf0c7d63f88e5f252fefdceac65a1e616cd6596b06157da6dc91f"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "kind": "synthetic_contract_fixture",
+  "biological_data": false,
+  "purpose": "Shape, scale, identity and schema examples only; not fitted model golden values or calibration evidence.",
+  "construction": "Explicit deterministic values documented in fixtures/README.md",
+  "files": {
+    "independent-abundance.tsv": "fc331a5709031f5574b31f01200ebe73abf6b88be6898b8f6540683d5c0449ec",
+    "features.tsv": "478ff2c26e998fd372344a92ef4b8e01e43b185d2e29edb2898c75a220cc6900",
+    "paired-abundance.tsv": "b6a2572d8051d12bffeac701adada507d7b7eb3f52733f0438ee358218df150a",
+    "independent-observations.tsv": "193ada9c1aebfc19535ddc1739180d7e226803bc77ac0ee18a61633bfdcbc1e9",
+    "paired-observations.tsv": "0c7d75a4e1ee7975e2ff52035545304b7a7dec3bd979ac2bafa5650271a9af96"
+  }
+}

@@ -1,0 +1,9 @@
+observation_id	biological_unit_id	subject_id	technical_replicate_id	group	batch
+S1_before	specimen_S1_before	S1	NA	before	B1
+S1_after	specimen_S1_after	S1	NA	after	B1
+S2_before	specimen_S2_before	S2	NA	before	B1
+S2_after	specimen_S2_after	S2	NA	after	B1
+S3_before	specimen_S3_before	S3	NA	before	B1
+S3_after	specimen_S3_after	S3	NA	after	B1
+S4_before	specimen_S4_before	S4	NA	before	B1
+S4_after	specimen_S4_after	S4	NA	after	B1

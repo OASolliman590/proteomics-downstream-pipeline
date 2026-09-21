@@ -1,102 +1,166 @@
 # Feature Specification: Assay-qualified DEqMS and proDA backends
 
-**Feature Branch:** `spec/007-assay-engines` (logical slice; stay on the current worktree branch unless a branch change is safe and needed).
-**Created:** 2026-09-12. **Status:** Corrected draft awaiting Independent Reviewer audit and Maintainer freeze; not verified.
-**Input:** Parent roadmap `specs/001-downstream-proteomics/roadmap.md` → **R06**. Deliver assay-qualified deqms and proda backends for user journey US2.
+**Phase:** 2. **Packet:** R06. **Status:** 1.2.0-frozen; implementation pending Phase 1 acceptance and separate authorization.
 
-## User Scenarios & Testing
+## Scope
 
-### US2 — Assay-qualified DEqMS and proDA backends (Priority P1)
-
-This slice delivers a usable and independently verifiable part of the parent user journey. It consumes the shared canonical contracts and exposes the behavior below through maintained package interfaces. It must not silently change the historical baseline or scientific interpretation.
-
-**Why this priority:** dependent stages cannot reliably interpret their input without this contract being enforced.
-**Independent Test:** run the acceptance cases below against actual implementations, including the negative cases; downstream slices may use controlled canonical fixtures rather than requiring an unfinished upstream feature.
-**Dependencies:** R05 (`specs/006-limma-inference/`).
+Deliver only FR-051–FR-060 for US2. [Packet index](../001-downstream-proteomics/packet-index.md), [ownership](../001-downstream-proteomics/packet-ownership.json), [data model](../001-downstream-proteomics/data-model.md) and [scientific contract](../001-downstream-proteomics/contracts/scientific-methods.md) define the shared interfaces. No implementation dispatch is authorized yet.
 
 ## Requirements
 
-- **FR-051**: The system MUST provide count evidence schema. True peptide/PSM count grain and provenance validate; observed-sample count or abundance proxy is rejected as unsupported evidence.
-- **FR-052**: The system MUST provide deqms fit pipeline. Installed official fit/eBayes/count/spectraCounteBayes sequence reproduces reference count-adjusted statistics.
-- **FR-053**: The system MUST provide deqms statistic alignment. sca P/statistic/variance fields are kept separate from original limma fields; shuffled count IDs align or fail, never silently reorder.
-- **FR-054**: The system MUST provide deqms hypotheses and design guard. Unsupported block/precision-weight/threshold-null requests are rejected with explicit contract; eligible sparse exact-contrast use is verified.
-- **FR-055**: The system MUST provide lfq dropout provenance gate. proDA accepts qualified unimputed LFQ data and rejects TMT, unknown incompatible imputation and unsupported repeated models.
-- **FR-056**: The system MUST provide proda fitting and test_diff. Zero-null/reduced-model reference calls match native output and retain model-specific uncertainty and dropout diagnostics.
-- **FR-057**: The system MUST provide alternative-engine uncertainty. Engine-appropriate intervals/statistics are verified against native/reference calculations; no borrowed limma df or fake TREAT output.
-- **FR-058**: The system MUST provide method sensitivity comparison. Matched-universe effects/discoveries are displayed as sensitivities, with unmatched universes explained; no hit-count winner changes primary.
-- **FR-059**: The system MUST provide dependencies and failure propagation. Missing package/backend error is visible, required analysis fails, optional applicability is distinguished from installation failure.
-- **FR-060**: The system MUST provide assay-engine golden/calibration fixtures. Count-dependent variance and LFQ dropout simulations have pinned reference comparisons, unsuitable-input negative cases and recorded diagnostics.
-
-## Key Entities
-
-Use entities/keys in `specs/001-downstream-proteomics/data-model.md`. All artifacts carry schema_version, run_id/plan_hash where applicable, source lineage and execution status. No alternate implicit identity or inference representation is permitted.
+- **FR-051 — Count evidence schema:** The system MUST accept genuine declared count evidence only; preserve original zeros/missing values and require positive actual fit counts after any explicit justified policy.
+- **FR-052 — DEqMS fit pipeline:** The system MUST match count-adjusted statistics and P values at frozen backend tolerance, with actual call/version evidence.
+- **FR-053 — DEqMS statistic alignment:** The system MUST align counts by identity and retain sca.P.Value/statistic/variance distinctly from original limma fields; compute central q from sca raw P.
+- **FR-054 — DEqMS hypotheses and design guard:** The system MUST qualify the sparse exact route numerically and reject unqualified block/precision-weight/TREAT combinations before backend execution.
+- **FR-055 — LFQ dropout provenance gate:** The system MUST permit only the qualified LFQ independent fixed-model path; preserve actual original observations and native missingness.
+- **FR-056 — proDA fitting and test_diff:** The system MUST match native effects, P and native uncertainty/diagnostics where reference results exist; retain n_obs and prior/dropout dependence for all-missing-group estimates.
+- **FR-057 — Alternative-engine uncertainty:** The system MUST export only justified intervals/statistics with correct native names/df; unsupported quantities stay unavailable with reasons.
+- **FR-058 — Method sensitivity comparison:** The system MUST compare matched effects and disclose unmatched universes; keep model/hypothesis families distinct and never promote the larger hit count to primary.
+- **FR-059 — Dependencies and failure propagation:** The system MUST distinguish scientific inapplicability from missing installation and numerical failure; required failure blocks the run, optional operational failure is PARTIAL/nonzero.
+- **FR-060 — Assay-engine golden/calibration fixtures:** The system MUST prespecify reference calls/expected statuses and save actual diagnostics, precision and eligibility outcomes; no tiny-fixture claim of calibrated FDR.
 
 ## Acceptance Scenarios
 
+<a id="V051"></a>
+
 ### V051: Count evidence schema
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** true peptide/PSM count grain and provenance validate; observed-sample count or abundance proxy is rejected as unsupported evidence.
+**Fixture:** Eight protein IDs with peptide counts [1,2,3,4,5,6,7,8], a separate per-plex PSM table and a provenance manifest.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Explicit source grain/type/aggregation and keyed feature alignment.
+
+**Exact assertion:** Accept genuine declared count evidence only; preserve original zeros/missing values and require positive actual fit counts after any explicit justified policy.
+
+**Negative case:** Observed-sample counts or abundance-derived proxies fail E_DEQMS_COUNT_EVIDENCE; hidden +1 is not an acceptable correction.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V052"></a>
 
 ### V052: DEqMS fit pipeline
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** installed official fit/eBayes/count/spectraCounteBayes sequence reproduces reference count-adjusted statistics.
+**Fixture:** ≤20 proteins with aligned strictly positive support counts and a complete independent log2 design.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Separate direct official lmFit/eBayes/count/spectraCounteBayes/outputResult invocation in the pinned environment.
+
+**Exact assertion:** Match count-adjusted statistics and P values at frozen backend tolerance, with actual call/version evidence.
+
+**Negative case:** An ordinary eBayes table copied as DEqMS or a spectraCounteBayes call without aligned count evidence fails.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V053"></a>
 
 ### V053: DEqMS statistic alignment
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** sca P/statistic/variance fields are kept separate from original limma fields; shuffled count IDs align or fail, never silently reorder.
+**Fixture:** Same count fixture with shuffled count-table rows and intentionally different native limma versus sca P fields.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Join by feature_id and direct native field names/values.
+
+**Exact assertion:** Align counts by identity and retain sca.P.Value/statistic/variance distinctly from original limma fields; compute central q from sca raw P.
+
+**Negative case:** Duplicate/missing count IDs fail; silently using original P.Value as DEqMS P fails exact field assertions.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V054"></a>
 
 ### V054: DEqMS hypotheses and design guard
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** unsupported block/precision-weight/threshold-null requests are rejected with explicit contract; eligible sparse exact-contrast use is verified.
+**Fixture:** One eligible sparse independent fixture plus blocked, weighted and treat requests.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** SM10 allowed-design table plus direct exact-refit DEqMS reference for the eligible sparse case.
+
+**Exact assertion:** Qualify the sparse exact route numerically and reject unqualified block/precision-weight/TREAT combinations before backend execution.
+
+**Negative case:** A backend accepting and ignoring a block/weight argument cannot count as supported behavior.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V055"></a>
 
 ### V055: LFQ dropout provenance gate
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** proDA accepts qualified unimputed LFQ data and rejects TMT, unknown incompatible imputation and unsupported repeated models.
+**Fixture:** Documented unimputed LFQ matrix with real NA mask; copies relabeled TMT, unknown-imputed and duplicate-correlation.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Declared assay/mask/imputation/design eligibility, not result count.
+
+**Exact assertion:** Permit only the qualified LFQ independent fixed-model path; preserve actual original observations and native missingness.
+
+**Negative case:** TMT, unknown incompatible prior imputation or repeated block models produce the named proDA eligibility errors, never a limma fallback.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V056"></a>
 
 ### V056: proDA fitting and test_diff
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** zero-null/reduced-model reference calls match native output and retain model-specific uncertainty and dropout diagnostics.
+**Fixture:** ≤20 LFQ features with dropout, including a feature absent in one target group; full and nested reduced fixed designs.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Separate pinned proDA/test_diff calls for the zero-null and reduced-model tests.
+
+**Exact assertion:** Match native effects, P and native uncertainty/diagnostics where reference results exist; retain n_obs and prior/dropout dependence for all-missing-group estimates.
+
+**Negative case:** Invented zero abundance, substituted residual df or a fake TREAT endpoint fails even if a result row is finite.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V057"></a>
 
 ### V057: Alternative-engine uncertainty
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** engine-appropriate intervals/statistics are verified against native/reference calculations; no borrowed limma df or fake TREAT output.
+**Fixture:** One DEqMS and one proDA direct-reference fit with their native SE/variance/df fields.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Model-specific direct calculations permitted by the pinned official output semantics.
+
+**Exact assertion:** Export only justified intervals/statistics with correct native names/df; unsupported quantities stay unavailable with reasons.
+
+**Negative case:** Borrowing limma df or SE to fill missing proDA/DEqMS uncertainty is rejected.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V058"></a>
 
 ### V058: Method sensitivity comparison
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** matched-universe effects/discoveries are displayed as sensitivities, with unmatched universes explained; no hit-count winner changes primary.
+**Fixture:** Two predeclared engines with overlapping but nonidentical eligible feature universes and different rejection counts.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Stable-ID intersection/union and the unchanged frozen primary declaration.
+
+**Exact assertion:** Compare matched effects and disclose unmatched universes; keep model/hypothesis families distinct and never promote the larger hit count to primary.
+
+**Negative case:** Shuffle engine result order or increase sensitivity hits: primary engine/model/plan hash must not change.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V059"></a>
 
 ### V059: Dependencies and failure propagation
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** missing package/backend error is visible, required analysis fails, optional applicability is distinguished from installation failure.
+**Fixture:** A schema-valid Phase 2 config with installed eligible primary limma model declaring execution_requirement=required and a DEqMS sensitivity model declaring execution_requirement=optional whose package is absent; then the same eligible DEqMS model declaring required; then an installed child process that raises an error.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Frozen model declarations plus actual process/dependency state and the CLI exit/state table, evaluated without deleting unavailable requests from the plan.
+
+**Exact assertion:** Structural/scientific validation accepts the contractually eligible optional request independent of installation and freezes its requiredness. Its missing package yields NOT_RUN plus E_ENGINE_NOT_AVAILABLE and makes the otherwise successful run PARTIAL/exit 3. The same missing eligible engine declared required makes the run FAILED/exit 3 with dependants NOT_RUN. An actual optional child failure yields FAILED at that stage and PARTIAL/exit 4; an actual required child failure makes the run FAILED/exit 4.
+
+**Negative case:** A primary model declared optional fails structural validation; omission of execution_requirement fails schema validation. A validator that rejects an eligible optional request solely because its package is absent, drops it from the frozen plan, emits a fallback table under its name or labels the operational absence INAPPLICABLE fails.
+
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
+
+<a id="V060"></a>
 
 ### V060: Assay-engine golden/calibration fixtures
 
-**Given** a fixture exercising the declared scientific/input conditions, **when** this capability executes, **then** count-dependent variance and LFQ dropout simulations have pinned reference comparisons, unsuitable-input negative cases and recorded diagnostics.
+**Fixture:** Small count-dependent-variance and LFQ-dropout fixtures with a fixed seed, plus unsuitable-input negatives.
 
-Use an analytic calculation, independently invoked package reference, or observable failure/invariance behavior. A mock of the function under test is not evidence. Record the expected value/state before inspecting candidate output.
+**Oracle:** Independent direct package references; release-scale calibration is explicitly V105–V106, not this tiny fixture.
 
-## Edge Cases and Success Criteria
+**Exact assertion:** Prespecify reference calls/expected statuses and save actual diagnostics, precision and eligibility outcomes; no tiny-fixture claim of calibrated FDR.
 
-Test the named invalid/missing/empty/reordered/boundary cases without weakening the shared scientific contract. Every requirement must have a passing eligible-case test and a relevant explicit failure or boundary case where applicable. Preserve finite/NA distinctions and scientific eligibility reasons. Success requires real behavior, schema-valid outputs, independently rerun gates, reviewed diff and evidence linked to a commit; process exit alone is insufficient.
+**Negative case:** Nonconvergence or missing R is retained as failure/NOT_RUN, not replaced with fixture-derived expected statistics.
 
-## Assumptions and Scope Boundary
+**Contract:** SM10; **owner:** R06; **evidence:** pending-after-freeze, none recorded. Numeric comparison uses [frozen tolerances](../001-downstream-proteomics/validation-strategy.md#numeric-tolerances).
 
-Implement only the capabilities assigned above and the narrow helpers they require. Read the live constitution and parent contracts. An optional per-study analysis is still a mandatory implemented adapter when assigned here. Do not implement unrelated services, raw-MS analysis, private-data transmission or speculative interfaces. Use synthetic/public-permitted fixtures. Maintainer handles local private regression in the final slice.
+## Boundary
+
+No recovered source/audit changes, private-data transfer, invented license, fake backend or unsupported completion claim. A missing prerequisite is NOT_RUN, not a successful acceptance case. Only the Maintainer updates traceability after independent gate execution.

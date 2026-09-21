@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:proteomics-downstream:run-status:1.2.0",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.2.0"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "plan_hash": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requested_phase": {
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "implemented_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "state": {
+      "enum": [
+        "NOT_RUN",
+        "RUNNING",
+        "COMPLETED",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED"
+      ]
+    },
+    "reason_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "started_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "capability": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "state": {
+            "enum": [
+              "NOT_RUN",
+              "RUNNING",
+              "COMPLETED",
+              "INAPPLICABLE",
+              "FAILED",
+              "CANCELLED",
+              "NOT_REQUESTED"
+            ]
+          },
+          "reason_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "stage_id",
+          "capability",
+          "required",
+          "state",
+          "reason_code",
+          "result_path"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "relative_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "result_type": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "artifact_id",
+          "relative_path",
+          "sha256",
+          "result_type"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "warnings_file": {
+      "const": "warnings.json"
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "plan_hash",
+    "requested_phase",
+    "implemented_capabilities",
+    "state",
+    "reason_code",
+    "started_at",
+    "finished_at",
+    "exit_code",
+    "stages",
+    "artifacts",
+    "warnings_file"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "const": "COMPLETED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "exit_code": {
+            "const": 0
+          },
+          "reason_code": {
+            "type": "null"
+          },
+          "finished_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stages": {
+            "minItems": 1,
+            "items": {
+              "if": {
+                "properties": {
+                  "required": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "state": {
+                    "const": "COMPLETED"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "state": {
+            "enum": [
+              "NOT_RUN",
+              "PARTIAL",
+              "FAILED",
+              "CANCELLED"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason_code": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}
