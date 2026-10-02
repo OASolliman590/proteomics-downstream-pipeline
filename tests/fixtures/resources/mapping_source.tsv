@@ -1,0 +1,11 @@
+source_id	id_type	gene_id	gene_symbol	taxonomy_id	status
+P01	synthetic_accession	rat:G1	Gsa	10116	current
+P02	synthetic_accession	rat:G2	Gsb	10116	current
+P03	synthetic_accession	rat:G2	Gsb	10116	current
+P04	synthetic_accession	rat:G4old	Gsd	10116	retired
+P05	synthetic_accession	rat:G5	Gse	10116	current
+P05	synthetic_accession	rat:G6	Gsf	10116	current
+P07	synthetic_accession	rat:G7	Gsg	10116	current
+P08	synthetic_accession	rat:G8	Gsh	10116	current
+P06	synthetic_accession	hum:G6	Gsf	9606	current
+P01	synthetic_accession	hum:G1	Gsa	9606	current

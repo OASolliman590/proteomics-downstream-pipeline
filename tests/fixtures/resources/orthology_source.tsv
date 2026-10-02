@@ -1,0 +1,5 @@
+source_gene_id	source_taxonomy_id	target_gene_id	target_taxonomy_id	evidence	ambiguous
+hum:G1	9606	rat:G1	10116	synthetic one-to-one	false
+hum:G2	9606	rat:G2	10116	synthetic one-to-one	false
+hum:G7	9606	rat:G7	10116	synthetic one-to-many	true
+hum:G7	9606	rat:G8	10116	synthetic one-to-many	true

@@ -11,9 +11,11 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path);args=ap.parse_args()
     trace=json.loads((EPIC/'traceability.json').read_text(encoding='utf-8'))['requirements']
     roadmap=json.loads((EPIC/'roadmap.json').read_text(encoding='utf-8'))['slices']
-    assert len(trace)==120 and len(roadmap)==12
+    # Amendment A-2026-10-01-04 (ADR 0006): FR/T/V-121..130 appended for R13; the original 120 identities are unchanged.
+    assert len(trace)==130 and len(roadmap)==13
+    assert [x['requirement'] for x in trace[:120]]==[f'FR-{i:03d}' for i in range(1,121)]
     for key in ['requirement','task','acceptance']:
-        assert len({x[key] for x in trace})==120,f'Duplicate {key}'
+        assert len({x[key] for x in trace})==130,f'Duplicate {key}'
     packet_ids={r['id'] for r in roadmap};seen=set()
     for row in roadmap:
         assert set(row['depends_on'])<=packet_ids,f'Unknown dependency: {row}'
@@ -43,7 +45,7 @@ def main():
         assert hashlib.sha256((ROOT/row['destination']).read_bytes()).hexdigest()==row['sha256_packaged'],row['destination']
     record={'status':'PASS','scope':'Specification structure/traceability/links and preserved-source hashes; not implementation validation',
             'slices':len(roadmap),'requirements':len(trace),'tasks':len(trace),'acceptance_cases':len(trace),'markdown_files_checked':len(docs),
-            'implementation_status':'NOT_STARTED','schema_note':'Draft 2020-12 schema and three examples separately validated with jsonschema 4.25.1; semantic/runtime validation remains an implementation task.'}
+            'implementation_status':sorted({row['status'] for row in trace}),'schema_note':'Draft 2020-12 schema and three examples separately validated with jsonschema 4.25.1; semantic/runtime validation remains an implementation task.'}
     if args.output:
         args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(record,indent=2),encoding='utf-8')
     print(json.dumps(record,indent=2))

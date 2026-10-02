@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/integration/test_offline.py tests/integration/test_resume.py tests/integration/test_report_artifacts.py tests/scientific/reference -q -rs -p no:cacheprovider
+# started 2026-10-01T23:43:28.951637+00:00  exit 0
+
+.........................                                                [100%]
+25 passed in 88.62s (0:01:28)
+
+--- stderr ---

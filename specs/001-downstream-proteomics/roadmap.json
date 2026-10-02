@@ -314,6 +314,30 @@
         "FR-120"
       ],
       "phase": 3
+    },
+    {
+      "id": "R13",
+      "slice": "014-multivariate-permanova",
+      "title": "Multivariate PERMANOVA and dispersion testing",
+      "story": "US7",
+      "depends_on": [
+        "R05"
+      ],
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-121",
+        "FR-122",
+        "FR-123",
+        "FR-124",
+        "FR-125",
+        "FR-126",
+        "FR-127",
+        "FR-128",
+        "FR-129",
+        "FR-130"
+      ],
+      "phase": 2,
+      "amendment": "ADR 0006 (operator-authorized 2026-10-01)"
     }
   ],
   "phases": [

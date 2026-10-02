@@ -1,0 +1,3 @@
+PG.ProteinGroups	PG.ProteinAccessions	PG.Genes	PG.ProteinDescriptions	[1] A1.PG.Quantity	[2] A2.PG.Quantity	[3] B1.PG.Quantity	[4] B2.PG.Quantity	[1] A1.PG.IsSingleHit
+Q0001	Q0001	Gna	synthetic a	10	20	Filtered	40	False
+Q0007;Q0008	Q0007;Q0008	Gng	synthetic g	NaN	3	6	12	True

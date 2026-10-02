@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:proteomics-downstream:validation-evidence:1.2.0",
+  "title": "Validation evidence record (R11, V110)",
+  "type": "object",
+  "required": [
+    "acceptance_id",
+    "requirement",
+    "task",
+    "status",
+    "reviewed_tree",
+    "commands",
+    "artifacts",
+    "expected_oracle",
+    "observed",
+    "reviewer_conclusion",
+    "verified_commit"
+  ],
+  "properties": {
+    "acceptance_id": {
+      "type": "string",
+      "pattern": "^V[0-9]{3}$"
+    },
+    "requirement": {
+      "type": "string",
+      "pattern": "^FR-[0-9]{3}$"
+    },
+    "task": {
+      "type": "string",
+      "pattern": "^T[0-9]{3}$"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "NOT_RUN",
+        "SKIPPED",
+        "INAPPLICABLE"
+      ]
+    },
+    "reviewed_tree": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Reviewed commit (40 hex) or working-source manifest SHA-256 (64 hex) for uncommitted Claude-route receipts."
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "command",
+          "exit_code"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "versions": {
+      "type": "object"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "expected_oracle": {
+      "type": "string"
+    },
+    "observed": {
+      "type": "string"
+    },
+    "reviewer_conclusion": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "verified_commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "commands": {
+            "minItems": 1,
+            "items": {
+              "properties": {
+                "exit_code": {
+                  "const": 0
+                }
+              }
+            }
+          },
+          "artifacts": {
+            "minItems": 1
+          },
+          "reviewed_tree": {
+            "type": "string",
+            "pattern": "^([a-f0-9]{40}|[a-f0-9]{64})$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "NOT_RUN",
+              "SKIPPED",
+              "INAPPLICABLE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "FAIL"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "commands": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}

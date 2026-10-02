@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/contract/test_resources.py -q -rs -p no:cacheprovider
+# started 2026-10-01T22:57:01.073045+00:00  exit 0
+
+...........                                                              [100%]
+11 passed in 34.98s
+
+--- stderr ---

@@ -7,7 +7,9 @@ from .errors import CapabilityError, CollisionError, IntegrityError, ProteomicsE
 from .paths import atomic_write_bytes
 from .provenance import sha256_file
 STAGE_STATES={"NOT_RUN","RUNNING","COMPLETED","INAPPLICABLE","FAILED","CANCELLED","NOT_REQUESTED"}
-R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response"}
+R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova"}
+# Amendment A-2026-10-01-02: planning stages run before the plan exists, so their results carry plan_hash=null.
+PLANNING_CAPABILITIES={"intake","preprocessing","design"}
 CAPABILITY_MAP={
  "foundation.io_roundtrip":("proteomics_pipeline","io_roundtrip"),
  "intake":("proteomics_pipeline.intake.service","execute"),
@@ -21,7 +23,9 @@ CAPABILITY_MAP={
  "report_stub":("proteomics_pipeline.reporting.stub","execute"),
  "report_full":("proteomics_pipeline.reporting.full","execute"),
  "reproduction":("proteomics_pipeline.reproduction","execute"),
- "legacy":("proteomics_pipeline.legacy_service","execute")}
+ "legacy":("proteomics_pipeline.legacy_service","execute"),
+ # Amendment A-2026-10-01-01 (operator-authorized PERMANOVA scope, packet R13)
+ "permanova":("proteomics_pipeline.permanova_service","execute")}
 REQUIRED_PACKAGES={"foundation.io_roundtrip":["Rscript","jsonlite","openssl","proteomicsCore"]}
 def _discovery(capability,module_name,function_name):
     record={"id":capability,"module":module_name,"function":function_name,
@@ -123,7 +127,8 @@ def validate_run_status(value, root):
         if root not in path.parents or not path.is_file(): raise ValueError("stage result path escapes or is missing")
         result=json.loads(path.read_text(encoding="utf-8")); validate_stage_result(result)
         if result.get("state")=="COMPLETED" and result.get("capability") in R_BACKED_CAPABILITIES and not result.get("session_info_path"): raise ValueError("completed R-backed stage requires session_info_path")
-        if result.get("run_id")!=value.get("run_id") or result.get("plan_hash")!=value.get("plan_hash"): raise ValueError("stage result run_id/plan_hash mismatch")
+        planning_stage=result.get("capability") in PLANNING_CAPABILITIES and result.get("plan_hash") is None
+        if result.get("run_id")!=value.get("run_id") or (result.get("plan_hash")!=value.get("plan_hash") and not planning_stage): raise ValueError("stage result run_id/plan_hash mismatch")
         if result.get("stage_id")!=stage.get("stage_id") or result.get("capability")!=stage.get("capability") or result.get("state")!=stage.get("state"): raise ValueError("stage result identity/state mismatch")
         if result.get("session_info_path"):
             session_path=(path.parent/result["session_info_path"]).resolve()

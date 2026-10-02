@@ -296,12 +296,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V011",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V011"
+      "acceptance_spec": "specs/003-intake/spec.md#V011",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-012",
@@ -320,12 +332,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V012",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V012"
+      "acceptance_spec": "specs/003-intake/spec.md#V012",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-013",
@@ -344,12 +368,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V013",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V013"
+      "acceptance_spec": "specs/003-intake/spec.md#V013",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-014",
@@ -368,12 +404,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V014",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V014"
+      "acceptance_spec": "specs/003-intake/spec.md#V014",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-015",
@@ -392,12 +440,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V015",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V015"
+      "acceptance_spec": "specs/003-intake/spec.md#V015",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-016",
@@ -416,12 +476,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V016",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V016"
+      "acceptance_spec": "specs/003-intake/spec.md#V016",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-017",
@@ -440,12 +512,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V017",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V017"
+      "acceptance_spec": "specs/003-intake/spec.md#V017",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-018",
@@ -464,12 +548,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V018",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V018"
+      "acceptance_spec": "specs/003-intake/spec.md#V018",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-019",
@@ -488,12 +584,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V019",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V019"
+      "acceptance_spec": "specs/003-intake/spec.md#V019",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-020",
@@ -512,12 +620,24 @@
       "proposed_test_target": {
         "path": "tests/contract/intake/**",
         "case_id": "V020",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/intake/",
+        "tests/scientific/test_technical_units.py",
+        "docs/validation/003-intake/receipt.md",
+        "docs/validation/003-intake/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/003-intake/spec.md#V020"
+      "acceptance_spec": "specs/003-intake/spec.md#V020",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-021",
@@ -536,12 +656,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V021",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V021"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V021",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-022",
@@ -560,12 +693,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V022",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V022"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V022",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-023",
@@ -584,12 +730,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V023",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V023"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V023",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-024",
@@ -608,12 +767,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V024",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V024"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V024",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-025",
@@ -632,12 +804,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V025",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V025"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V025",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-026",
@@ -656,12 +841,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V026",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V026"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V026",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-027",
@@ -680,12 +878,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V027",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V027"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V027",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-028",
@@ -704,12 +915,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V028",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V028"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V028",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-029",
@@ -728,12 +952,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V029",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V029"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V029",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-030",
@@ -752,12 +989,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_qc.py",
         "case_id": "V030",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_qc.py",
+        "r/proteomicsCore/tests/testthat/test-preprocessing.R",
+        "r/proteomicsCore/tests/testthat/test-qc.R",
+        "docs/validation/004-preprocessing-qc/receipt.md",
+        "docs/validation/004-preprocessing-qc/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V030"
+      "acceptance_spec": "specs/004-preprocessing-qc/spec.md#V030",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-031",
@@ -776,12 +1026,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V031",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V031"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V031",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-032",
@@ -800,12 +1062,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V032",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V032"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V032",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-033",
@@ -824,12 +1098,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V033",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V033"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V033",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-034",
@@ -848,12 +1134,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V034",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V034"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V034",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-035",
@@ -872,12 +1170,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V035",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V035"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V035",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-036",
@@ -896,12 +1206,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V036",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V036"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V036",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-037",
@@ -920,12 +1242,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V037",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V037"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V037",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-038",
@@ -944,12 +1278,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V038",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V038"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V038",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-039",
@@ -968,12 +1314,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V039",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V039"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V039",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-040",
@@ -992,12 +1350,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_design_contract.py",
         "case_id": "V040",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_design_contract.py",
+        "r/proteomicsCore/tests/testthat/test-design.R",
+        "docs/validation/005-design-contrasts/receipt.md",
+        "docs/validation/005-design-contrasts/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/005-design-contrasts/spec.md#V040"
+      "acceptance_spec": "specs/005-design-contrasts/spec.md#V040",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-041",
@@ -1016,12 +1386,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V041",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V041"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V041",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-042",
@@ -1040,12 +1422,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V042",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V042"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V042",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-043",
@@ -1064,12 +1458,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V043",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V043"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V043",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-044",
@@ -1088,12 +1494,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V044",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V044"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V044",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-045",
@@ -1112,12 +1530,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V045",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V045"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V045",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-046",
@@ -1136,12 +1566,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V046",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V046"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V046",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-047",
@@ -1160,12 +1602,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V047",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V047"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V047",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-048",
@@ -1184,12 +1638,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V048",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V048"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V048",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-049",
@@ -1208,12 +1674,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V049",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V049"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V049",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-050",
@@ -1232,12 +1710,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_limma.py",
         "case_id": "V050",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_limma.py",
+        "r/proteomicsCore/tests/testthat/test-limma.R",
+        "docs/validation/006-limma-inference/receipt.md",
+        "docs/validation/006-limma-inference/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/006-limma-inference/spec.md#V050"
+      "acceptance_spec": "specs/006-limma-inference/spec.md#V050",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-051",
@@ -1256,12 +1746,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V051",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V051"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V051",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-052",
@@ -1280,12 +1782,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V052",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V052"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V052",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-053",
@@ -1304,12 +1818,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V053",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V053"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V053",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-054",
@@ -1328,12 +1854,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V054",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V054"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V054",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-055",
@@ -1352,12 +1890,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V055",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V055"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V055",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-056",
@@ -1376,12 +1926,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V056",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V056"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V056",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-057",
@@ -1400,12 +1962,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V057",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V057"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V057",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-058",
@@ -1424,12 +1998,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V058",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V058"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V058",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-059",
@@ -1448,12 +2034,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V059",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V059"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V059",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-060",
@@ -1472,12 +2070,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_assay_engines.py",
         "case_id": "V060",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_assay_engines.py",
+        "r/proteomicsCore/tests/testthat/test-assay-engines.R",
+        "docs/validation/007-assay-engines/receipt.md",
+        "docs/validation/007-assay-engines/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/007-assay-engines/spec.md#V060"
+      "acceptance_spec": "specs/007-assay-engines/spec.md#V060",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-061",
@@ -1496,12 +2106,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V061",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V061"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V061",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-062",
@@ -1520,12 +2142,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V062",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V062"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V062",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-063",
@@ -1544,12 +2178,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V063",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V063"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V063",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-064",
@@ -1568,12 +2214,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V064",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V064"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V064",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-065",
@@ -1592,12 +2250,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V065",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V065"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V065",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-066",
@@ -1616,12 +2286,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V066",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V066"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V066",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-067",
@@ -1640,12 +2322,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V067",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V067"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V067",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-068",
@@ -1664,12 +2358,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V068",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V068"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V068",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-069",
@@ -1688,12 +2394,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V069",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V069"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V069",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-070",
@@ -1712,12 +2430,24 @@
       "proposed_test_target": {
         "path": "tests/contract/test_resources.py",
         "case_id": "V070",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/contract/test_resources.py",
+        "r/proteomicsCore/tests/testthat/test-mapping.R",
+        "docs/validation/008-resources-mapping/receipt.md",
+        "docs/validation/008-resources-mapping/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/008-resources-mapping/spec.md#V070"
+      "acceptance_spec": "specs/008-resources-mapping/spec.md#V070",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-071",
@@ -1736,12 +2466,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V071",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V071"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V071",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-072",
@@ -1760,12 +2502,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V072",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V072"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V072",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-073",
@@ -1784,12 +2538,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V073",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V073"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V073",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-074",
@@ -1808,12 +2574,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V074",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V074"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V074",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-075",
@@ -1832,12 +2610,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V075",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V075"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V075",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-076",
@@ -1856,12 +2646,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V076",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V076"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V076",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-077",
@@ -1880,12 +2682,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V077",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V077"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V077",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-078",
@@ -1904,12 +2718,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V078",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V078"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V078",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-079",
@@ -1928,12 +2754,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V079",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V079"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V079",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-080",
@@ -1952,12 +2790,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_pathways.py",
         "case_id": "V080",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_pathways.py",
+        "r/proteomicsCore/tests/testthat/test-pathways.R",
+        "docs/validation/009-enrichment/receipt.md",
+        "docs/validation/009-enrichment/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/009-enrichment/spec.md#V080"
+      "acceptance_spec": "specs/009-enrichment/spec.md#V080",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-081",
@@ -1976,12 +2826,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V081",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V081"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V081",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-082",
@@ -2000,12 +2862,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V082",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V082"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V082",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-083",
@@ -2024,12 +2898,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V083",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V083"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V083",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-084",
@@ -2048,12 +2934,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V084",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V084"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V084",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-085",
@@ -2072,12 +2970,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V085",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V085"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V085",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-086",
@@ -2096,12 +3006,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V086",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V086"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V086",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-087",
@@ -2120,12 +3042,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V087",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V087"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V087",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-088",
@@ -2144,12 +3078,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V088",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V088"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V088",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-089",
@@ -2168,12 +3114,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V089",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V089"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V089",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-090",
@@ -2192,12 +3150,24 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_response.py",
         "case_id": "V090",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_response.py",
+        "r/proteomicsCore/tests/testthat/test-response.R",
+        "docs/validation/010-treatment-response/receipt.md",
+        "docs/validation/010-treatment-response/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/010-treatment-response/spec.md#V090"
+      "acceptance_spec": "specs/010-treatment-response/spec.md#V090",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-091",
@@ -2216,12 +3186,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_report_stub.py",
         "case_id": "V091",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/stub/receipt.md",
+        "docs/validation/011-reporting/stub/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V091"
+      "acceptance_spec": "specs/011-reporting/spec.md#V091",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-092",
@@ -2240,12 +3221,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_report_stub.py",
         "case_id": "V092",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/stub/receipt.md",
+        "docs/validation/011-reporting/stub/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V092"
+      "acceptance_spec": "specs/011-reporting/spec.md#V092",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-093",
@@ -2264,12 +3256,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_report_stub.py",
         "case_id": "V093",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/stub/receipt.md",
+        "docs/validation/011-reporting/stub/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V093"
+      "acceptance_spec": "specs/011-reporting/spec.md#V093",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-094",
@@ -2288,12 +3291,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_report_stub.py",
         "case_id": "V094",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/stub/receipt.md",
+        "docs/validation/011-reporting/stub/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V094"
+      "acceptance_spec": "specs/011-reporting/spec.md#V094",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-095",
@@ -2312,12 +3326,24 @@
       "proposed_test_target": {
         "path": "tests/integration/test_reports.py",
         "case_id": "V095",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_reports.py",
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/full/receipt.md",
+        "docs/validation/011-reporting/full/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V095"
+      "acceptance_spec": "specs/011-reporting/spec.md#V095",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-096",
@@ -2336,12 +3362,24 @@
       "proposed_test_target": {
         "path": "tests/integration/test_reports.py",
         "case_id": "V096",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_reports.py",
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/full/receipt.md",
+        "docs/validation/011-reporting/full/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V096"
+      "acceptance_spec": "specs/011-reporting/spec.md#V096",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-097",
@@ -2360,12 +3398,24 @@
       "proposed_test_target": {
         "path": "tests/integration/test_reports.py",
         "case_id": "V097",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_reports.py",
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/full/receipt.md",
+        "docs/validation/011-reporting/full/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V097"
+      "acceptance_spec": "specs/011-reporting/spec.md#V097",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-098",
@@ -2384,12 +3434,24 @@
       "proposed_test_target": {
         "path": "tests/integration/test_reports.py",
         "case_id": "V098",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_reports.py",
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/full/receipt.md",
+        "docs/validation/011-reporting/full/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V098"
+      "acceptance_spec": "specs/011-reporting/spec.md#V098",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-099",
@@ -2408,12 +3470,24 @@
       "proposed_test_target": {
         "path": "tests/integration/test_reports.py",
         "case_id": "V099",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_reports.py",
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/full/receipt.md",
+        "docs/validation/011-reporting/full/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V099"
+      "acceptance_spec": "specs/011-reporting/spec.md#V099",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-100",
@@ -2432,12 +3506,24 @@
       "proposed_test_target": {
         "path": "tests/integration/test_reports.py",
         "case_id": "V100",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_reports.py",
+        "tests/integration/test_report_stub.py",
+        "docs/validation/011-reporting/full/receipt.md",
+        "docs/validation/011-reporting/full/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/011-reporting/spec.md#V100"
+      "acceptance_spec": "specs/011-reporting/spec.md#V100",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-101",
@@ -2456,12 +3542,30 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V101",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "renv.lock",
+        "requirements.lock",
+        "docs/validation/012-validation/evidence/renv-restore.log",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V101"
+      "acceptance_spec": "specs/012-validation/spec.md#V101",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-102",
@@ -2480,12 +3584,27 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V102",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V102"
+      "acceptance_spec": "specs/012-validation/spec.md#V102",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-103",
@@ -2504,12 +3623,27 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V103",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V103"
+      "acceptance_spec": "specs/012-validation/spec.md#V103",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-104",
@@ -2528,12 +3662,28 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V104",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/reference-matrix.json",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V104"
+      "acceptance_spec": "specs/012-validation/spec.md#V104",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-105",
@@ -2552,12 +3702,28 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V105",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/012-validation/calibration/calibration_summary.json",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V105"
+      "acceptance_spec": "specs/012-validation/spec.md#V105",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-106",
@@ -2576,12 +3742,28 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V106",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/012-validation/calibration/pathways.json",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V106"
+      "acceptance_spec": "specs/012-validation/spec.md#V106",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-107",
@@ -2600,12 +3782,29 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V107",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "NOT_RUN",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        ".github/workflows/maintained.yml",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V107"
+      "acceptance_spec": "specs/012-validation/spec.md#V107",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false,
+        "reason": "The Linux/Windows CI jobs have never run: pushing is not authorized. Only the workflow structure is tested."
+      }
     },
     {
       "requirement": "FR-108",
@@ -2624,12 +3823,29 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V108",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/benchmarks/benchmark.json",
+        "docs/validation/benchmarks/run.log",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V108"
+      "acceptance_spec": "specs/012-validation/spec.md#V108",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-109",
@@ -2648,12 +3864,27 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V109",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V109"
+      "acceptance_spec": "specs/012-validation/spec.md#V109",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-110",
@@ -2672,12 +3903,28 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V110",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_offline.py",
+        "tests/integration/test_resume.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/scientific/reference/test_reference_matrix.py",
+        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/acceptance.json",
+        "docs/validation/012-validation/receipt.md",
+        "docs/validation/012-validation/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/012-validation/spec.md#V110"
+      "acceptance_spec": "specs/012-validation/spec.md#V110",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     },
     {
       "requirement": "FR-111",
@@ -2918,8 +4165,369 @@
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/013-release/spec.md#V120"
+    },
+    {
+      "requirement": "FR-121",
+      "task": "T121",
+      "acceptance": "V121",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Distance and feature-set construction",
+      "criterion": "Compute the declared distance (default Euclidean on per-protein z-scored log2 abundance, equivalent to PCA space) on genuinely observed, complete-case features of the analysed observations, for all-protein, declared-panel and DEP-derived feature sets, recording every excluded feature and reason.",
+      "scientific_rule": "SM26",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V121",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V121",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-122",
+      "task": "T122",
+      "acceptance": "V122",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "PERMANOVA term reporting",
+      "criterion": "Run vegan::adonis2 with a declared permutation count (default 9,999) and a recorded seed and report Df, SS, R², pseudo-F and P, with P floored at 1/(nperm+1) and displayed as \"< floor\" at the floor.",
+      "scientific_rule": "SM27",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V122",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V122",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-123",
+      "task": "T123",
+      "acceptance": "V123",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Global and pairwise tests",
+      "criterion": "Test the global group term across all declared groups and every group pair post hoc, adjusting pairwise P values within each feature set by the declared method (Holm default).",
+      "scientific_rule": "SM27",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V123",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V123",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-124",
+      "task": "T124",
+      "acceptance": "V124",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Covariate-adjusted margins with restricted permutations",
+      "criterion": "Use marginal sums of squares, test covariate terms with permutations restricted within the primary grouping factor, test the group term only from an unrestricted model, and never report a group term from a blocked model.",
+      "scientific_rule": "SM28",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V124",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V124",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-125",
+      "task": "T125",
+      "acceptance": "V125",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Interaction estimability",
+      "criterion": "Fit a group×covariate interaction only when every cell is non-empty and refuse otherwise with a typed error.",
+      "scientific_rule": "SM28",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V125",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V125",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-126",
+      "task": "T126",
+      "acceptance": "V126",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "PERMDISP alongside every PERMANOVA",
+      "criterion": "Report vegan::betadisper + permutest with the same permutation scheme next to each group/covariate test and state the interpretation rule.",
+      "scientific_rule": "SM29",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V126",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V126",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-127",
+      "task": "T127",
+      "acceptance": "V127",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Per-feature contribution and mean-R² identity",
+      "criterion": "Report each feature's univariate group R² and, under z-scored Euclidean distance, assert that the multivariate R² equals their mean.",
+      "scientific_rule": "SM30",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V127",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V127",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-128",
+      "task": "T128",
+      "acceptance": "V128",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Selection-circularity context",
+      "criterion": "Compare panels selected on the same data, and DEP-derived sets, with a null of random equal-size feature sets and with the best possible same-size set, and flag in-sample R² as optimistic.",
+      "scientific_rule": "SM30",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V128",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V128",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-129",
+      "task": "T129",
+      "acceptance": "V129",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Outputs, figures and report integration",
+      "criterion": "Export machine-readable tables, figure source tables and figures (ordination with centroids and spider lines, PERMDISP distances, permutation nulls, R² bars, per-feature R², random-set null) and show them in the offline report.",
+      "scientific_rule": "SM30",
+      "implementation_targets": [
+        "r/proteomicsCore/R/permanova_figures.R",
+        "src/proteomics_pipeline/reporting/permanova_data.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V129",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V129",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
+    },
+    {
+      "requirement": "FR-130",
+      "task": "T130",
+      "acceptance": "V130",
+      "slice": "014-multivariate-permanova",
+      "story": "US7",
+      "packet": "R13",
+      "phase": 2,
+      "capability": "Synthetic qualification fixtures and reproducibility",
+      "criterion": "Behave as specified on null, strong location-shift and dispersion-only synthetic fixtures and reproduce identical results for the same seed.",
+      "scientific_rule": "SM27",
+      "implementation_targets": [
+        "tests/fixtures/permanova/make_fixtures.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_permanova.py; r/proteomicsCore/tests/testthat/test-permanova.R",
+        "case_id": "V130",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_permanova.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/validation/014-multivariate-permanova/receipt.md",
+        "docs/validation/014-multivariate-permanova/evidence/gate-results.json"
+      ],
+      "verified_commit": null,
+      "acceptance_spec": "specs/014-multivariate-permanova/spec.md#V130",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-02",
+        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
+        "independent_audit": "NOT_RUN",
+        "committed": false
+      }
     }
   ],
   "redirects": [],
-  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution."
+  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired."
 }

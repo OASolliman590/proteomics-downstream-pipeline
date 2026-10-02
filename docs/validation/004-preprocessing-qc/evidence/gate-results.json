@@ -1,0 +1,29 @@
+{
+  "packet": "R03",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/integration/test_qc.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "8 passed in 5.88s",
+      "log": "docs/validation/004-preprocessing-qc/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-preprocessing.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=42 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/004-preprocessing-qc/evidence/r-test-preprocessing.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-qc.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=16 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/004-preprocessing-qc/evidence/r-test-qc.log"
+    }
+  ],
+  "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
+  "n_files": 16,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

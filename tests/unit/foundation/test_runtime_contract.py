@@ -12,7 +12,9 @@ def test_plan_hash_oracle_excludes_plan_hash_and_observational_timestamps_recurs
 def test_publish_artifact_verifies_hash_and_promotes_atomically(tmp_path):
     temp=tmp_path/"stage"; temp.mkdir(); source=temp/"value.txt"; source.write_text("Ω\n",encoding="utf-8"); digest=hashlib.sha256(source.read_bytes()).hexdigest(); destination=tmp_path/"run"/"value.txt"; runtime.publish_artifact(source,destination,digest); assert destination.read_text(encoding="utf-8")=="Ω\n"
     with pytest.raises(runtime.IntegrityError):runtime.publish_artifact(destination,tmp_path/"run"/"other.txt","0"*64)
-def test_capabilities_use_fixed_map_and_absent_handlers_are_unavailable():
+def test_capabilities_use_fixed_map_and_absent_handlers_are_unavailable(monkeypatch):
+    # Amendment A-2026-10-01-03: R05 implements limma; absence is now simulated explicitly.
+    monkeypatch.setitem(sys.modules,"proteomics_pipeline.inference_service",None)
     values={item["id"]:item for item in runtime.capabilities()}; assert values["foundation.io_roundtrip"]["implemented"] is True; assert values["foundation.io_roundtrip"]["required_packages"]==["Rscript","jsonlite","openssl","proteomicsCore"]; assert values["limma"]["implemented"] is False; assert values["limma"]["module"]=="proteomics_pipeline.inference_service"
 def test_capabilities_lazily_activate_a_real_fixed_module_interface(monkeypatch):
     module=types.ModuleType("proteomics_pipeline.inference_service"); module.capabilities=lambda:[{"id":"limma","dependencies":["design"],"required_r_packages":["futureR"]}]; module.execute=lambda request:{}

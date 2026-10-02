@@ -1,0 +1,21 @@
+{
+  "profile": "diann_pg_matrix",
+  "version": "1.8-headers-1",
+  "vendor": "DIA-NN",
+  "qualification": "Synthetic header-set qualification only (V016). Not a claim of compatibility with any particular DIA-NN release; real exports must be checked against this declared header set.",
+  "grain": "protein",
+  "documented_header_set": "Protein-group matrix (pg_matrix.tsv): annotation columns followed by one column per run, headed by the run file path.",
+  "required_columns": ["Protein.Group", "Protein.Ids", "Protein.Names", "Genes", "First.Protein.Description"],
+  "feature_id_column": "Protein.Group",
+  "accessions": {"column": "Protein.Ids", "separator": ";"},
+  "gene_symbols": {"column": "Genes", "separator": ";"},
+  "gene_ids": null,
+  "decoy": null,
+  "contaminant": null,
+  "intensity_columns": {"mode": "remaining"},
+  "annotation_columns": [],
+  "ignored_column_patterns": [],
+  "declared_source_scale": "linear_positive",
+  "missing_encoding": {"zero": false, "tokens": [""]},
+  "notes": "Run columns are file paths, so observation metadata must provide a source_column that names each exact header."
+}

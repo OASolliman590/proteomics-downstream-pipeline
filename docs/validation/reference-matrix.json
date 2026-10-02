@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.2.0",
+  "frozen": "2026-10-02",
+  "note": "Versions and tolerances frozen before candidate comparison (V104). Oracles are direct package calls or hand arithmetic authored in the tests, never the production adapter.",
+  "tolerances": {
+    "exact": "equality",
+    "deterministic": {
+      "abs": 1e-10,
+      "rel": 1e-08
+    },
+    "backend": {
+      "abs": 1e-08,
+      "rel": 1e-06
+    }
+  },
+  "cases": [
+    {
+      "case_id": "RM01",
+      "description": "limma zero-null, complete and two-NA independent",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5",
+        "statmod": "1.5.2"
+      },
+      "oracle_test": "tests/scientific/test_limma.py::test_v041_v045_matches_direct_lmfit_ebayes_with_original_na",
+      "oracle_identifier": "REFERENCE",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM02",
+      "description": "limma exact contrasts with weights, missing row and duplicateCorrelation block",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5"
+      },
+      "oracle_test": "tests/scientific/test_limma.py::test_v042_weighted_sparse_blocked_contrasts_through_export",
+      "oracle_identifier": "ORACLE_GLS",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM03",
+      "description": "eBayes trend/robust moderation, TREAT and omnibus F",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5",
+        "statmod": "1.5.2"
+      },
+      "oracle_test": "tests/scientific/test_limma.py::test_v043_v044_v047_moderation_treat_and_omnibus",
+      "oracle_identifier": "TREND_ORACLE",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM04",
+      "description": "Exact contrast covariance versus direct GLS",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5"
+      },
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-design.R::V037 contrast-as-coefficient",
+      "oracle_identifier": "gls_oracle",
+      "oracle_kind": "hand_arithmetic",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM05",
+      "description": "Design rank/alias versus qr/svd",
+      "backend": "base R",
+      "packages": {},
+      "oracle_test": "tests/scientific/test_design_contract.py::test_v033_rank_matches_independent_qr",
+      "oracle_identifier": "inline",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "exact"
+    },
+    {
+      "case_id": "RM06",
+      "description": "duplicateCorrelation consensus",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5"
+      },
+      "oracle_test": "tests/scientific/test_design_contract.py::test_v034_paired_fixed_subject_and_repeated_correlation",
+      "oracle_identifier": "inline",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM07",
+      "description": "PCA versus prcomp; correlations on shared cells",
+      "backend": "base R",
+      "packages": {},
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-qc.R::V026 PCA",
+      "oracle_identifier": "prcomp",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM08",
+      "description": "Detection Fisher exact and BH",
+      "backend": "stats",
+      "packages": {},
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-preprocessing.R::V029",
+      "oracle_identifier": "enumeration",
+      "oracle_kind": "hand_arithmetic",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM09",
+      "description": "KNN sensitivity versus impute.knn",
+      "backend": "impute",
+      "packages": {
+        "impute": "1.86.0"
+      },
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-preprocessing.R::V028",
+      "oracle_identifier": "impute::impute.knn",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM10",
+      "description": "DEqMS official sequence and sparse exact route",
+      "backend": "DEqMS",
+      "packages": {
+        "DEqMS": "1.30.0",
+        "limma": "3.68.5"
+      },
+      "oracle_test": "tests/scientific/test_assay_engines.py::test_v052_v053_deqms_matches_official_sequence",
+      "oracle_identifier": "DEQMS_ORACLE",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM11",
+      "description": "proDA test_diff (seeded)",
+      "backend": "proDA",
+      "packages": {
+        "proDA": "1.26.0"
+      },
+      "oracle_test": "tests/scientific/test_assay_engines.py::test_v055_v056_v057_proda_native_results",
+      "oracle_identifier": "PRODA_ORACLE",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM12",
+      "description": "CAMERA and mroast (independent)",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5"
+      },
+      "oracle_test": "tests/scientific/test_pathways.py::test_v072_v074_v075_independent_camera_roast_fgsea_match_direct_calls",
+      "oracle_identifier": "inline",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM13",
+      "description": "mroast with block/correlation",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5"
+      },
+      "oracle_test": "tests/scientific/test_pathways.py::test_v071_v073_blocked_designs_dispatch_to_roast",
+      "oracle_identifier": "inline",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM14",
+      "description": "fgsea preranked (seeded)",
+      "backend": "fgsea",
+      "packages": {
+        "fgsea": "1.38.0"
+      },
+      "oracle_test": "tests/scientific/test_pathways.py::test_v072_v074_v075_independent_camera_roast_fgsea_match_direct_calls",
+      "oracle_identifier": "inline",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM15",
+      "description": "ORA hypergeometric and BH",
+      "backend": "stats",
+      "packages": {},
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-pathways.R::V076",
+      "oracle_identifier": "hand",
+      "oracle_kind": "hand_arithmetic",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM16",
+      "description": "Gene-level limma refit",
+      "backend": "limma",
+      "packages": {
+        "limma": "3.68.5"
+      },
+      "oracle_test": "tests/contract/test_resources.py::test_v063_to_v069_end_to_end_mapping_and_gene_matrix",
+      "oracle_identifier": "inline",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "backend"
+    },
+    {
+      "case_id": "RM17",
+      "description": "TOST, Fieller, conjunction",
+      "backend": "stats",
+      "packages": {},
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-response.R::V084",
+      "oracle_identifier": "quadratic/pt",
+      "oracle_kind": "hand_arithmetic",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM18",
+      "description": "Exact/MC randomization",
+      "backend": "base R",
+      "packages": {},
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-response.R::V088/V090",
+      "oracle_identifier": "combn enumeration",
+      "oracle_kind": "hand_arithmetic",
+      "tolerance": "exact"
+    },
+    {
+      "case_id": "RM19",
+      "description": "PERMANOVA adonis2 terms, margins, blocks",
+      "backend": "vegan",
+      "packages": {
+        "vegan": "2.7-6",
+        "permute": "0.9-10"
+      },
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-permanova.R::V122",
+      "oracle_identifier": "vegan::adonis2",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM20",
+      "description": "PERMDISP betadisper/permutest",
+      "backend": "vegan",
+      "packages": {
+        "vegan": "2.7-6",
+        "permute": "0.9-10"
+      },
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-permanova.R::V126",
+      "oracle_identifier": "vegan::permutest",
+      "oracle_kind": "direct_package_call",
+      "tolerance": "deterministic"
+    },
+    {
+      "case_id": "RM21",
+      "description": "TOST equivalence passes only for the narrow interval",
+      "backend": "stats",
+      "packages": {},
+      "oracle_test": "r/proteomicsCore/tests/testthat/test-response.R::V085",
+      "oracle_identifier": "pt",
+      "oracle_kind": "hand_arithmetic",
+      "tolerance": "deterministic"
+    }
+  ],
+  "unsupported_combinations": [
+    {
+      "combination": "DEqMS x TREAT",
+      "reason_code": "E_DEQMS_HYPOTHESIS_UNSUPPORTED"
+    },
+    {
+      "combination": "DEqMS x block/weights",
+      "reason_code": "E_DEQMS_DESIGN_UNSUPPORTED"
+    },
+    {
+      "combination": "proDA x TMT or prior imputation",
+      "reason_code": "E_PRODA_LFQ_UNIMPUTED_REQUIRED"
+    },
+    {
+      "combination": "proDA x block/weights",
+      "reason_code": "E_PRODA_DESIGN_UNSUPPORTED"
+    },
+    {
+      "combination": "CAMERA x paired/blocked",
+      "reason_code": "E_CAMERA_BLOCKED_DESIGN"
+    },
+    {
+      "combination": "reduced-design omnibus",
+      "reason_code": "E_OMNIBUS_REDUCED_UNSUPPORTED"
+    },
+    {
+      "combination": "covariate PERMANOVA x subject blocks",
+      "reason_code": "E_PERMANOVA_DESIGN_UNSUPPORTED"
+    },
+    {
+      "combination": "within_block score randomization",
+      "reason_code": "E_SCORE_EXCHANGEABILITY_UNSUPPORTED"
+    }
+  ]
+}

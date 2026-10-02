@@ -803,6 +803,9 @@
         "public_path_redaction"
       ],
       "additionalProperties": false
+    },
+    "multivariate": {
+      "$ref": "#/$defs/multivariate"
     }
   },
   "required": [
@@ -1772,6 +1775,205 @@
         "exchangeability_evidence"
       ],
       "additionalProperties": false
+    },
+    "feature_set": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "kind": {
+          "enum": [
+            "all_complete",
+            "declared_panel",
+            "dep_derived"
+          ]
+        },
+        "feature_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "selection_provenance": {
+          "enum": [
+            "independent",
+            "same_data",
+            "unknown"
+          ]
+        },
+        "model_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "contrast_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "criterion": {
+          "enum": [
+            "family_q",
+            "raw_p"
+          ]
+        },
+        "threshold": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "declared_panel"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "feature_ids",
+              "selection_provenance"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "dep_derived"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "model_id",
+              "contrast_id",
+              "criterion",
+              "threshold"
+            ]
+          }
+        }
+      ]
+    },
+    "multivariate": {
+      "type": "object",
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": false,
+      "description": "Operator-authorized v1.2.0 amendment (ADR 0006): PERMANOVA/PERMDISP, packet R13, SM26-SM30.",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "execution_requirement": {
+          "enum": [
+            "required",
+            "optional"
+          ],
+          "default": "optional"
+        },
+        "permanova": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "distance": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "metric": {
+                  "enum": [
+                    "euclidean",
+                    "manhattan"
+                  ]
+                },
+                "scaling": {
+                  "enum": [
+                    "zscore",
+                    "center",
+                    "none"
+                  ]
+                }
+              }
+            },
+            "permutations": {
+              "type": "integer",
+              "minimum": 99,
+              "maximum": 999999
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "pairwise": {
+              "type": "boolean"
+            },
+            "adjustment": {
+              "enum": [
+                "holm",
+                "bonferroni",
+                "BH",
+                "none"
+              ]
+            },
+            "alpha": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 0.25
+            },
+            "covariates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "column",
+                  "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "column": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "type": {
+                    "enum": [
+                      "categorical",
+                      "continuous"
+                    ]
+                  }
+                }
+              }
+            },
+            "interaction": {
+              "type": "boolean"
+            },
+            "feature_sets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/feature_set"
+              },
+              "minItems": 1
+            },
+            "random_sets": {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 100000
+            }
+          }
+        }
+      }
     }
   },
   "allOf": [
@@ -1960,6 +2162,13 @@
           },
           "resources": {
             "maxItems": 0
+          },
+          "multivariate": {
+            "properties": {
+              "enabled": {
+                "const": false
+              }
+            }
           }
         }
       }

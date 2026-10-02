@@ -1,0 +1,23 @@
+{
+  "packet": "R04",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_design_contract.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "28 passed in 81.39s (0:01:21)",
+      "log": "docs/validation/005-design-contrasts/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-design.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=27 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/005-design-contrasts/evidence/r-test-design.log"
+    }
+  ],
+  "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
+  "n_files": 9,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

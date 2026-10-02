@@ -6,7 +6,9 @@ foundation_handlers <- list(
  "assay_engines"="assay_engine_stage",
  "resources"="mapping_stage",
  "pathways"="pathway_stage",
- "response"="response_stage"
+ "response"="response_stage",
+ # Amendment A-2026-10-01-01: operator-authorized PERMANOVA scope (packet R13)
+ "permanova"="permanova_stage"
 )
 dispatch_stage <- function(request_path,result_path,requested=NULL) {
   request=jsonlite::fromJSON(request_path,simplifyVector=FALSE); capability=if(is.null(requested))request$capability else requested; handler_name=foundation_handlers[[capability]]

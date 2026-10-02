@@ -1,0 +1,4 @@
+set_id	set_name	gene_id
+HSET	synthetic human set	hum:G1
+HSET	synthetic human set	hum:G2
+HSET	synthetic human set	hum:G7

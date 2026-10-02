@@ -1,0 +1,17 @@
+{
+  "packet": "R10a",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/integration/test_report_stub.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "9 passed in 39.58s",
+      "log": "docs/validation/011-reporting/stub/evidence/python-tests-1.log"
+    }
+  ],
+  "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
+  "n_files": 8,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

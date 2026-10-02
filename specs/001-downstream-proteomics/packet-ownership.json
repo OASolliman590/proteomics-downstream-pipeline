@@ -316,6 +316,25 @@
         "CHANGELOG.md",
         ".gitignore"
       ]
+    },
+    "R13": {
+      "phase": 2,
+      "risk": "high",
+      "depends_on": [
+        "R05",
+        "R10a"
+      ],
+      "scope_amendment": "ADR 0006 (operator-authorized 2026-10-01): FR-121-FR-130 / T121-T130 / V121-V130",
+      "write_allowlist": [
+        "src/proteomics_pipeline/permanova_service.py",
+        "src/proteomics_pipeline/reporting/permanova_data.py",
+        "r/proteomicsCore/R/permanova.R",
+        "r/proteomicsCore/R/permanova_figures.R",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "tests/scientific/test_permanova.py",
+        "tests/fixtures/permanova/**",
+        "docs/validation/014-multivariate-permanova/**"
+      ]
     }
   },
   "parallel_groups": [
@@ -325,5 +344,99 @@
       "R09"
     ]
   ],
-  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization."
+  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments.",
+  "maintainer_amendments": [
+    {
+      "id": "A-2026-10-01-01",
+      "adr": "docs/adr/0006-permanova-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "r/proteomicsCore/R/dispatch.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "r/proteomicsCore/DESCRIPTION"
+      ],
+      "change": "Add the fixed permanova capability (Python map entry + R handler name), the optional multivariate configuration block and optional R Suggests."
+    },
+    {
+      "id": "A-2026-10-01-02",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/workflow.py",
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/runtime.py",
+        "pyproject.toml"
+      ],
+      "change": "Command-level integration seam for validate/plan/run/verify; planning stages carry plan_hash=null; report template packaged."
+    },
+    {
+      "id": "A-2026-10-01-03",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/contract/foundation/test_cli_contract.py",
+        "tests/unit/foundation/test_doctor_contract.py",
+        "tests/unit/foundation/test_runtime_contract.py",
+        "r/proteomicsCore/tests/testthat/test-foundation.R"
+      ],
+      "change": "R01 regression tests that asserted 'not yet implemented' now simulate absence explicitly; their invariants are unchanged."
+    },
+    {
+      "id": "A-2026-10-01-04",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "scripts/check_spec_kit.py",
+        "scripts/maintained/install_r_dependencies.R"
+      ],
+      "change": "Spec checker accepts the amended 130-requirement/13-slice kit; explicit project-local R dependency installer."
+    },
+    {
+      "id": "A-2026-10-01-05",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/reporting/assemble.py",
+        "src/proteomics_pipeline/design_service.py",
+        "r/proteomicsCore/R/model_limma.R",
+        "src/proteomics_pipeline/workflow.py",
+        "src/proteomics_pipeline/cli.py",
+        "tests/unit/foundation/test_doctor_contract.py",
+        "tests/fixtures/design/builders.py"
+      ],
+      "change": "Phase 2 integration: fixed report-section providers for response/pathways/assay engines; plan freezes DEqMS count-evidence hashes; the R05 score guard applies only to Phase 1 plans; workflow runs assay engines, resources, response and pathways; 'resources prepare' command; R01 doctor test simulates an absent resources module; oracle helper reads the last JSON line."
+    },
+    {
+      "id": "A-2026-10-01-06",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/workflow.py",
+        "tests/integration/test_report_stub.py"
+      ],
+      "change": "R10b activates the contracted 'report --run' and 'compare --left --right --output' commands; the workflow appends an optional report_full stage after the R10a stub; the R10a stage-order assertion allows that trailing stage (the stub report is otherwise unchanged)."
+    },
+    {
+      "id": "A-2026-10-01-07",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/workflow.py"
+      ],
+      "change": "R11 activates the contracted 'resume --run' command and lets the workflow reuse verified stage outputs through cache.py fingerprints (normalized request + code manifest + environment); any mismatch re-executes the stage and all dependants."
+    },
+    {
+      "id": "A-2026-10-01-08",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/scientific/test_design_contract.py"
+      ],
+      "change": "R04 V038 negative asserted that assay_engines was unimplemented; after R06 it simulates an absent assay_service module explicitly (same invariant: absent optional adapter is NOT_RUN, required one exits 3, never limma). Found by the 2026-10-02 full gate re-run."
+    },
+    {
+      "id": "A-2026-10-01-09",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/contract/foundation/test_cli_contract.py"
+      ],
+      "change": "The R01 CLI contract used a required DEqMS model as the still-unimplemented capability; after R06 the child process blocks the assay_service module explicitly (same invariant: validate/plan/run exit 3 with E_CAPABILITY_NOT_IMPLEMENTED). The same regression exposed an untyped missing-count-evidence error, fixed inside R06 (E_DEQMS_COUNT_EVIDENCE, exit 2)."
+    }
+  ]
 }

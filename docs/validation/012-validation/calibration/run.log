@@ -1,0 +1,2 @@
+{"null": "PASS", "mixture": "PASS", "heavy_tail": "STRESS_REPORTED (not a nominal guarantee)", "mnar": "STRESS_REPORTED (not a nominal guarantee)", "pathways": {"null_rate_upper95_max": 0.075, "camera_pass": true, "roast_pass": true, "roast_mixed_pass": true}}
+.venv/bin/python scripts/maintained/run_calibration.py --datasets 1000  300    224.29s user 4.33s system 98% cpu 3:51.63 total

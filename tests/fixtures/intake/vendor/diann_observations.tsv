@@ -1,0 +1,5 @@
+observation_id	biological_unit_id	subject_id	technical_replicate_id	group	source_column
+A1	A1	NA	NA	alpha	/data/run_A1.raw
+A2	A2	NA	NA	alpha	/data/run_A2.raw
+B1	B1	NA	NA	beta	/data/run_B1.raw
+B2	B2	NA	NA	beta	/data/run_B2.raw

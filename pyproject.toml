@@ -25,4 +25,4 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-proteomics_pipeline = ["py.typed", "schemas/*.json"]
+proteomics_pipeline = ["py.typed", "schemas/*.json", "reporting/*.html"]

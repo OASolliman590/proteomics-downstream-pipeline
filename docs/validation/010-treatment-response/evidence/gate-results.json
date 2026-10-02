@@ -1,0 +1,23 @@
+{
+  "packet": "R09",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_response.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "7 passed in 42.41s",
+      "log": "docs/validation/010-treatment-response/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-response.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=35 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/010-treatment-response/evidence/r-test-response.log"
+    }
+  ],
+  "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+  "n_files": 14,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

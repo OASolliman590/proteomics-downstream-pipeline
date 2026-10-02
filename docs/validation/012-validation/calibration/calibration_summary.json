@@ -1,0 +1,103 @@
+{
+  "profile": "release",
+  "datasets_per_scenario": 1000,
+  "features": 2000,
+  "units_per_group": 4,
+  "seed_bank": {
+    "null": 100000,
+    "mixture": 200000,
+    "heavy_tail": 300000,
+    "mnar": 400000
+  },
+  "scenarios": {
+    "null": {
+      "n_datasets": 1000,
+      "seconds": 17.7,
+      "core": true,
+      "mean_coverage": 0.9498025,
+      "coverage_mc_se": 0.0001566214353912773,
+      "mean_power": null,
+      "mean_fdp": 0.046,
+      "any_rejection_k": 46,
+      "any_rejection_rate": 0.046,
+      "any_rejection_upper95": 0.05843637270256414,
+      "gate": "PASS"
+    },
+    "mixture": {
+      "n_datasets": 1000,
+      "seconds": 17.3,
+      "core": true,
+      "mean_coverage": 0.9499075,
+      "coverage_mc_se": 0.0001584196658894993,
+      "mean_power": 0.023965,
+      "mean_fdp": 0.05491191767101976,
+      "mean_fdp_upper95": 0.06234312021074204,
+      "gate": "PASS"
+    },
+    "heavy_tail": {
+      "n_datasets": 1000,
+      "seconds": 21.8,
+      "core": false,
+      "mean_coverage": 0.9616615000000001,
+      "coverage_mc_se": 0.00013873144619791213,
+      "mean_power": 0.01716,
+      "mean_fdp": 0.005321016969170541,
+      "mean_fdp_upper95": 0.0077789981802326245,
+      "gate": "STRESS_REPORTED (not a nominal guarantee)"
+    },
+    "mnar": {
+      "n_datasets": 1000,
+      "seconds": 151.9,
+      "core": false,
+      "mean_coverage": 0.9455704204057613,
+      "coverage_mc_se": 0.0001656047030858746,
+      "mean_power": 0.009522730462831494,
+      "mean_fdp": 0.04628165151841622,
+      "mean_fdp_upper95": 0.05344842624695565,
+      "gate": "STRESS_REPORTED (not a nominal guarantee)"
+    }
+  },
+  "pathways": {
+    "n_datasets": 300,
+    "nrot": 999,
+    "hypotheses": {
+      "camera": "competitive (set vs other genes, estimated inter-gene correlation)",
+      "roast": "self-contained (set vs zero)"
+    },
+    "fgsea": "not calibrated as a sample-label test (exploratory gene-set randomization)",
+    "results": {
+      "camera_null_rate": {
+        "mean": 0.0427777777777778,
+        "mc_se": 0.0034634877133714,
+        "upper95": 0.0484752150662737
+      },
+      "roast_null_rate": {
+        "mean": 0.0463888888888889,
+        "mc_se": 0.00360682076551058,
+        "upper95": 0.0523221090481538
+      },
+      "roast_mixed_null_rate": {
+        "mean": 0.05,
+        "mc_se": 0.00367026275465667,
+        "upper95": 0.0560375822314102
+      },
+      "camera_power": {
+        "mean": 0.666666666666667,
+        "mc_se": 0.0272620273369844,
+        "upper95": 0.711512701636006
+      },
+      "roast_power": {
+        "mean": 0.646666666666667,
+        "mc_se": 0.0276437494909069,
+        "upper95": 0.692140634579208
+      }
+    },
+    "gate": {
+      "null_rate_upper95_max": 0.075,
+      "camera_pass": true,
+      "roast_pass": true,
+      "roast_mixed_pass": true
+    },
+    "seconds": 20.5
+  }
+}

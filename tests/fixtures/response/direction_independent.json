@@ -1,0 +1,35 @@
+{
+  "resource_kind": "independent_direction",
+  "directions": [
+    {
+      "feature_id": "P02",
+      "direction": 1
+    },
+    {
+      "feature_id": "P03",
+      "direction": 1
+    },
+    {
+      "feature_id": "P04",
+      "direction": -1
+    },
+    {
+      "feature_id": "P05",
+      "direction": 1
+    },
+    {
+      "feature_id": "P07",
+      "direction": 1
+    },
+    {
+      "feature_id": "P08",
+      "direction": -1
+    }
+  ],
+  "selection_subject_ids": [
+    "ext_01",
+    "ext_02"
+  ],
+  "selection_unit_ids": [],
+  "source": "synthetic external cohort (invented)"
+}
