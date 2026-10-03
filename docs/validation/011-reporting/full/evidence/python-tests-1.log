@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/integration/test_reports.py tests/integration/test_report_stub.py -q -rs -p no:cacheprovider
+# started 2026-10-02T20:40:39.018584+00:00  exit 0
+
+................                                                         [100%]
+16 passed in 458.77s (0:07:38)
+
+--- stderr ---

@@ -1,0 +1,21 @@
+{
+  "version": "synthetic-1",
+  "source": "synthetic test fixture (not a real database)",
+  "terms": "synthetic; no redistribution restrictions",
+  "id_type": "synthetic",
+  "resource_id": "hsets",
+  "kind": "gene_sets",
+  "source_taxonomy_id": 9606,
+  "target_taxonomy_id": 10116,
+  "projection": {
+    "method": "orthology_resource",
+    "orthology_resource_id": "orth",
+    "evidence": "synthetic one-to-one only"
+  },
+  "files": [
+    {
+      "name": "gene_sets.tsv",
+      "source": "human_genesets_source.tsv"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+set_id	set_name	gene_id
+SET_A	synthetic set A	rat:G1
+SET_A	synthetic set A	rat:G2
+SET_A	synthetic set A	rat:G7
+SET_B	synthetic set B	rat:G8
+SET_B	synthetic set B	rat:G99
+SET_C	synthetic set C	rat:G1
+SET_C	synthetic set C	rat:G2
+SET_C	synthetic set C	rat:G7
+SET_C	synthetic set C	rat:G8

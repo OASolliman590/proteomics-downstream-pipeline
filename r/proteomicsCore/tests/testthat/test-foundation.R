@@ -1,7 +1,12 @@
-testthat::test_that("dispatch map contains only the real foundation handler", {
- testthat::expect_true(is.function(proteomicsCore::dispatch_stage)); testthat::expect_true(is.function(proteomicsCore::io_roundtrip)); testthat::expect_false("limma_stage" %in% ls(asNamespace("proteomicsCore"),all.names=TRUE))
- expected <- c("foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response")
- testthat::expect_setequal(names(get("foundation_handlers", envir=asNamespace("proteomicsCore"))), expected)
+testthat::test_that("dispatch map contains only real handlers", {
+ # Amendment A-2026-10-01-03: later packets add real handlers; every mapped name must be absent or a real function,
+ # and the fixed map gains only the operator-authorized permanova entry (A-2026-10-01-01).
+ testthat::expect_true(is.function(proteomicsCore::dispatch_stage)); testthat::expect_true(is.function(proteomicsCore::io_roundtrip))
+ handlers <- get("foundation_handlers", envir=asNamespace("proteomicsCore"))
+ expected <- c("foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova")
+ testthat::expect_setequal(names(handlers), expected)
+ for (name in unlist(handlers)) if (exists(name, envir=asNamespace("proteomicsCore"), inherits=FALSE)) testthat::expect_true(is.function(get(name, envir=asNamespace("proteomicsCore"))))
+ testthat::expect_identical(unname(unlist(exports <- getNamespaceExports("proteomicsCore")))[order(unlist(exports))], sort(c("dispatch_stage","io_roundtrip")))
 })
 
 testthat::test_that("sha256_file does not leak file connections", {
@@ -82,7 +87,8 @@ testthat::test_that("an intentionally failing isolated R harness is nonzero", {
 
 testthat::test_that("unknown R capabilities remain NOT_RUN", {
   root <- tempfile("dispatch-"); dir.create(root)
-  request <- list(schema_version="1.2.0",run_id="r",stage_id="s",capability="limma",plan_hash=NULL,inputs=list(),output_temp_dir=root,config_path=NULL,parameters=list(),rng=list(seed=1L,kind="L'Ecuyer-CMRG",threads=1L))
+  # Amendment A-2026-10-01-03: limma_stage exists after R05; use a capability outside the fixed map.
+  request <- list(schema_version="1.2.0",run_id="r",stage_id="s",capability="unregistered.capability",plan_hash=NULL,inputs=list(),output_temp_dir=root,config_path=NULL,parameters=list(),rng=list(seed=1L,kind="L'Ecuyer-CMRG",threads=1L))
   request_path <- file.path(root,"request.json"); result_path <- file.path(root,"result.json")
   jsonlite::write_json(request, request_path, auto_unbox=TRUE, na="null", null="null")
   proteomicsCore::dispatch_stage(request_path,result_path)

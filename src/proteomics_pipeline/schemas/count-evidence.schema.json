@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:proteomics-downstream:count-evidence:1.2.0",
+  "title": "Count evidence row (R06, DEqMS)",
+  "type": "object",
+  "required": [
+    "feature_id",
+    "count_type",
+    "count_value",
+    "count_source",
+    "count_aggregation",
+    "pseudocount_policy"
+  ],
+  "properties": {
+    "feature_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observation_id": {
+      "type": "string"
+    },
+    "plex_id": {
+      "type": "string"
+    },
+    "count_type": {
+      "enum": [
+        "peptide",
+        "psm"
+      ]
+    },
+    "count_value": {
+      "type": "string",
+      "pattern": "^(NA|[0-9]+)$"
+    },
+    "count_source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "count_aggregation": {
+      "enum": [
+        "protein_level",
+        "minimum_across_observations",
+        "minimum_across_plexes"
+      ]
+    },
+    "pseudocount_policy": {
+      "enum": [
+        "none",
+        "explicit_offset"
+      ]
+    }
+  },
+  "additionalProperties": {
+    "type": "string"
+  }
+}

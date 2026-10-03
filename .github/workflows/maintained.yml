@@ -1,0 +1,100 @@
+# R11 V107: cross-platform smoke CI for the maintained pipeline.
+# Smoke CI runs the real Python and R test suites plus one synthetic end-to-end
+# example on fresh Linux and Windows runners.  Expensive release calibration
+# (scripts/maintained/run_calibration.py) and the 20000x100 benchmark are a
+# separate, manually dispatched job and are never part of push/PR CI.
+# Until these jobs have actually run on GitHub, V107 is recorded NOT_RUN.
+name: Maintained pipeline
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release_calibration:
+        description: "Run the expensive release calibration and benchmark"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      LANG: en_US.UTF-8
+      R_LIBS_USER: ${{ github.workspace }}/.r-lib
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.6.1'
+      - name: Install pinned Python environment
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install -e . --no-deps
+      - name: Install project-local R dependencies
+        shell: bash
+        run: |
+          mkdir -p "$R_LIBS_USER"
+          Rscript --vanilla -e 'lib <- Sys.getenv("R_LIBS_USER"); .libPaths(c(lib, .Library)); install.packages("renv", lib = lib, repos = "https://cloud.r-project.org"); renv::restore(lockfile = "renv.lock", library = lib, prompt = FALSE)'
+          R CMD INSTALL --library="$R_LIBS_USER" r/proteomicsCore
+      - name: Qualify locks
+        run: |
+          python -c "from proteomics_pipeline import reproduction as r; import json,sys; q=r.check_r_lock('renv.lock'); print(json.dumps(q)[:2000]); sys.exit(0 if q['qualified'] and not r.check_python_lock('requirements.lock') else 1)"
+      - name: Python suite
+        run: python -m pytest -q -p no:cacheprovider tests
+      - name: R testthat suite
+        run: Rscript --vanilla -e "testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', stop_on_failure = TRUE)"
+      - name: Synthetic end-to-end example
+        shell: bash
+        run: |
+          python -m proteomics_pipeline validate --config configs/examples/example-independent.json
+          python -m proteomics_pipeline run --config configs/examples/example-independent.json --output ci-run
+          python -m proteomics_pipeline verify --run ci-run
+      - name: Artifact manifest
+        if: always()
+        shell: bash
+        run: |
+          python -c "import hashlib,pathlib,json; print(json.dumps({str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(pathlib.Path('ci-run').rglob('*')) if p.is_file()}, indent=1))" > ci-manifest.json || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-${{ matrix.os }}
+          path: |
+            ci-manifest.json
+            ci-run/run_status.json
+            ci-run/logs/
+  release-calibration:
+    if: github.event_name == 'workflow_dispatch' && inputs.release_calibration
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      LANG: en_US.UTF-8
+      R_LIBS_USER: ${{ github.workspace }}/.r-lib
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.6.1'
+      - run: |
+          python -m pip install -r requirements.lock && python -m pip install -e . --no-deps
+          mkdir -p "$R_LIBS_USER"
+          Rscript --vanilla -e 'lib <- Sys.getenv("R_LIBS_USER"); .libPaths(c(lib, .Library)); install.packages("renv", lib = lib, repos = "https://cloud.r-project.org"); renv::restore(lockfile = "renv.lock", library = lib, prompt = FALSE)'
+          R CMD INSTALL --library="$R_LIBS_USER" r/proteomicsCore
+          python scripts/maintained/run_calibration.py --output calibration-out
+          python scripts/maintained/benchmark.py --scale 1.0 --output benchmark-out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-calibration
+          path: |
+            calibration-out/
+            benchmark-out/

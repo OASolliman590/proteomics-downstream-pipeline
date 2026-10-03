@@ -1,8 +1,8 @@
 # Packet index — v1.2.0-frozen
 
-**Dispatch is not authorized.** First an independent specification audit, then explicit Maintainer freeze of the candidate tree. The first later packet is [R01](IMPLEMENTATION_BRIEF_R01.md), never an engine implementation during this hardening pass.
+Kit frozen 2026-09-20. R01 accepted 2026-09-21. On 2026-10-01 the operator gave GO for R02 onward in this order and authorized R13 (PERMANOVA, [ADR 0006](../../docs/adr/0006-permanova-scope-amendment.md)) with the Claude route ([ADR 0007](../../docs/adr/0007-claude-route-and-integration-amendments.md)). R02–R10b and R13 pass their gates, and R11 passes, including V107 (CI run 37087074374 on fa4d948, Ubuntu and Windows) — all uncommitted, independent audit NOT_RUN. R12 private gates are Maintainer-only and NOT_RUN.
 
-[PHASES.md](PHASES.md) defines release scope. [packet-ownership.json](packet-ownership.json) is the authoritative exact write allowlist and dispatch-dependency record. All listed source/test paths are pending creation after freeze. All paths not assigned to a packet are forbidden to that implementer. There are twelve original slices and thirteen dispatch units because R10 is split without changing any FR/T/V identity.
+[PHASES.md](PHASES.md) defines release scope. [packet-ownership.json](packet-ownership.json) is the authoritative exact write allowlist and dispatch-dependency record. All listed source/test paths are pending creation after freeze. All paths not assigned to a packet are forbidden to that implementer. There are twelve original slices plus the amended R13 slice, and fourteen dispatch units because R10 is split without changing any FR/T/V identity.
 
 | Dispatch unit | Phase | Dependency | Acceptance | Risk | Slice |
 |---|---|---|---|---|---|
@@ -12,6 +12,7 @@
 | R04 | 1 | R03 | V031–V040 | high | [Design validation, exact contrasts and blocking](../005-design-contrasts/spec.md) |
 | R05 | 1 | R04 | V041–V050 | high | [Core limma inference and multiplicity](../006-limma-inference/spec.md) |
 | R10a | 1 | R05 | V091–V094 | high | [Unified offline report and streamlined workflow](../011-reporting/spec.md) |
+| R13 | 2 | R05, R10a | V121–V130 | high | [Multivariate PERMANOVA and dispersion testing](../014-multivariate-permanova/spec.md) (amendment) |
 | R06 | 2 | R05, R10a | V051–V060 | high | [Assay-qualified DEqMS and proDA backends](../007-assay-engines/spec.md) |
 | R07 | 2 | R05, R10a | V061–V070 | high | [Versioned annotation, protein groups and gene sets](../008-resources-mapping/spec.md) |
 | R09 | 2 | R05, R10a | V081–V090 | high | [Treatment response, equivalence and independent scores](../010-treatment-response/spec.md) |
@@ -19,6 +20,12 @@
 | R10b | 3 | R10a, R08, R09 | V095–V100 | high | [Unified offline report and streamlined workflow](../011-reporting/spec.md) |
 | R11 | 3 | R10b | V101–V110 | high | [Reproducibility, calibration and continuous validation](../012-validation/spec.md) |
 | R12 | 3 | R11 | V111–V120 | high | [Archived-study regression, documentation and versioned successor](../013-release/spec.md) |
+| R14a | 4 | R11, R13 | V131–V136 | high | [Post-DE: result structure and concordance](../015-post-de-analysis/spec.md) (amendment) |
+| R14b | 4 | R14a | V137–V143 | high | [Post-DE: robustness and sensitivity](../015-post-de-analysis/spec.md) (amendment) |
+| R14c | 4 | R14b | V144–V148 | high | [Post-DE: protein–phenotype association](../015-post-de-analysis/spec.md) (amendment) |
+| R14d | 4 | R14c, R09 | V149–V160 | high | [Post-DE: biomarker discrimination evaluation](../015-post-de-analysis/spec.md) (amendment) |
+| R14e | 4 | R14d, R07 | V161–V165 | high | [Post-DE: co-abundance modules and networks](../015-post-de-analysis/spec.md) (amendment) |
+| R14f | 4 | R14a–R14e, R10b | V166–V167 | high | [Post-DE: eligibility reporting and generality matrix](../015-post-de-analysis/spec.md) (amendment) |
 
 ## Ownership and scheduling
 
@@ -32,4 +39,6 @@ The only permitted concurrent group is **R06 ∥ R07 ∥ R09 after accepted R05 
 
 A packet receipt identifies its frozen tree/contract versions, changed paths, acceptance IDs, executed commands and actual outputs/failures. The Maintainer reviews the diff and independently runs the gates before recording completion. Evidence status remains pending-after-freeze or NOT_RUN when no verified execution exists. Independent Reviewer audit does not authorize its author to mark their own candidate frozen.
 
-Current next action: explicit user authorization for **R01 only**, using [IMPLEMENTATION_BRIEF_R01.md](IMPLEMENTATION_BRIEF_R01.md). No current engine, lockfile or validated general platform is implied.
+Current next action: the Phase 2 group R06 ∥ R07 ∥ R09, then R08 (see [progress.md](progress.md) for what has been completed since). Shared-interface amendments made by the Maintainer route are listed in `maintainer_amendments` of [packet-ownership.json](packet-ownership.json). No lockfile or validated general platform is implied.
+
+Phase 4 amendment (2026-10-02, [ADR 0009](../../docs/adr/0009-post-de-scope-amendment.md)): slice 015 adds dispatch units R14a–R14f (FR/T/V-131–167), serial after accepted R11 and the R13 audit fixes. Not yet dispatched. The shared-interface amendment (capability maps, optional `post_de` schema block, R Suggests) is made by the Maintainer before R14a, as described in [the slice plan](../015-post-de-analysis/plan.md).

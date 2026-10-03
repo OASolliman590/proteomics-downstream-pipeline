@@ -1,0 +1,21 @@
+{
+  "profile": "spectronaut_pg_pivot",
+  "version": "18.x-pg-quantity-headers-1",
+  "vendor": "Spectronaut",
+  "qualification": "Synthetic header-set qualification only (V016). Not a claim of compatibility with any particular Spectronaut release.",
+  "grain": "protein",
+  "documented_header_set": "Protein-group pivot report with '[n] <run>.PG.Quantity' columns.",
+  "required_columns": ["PG.ProteinGroups", "PG.ProteinAccessions", "PG.Genes"],
+  "feature_id_column": "PG.ProteinGroups",
+  "accessions": {"column": "PG.ProteinAccessions", "separator": ";"},
+  "gene_symbols": {"column": "PG.Genes", "separator": ";"},
+  "gene_ids": null,
+  "decoy": null,
+  "contaminant": null,
+  "intensity_columns": {"regex": "\\[\\d+\\] (.+)\\.PG\\.Quantity"},
+  "annotation_columns": ["PG.ProteinDescriptions", "PG.ProteinNames", "PG.Organisms"],
+  "ignored_column_patterns": ["\\.PG\\.IsSingleHit$", "\\.PG\\.NrOfStrippedSequencesIdentified$"],
+  "declared_source_scale": "linear_positive",
+  "missing_encoding": {"zero": false, "tokens": ["NaN", "Filtered"]},
+  "notes": "'NaN' and 'Filtered' are documented missing tokens and must be declared in input.missing_values."
+}

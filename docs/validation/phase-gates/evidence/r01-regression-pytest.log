@@ -1,0 +1,4 @@
+$ .venv/bin/python -m pytest tests/contract/foundation tests/unit/foundation -q -rs -p no:cacheprovider
+......................................................................   [100%]
+70 passed in 91.37s (0:01:31)
+exit=0

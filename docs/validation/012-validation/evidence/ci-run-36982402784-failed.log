@@ -1,0 +1,33 @@
+# GitHub Actions run 36982402784 (workflow 'Maintained pipeline') on fd8dfa985d6b4247282a8ebf94d45e6ae79bf0ab
+# https://github.com/OASolliman590/proteomics-downstream-pipeline/actions/runs/36982402784
+# conclusion: failure; smoke (ubuntu-latest): failure; smoke (windows-latest): failure; release-calibration: skipped
+# Excerpt of 'gh run view 36982402784 --log-failed' (read-only), 2026-10-02: final pytest summary of each job and the first error of each failure class.
+
+## smoke (ubuntu-latest): pytest 2 failed, 251 passed
+FAILED tests/scientific/test_assay_engines.py::test_v059_missing_engine_package[optional-PARTIAL-3] - FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/proteomics-downstream-pipeline/proteomics-downstream-pipeline/.r-lib'
+FAILED tests/scientific/test_assay_engines.py::test_v059_missing_engine_package[required-FAILED-3] - FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/proteomics-downstream-pipeline/proteomics-downstream-pipeline/.r-lib'
+
+## smoke (windows-latest): pytest 16 failed, 237 passed
+FAILED tests/contract/foundation/test_cli_contract.py::test_installed_console_and_python_module_work_without_source_path - assert None
+FAILED tests/contract/intake/test_r_bundle_reader.py::test_v018_r_reader_handles_quoted_tab_and_unicode_ids - assert ['grp\\t\xce\xa9 "x"'] == ['grp\\t\u03a9 "x"']\n  \n  At index 0 diff: 'grp\\t\xce\xa9 "x"' != 'grp\\t\u03a9 "x"'\n  \n  Full diff:\n    [\n  -     'grp\\t\u03a9 "x"',\n  ?           ^\n  +     'grp\\t\xce\xa9 "x"',\n  ?           ^^\n    ]
+FAILED tests/integration/test_offline.py::test_v101_r_lock_matches_installed_library_and_api_probes - UnicodeDecodeError: 'charmap' codec can't decode byte 0x8d in position 99906: character maps to <undefined>
+FAILED tests/integration/test_reports.py::test_v100_documented_commands_run_verbatim - AssertionError: assert (False)
+FAILED tests/scientific/reference/test_reference_matrix.py::test_v104_negative_version_drift_missing_oracle_and_unraised_code_are_recorded - UnicodeDecodeError: 'charmap' codec can't decode byte 0x8d in position 99906: character maps to <undefined>
+FAILED tests/scientific/test_assay_engines.py::test_v052_v053_deqms_matches_official_sequence - RuntimeError
+FAILED tests/scientific/test_assay_engines.py::test_v054_sparse_exact_route_and_design_guards - RuntimeError: Error in file(file, "rt") : invalid 'description' argument
+FAILED tests/scientific/test_assay_engines.py::test_v055_v056_v057_proda_native_results - RuntimeError
+FAILED tests/scientific/test_assay_engines.py::test_v059_missing_engine_package[optional-PARTIAL-3] - FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\a\\proteomics-downstream-pipeline\\proteomics-downstream-pipeline\\.r-lib'
+FAILED tests/scientific/test_assay_engines.py::test_v059_missing_engine_package[required-FAILED-3] - FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\a\\proteomics-downstream-pipeline\\proteomics-downstream-pipeline\\.r-lib'
+FAILED tests/scientific/test_limma.py::test_v041_v045_matches_direct_lmfit_ebayes_with_original_na - RuntimeError
+FAILED tests/scientific/test_limma.py::test_v042_weighted_sparse_blocked_contrasts_through_export[none] - RuntimeError
+FAILED tests/scientific/test_limma.py::test_v042_weighted_sparse_blocked_contrasts_through_export[duplicate_correlation] - RuntimeError
+FAILED tests/scientific/test_limma.py::test_v043_v044_v047_moderation_treat_and_omnibus - RuntimeError
+FAILED tests/scientific/test_pathways.py::test_v072_v074_v075_independent_camera_roast_fgsea_match_direct_calls - RuntimeError: Error in file(file, "rt") : invalid 'description' argument
+FAILED tests/scientific/test_pathways.py::test_v071_v073_blocked_designs_dispatch_to_roast - RuntimeError: Error in file(file, "rt") : invalid 'description' argument
+
+## representative errors (windows-latest)
+E           RuntimeError: Error in file(file, "rt") : invalid 'description' argument
+E       AssertionError: assert (False)
+E       FileNotFoundError: [WinError 3] The system cannot find the path specified: 'D:\\a\\proteomics-downstream-pipeline\\proteomics-downstream-pipeline\\.r-lib'
+E       UnicodeDecodeError: 'charmap' codec can't decode byte 0x8d in position 99906: character maps to <undefined>
+E       assert None

@@ -1,0 +1,30 @@
+{
+  "resource_kind": "independent_score",
+  "score_id": "synthetic-score",
+  "features": [
+    {
+      "feature_id": "P02",
+      "weight": 1.0,
+      "center": 11.0,
+      "scale": 0.5
+    },
+    {
+      "feature_id": "P03",
+      "weight": 1.0,
+      "center": 12.5,
+      "scale": 1.0
+    }
+  ],
+  "missing_feature_policy": "require_all",
+  "training_subject_ids": [
+    "train_01",
+    "train_02",
+    "train_03"
+  ],
+  "selection_subject_ids": [
+    "train_04"
+  ],
+  "training_unit_ids": [
+    "train_unit_01"
+  ]
+}

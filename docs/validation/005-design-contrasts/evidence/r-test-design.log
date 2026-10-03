@@ -1,0 +1,9 @@
+$ Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-design.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))
+# started 2026-10-02T20:25:59.036227+00:00  exit 0
+
+design: ............................
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations=28 failed=0 skipped=0 errors=0
+
+--- stderr ---

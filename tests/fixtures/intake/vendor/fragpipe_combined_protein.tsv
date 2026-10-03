@@ -1,0 +1,3 @@
+Protein	Protein ID	Entry Name	Gene	Indistinguishable Proteins	Protein Probability	A1 Spectral Count	A1 MaxLFQ Intensity	A2 MaxLFQ Intensity	B1 MaxLFQ Intensity	B2 MaxLFQ Intensity
+sp|Q0001|PRA_SYN	Q0001	PRA_SYN	Gna		1.0	4	2	4	8	0
+sp|Q0005|PRE_SYN	Q0005;Q0006	PRE_SYN	Gne	sp|Q0006|PRF_SYN	0.99	2	0	1	1	1

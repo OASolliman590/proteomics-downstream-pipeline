@@ -1,6 +1,6 @@
 # R01 implementation brief — the only first packet
 
-**Status:** 1.2.0-frozen, ELIGIBLE BUT NOT AUTHORIZED FOR DISPATCH. Baseline inspected: `3aefdd95c46a1c56dae89e79ddf441b6cc978148`. No maintained package or engine was implemented in the specification pass. Begin only after the user explicitly says GO R01 using the recorded frozen contract identity.
+**Status:** historical brief — R01 was authorized and **accepted on 2026-09-21** (V001–V010 PASS at `88e7fb6773ab9403e8b57037a017204357ba75cd`; see [receipt](../../docs/validation/002-foundation/receipt.md)). The text below is the original pre-dispatch brief, kept for provenance: Baseline inspected: `3aefdd95c46a1c56dae89e79ddf441b6cc978148`. No maintained package or engine was implemented in the specification pass. Begin only after the user explicitly says GO R01 using the recorded frozen contract identity.
 
 ## Deliverable and stopping boundary
 

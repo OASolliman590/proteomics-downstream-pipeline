@@ -1,0 +1,17 @@
+$ .venv/bin/python scripts/check_spec_kit.py
+{
+  "status": "PASS",
+  "scope": "Specification structure/traceability/links and preserved-source hashes; not implementation validation",
+  "slices": 13,
+  "requirements": 130,
+  "tasks": 130,
+  "acceptance_cases": 130,
+  "markdown_files_checked": 61,
+  "implementation_status": [
+    "FAIL",
+    "PASS",
+    "pending-after-freeze"
+  ],
+  "schema_note": "Draft 2020-12 schema and three examples separately validated with jsonschema 4.25.1; semantic/runtime validation remains an implementation task."
+}
+exit=0

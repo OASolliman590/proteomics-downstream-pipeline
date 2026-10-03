@@ -6,20 +6,27 @@ def test_doctor_reports_actual_python_identity():
     report=inspect()
     assert report["python"]["path"]==sys.executable
     assert report["python"]["version"]==sys.version.split()[0]
-    assert {item["name"] for item in report["packages"]}=={"jsonlite","openssl","proteomicsCore"}
+    # Amendment A-2026-10-01-03: later packets add their declared R packages to the inventory.
+    names={item["name"] for item in report["packages"]}
+    declared={pkg for item in report["capabilities"] if item["implemented"] for pkg in item["required_r_packages"]}
+    assert {"jsonlite","openssl","proteomicsCore"}<=names and names<={"jsonlite","openssl","proteomicsCore"}|declared
 
-def test_doctor_resource_hash_and_absolute_path_are_truthful(tmp_path):
+def test_doctor_resource_hash_and_absolute_path_are_truthful(tmp_path,monkeypatch):
+    # Amendment A-2026-10-01-03: R07 implements the resources capability; its absence is simulated so exit 3 still means a required capability is unavailable.
+    monkeypatch.setitem(sys.modules,"proteomics_pipeline.resources",None)
     resource=tmp_path/"resource.dat"; resource.write_bytes(b"stable-resource")
     digest=hashlib.sha256(resource.read_bytes()).hexdigest()
-    source=json.loads((__import__("pathlib").Path(__file__).parents[3]/"configs/examples/example-independent.json").read_text())
+    source=json.loads((__import__("pathlib").Path(__file__).parents[3]/"configs/examples/example-independent.json").read_text(encoding="utf-8"))
     source["runtime"]["phase"]=2
     source["resources"]=[{"id":"r","kind":"mapping","path":str(resource),"sha256":digest,"version":"1","source":"synthetic","source_taxonomy_id":1,"target_taxonomy_id":1,"terms":"term"}]
-    config_path=tmp_path/"analysis.json"; config_path.write_text(json.dumps(source))
+    config_path=tmp_path/"analysis.json"; config_path.write_text(json.dumps(source), encoding="utf-8")
     report=inspect(config_path=config_path); assert report["resources"][0]["available"] is True; assert exit_code(report)==3
     resource.write_bytes(b"mutated"); report=inspect(config_path=config_path); assert report["resources"][0]["status"]=="NOT_AVAILABLE" and exit_code(report)==3
     resource.unlink(); report=inspect(config_path=config_path); assert report["resources"][0]["status"]=="NOT_AVAILABLE" and exit_code(report)==3
 
-def test_doctor_config_reports_required_limma_unavailable():
+def test_doctor_config_reports_required_limma_unavailable(monkeypatch):
+    # Amendment A-2026-10-01-03: limma is implemented by R05; simulate its absence explicitly.
+    monkeypatch.setitem(sys.modules,"proteomics_pipeline.inference_service",None)
     root=__import__("pathlib").Path(__file__).parents[3]; config_path=root/"configs/examples/example-independent.json"
     report=inspect(config_path=config_path)
     required={item["id"] for item in report["requested_capabilities"] if item["required"]}

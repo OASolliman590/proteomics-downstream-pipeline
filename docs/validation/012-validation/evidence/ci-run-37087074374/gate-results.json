@@ -1,0 +1,22 @@
+{
+  "packet": "R11",
+  "acceptance": "V107",
+  "source": "GitHub Actions .github/workflows/maintained.yml",
+  "run_url": "https://github.com/OASolliman590/proteomics-downstream-pipeline/actions/runs/37087074374",
+  "head_sha": "fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd",
+  "commands": [
+    {
+      "command": "GitHub Actions maintained.yml / smoke (ubuntu-latest), run 37087074374: locks, Python suite, R testthat, synthetic end-to-end, artifact manifest",
+      "exit_code": 0,
+      "summary": "Python 269 passed; R [ FAIL 0 | WARN 0 | SKIP 0 | PASS 319 ]; locks qualified; example COMPLETED",
+      "log": "docs/validation/012-validation/evidence/ci-run-37087074374/summary.log"
+    },
+    {
+      "command": "GitHub Actions maintained.yml / smoke (windows-latest), run 37087074374: locks, Python suite, R testthat, synthetic end-to-end, artifact manifest",
+      "exit_code": 0,
+      "summary": "Python 269 passed; R [ FAIL 0 | WARN 0 | SKIP 0 | PASS 319 ]; locks qualified; example COMPLETED",
+      "log": "docs/validation/012-validation/evidence/ci-run-37087074374/summary.log"
+    }
+  ],
+  "not_run": "release-calibration job is dispatch-only (expensive calibration/benchmark), skipped on push by design"
+}

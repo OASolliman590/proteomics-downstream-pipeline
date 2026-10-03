@@ -1,0 +1,31 @@
+# BEFORE FIX: extracted fd8dfa9 tree and its own R package build, with the audit tests copied in; 2026-10-02T09:11:46Z
+PASSED tests/scientific/test_permanova.py::test_audit_m2_subject_blocked_group_test_uses_a_valid_scheme_and_detects_a_strong_shift[within-within:subject_id]
+PASSED tests/scientific/test_permanova.py::test_audit_m2_exact_location_label_for_identical_spread
+FAILED tests/scientific/test_limma.py::test_audit_m1_sensitivity_targeting_primary_model_is_rejected
+FAILED tests/scientific/test_limma.py::test_audit_m1_service_layer_refuses_primary_on_sensitivity_matrix
+FAILED tests/scientific/test_limma.py::test_audit_m1_sensitivity_model_settings_record_the_matrix_actually_used
+FAILED tests/scientific/test_limma.py::test_audit_m1_downstream_refuses_primary_results_not_from_observed_data
+FAILED tests/scientific/test_limma.py::test_audit_m1_pathways_response_and_permanova_builders_call_the_guard
+FAILED tests/scientific/test_permanova.py::test_v125_empty_interaction_cell_refused_typed
+FAILED tests/scientific/test_permanova.py::test_audit_m2_subject_blocked_group_test_uses_a_valid_scheme_and_detects_a_strong_shift[between-between_subjects:subject_id]
+FAILED tests/scientific/test_permanova.py::test_audit_m2_mixed_subject_design_is_refused_typed
+FAILED tests/scientific/test_permanova.py::test_audit_m4_empty_interaction_cell_refuses_only_the_term_for_optional_runs
+FAILED tests/scientific/test_permanova.py::test_audit_m6_non_syntactic_covariate_name
+FAILED tests/scientific/test_permanova.py::test_audit_m5_contract_lists_only_produced_exclusion_reasons
+FAILED tests/scientific/reference/test_calibration_evidence.py::test_v105_calibration_uses_the_production_fit_and_eligibility_rule
+12 failed, 2 passed, 19 deselected in 59.11s
+# R testthat (audit-tagged and amended cases)
+FAILED test-permanova.R V124 covariate terms use within-group permutations; the group term never comes from the blocked model 
+FAILED test-permanova.R V125 interaction only when every cell is filled; empty cell is refused 
+PASSED test-permanova.R V126 PERMDISP matches permutest and labels dispersion-only versus location shift 
+FAILED test-permanova.R audit M2: group constant within subjects permutes whole subjects (known answer, not degenerate) 
+FAILED test-permanova.R audit M2: group varying within every subject permutes within subject (known answer) 
+FAILED test-permanova.R audit M2: mixed constant/varying subjects are refused with a typed error 
+PASSED test-permanova.R audit m2: exact interpretation labels for constructed location-only and dispersion-only data 
+FAILED test-permanova.R audit m2: covariate terms are tested with the pipeline's within-group permutations 
+FAILED test-permanova.R audit m3: empty declared groups and refused pairs are recorded; Holm family size is stated 
+FAILED test-permanova.R audit m4: an empty interaction cell refuses only the interaction term 
+FAILED test-permanova.R audit m6: non-syntactic covariate names are used safely 
+FAILED test-permanova.R audit m5: the R side verifies the DEP table hash like the Python side 
+PASSED test-design.R audit: vectorized featurewise_estimability equals the former per-feature loop 
+PASSED test-preprocessing.R audit: vectorized coverage_tables equals the former per-feature loop 

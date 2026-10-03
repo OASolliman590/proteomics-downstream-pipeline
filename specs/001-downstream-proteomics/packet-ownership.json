@@ -316,6 +316,135 @@
         "CHANGELOG.md",
         ".gitignore"
       ]
+    },
+    "R13": {
+      "phase": 2,
+      "risk": "high",
+      "depends_on": [
+        "R05",
+        "R10a"
+      ],
+      "scope_amendment": "ADR 0006 (operator-authorized 2026-10-01): FR-121-FR-130 / T121-T130 / V121-V130",
+      "write_allowlist": [
+        "src/proteomics_pipeline/permanova_service.py",
+        "src/proteomics_pipeline/reporting/permanova_data.py",
+        "r/proteomicsCore/R/permanova.R",
+        "r/proteomicsCore/R/permanova_figures.R",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "tests/scientific/test_permanova.py",
+        "tests/fixtures/permanova/**",
+        "docs/validation/014-multivariate-permanova/**"
+      ]
+    },
+    "R14a": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R11",
+        "R13"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "src/proteomics_pipeline/reporting/post_de_sets_data.py",
+        "r/proteomicsCore/R/post_de_sets.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "tests/scientific/test_post_de_sets.py",
+        "tests/fixtures/post_de/sets/**",
+        "docs/validation/015-post-de-analysis/R14a/**",
+        "src/proteomics_pipeline/post_de/__init__.py",
+        "tests/fixtures/post_de/design_factory.py"
+      ]
+    },
+    "R14b": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14a"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "src/proteomics_pipeline/reporting/post_de_sensitivity_data.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "tests/scientific/test_post_de_sensitivity.py",
+        "tests/fixtures/post_de/sensitivity/**",
+        "docs/validation/015-post-de-analysis/R14b/**"
+      ]
+    },
+    "R14c": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14b"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "src/proteomics_pipeline/reporting/post_de_association_data.py",
+        "r/proteomicsCore/R/post_de_association.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "tests/scientific/test_post_de_association.py",
+        "tests/fixtures/post_de/association/**",
+        "docs/validation/015-post-de-analysis/R14c/**"
+      ]
+    },
+    "R14d": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14c",
+        "R09"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "src/proteomics_pipeline/reporting/post_de_biomarker_data.py",
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "tests/scientific/test_post_de_biomarker.py",
+        "tests/fixtures/post_de/biomarker/**",
+        "docs/validation/015-post-de-analysis/R14d/**"
+      ]
+    },
+    "R14e": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14d",
+        "R07"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "src/proteomics_pipeline/reporting/post_de_networks_data.py",
+        "r/proteomicsCore/R/post_de_networks.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "tests/scientific/test_post_de_networks.py",
+        "tests/fixtures/post_de/networks/**",
+        "docs/validation/015-post-de-analysis/R14e/**"
+      ]
+    },
+    "R14f": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14a",
+        "R14b",
+        "R14c",
+        "R14d",
+        "R14e",
+        "R10b"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/eligibility.py",
+        "src/proteomics_pipeline/reporting/post_de_data.py",
+        "tests/integration/test_post_de_generality.py",
+        "tests/fixtures/post_de/generality/**",
+        "docs/validation/015-post-de-analysis/R14f/**"
+      ]
     }
   },
   "parallel_groups": [
@@ -325,5 +454,128 @@
       "R09"
     ]
   ],
-  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization."
+  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments. 2026-10-02 (ADR 0009): R14a–R14f added for slice 015 (Phase 4), serial; allowlists are disjoint and proposed before dispatch.",
+  "maintainer_amendments": [
+    {
+      "id": "A-2026-10-01-01",
+      "adr": "docs/adr/0006-permanova-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "r/proteomicsCore/R/dispatch.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "r/proteomicsCore/DESCRIPTION"
+      ],
+      "change": "Add the fixed permanova capability (Python map entry + R handler name), the optional multivariate configuration block and optional R Suggests."
+    },
+    {
+      "id": "A-2026-10-01-02",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/workflow.py",
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/runtime.py",
+        "pyproject.toml"
+      ],
+      "change": "Command-level integration seam for validate/plan/run/verify; planning stages carry plan_hash=null; report template packaged."
+    },
+    {
+      "id": "A-2026-10-01-03",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/contract/foundation/test_cli_contract.py",
+        "tests/unit/foundation/test_doctor_contract.py",
+        "tests/unit/foundation/test_runtime_contract.py",
+        "r/proteomicsCore/tests/testthat/test-foundation.R"
+      ],
+      "change": "R01 regression tests that asserted 'not yet implemented' now simulate absence explicitly; their invariants are unchanged."
+    },
+    {
+      "id": "A-2026-10-01-04",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "scripts/check_spec_kit.py",
+        "scripts/maintained/install_r_dependencies.R"
+      ],
+      "change": "Spec checker accepts the amended 130-requirement/13-slice kit; explicit project-local R dependency installer."
+    },
+    {
+      "id": "A-2026-10-01-05",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/reporting/assemble.py",
+        "src/proteomics_pipeline/design_service.py",
+        "r/proteomicsCore/R/model_limma.R",
+        "src/proteomics_pipeline/workflow.py",
+        "src/proteomics_pipeline/cli.py",
+        "tests/unit/foundation/test_doctor_contract.py",
+        "tests/fixtures/design/builders.py"
+      ],
+      "change": "Phase 2 integration: fixed report-section providers for response/pathways/assay engines; plan freezes DEqMS count-evidence hashes; the R05 score guard applies only to Phase 1 plans; workflow runs assay engines, resources, response and pathways; 'resources prepare' command; R01 doctor test simulates an absent resources module; oracle helper reads the last JSON line."
+    },
+    {
+      "id": "A-2026-10-01-06",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/workflow.py",
+        "tests/integration/test_report_stub.py"
+      ],
+      "change": "R10b activates the contracted 'report --run' and 'compare --left --right --output' commands; the workflow appends an optional report_full stage after the R10a stub; the R10a stage-order assertion allows that trailing stage (the stub report is otherwise unchanged)."
+    },
+    {
+      "id": "A-2026-10-01-07",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/cli.py",
+        "src/proteomics_pipeline/workflow.py"
+      ],
+      "change": "R11 activates the contracted 'resume --run' command and lets the workflow reuse verified stage outputs through cache.py fingerprints (normalized request + code manifest + environment); any mismatch re-executes the stage and all dependants."
+    },
+    {
+      "id": "A-2026-10-01-08",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/scientific/test_design_contract.py"
+      ],
+      "change": "R04 V038 negative asserted that assay_engines was unimplemented; after R06 it simulates an absent assay_service module explicitly (same invariant: absent optional adapter is NOT_RUN, required one exits 3, never limma). Found by the 2026-10-02 full gate re-run."
+    },
+    {
+      "id": "A-2026-10-01-09",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/contract/foundation/test_cli_contract.py"
+      ],
+      "change": "The R01 CLI contract used a required DEqMS model as the still-unimplemented capability; after R06 the child process blocks the assay_service module explicitly (same invariant: validate/plan/run exit 3 with E_CAPABILITY_NOT_IMPLEMENTED). The same regression exposed an untyped missing-count-evidence error, fixed inside R06 (E_DEQMS_COUNT_EVIDENCE, exit 2)."
+    },
+    {
+      "id": "A-2026-10-01-10",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/config.py"
+      ],
+      "change": "Independent audit 2026-10-02 (MAJOR 1): configuration validation rejects a preprocessing sensitivity whose model_id is the role=primary model (E_SENSITIVITY_PRIMARY_MODEL, exit 2), so an imputed matrix can never feed the primary fit."
+    },
+    {
+      "id": "A-2026-10-01-11",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "tests/contract/foundation/test_cli_contract.py",
+        "tests/contract/foundation/test_verify_contract.py"
+      ],
+      "change": "Portability fixes from the first real CI run (36982402784, V107 FAIL). runtime.run_r_code runs R snippets from a UTF-8 script file instead of `Rscript -e`, passes forward-slash path arguments and decodes as UTF-8. runtime.child_environment forces a UTF-8 locale for R children on POSIX. The CLI contract finds console scripts through sysconfig. Explicit encoding='utf-8' was added mechanically to every text-mode open/read_text/write_text/subprocess call across src/, tests/ and scripts/maintained/ (each file stays in its owning packet; behaviour is unchanged on UTF-8 platforms), and a lint test enforces it."
+    },
+    {
+      "id": "A-2026-10-01-12",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/cli.py",
+        "tests/contract/foundation/test_cli_contract.py",
+        "src/proteomics_pipeline/reproduction.py",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "Portability follow-up to A-2026-10-01-11, found by the coordinator's simulated non-UTF-8 run (LC_ALL=C; non-ASCII paths) of the CI-failing tests: cli._emit printed JSON with ensure_ascii=False through the console encoding, so `proteomics report` (and any command whose payload holds non-ASCII text) crashed with UnicodeEncodeError on ASCII/cp1252 consoles. CLI output is now written to stdout as UTF-8 bytes regardless of locale. Regression test test_json_output_is_utf8_under_non_utf8_console fails on fd8dfa9 (exit 1, UnicodeEncodeError) and passes after the fix. Also: build_acceptance_ledger now writes a reason on FAIL records (taken from the traceability verification reason); V110 requires a reason on every non-PASS record and failed once V107 became FAIL. The ledger was regenerated: V107 gains its reason and V001's artifact hash follows the edited test_cli_contract.py; no status changed."
+    }
+  ]
 }

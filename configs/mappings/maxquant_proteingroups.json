@@ -1,0 +1,21 @@
+{
+  "profile": "maxquant_proteingroups",
+  "version": "2.x-lfq-headers-1",
+  "vendor": "MaxQuant",
+  "qualification": "Synthetic header-set qualification only (V016). Not a claim of compatibility with any particular MaxQuant release.",
+  "grain": "protein",
+  "documented_header_set": "proteinGroups.txt with LFQ intensity columns named 'LFQ intensity <sample>'.",
+  "required_columns": ["Protein IDs", "Majority protein IDs", "Gene names", "Reverse", "Potential contaminant", "Only identified by site"],
+  "feature_id_column": "Protein IDs",
+  "accessions": {"column": "Protein IDs", "separator": ";"},
+  "gene_symbols": {"column": "Gene names", "separator": ";"},
+  "gene_ids": null,
+  "decoy": {"column": "Reverse", "true_values": ["+"], "false_values": [""]},
+  "contaminant": {"column": "Potential contaminant", "true_values": ["+"], "false_values": [""]},
+  "intensity_columns": {"regex": "LFQ intensity (.+)"},
+  "annotation_columns": ["Protein names", "Fasta headers", "id"],
+  "ignored_column_patterns": ["^Intensity( |$)", "^iBAQ( |$)", "^Peptides( |$)", "^Razor \\+ unique peptides( |$)", "^Unique peptides( |$)", "^Sequence coverage", "^Score$", "^Q-value$", "^MS/MS count( |$)"],
+  "declared_source_scale": "linear_positive",
+  "missing_encoding": {"zero": true, "tokens": []},
+  "notes": "Zero LFQ intensity means not quantified; the configuration must set linear_zero_as_missing=true. Peptide-count columns are ignored here; count evidence for DEqMS is a separate table."
+}

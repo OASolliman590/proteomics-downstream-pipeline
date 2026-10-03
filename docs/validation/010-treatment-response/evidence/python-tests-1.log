@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/scientific/test_response.py -q -rs -p no:cacheprovider
+# started 2026-10-02T20:34:59.232170+00:00  exit 0
+
+.......                                                                  [100%]
+7 passed in 170.22s (0:02:50)
+
+--- stderr ---

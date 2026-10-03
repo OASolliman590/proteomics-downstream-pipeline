@@ -1,0 +1,21 @@
+{
+  "profile": "fragpipe_combined_protein",
+  "version": "20.x-maxlfq-headers-1",
+  "vendor": "FragPipe/IonQuant",
+  "qualification": "Synthetic header-set qualification only (V016). Not a claim of compatibility with any particular FragPipe release.",
+  "grain": "protein",
+  "documented_header_set": "combined_protein.tsv with '<sample> MaxLFQ Intensity' columns.",
+  "required_columns": ["Protein", "Protein ID", "Entry Name", "Gene", "Indistinguishable Proteins"],
+  "feature_id_column": "Protein",
+  "accessions": {"column": "Protein ID", "separator": ";"},
+  "gene_symbols": {"column": "Gene", "separator": ";"},
+  "gene_ids": null,
+  "decoy": null,
+  "contaminant": null,
+  "intensity_columns": {"regex": "(.+) MaxLFQ Intensity"},
+  "annotation_columns": ["Protein Length", "Organism", "Description", "Protein Existence", "Coverage", "Protein Probability", "Top Peptide Probability"],
+  "ignored_column_patterns": [" Spectral Count$", " Unique Spectral Count$", " Total Spectral Count$", " Intensity$", " Unique Intensity$", " Razor Intensity$", "^Combined "],
+  "declared_source_scale": "linear_positive",
+  "missing_encoding": {"zero": true, "tokens": []},
+  "notes": "Indistinguishable protein members are kept as annotation, not split into rows."
+}

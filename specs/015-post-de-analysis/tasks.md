@@ -1,0 +1,41 @@
+# Tasks — R14a–R14f
+
+**Phase:** 4. Operator-authorized scope amendment (2026-10-02, ADR 0009). Status changes are recorded by the Maintainer in traceability. Dispatch order: R14a → R14b → R14c → R14d → R14e → R14f.
+
+- [ ] T131 — R14a: implement FR-131 (Declarative set algebra); establish and pass V131, including its negative case, with independent evidence.
+- [ ] T132 — R14a: implement FR-132 (Region provenance and refusals); establish and pass V132, including its negative case, with independent evidence.
+- [ ] T133 — R14a: implement FR-133 (Exact region partition); establish and pass V133, including its negative case, with independent evidence.
+- [ ] T134 — R14a: implement FR-134 (Direction-aware overlap); establish and pass V134, including its negative case, with independent evidence.
+- [ ] T135 — R14a: implement FR-135 (Effect concordance across contrasts and models); establish and pass V135, including its negative case, with independent evidence.
+- [ ] T136 — R14a: implement FR-136 (Overlap inference eligibility); establish and pass V136, including its negative case, with independent evidence.
+- [ ] T137 — R14b: implement FR-137 (Covariate-imbalance diagnostics); establish and pass V137, including its negative case, with independent evidence.
+- [ ] T138 — R14b: implement FR-138 (Covariate-adjusted sensitivity model); establish and pass V138, including its negative case, with independent evidence.
+- [ ] T139 — R14b: implement FR-139 (Subgroup re-analysis); establish and pass V139, including its negative case, with independent evidence.
+- [ ] T140 — R14b: implement FR-140 (Primary-versus-sensitivity comparison); establish and pass V140, including its negative case, with independent evidence.
+- [ ] T141 — R14b: implement FR-141 (Matched-n resampling sensitivity); establish and pass V141, including its negative case, with independent evidence.
+- [ ] T142 — R14b: implement FR-142 (Unit-level influence on discoveries); establish and pass V142, including its negative case, with independent evidence.
+- [ ] T143 — R14b: implement FR-143 (Robustness summary); establish and pass V143, including its negative case, with independent evidence.
+- [ ] T144 — R14c: implement FR-144 (Continuous and ordinal phenotype models); establish and pass V144, including its negative case, with independent evidence.
+- [ ] T145 — R14c: implement FR-145 (Correlation alternative); establish and pass V145, including its negative case, with independent evidence.
+- [ ] T146 — R14c: implement FR-146 (Missing phenotype values); establish and pass V146, including its negative case, with independent evidence.
+- [ ] T147 — R14c: implement FR-147 (Confounding guard); establish and pass V147, including its negative case, with independent evidence.
+- [ ] T148 — R14c: implement FR-148 (Association outputs); establish and pass V148, including its negative case, with independent evidence.
+- [ ] T149 — R14d: implement FR-149 (Scope and claims vocabulary); establish and pass V149, including its negative case, with independent evidence.
+- [ ] T150 — R14d: implement FR-150 (Single-feature discrimination); establish and pass V150, including its negative case, with independent evidence.
+- [ ] T151 — R14d: implement FR-151 (Minimum-size refusal); establish and pass V151, including its negative case, with independent evidence.
+- [ ] T152 — R14d: implement FR-152 (Leakage-safe preprocessing); establish and pass V152, including its negative case, with independent evidence.
+- [ ] T153 — R14d: implement FR-153 (Nested cross-validation); establish and pass V153, including its negative case, with independent evidence.
+- [ ] T154 — R14d: implement FR-154 (In-fold feature selection and stability); establish and pass V154, including its negative case, with independent evidence.
+- [ ] T155 — R14d: implement FR-155 (Classifier families and score orientation); establish and pass V155, including its negative case, with independent evidence.
+- [ ] T156 — R14d: implement FR-156 (Permutation test of the whole procedure); establish and pass V156, including its negative case, with independent evidence.
+- [ ] T157 — R14d: implement FR-157 (Fixed-panel evaluation and circularity); establish and pass V157, including its negative case, with independent evidence.
+- [ ] T158 — R14d: implement FR-158 (Calibration and threshold metrics); establish and pass V158, including its negative case, with independent evidence.
+- [ ] T159 — R14d: implement FR-159 (External validation); establish and pass V159, including its negative case, with independent evidence.
+- [ ] T160 — R14d: implement FR-160 (Biomarker outputs); establish and pass V160, including its negative case, with independent evidence.
+- [ ] T161 — R14e: implement FR-161 (Co-abundance module eligibility); establish and pass V161, including its negative case, with independent evidence.
+- [ ] T162 — R14e: implement FR-162 (Module construction and stability); establish and pass V162, including its negative case, with independent evidence.
+- [ ] T163 — R14e: implement FR-163 (Module–trait association); establish and pass V163, including its negative case, with independent evidence.
+- [ ] T164 — R14e: implement FR-164 (Offline interaction resources); establish and pass V164, including its negative case, with independent evidence.
+- [ ] T165 — R14e: implement FR-165 (Network connectivity with a measured-universe null); establish and pass V165, including its negative case, with independent evidence.
+- [ ] T166 — R14f: implement FR-166 (Post-DE eligibility and dependency report); establish and pass V166, including its negative case, with independent evidence.
+- [ ] T167 — R14f: implement FR-167 (Generality qualification matrix); establish and pass V167, including its negative case, with independent evidence.

@@ -1,0 +1,37 @@
+{
+  "crosswalk_version": "1",
+  "method": "B",
+  "group_names": {
+    "CTL": "CTRL",
+    "PDM": "PreDM",
+    "DM": "DM",
+    "PDM-Treated": "PreDM_Dapa",
+    "DM-Treated": "DM_Dapa"
+  },
+  "contrasts": [
+    {
+      "id": "D2_DM_vs_CTRL",
+      "sheet": "DM_vs_CTL",
+      "numerator": "DM",
+      "denominator": "CTRL"
+    },
+    {
+      "id": "D1_PreDM_vs_CTRL",
+      "sheet": "PDM_vs_CTL",
+      "numerator": "PreDM",
+      "denominator": "CTRL"
+    },
+    {
+      "id": "T2_DM_Dapa_vs_DM",
+      "sheet": "DM-Treated_vs_DM",
+      "numerator": "DM_Dapa",
+      "denominator": "DM"
+    },
+    {
+      "id": "T1_PreDM_Dapa_vs_PreDM",
+      "sheet": "PDM-Treated_vs_PDM",
+      "numerator": "PreDM_Dapa",
+      "denominator": "PreDM"
+    }
+  ]
+}

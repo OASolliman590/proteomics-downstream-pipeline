@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/contract/intake tests/scientific/test_technical_units.py -q -rs -p no:cacheprovider
+# started 2026-10-02T20:24:13.566740+00:00  exit 0
+
+...............................................                          [100%]
+47 passed in 3.23s
+
+--- stderr ---

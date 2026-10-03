@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:proteomics-downstream:independent-score:1.2.0",
+  "title": "Independent fixed-score manifest (R09, SM23)",
+  "type": "object",
+  "required": [
+    "resource_kind",
+    "score_id",
+    "features",
+    "missing_feature_policy",
+    "training_subject_ids"
+  ],
+  "properties": {
+    "resource_kind": {
+      "const": "independent_score"
+    },
+    "score_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "feature_id",
+          "weight",
+          "center",
+          "scale"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "feature_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "weight": {
+            "type": "number"
+          },
+          "center": {
+            "type": "number"
+          },
+          "scale": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      }
+    },
+    "missing_feature_policy": {
+      "enum": [
+        "require_all",
+        "renormalize"
+      ]
+    },
+    "training_subject_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selection_subject_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "training_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selection_provenance_unknown": {
+      "type": "boolean"
+    },
+    "transform_refit_on_validation": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/integration/test_qc.py -q -rs -p no:cacheprovider
+# started 2026-10-02T20:24:17.913585+00:00  exit 0
+
+........                                                                 [100%]
+8 passed in 6.09s
+
+--- stderr ---

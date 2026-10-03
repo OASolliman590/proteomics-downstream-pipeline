@@ -1,0 +1,42 @@
+{
+  "n_datasets": 300,
+  "nrot": 999,
+  "hypotheses": {
+    "camera": "competitive (set vs other genes, estimated inter-gene correlation)",
+    "roast": "self-contained (set vs zero)"
+  },
+  "fgsea": "not calibrated as a sample-label test (exploratory gene-set randomization)",
+  "results": {
+    "camera_null_rate": {
+      "mean": 0.0427777777777778,
+      "mc_se": 0.0034634877133714,
+      "upper95": 0.0484752150662737
+    },
+    "roast_null_rate": {
+      "mean": 0.0463888888888889,
+      "mc_se": 0.00360682076551058,
+      "upper95": 0.0523221090481538
+    },
+    "roast_mixed_null_rate": {
+      "mean": 0.05,
+      "mc_se": 0.00367026275465667,
+      "upper95": 0.0560375822314102
+    },
+    "camera_power": {
+      "mean": 0.666666666666667,
+      "mc_se": 0.0272620273369844,
+      "upper95": 0.711512701636006
+    },
+    "roast_power": {
+      "mean": 0.646666666666667,
+      "mc_se": 0.0276437494909069,
+      "upper95": 0.692140634579208
+    }
+  },
+  "gate": {
+    "null_rate_upper95_max": 0.075,
+    "camera_pass": true,
+    "roast_pass": true,
+    "roast_mixed_pass": true
+  }
+}

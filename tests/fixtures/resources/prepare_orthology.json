@@ -1,0 +1,20 @@
+{
+  "version": "synthetic-1",
+  "source": "synthetic test fixture (not a real database)",
+  "terms": "synthetic; no redistribution restrictions",
+  "id_type": "synthetic",
+  "resource_id": "orth",
+  "kind": "orthology",
+  "source_taxonomy_id": 9606,
+  "target_taxonomy_id": 10116,
+  "projection": {
+    "method": "orthology table",
+    "evidence": "synthetic"
+  },
+  "files": [
+    {
+      "name": "orthology.tsv",
+      "source": "orthology_source.tsv"
+    }
+  ]
+}

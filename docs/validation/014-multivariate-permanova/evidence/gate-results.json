@@ -1,0 +1,23 @@
+{
+  "packet": "R13",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_permanova.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "15 passed in 526.24s (0:08:46)",
+      "log": "docs/validation/014-multivariate-permanova/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-permanova.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=87 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/014-multivariate-permanova/evidence/r-test-permanova.log"
+    }
+  ],
+  "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+  "n_files": 8,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

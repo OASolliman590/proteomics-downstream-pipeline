@@ -9,4 +9,10 @@ Imports:
     jsonlite,
     openssl
 Suggests:
-    testthat
+    testthat,
+    limma,
+    statmod,
+    impute,
+    vegan,
+    permute,
+    svglite

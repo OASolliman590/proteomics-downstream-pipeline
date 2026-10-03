@@ -1,0 +1,9 @@
+$ Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-mapping.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))
+# started 2026-10-02T20:34:55.755275+00:00  exit 0
+
+mapping: ...........
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations=11 failed=0 skipped=0 errors=0
+
+--- stderr ---

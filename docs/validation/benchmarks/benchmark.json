@@ -1,0 +1,70 @@
+{
+  "workload": {
+    "features": 20000,
+    "observations": 100,
+    "contrasts": 8,
+    "gene_sets": 2000,
+    "scale": 1.0,
+    "label": "release workload"
+  },
+  "hardware": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "machine": "x86_64",
+    "cpu": "Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz",
+    "logical_cpus": "16",
+    "memory_bytes": "34359738368",
+    "python": "3.13.15"
+  },
+  "exit_code": 0,
+  "run_state": "COMPLETED",
+  "wall_seconds": 558.8,
+  "data_generation_seconds": 3.3,
+  "peak_child_rss_bytes": 1595342848,
+  "stages": [
+    {
+      "stage_id": "intake",
+      "state": "COMPLETED",
+      "seconds": 95.41632
+    },
+    {
+      "stage_id": "preprocessing",
+      "state": "COMPLETED",
+      "seconds": 135.0
+    },
+    {
+      "stage_id": "design",
+      "state": "COMPLETED",
+      "seconds": 84.0
+    },
+    {
+      "stage_id": "limma",
+      "state": "COMPLETED",
+      "seconds": 69.0
+    },
+    {
+      "stage_id": "resources",
+      "state": "COMPLETED",
+      "seconds": 118.0
+    },
+    {
+      "stage_id": "pathways",
+      "state": "COMPLETED",
+      "seconds": 26.0
+    },
+    {
+      "stage_id": "report",
+      "state": "COMPLETED",
+      "seconds": 4.411743
+    },
+    {
+      "stage_id": "report_full",
+      "state": "COMPLETED",
+      "seconds": 14.46059
+    }
+  ],
+  "targets": {
+    "wall_seconds_max": 1800,
+    "memory_bytes_max": 8589934592
+  },
+  "assessment": "PASS"
+}

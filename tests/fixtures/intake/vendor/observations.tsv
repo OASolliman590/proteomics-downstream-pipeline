@@ -1,0 +1,5 @@
+observation_id	biological_unit_id	subject_id	technical_replicate_id	group
+A1	A1	NA	NA	alpha
+A2	A2	NA	NA	alpha
+B1	B1	NA	NA	beta
+B2	B2	NA	NA	beta

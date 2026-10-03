@@ -1,0 +1,23 @@
+{
+  "packet": "R07",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/contract/test_resources.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "11 passed in 144.02s (0:02:24)",
+      "log": "docs/validation/008-resources-mapping/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-mapping.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=11 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/008-resources-mapping/evidence/r-test-mapping.log"
+    }
+  ],
+  "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+  "n_files": 15,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

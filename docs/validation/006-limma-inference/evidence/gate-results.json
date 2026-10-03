@@ -1,0 +1,23 @@
+{
+  "packet": "R05",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "14 passed in 60.18s (0:01:00)",
+      "log": "docs/validation/006-limma-inference/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-limma.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))",
+      "exit_code": 0,
+      "summary": "expectations=20 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/006-limma-inference/evidence/r-test-limma.log"
+    }
+  ],
+  "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+  "n_files": 9,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

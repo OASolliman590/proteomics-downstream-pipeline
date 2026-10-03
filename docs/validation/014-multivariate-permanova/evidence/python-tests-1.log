@@ -1,0 +1,7 @@
+$ <repo>/.venv/bin/python -m pytest tests/scientific/test_permanova.py -q -rs -p no:cacheprovider
+# started 2026-10-02T20:55:56.903701+00:00  exit 0
+
+...............                                                          [100%]
+15 passed in 526.24s (0:08:46)
+
+--- stderr ---

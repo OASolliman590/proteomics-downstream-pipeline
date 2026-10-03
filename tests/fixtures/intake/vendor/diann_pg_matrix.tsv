@@ -1,0 +1,4 @@
+Protein.Group	Protein.Ids	Protein.Names	Genes	First.Protein.Description	/data/run_A1.raw	/data/run_A2.raw	/data/run_B1.raw	/data/run_B2.raw
+Q0001	Q0001	PRA_SYN	Gna	synthetic a	1000	2000	4000	
+Q0002;Q0003	Q0002;Q0003	PRB_SYN;PRC_SYN	Gnb;Gnc	synthetic b	500		250	125
+Q0004	Q0004	PRD_SYN		synthetic d	8	16	32	64

@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:proteomics-downstream:report-data:1.2.0",
+  "title": "ReportData (R10a thin report)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "result_type",
+    "run",
+    "stages",
+    "inputs",
+    "qc",
+    "design",
+    "dea",
+    "sections",
+    "plan",
+    "warnings",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.2.0"
+    },
+    "result_type": {
+      "const": "ReportData"
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "plan_hash",
+        "state",
+        "exit_code",
+        "reason_code",
+        "requested_phase",
+        "phase_label",
+        "implemented_capabilities",
+        "scope"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "plan_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "NOT_RUN",
+            "RUNNING",
+            "COMPLETED",
+            "PARTIAL",
+            "FAILED",
+            "CANCELLED"
+          ]
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "reason_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requested_phase": {
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "phase_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implemented_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "enum": [
+            "analysis",
+            "qc_only",
+            null
+          ]
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "stage_id",
+          "capability",
+          "required",
+          "state",
+          "reason_code",
+          "verified",
+          "display_state"
+        ],
+        "properties": {
+          "stage_id": {
+            "type": "string"
+          },
+          "capability": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "state": {
+            "enum": [
+              "NOT_RUN",
+              "RUNNING",
+              "COMPLETED",
+              "INAPPLICABLE",
+              "FAILED",
+              "CANCELLED",
+              "NOT_REQUESTED"
+            ]
+          },
+          "reason_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "display_state": {
+            "enum": [
+              "NOT_RUN",
+              "RUNNING",
+              "COMPLETED",
+              "INAPPLICABLE",
+              "FAILED",
+              "CANCELLED",
+              "NOT_REQUESTED",
+              "UNVERIFIED"
+            ]
+          },
+          "verification_problem": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "display_state": {
+                  "const": "UNVERIFIED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "verified": {
+                  "const": false
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "qc": {
+      "type": "object",
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "design": {
+      "type": "object",
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dea": {
+      "type": "object",
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "families": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "family_id",
+              "n_planned",
+              "n_finite",
+              "completeness",
+              "rejection_count"
+            ]
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "not": {
+                  "const": "COMPLETED"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "values": {
+                "type": "null"
+              }
+            },
+            "not": {
+              "required": [
+                "families"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "sections": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "plan": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "plan_hash",
+            "families",
+            "models"
+          ]
+        }
+      ]
+    },
+    "warnings": {
+      "type": "array"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  }
+}

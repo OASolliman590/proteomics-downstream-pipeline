@@ -1,13 +1,14 @@
 # Release phases — normative scope
 
-Kit: **1.2.0-frozen**. No maintained phase has shipped. R01 is the only next packet eligible for explicit authorization.
+Kit: **1.3.0-frozen** with the operator-authorized 2026-10-01 amendments (ADR 0006/0007) and the 2026-10-02 post-differential amendment (ADR 0009, Phase 4 not yet implemented). No maintained phase has shipped or been tagged. Phase 1 (R01–R05, R10a), Phase 2 (R13, R06, R07, R09, R08) and Phase 3 R10b pass their gates in an uncommitted working tree; R11 passes, including V107 (CI run 37087074374 on fa4d948, Ubuntu and Windows); R12 is NOT_RUN (Maintainer-only). See [progress.md](progress.md).
 
 | Phase | Packets | Release name | Meaning |
 |---|---|---|---|
 | 0 | Recovered baseline | baseline-recovered | Inspectable study scripts and immutable audit, not a validated general platform. |
 | 1 | R01–R05 + R10a | v0.1-limma-core | CLI, all assigned intake/QC/design/limma requirements and a thin offline HTML report. |
-| 2 | R06, R07, R08, R09 | v0.2-qualified-methods | Qualified DEqMS/proDA, frozen mapping/resources, design-valid enrichment and response. |
+| 2 | R13, R06, R07, R08, R09 | v0.2-qualified-methods | Multivariate PERMANOVA/PERMDISP (R13, amendment), qualified DEqMS/proDA, frozen mapping/resources, design-valid enrichment and response. |
 | 3 | R10b, R11, R12 | v1.0-defensible | Full report, environment locks, calibration, offline reproduction and legacy reconciliation. |
+| 4 | R14a–R14f | v1.1-post-de | Post-differential analysis (amendment, ADR 0009): declared set logic and concordance, robustness/sensitivity, protein–phenotype association, leakage-safe biomarker evaluation, co-abundance and offline networks, eligibility reporting and the generality matrix. |
 
 R10 remains one of twelve slices. R10a owns FR-091–FR-094 / T091–T094 / V091–V094. R10b owns FR-095–FR-100 / T095–T100 / V095–V100. No identifier is added, retired or renumbered. Phase 1 does not mark R10 as a whole complete; Phase 3 re-exercises the R10a interface without changing its ownership.
 
@@ -15,6 +16,8 @@ Phase 1 requires all Phase 1 acceptance cases and the cross-cutting scenarios in
 
 Phase 1 records the actual solved environment and runs its direct numerical oracles. Fully reproducible lock restoration and 1,000-dataset release calibration remain R11, not requirements for calling Phase 1 a milestone. Phase 1 MUST NOT claim completed R11 validation. Production in every implemented phase still uses local hashed resources only.
 
-The only permitted concurrent group is R06 ∥ R07 ∥ R09 after R05 and R10a have both been accepted. R10a runs serially after R05. R08 waits for acceptance of R06, R07 and R09 and is scheduled serially after that whole-group barrier. R10b waits for R10a, R08 and R09. R11 follows R10b; R12 follows R11. Exact ownership and dependencies are in [packet-index.md](packet-index.md).
+R13 (PERMANOVA, ADR 0006) runs serially after R05 and R10a and before the parallel group. The only permitted concurrent group is R06 ∥ R07 ∥ R09 after R05 and R10a have both been accepted. R10a runs serially after R05. R08 waits for acceptance of R06, R07 and R09 and is scheduled serially after that whole-group barrier. R10b waits for R10a, R08 and R09. R11 follows R10b; R12 follows R11. Exact ownership and dependencies are in [packet-index.md](packet-index.md).
 
 A phase gate records executed scope, reviewed tree hash and evidence IDs. Missing optional study prerequisites are INAPPLICABLE or NOT_RUN with reasons; absent software is not scientific inapplicability. A failed required gate blocks the corresponding milestone. License/disclosure authorization is a separate unresolved public-release gate, not permission to invent terms. Private study validation cannot be claimed until the Maintainer actually performs it.
+
+Phase 4 (ADR 0009, operator-authorized 2026-10-02) runs serially after accepted R11 and the R13 audit fixes: R14a → R14b → R14c → R14d → R14e → R14f. No R14 packet runs concurrently with another. Its gate requires R14a–R14f all accepted. R14e modules are opt-in at run time and refused below their declared sample-size minimum. Phase 4 adds FR/T/V-131–167 and SM31–SM41 and changes no earlier identity. Not yet implemented.

@@ -59,6 +59,8 @@ def _semantic(value):
         if model["design_id"] not in design_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","model design does not exist",f"/models/{index}/design_id")
     for index,sensitivity in enumerate(value["preprocessing"].get("sensitivities",[])):
         if sensitivity["model_id"] not in model_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","sensitivity model does not exist",f"/preprocessing/sensitivities/{index}/model_id")
+        # Audit 2026-10-02 (A-2026-10-01-10): an imputed sensitivity matrix may never feed the primary model.
+        if sensitivity["model_id"]==primary["id"]: raise ConfigurationError("E_SENSITIVITY_PRIMARY_MODEL","a sensitivity matrix cannot be assigned to the primary model; declare a separate role=sensitivity model",f"/preprocessing/sensitivities/{index}/model_id")
     for index,omnibus in enumerate(value.get("omnibus_tests",[])):
         if omnibus["model_id"] not in model_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","omnibus model does not exist",f"/omnibus_tests/{index}/model_id")
         if omnibus.get("reduced_design_id") is not None and omnibus["reduced_design_id"] not in design_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","omnibus reduced design does not exist",f"/omnibus_tests/{index}/reduced_design_id")

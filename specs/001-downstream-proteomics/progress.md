@@ -1,20 +1,20 @@
 # Progress — evidence, not anticipated completion
 
-Kit: **1.2.0-frozen** on **2026-09-20**. Baseline: recovered study code at `3aefdd95c46a1c56dae89e79ddf441b6cc978148`. Maintained successor: **NOT_STARTED**.
+Kit: **1.2.0-frozen** on **2026-09-20**. Baseline: recovered study code at `3aefdd95c46a1c56dae89e79ddf441b6cc978148`. Maintained successor: **IN PROGRESS** — R02–R11 and R13 were committed by Omar as `fd8dfa9`. An independent audit of that commit returned ACCEPT WITH FIXES. The fixes (ADR 0008, `docs/validation/audit-2026-10-02`) are uncommitted on top of it and have not been re-audited. Every packet gate was re-executed after the fixes. R11 V107 (CI) is FAIL (run 36982402784; fixes pending a re-run); R12 private gates are Maintainer-only and NOT_RUN.
 
 | Gate / scope | State |
 |---|---|
 | Specification hardening artifact | FROZEN v1.2.0 as uncommitted working-tree files; actual checkout checker, schema cases, protected trees and registered source hashes pass. |
 | Independent candidate audit | Initial Astra audit found three P0 and two P1 items. Sol corrected dispatch barriers, explicit engine requiredness/status rules, executable R03 V027/V029 seams and the frozen R function map. Fresh bounded Astra re-audit found no P0; its final P1 registration-wording ambiguity was resolved without changing interface meaning. |
-| Maintainer freeze / implementation authorization | Freeze recorded 2026-09-20. The user authorized R01 only; no commit or push is authorized. |
-| R01–R05 / R10a (Phase 1) | R01 accepted on 2026-09-21 with V001–V010 PASS. R02 is the next dependency-eligible packet but remains unstarted pending explicit authorization; R03–R05/R10a remain blocked on serial prerequisites. |
-| R06–R09 (Phase 2) | Not started; requires accepted Phase 1/R10a and separate authorization. |
-| R10b / R11 / R12 (Phase 3) | Not started; requires exact prerequisites and separate authorization. |
-| R execution, maintained numerical qualification, locks/calibration | R01 foundation R execution PASS; later scientific qualification and R11 locks/calibration remain NOT_RUN. |
+| Maintainer freeze / implementation authorization | Freeze recorded 2026-09-20. R01 authorized and accepted 2026-09-21. On 2026-10-01 the operator gave GO for R02 onward in the mandated order, authorized the PERMANOVA scope amendment (ADR 0006) and chose the Claude (Opus) route for all roles (ADR 0007). No commit or push is authorized. |
+| R01–R05 / R10a (Phase 1) | R01 accepted 2026-09-21 (V001–V010). R02 (V011–V020), R03 (V021–V030), R04 (V031–V040), R05 (V041–V050) and R10a (V091–V094) PASS on 2026-10-01 including the V027/V029 integration reruns; receipts in `docs/validation/003-intake`, `004-preprocessing-qc`, `005-design-contrasts`, `006-limma-inference`, `011-reporting/stub`; phase gates in `docs/validation/phase-gates`. Self-verified, uncommitted, independent audit NOT_RUN. |
+| R13, R06–R09 (Phase 2) | R13 PERMANOVA (V121–V130) PASS (`docs/validation/014-multivariate-permanova`). R06 (V051–V060), R07 (V061–V070) and R09 (V081–V090) PASS as the parallel group; after the barrier R08 (V071–V080) PASS. Receipts in `docs/validation/007-assay-engines`, `008-resources-mapping`, `010-treatment-response`, `009-enrichment`. Self-verified, uncommitted. |
+| R10b / R11 / R12 (Phase 3) | R10b (V095–V100) PASS (`docs/validation/011-reporting/full`). R11: V101–V106, V108–V110 PASS; V107 cross-platform CI **PASS** (first run 36982402784 failed: Ubuntu 2, Windows 16; after fixes A-2026-10-01-11/12, run 37087074374 on fa4d948 passed on both) (`docs/validation/012-validation`). R12: tooling not started beyond what R11 needs; all R12 gates (V111–V120) NOT_RUN — Maintainer-only private regression and release. |
+| R execution, maintained numerical qualification, locks/calibration | Real Python→R execution with direct numerical oracles PASS for R02–R11/R13 on macOS x86_64 (R 4.6.1). renv.lock/requirements.lock restored and qualified; release calibration PASS on the production fit path; 20000×100 benchmark 559 s, largest process 1.5 GiB (PASS on 8-core i9, not the four-core reference machine). Linux/Windows CI FAIL in run 36982402784 (fixes pending a re-run). |
 | Private legacy regression | NOT_RUN; Maintainer-only |
 | License / ownership / public-release authorization | Unresolved; no license selected |
 
-[Traceability](traceability.json) contains no implementation evidence and every `verified_commit` remains null. A schema/document check is not a package or scientific PASS. The next action is an explicit user decision to authorize R01; later packets remain separate. The GitHub repository has not been modified by this uncommitted working tree.
+[Traceability](traceability.json) records PASS with evidence and a working-source manifest for every executed acceptance case; every `verified_commit` remains null because nothing is committed. A schema/document check is not a package or scientific PASS. Decisions and open questions: [decisions.md](decisions.md). The GitHub repository has not been modified.
 
 <!-- FREEZE_RECEIPT_START -->
 ## Freeze receipt

@@ -1,0 +1,16 @@
+{
+  "version": "synthetic-1",
+  "source": "synthetic test fixture (not a real database)",
+  "terms": "synthetic; no redistribution restrictions",
+  "id_type": "synthetic",
+  "resource_id": "sets",
+  "kind": "gene_sets",
+  "source_taxonomy_id": 10116,
+  "target_taxonomy_id": 10116,
+  "files": [
+    {
+      "name": "gene_sets.tsv",
+      "source": "genesets_source.tsv"
+    }
+  ]
+}

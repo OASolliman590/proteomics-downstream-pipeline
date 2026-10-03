@@ -1,0 +1,17 @@
+{
+  "packet": "R02",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/contract/intake tests/scientific/test_technical_units.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "47 passed in 3.23s",
+      "log": "docs/validation/003-intake/evidence/python-tests-1.log"
+    }
+  ],
+  "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+  "n_files": 32,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}
