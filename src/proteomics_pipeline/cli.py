@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse,json
+import argparse,json,sys
 from pathlib import Path
 from . import __version__
 from .config import load_config
@@ -25,7 +25,12 @@ def _parser():
     # Amendment A-2026-10-01-07: R11 activates resume (contract: resume --run).
     resume=commands.add_parser("resume",help="resume or refresh a run, reusing only verified unchanged stages"); resume.add_argument("--run",required=True); resume.add_argument("--json",action="store_true")
     return parser
-def _emit(payload,*,json_mode=True): print(json.dumps(payload,ensure_ascii=False,sort_keys=True,separators=(",",":") if json_mode else None))
+# Amendment A-2026-10-01-12: CLI output is always UTF-8, independent of the console/locale encoding (cp1252 on Windows, ASCII under LC_ALL=C).
+def _emit(payload,*,json_mode=True):
+    text=json.dumps(payload,ensure_ascii=False,sort_keys=True,separators=(",",":") if json_mode else None)+"\n"
+    buffer=getattr(sys.stdout,"buffer",None)
+    if buffer is None: sys.stdout.write(text); return
+    sys.stdout.flush(); buffer.write(text.encode("utf-8")); buffer.flush()
 def _error(error,json_mode): _emit({"valid":False,"errors":[error.as_dict()]},json_mode=json_mode); return error.exit_code
 def _workflow(args,command):
     """Amendment A-2026-10-01-02: delegate full validate/plan/run to the integration seam."""

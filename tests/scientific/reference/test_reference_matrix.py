@@ -19,7 +19,7 @@ LOCK = ROOT / "renv.lock"
 def test_v104_matrix_is_frozen_consistent_with_lock_and_oracles_exist():
     result = reproduction.check_reference_matrix(MATRIX, LOCK)
     assert result["consistent"], result["differences"]
-    matrix = json.loads(MATRIX.read_text())
+    matrix = json.loads(MATRIX.read_text(encoding="utf-8"))
     assert set(matrix["tolerances"]) == {"exact", "deterministic", "backend"}
     assert {c["oracle_kind"] for c in matrix["cases"]} <= {"direct_package_call", "hand_arithmetic"}
     backends = {c["backend"] for c in matrix["cases"]}
@@ -28,25 +28,25 @@ def test_v104_matrix_is_frozen_consistent_with_lock_and_oracles_exist():
 
 
 def test_v104_negative_version_drift_missing_oracle_and_unraised_code_are_recorded(tmp_path):
-    matrix = json.loads(MATRIX.read_text())
+    matrix = json.loads(MATRIX.read_text(encoding="utf-8"))
     matrix["cases"][0]["packages"]["limma"] = "0.0.0"
     matrix["cases"][1]["oracle_test"] = "tests/scientific/test_limma.py::test_does_not_exist"
     matrix["cases"][2]["tolerance"] = "loose"
     matrix["unsupported_combinations"].append({"combination": "made-up", "reason_code": "E_NEVER_RAISED_ANYWHERE_XYZ"})
-    path = tmp_path / "matrix.json"; path.write_text(json.dumps(matrix))
+    path = tmp_path / "matrix.json"; path.write_text(json.dumps(matrix), encoding="utf-8")
     result = reproduction.check_reference_matrix(path, LOCK)
     assert not result["consistent"]
     fields = {(d["case_id"], d["field"]) for d in result["differences"]}
     assert ("RM01", "packages/limma") in fields and ("RM02", "oracle_test") in fields
     assert ("RM03", "tolerance") in fields and ("made-up", "reason_code") in fields
     drift = next(d for d in result["differences"] if d["field"] == "packages/limma")
-    assert drift["frozen"] == "0.0.0" and drift["observed"] == json.loads(LOCK.read_text())["Packages"]["limma"]["Version"]
+    assert drift["frozen"] == "0.0.0" and drift["observed"] == json.loads(LOCK.read_text(encoding="utf-8"))["Packages"]["limma"]["Version"]
 
 
 def _write(path: Path, rows: list[dict]):
     path.parent.mkdir(parents=True, exist_ok=True)
     cols = list(rows[0])
-    path.write_text("\t".join(cols) + "\n" + "".join("\t".join(str(r[c]) for c in cols) + "\n" for r in rows))
+    path.write_text("\t".join(cols) + "\n" + "".join("\t".join(str(r[c]) for c in cols) + "\n" for r in rows), encoding="utf-8")
 
 
 def test_v104_candidate_comparison_records_actual_fieldwise_differences(tmp_path):

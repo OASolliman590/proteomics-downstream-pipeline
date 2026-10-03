@@ -162,8 +162,31 @@ def publish_artifact(source,destination,expected_sha256):
     if destination.exists(): raise CollisionError(f"destination already exists: {destination}")
     destination.parent.mkdir(parents=True,exist_ok=True); atomic_write_bytes(destination,source.read_bytes())
     if sha256_file(destination)!=expected_sha256: raise IntegrityError(f"promoted artifact hash mismatch: {destination}")
+def child_environment()->dict:
+    """Environment for R children: UTF-8 I/O regardless of the parent locale (A-2026-10-01-11).
+    On POSIX a non-UTF-8 locale (for example LC_ALL=C) is replaced by C.UTF-8; Windows R >= 4.2 is UTF-8 natively."""
+    env=dict(os.environ); env.setdefault("PYTHONUTF8","1")
+    if os.name!="nt":
+        current=env.get("LC_ALL") or env.get("LC_CTYPE") or env.get("LANG") or ""
+        if "utf-8" not in current.lower() and "utf8" not in current.lower():
+            env["LC_ALL"]="C.UTF-8"
+    return env
 def run_subprocess(argv:Iterable[str],*,cwd=None,timeout=None):
-    return subprocess.run(list(argv),cwd=cwd,shell=False,check=False,capture_output=True,text=True,encoding="utf-8",errors="replace",timeout=timeout)
+    return subprocess.run(list(argv),cwd=cwd,shell=False,check=False,capture_output=True,text=True,encoding="utf-8",errors="replace",timeout=timeout,env=child_environment())
+def r_argument(value)->str:
+    """Paths handed to R are absolute-agnostic strings with forward slashes (R on Windows accepts them everywhere)."""
+    text=value.as_posix() if isinstance(value,Path) else str(value)
+    return text.replace("\\","/") if os.sep=="\\" else text
+def run_r_code(code:str,args:Iterable=(),*,rscript=None,cwd=None,timeout=None):
+    """Run an R snippet portably (amendment A-2026-10-01-11, CI run 36982402784).
+    The code is written to a UTF-8 script file instead of `Rscript -e`, because Rscript.exe on Windows
+    re-quotes `-e` expressions and multi-line code or embedded quotes lose the trailing arguments.
+    Output is decoded as UTF-8 (R >= 4.2 on Windows writes UTF-8), never with the locale code page."""
+    import tempfile
+    executable=rscript or os.environ.get("PROTEOMICS_RSCRIPT") or "Rscript"
+    with tempfile.TemporaryDirectory(prefix="proteomics-r-") as directory:
+        script=Path(directory)/"snippet.R"; script.write_text(code+"\n",encoding="utf-8")
+        return run_subprocess([executable,"--vanilla",script.as_posix(),*[r_argument(a) for a in args]],cwd=cwd,timeout=timeout)
 def execute_stage(request, *, rscript="Rscript", wrapper=None, cwd=None, timeout=None, run_root=None, promoted_stage_dir=None):
     validate_stage_request(request)
     output_dir=Path(request["output_temp_dir"]).resolve()

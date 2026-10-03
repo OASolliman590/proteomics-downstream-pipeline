@@ -52,6 +52,15 @@ def permanova_section(directory: str | Path, *, prefix: str = "permanova") -> di
                                   "rows": [[c["feature_set_id"], c["k"], _f(c["set_r2"]), _f(c["null_median"]), _f(c["null_q95"]), _f(c["fraction_null_at_or_above_set"]),
                                             _f(c["best_possible_r2"]), "in-sample R2 is optimistic" if c["in_sample_optimistic"] == "true" else ""] for c in context],
                                   "source": f"{prefix}/selection_context.tsv"})
+    refusals_path = root / "refusals.tsv"   # audit 2026-10-02: untested comparisons/terms are shown, never silently dropped
+    refusals = _table(refusals_path) if refusals_path.is_file() else []
+    if refusals:
+        section["tables"].append({"caption": "Planned comparisons and terms that were not tested", "columns": ["feature set", "analysis", "comparison", "reason code", "reason"],
+                                  "rows": [[r["feature_set_id"], r["analysis"], r["comparison"], r["reason_code"], r["reason"]] for r in refusals],
+                                  "source": f"{prefix}/refusals.tsv"})
+    family = {(t["adjustment_family_size"], t["adjustment_family_planned"]) for t in tests if t["analysis"] == "pairwise" and t.get("adjustment_family_size") not in (None, "", "NA")}
+    for size, planned in sorted(family):
+        section["notes"].append(f"Pairwise {result['settings']['adjustment']} adjustment covered {size} tested pair(s) of {planned} planned.")
     states = result.get("feature_sets", {})
     refused = [f"{k}: {v.get('reason')}" for k, v in states.items() if v.get("state") != "COMPLETED"]
     if refused:

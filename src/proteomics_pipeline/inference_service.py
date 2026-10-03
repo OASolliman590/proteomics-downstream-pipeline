@@ -11,6 +11,8 @@ import os
 import shutil
 from pathlib import Path
 
+from .errors import ProteomicsError
+
 CAPABILITY = "limma"
 
 
@@ -27,6 +29,34 @@ def _artifact(plan: dict, artifact_id: str) -> dict | None:
     if len(matches) > 1:
         raise ValueError(f"plan artifact id {artifact_id} is ambiguous")
     return matches[0] if matches else None
+
+
+def matrix_for_model(model: dict, sensitivity_for_model: dict) -> tuple[str, bool]:
+    """Return (matrix artifact, observed-cells-only) for a model.  The primary model is always the observed primary matrix."""
+    if model["id"] in sensitivity_for_model:
+        if model.get("role") == "primary":
+            raise ProteomicsError("E_PRIMARY_NOT_OBSERVED", f"primary model {model['id']!r} cannot be fitted on sensitivity matrix {sensitivity_for_model[model['id']]!r}",
+                                  "/preprocessing/sensitivities", exit_code=2)
+        return f"sensitivity_{sensitivity_for_model[model['id']]}_matrix", False
+    return "primary_matrix", True
+
+
+def require_primary_observed(dea_dir: str | Path, primary_model_id: str) -> dict:
+    """Downstream guard: refuse primary differential results unless the limma stage fitted them on observed cells of the primary matrix."""
+    path = Path(dea_dir) / "model_status.json"
+    status = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    settings = (status.get("settings") or {}).get(primary_model_id)
+    if not settings or settings.get("input_matrix") != "primary_matrix" or settings.get("observed_cells_only") is not True or settings.get("input_imputation", "none") != "none":
+        raise ProteomicsError("E_PRIMARY_NOT_OBSERVED", f"primary model {primary_model_id!r} results are not from genuinely observed primary-matrix cells; downstream use refused",
+                              exit_code=5)
+    return settings
+
+
+def guard_downstream(config: dict, dea_dir: str | Path) -> None:
+    """Called by every stage that consumes dea/ tables (pathways, response, DEP-derived PERMANOVA sets)."""
+    primary = next(m for m in config["models"] if m["role"] == "primary")
+    if primary["engine"] == "limma":
+        require_primary_observed(dea_dir, primary["id"])
 
 
 def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: str, output_temp_dir: str | Path, stage_id: str = "limma") -> dict:
@@ -48,6 +78,7 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
     for artifact_id in ("primary_matrix", "primary_observed_mask", "primary_observations", "estimability"):
         add(artifact_id)
     sensitivity_for_model = {s["model_id"]: s["id"] for s in config["preprocessing"].get("sensitivities", [])}
+    sensitivity_method = {s["id"]: s["method"] for s in config["preprocessing"].get("sensitivities", [])}
     blocking = {b["design_id"]: b for b in plan.get("blocking", [])}
     eligible = {row["model_id"]: row for row in plan["engine_eligibility"]}
     models = []
@@ -56,9 +87,8 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
             continue
         design = next(d for d in [config["design"], *config.get("additional_designs", [])] if d["id"] == model["design_id"])
         add(f"design_{model['design_id']}")
-        matrix_artifact = "primary_matrix"
-        if model["id"] in sensitivity_for_model:
-            matrix_artifact = f"sensitivity_{sensitivity_for_model[model['id']]}_matrix"
+        matrix_artifact, observed_only = matrix_for_model(model, sensitivity_for_model)
+        if not observed_only:
             add(matrix_artifact)
         weights = model.get("precision_weights") or {"kind": "none"}
         weights_artifact = None
@@ -69,7 +99,8 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
         models.append({"model_id": model["id"], "design_id": model["design_id"], "role": model["role"], "execution_requirement": model["execution_requirement"],
                        "hypotheses": [model["hypothesis"]] + list(model.get("additional_hypotheses", [])), "effect_threshold": model.get("effect_threshold"),
                        "trend": model.get("trend", True), "robust": model.get("robust", True), "matrix_artifact": matrix_artifact,
-                       "uses_observed_mask": matrix_artifact == "primary_matrix", "weights_artifact": weights_artifact, "weights_kind": weights["kind"],
+                       "uses_observed_mask": observed_only, "input_imputation": "none" if observed_only else sensitivity_method[sensitivity_for_model[model["id"]]],
+                       "weights_artifact": weights_artifact, "weights_kind": weights["kind"],
                        "blocking": {"mode": design["blocking"]["mode"], "subject_column": design["blocking"].get("subject_column"),
                                     "consensus_correlation": block.get("consensus_correlation")}})
     return {"schema_version": "1.2.0", "run_id": run_id, "stage_id": stage_id, "capability": CAPABILITY, "plan_hash": plan["plan_hash"], "inputs": inputs,

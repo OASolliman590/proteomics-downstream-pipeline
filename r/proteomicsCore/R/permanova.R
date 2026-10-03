@@ -4,9 +4,12 @@
 # (default z-scored) genuinely observed log2 abundance, computed within each
 # test's observations; features must be observed in every analysed
 # observation and non-constant.  vegan::adonis2 with marginal SS; the group
-# term comes only from unrestricted (or subject-blocked) permutations and
-# covariate/interaction terms only from permutations restricted within the
-# primary group.  PERMDISP accompanies every group/covariate row.
+# term comes only from unrestricted permutations or, in subject-blocked
+# designs, from whole-subject permutations (group constant within subject) or
+# within-subject permutations (group varying within every subject); mixed
+# designs are refused (pm_group_scheme).  Covariate/interaction terms use
+# permutations restricted within the primary group.  PERMDISP uses the same
+# scheme as its PERMANOVA row.
 
 PERMANOVA_INTERPRETATION_RULE <- paste(
   "A significant PERMANOVA with a non-significant PERMDISP indicates a location (centroid) shift;",
@@ -22,6 +25,28 @@ PERMANOVA_INTERPRETATION_RULE <- paste(
 .pm_how <- function(nperm, blocks = NULL) {
   if (is.null(blocks)) permute::how(nperm = nperm) else permute::how(nperm = nperm, blocks = factor(blocks))
 }
+
+# Exchangeability scheme for the group term (audit 2026-10-02).  Without subjects: free.
+# Group constant within every subject: whole subjects are permuted (balanced subjects required).
+# Group varying within every subject: permutation within subject.  Mixed designs are refused.
+pm_group_scheme <- function(groups, subjects, nperm, subject_column) {
+  if (is.null(subjects)) return(list(scheme = "free", how = permute::how(nperm = nperm)))
+  if (any(is.na(subjects) | subjects == "" | subjects == "NA")) stop("E_PERMANOVA_BLOCKING: subject identifiers are missing for a subject-blocked design", call. = FALSE)
+  n_groups <- tapply(groups, subjects, function(v) length(unique(v)))
+  if (all(n_groups == 1L)) {
+    sizes <- table(subjects)
+    if (length(unique(as.integer(sizes))) != 1L)
+      stop(sprintf("E_PERMANOVA_BLOCKING_UNBALANCED: group is constant within each %s but subjects have unequal numbers of observations (%s); whole-subject permutation needs balanced subjects",
+                   subject_column, paste(sort(unique(as.integer(sizes))), collapse = "/")), call. = FALSE)
+    return(list(scheme = paste0("between_subjects:", subject_column),
+                how = permute::how(nperm = nperm, plots = permute::Plots(strata = factor(subjects), type = "free"), within = permute::Within(type = "none"))))
+  }
+  if (all(n_groups > 1L)) return(list(scheme = paste0("within:", subject_column), how = permute::how(nperm = nperm, blocks = factor(subjects))))
+  stop(sprintf("E_PERMANOVA_BLOCKING_MIXED: group is constant within some %s values and varies within others; no single valid permutation scheme exists", subject_column), call. = FALSE)
+}
+
+# Covariate and interaction terms: permutations restricted within the primary group.
+pm_covariate_how <- function(groups, nperm) permute::how(nperm = nperm, blocks = factor(groups))
 
 # Usable features of a test: observed in every analysed observation and non-constant.
 pm_usable_features <- function(Y, features, keep) {
@@ -101,7 +126,12 @@ pm_feature_set <- function(Y, set, obs, settings) {
   levels_present <- settings$group_levels[settings$group_levels %in% groups_all]
   blocks <- if (!is.null(settings$subject_column)) obs[[settings$subject_column]] else NULL
   metric <- settings$metric; scaling <- settings$scaling; nperm <- settings$permutations; seed <- settings$seed; alpha <- settings$alpha
-  rows <- list(); usage <- list(); nulls <- list(); ordination <- NULL; feature_r2 <- NULL; identity <- NULL
+  rows <- list(); usage <- list(); nulls <- list(); ordination <- NULL; feature_r2 <- NULL; identity <- NULL; refusals <- list()
+  refuse <- function(analysis, comparison, code, reason) refusals[[length(refusals) + 1L]] <<- data.frame(feature_set_id = set$id, analysis = analysis,
+    comparison = comparison, reason_code = code, reason = reason, stringsAsFactors = FALSE)
+  for (l in setdiff(settings$group_levels, levels_present)) refuse("group", l, "W_PERMANOVA_EMPTY_GROUP", "group_without_observations")
+  refusal_frame <- function() if (length(refusals)) do.call(rbind, refusals) else
+    data.frame(feature_set_id = character(), analysis = character(), comparison = character(), reason_code = character(), reason = character(), stringsAsFactors = FALSE)
   run_test <- function(keep, analysis, comparison) {
     use <- pm_usable_features(Y, set$features, keep)
     usage[[length(usage) + 1L]] <<- cbind(feature_set_id = set$id, test = paste(analysis, comparison, sep = ":"), use)
@@ -114,7 +144,7 @@ pm_feature_set <- function(Y, set, obs, settings) {
     rows[[length(rows) + 1L]] <<- data.frame(feature_set_id = set$id, analysis = analysis, comparison = comparison, term = term, n = n, n_features = n_features,
       df = stats$df, ss = stats$ss, r2 = stats$r2, pseudo_f = stats$f, residual_df = stats$residual_df, residual_ss = stats$residual_ss, total_ss = stats$total_ss,
       p_value = stats$p, p_floor = 1 / (actual_nperm + 1), p_display = pm_display(stats$p, actual_nperm), p_adjusted = NA_real_, p_adjusted_display = NA_character_,
-      adjustment = NA_character_, nperm = actual_nperm, seed = seed, permutation_scheme = scheme,
+      adjustment = NA_character_, adjustment_family_size = NA_integer_, adjustment_family_planned = NA_integer_, nperm = actual_nperm, seed = seed, permutation_scheme = scheme,
       permdisp_f = if (is.null(disp)) NA_real_ else disp$f, permdisp_p = if (is.null(disp)) NA_real_ else disp$p,
       permdisp_p_display = if (is.null(disp)) NA_character_ else pm_display(disp$p, disp$nperm), permdisp_scheme = disp_scheme,
       interpretation = NA_character_, metric = metric, scaling = scaling, stringsAsFactors = FALSE)
@@ -126,17 +156,16 @@ pm_feature_set <- function(Y, set, obs, settings) {
                                                 pseudo_f = unname(ps$permutations[, j]), observed_pseudo_f = unname(ps$statistic[j]), stringsAsFactors = FALSE, row.names = NULL)
     nrow(ps$permutations)
   }
-  group_scheme <- if (is.null(blocks)) "free" else paste0("within:", settings$subject_column)
-
   # global
   keep <- groups_all %in% levels_present
   g <- run_test(keep, "global", "all_groups")
   if (g$refused) return(list(refused = TRUE, reason = "fewer_than_two_usable_features", usage = do.call(rbind, usage)))
   data <- data.frame(group = factor(groups_all[keep], levels = levels_present))
-  perm <- .pm_how(nperm, if (is.null(blocks)) NULL else blocks[keep])
-  a <- pm_adonis(g$D, data, "group", perm, seed)
+  gs <- pm_group_scheme(as.character(data$group), if (is.null(blocks)) NULL else blocks[keep], nperm, settings$subject_column)
+  group_scheme <- gs$scheme
+  a <- pm_adonis(g$D, data, "group", gs$how, seed)
   actual <- record_null(a, "group", "global:all_groups")
-  disp <- pm_permdisp(g$D, data$group, .pm_how(nperm, if (is.null(blocks)) NULL else blocks[keep]), seed)
+  disp <- pm_permdisp(g$D, data$group, gs$how, seed)
   add_row("global", "all_groups", "group", sum(keep), length(g$features), .pm_term(a, "group"), actual, group_scheme, disp, group_scheme)
   bd <- disp$betadisper
   eig <- bd$eig[bd$eig > 0]
@@ -164,23 +193,32 @@ pm_feature_set <- function(Y, set, obs, settings) {
 
   # pairwise
   if (isTRUE(settings$pairwise) && length(levels_present) > 2L) {
-    pairs <- utils::combn(levels_present, 2L, simplify = FALSE)
+    declared <- settings$group_levels
+    pairs <- utils::combn(declared, 2L, simplify = FALSE)
     first <- length(rows) + 1L
     for (pair in pairs) {
+      label <- paste(pair[2], "vs", pair[1])
+      if (!all(pair %in% levels_present)) { refuse("pairwise", label, "W_PERMANOVA_EMPTY_GROUP", "group_without_observations"); next }
       keep_pair <- groups_all %in% pair
       t <- run_test(keep_pair, "pairwise", paste(pair, collapse = "_vs_"))
-      if (t$refused) next
+      if (t$refused) { refuse("pairwise", label, "E_PERMANOVA_FEATURE_SET", "fewer_than_two_usable_features"); next }
       dpair <- data.frame(group = factor(groups_all[keep_pair], levels = pair))
-      blk <- if (is.null(blocks)) NULL else blocks[keep_pair]
-      ap <- pm_adonis(t$D, dpair, "group", .pm_how(nperm, blk), seed)
+      ps <- tryCatch(pm_group_scheme(as.character(dpair$group), if (is.null(blocks)) NULL else blocks[keep_pair], nperm, settings$subject_column),
+                     error = function(e) e)
+      if (inherits(ps, "error")) {
+        code <- regmatches(conditionMessage(ps), regexpr("^E_[A-Z0-9_]+", conditionMessage(ps)))
+        refuse("pairwise", label, if (length(code)) code else "E_PERMANOVA_BLOCKING", conditionMessage(ps)); next
+      }
+      ap <- pm_adonis(t$D, dpair, "group", ps$how, seed)
       act <- record_null(ap, "group", paste0("pairwise:", paste(pair, collapse = "_vs_")))
-      dp <- pm_permdisp(t$D, dpair$group, .pm_how(nperm, blk), seed)
-      add_row("pairwise", paste(pair[2], "vs", pair[1]), "group", sum(keep_pair), length(t$features), .pm_term(ap, "group"), act, group_scheme, dp, group_scheme)
+      dp <- pm_permdisp(t$D, dpair$group, ps$how, seed)
+      add_row("pairwise", label, "group", sum(keep_pair), length(t$features), .pm_term(ap, "group"), act, ps$scheme, dp, ps$scheme)
     }
-    idx <- seq.int(first, length(rows))
     if (length(rows) >= first) {
+      idx <- seq.int(first, length(rows))
       adjusted <- .pm_adjust(vapply(rows[idx], function(r) r$p_value, numeric(1)), settings$adjustment)
       for (k in seq_along(idx)) { rows[[idx[k]]]$p_adjusted <- adjusted[k]; rows[[idx[k]]]$adjustment <- settings$adjustment
+        rows[[idx[k]]]$adjustment_family_size <- length(idx); rows[[idx[k]]]$adjustment_family_planned <- length(pairs)
         rows[[idx[k]]]$p_adjusted_display <- pm_display(adjusted[k], rows[[idx[k]]]$nperm) }
     }
   }
@@ -193,28 +231,29 @@ pm_feature_set <- function(Y, set, obs, settings) {
     names_cov <- character()
     for (cv in covariates) {
       column <- cv$column
+      internal <- paste0("cov", length(names_cov) + 1L)   # syntactic internal name; the declared column name is reported (audit 2026-10-02)
       if (!column %in% names(obs)) stop(sprintf("E_PERMANOVA_COVARIATE: covariate column %s is absent", column), call. = FALSE)
       value <- obs[[column]][keep]
       if (identical(cv$type, "continuous")) {
         num <- suppressWarnings(as.numeric(value))
         if (any(!is.finite(num))) stop(sprintf("E_PERMANOVA_COVARIATE: continuous covariate %s has missing or nonfinite values", column), call. = FALSE)
-        cdata[[paste0("cov_", column)]] <- num
+        cdata[[internal]] <- num
       } else {
         if (any(is.na(value))) stop(sprintf("E_PERMANOVA_COVARIATE: categorical covariate %s has missing values", column), call. = FALSE)
-        cdata[[paste0("cov_", column)]] <- factor(value)
+        cdata[[internal]] <- factor(value)
       }
-      names_cov <- c(names_cov, paste0("cov_", column))
+      names_cov <- c(names_cov, internal)
     }
     rhs <- paste(c("group", names_cov), collapse = " + ")
     free <- pm_adonis(g$D, cdata, rhs, .pm_how(nperm), seed, by = "margin")
     act <- record_null(free, "group", "group_adjusted:all_groups")
     add_row("group_adjusted", paste("all groups adjusted for", paste(vapply(covariates, function(cv) cv$column, ""), collapse = ", ")), "group",
             sum(keep), length(g$features), .pm_term(free, "group"), act, "free", disp, "free")
-    blocked <- pm_adonis(g$D, cdata, rhs, .pm_how(nperm, cdata$group), seed, by = "margin")
+    blocked <- pm_adonis(g$D, cdata, rhs, pm_covariate_how(cdata$group, nperm), seed, by = "margin")
     for (k in seq_along(covariates)) {
       term <- names_cov[k]; cv <- covariates[[k]]
       act_b <- record_null(blocked, term, paste0("covariate:", cv$column))
-      cdisp <- if (identical(cv$type, "categorical")) pm_permdisp(g$D, cdata[[term]], .pm_how(nperm, cdata$group), seed) else NULL
+      cdisp <- if (identical(cv$type, "categorical")) pm_permdisp(g$D, cdata[[term]], pm_covariate_how(cdata$group, nperm), seed) else NULL
       add_row("covariate", paste(cv$column, "adjusted for group"), cv$column, sum(keep), length(g$features), .pm_term(blocked, term), act_b,
               paste0("within:", group_col), cdisp, if (is.null(cdisp)) NA_character_ else paste0("within:", group_col))
     }
@@ -222,9 +261,12 @@ pm_feature_set <- function(Y, set, obs, settings) {
       for (k in seq_along(covariates)) {
         cv <- covariates[[k]]; term <- names_cov[k]
         if (!identical(cv$type, "categorical")) next
-        pm_check_interaction(cdata$group, cdata[[term]], cv$column)
+        cells_ok <- tryCatch(pm_check_interaction(cdata$group, cdata[[term]], cv$column), error = function(e) e)
+        if (inherits(cells_ok, "error")) {   # refuse only this term; global, pairwise and covariate results stand (audit 2026-10-02)
+          refuse("interaction", paste("group x", cv$column), "E_PERMANOVA_INTERACTION_NONESTIMABLE", sub("^E_[A-Z_]+: ", "", conditionMessage(cells_ok))); next
+        }
         rhs_i <- paste(c(paste0("group * ", term), setdiff(names_cov, term)), collapse = " + ")
-        ai <- pm_adonis(g$D, cdata, rhs_i, .pm_how(nperm, cdata$group), seed, by = "margin")
+        ai <- pm_adonis(g$D, cdata, rhs_i, pm_covariate_how(cdata$group, nperm), seed, by = "margin")
         iterm <- paste0("group:", term)
         act_i <- record_null(ai, iterm, paste0("interaction:", cv$column))
         add_row("interaction", paste("group x", cv$column), paste0("group:", cv$column), sum(keep), length(g$features), .pm_term(ai, iterm), act_i, paste0("within:", group_col))
@@ -236,7 +278,7 @@ pm_feature_set <- function(Y, set, obs, settings) {
     p_use <- if (!is.na(tests$p_adjusted[i])) tests$p_adjusted[i] else tests$p_value[i]
     tests$interpretation[i] <- if (tests$analysis[i] %in% c("interaction")) "permdisp_not_applicable" else pm_interpret(p_use, tests$permdisp_p[i], alpha)
   }
-  list(refused = FALSE, tests = tests, usage = do.call(rbind, usage), nulls = do.call(rbind, nulls), ordination = ordination, axes = axes, centroids = centroids,
+  list(refused = FALSE, tests = tests, refusals = refusal_frame(), usage = do.call(rbind, usage), nulls = do.call(rbind, nulls), ordination = ordination, axes = axes, centroids = centroids,
        feature_r2 = feature_r2, identity = identity, global_r2 = global_r2, r2_universe = stats::setNames(r2_uni, g$features), features = g$features)
 }
 
@@ -258,7 +300,11 @@ pm_selection_context <- function(set_id, set_r2, k, universe_r2, draws, seed, id
   if (is.null(request$plan_hash) || !identical(plan$plan_hash, request$plan_hash)) stop("E_PLAN_CHANGED: request plan_hash does not match the frozen plan", call. = FALSE)
   planned <- list(); for (a in plan$artifacts) planned[[a$artifact_id]] <- a
   for (item in request$inputs) {
-    if (item$artifact_id %in% c("plan", "dea_zero_null")) next
+    if (identical(item$artifact_id, "plan")) next
+    if (identical(item$artifact_id, "dea_zero_null")) {   # not a plan artifact: verify the recorded limma-stage hash (same rule as Python)
+      if (!identical(sha256_file(item$path), item$sha256)) stop("E_INTEGRITY: differential table changed after the limma stage completed", call. = FALSE)
+      next
+    }
     ref <- planned[[item$artifact_id]]
     if (is.null(ref) || !identical(ref$sha256, item$sha256)) stop(sprintf("E_PLAN_CHANGED: input %s differs from the frozen plan", item$artifact_id), call. = FALSE)
     if (identical(ref$result_type, "DisplayOnlyMatrix")) stop("E_DISPLAY_MATRIX_REJECTED: display-only matrices cannot feed PERMANOVA", call. = FALSE)
@@ -308,6 +354,7 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
                    permutations = as.integer(p$permutations), seed = as.integer(p$seed), alpha = p$alpha, pairwise = isTRUE(p$pairwise), adjustment = p$adjustment,
                    covariates = p$covariates, interaction = isTRUE(p$interaction))
   sets <- pm_resolve_sets(p$feature_sets, rownames(Y), dea_path)
+  refusal_rows <- list()
   tests <- list(); usage <- list(); nulls <- list(); ord <- list(); axes <- list(); cents <- list(); fr2 <- list(); identity <- list(); context <- list(); random <- list(); states <- list()
   universe <- NULL
   for (set in sets) {
@@ -319,6 +366,11 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
       next
     }
     states[[set$id]] <- list(state = "COMPLETED", kind = set$kind, selection_provenance = set$selection_provenance, n_features_used = length(res$features))
+    if (nrow(res$refusals)) {
+      refusal_rows[[length(refusal_rows) + 1L]] <- res$refusals
+      for (i in seq_len(nrow(res$refusals))) warnings[[length(warnings) + 1L]] <- .pc_warning(request, res$refusals$reason_code[i],
+        sprintf("feature set %s: %s %s not tested (%s)", set$id, res$refusals$analysis[i], res$refusals$comparison[i], res$refusals$reason[i]), "permanova/refusals.tsv")
+    }
     tests[[length(tests) + 1L]] <- res$tests; nulls[[length(nulls) + 1L]] <- res$nulls; ord[[length(ord) + 1L]] <- res$ordination
     axes[[length(axes) + 1L]] <- res$axes; cents[[length(cents) + 1L]] <- res$centroids; fr2[[length(fr2) + 1L]] <- res$feature_r2; identity[[set$id]] <- res$identity
     if (identical(set$kind, "all_complete") && is.null(universe)) universe <- res$r2_universe
@@ -350,6 +402,9 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
   tests_df <- do.call(rbind, tests)
   write_tsv(tests_df, "tests.tsv", "permanova_tests", "PermanovaResult")
   write_tsv(do.call(rbind, usage), "feature_usage.tsv", "permanova_feature_usage", "MultivariateFeatureSet")
+  refusals_df <- if (length(refusal_rows)) do.call(rbind, refusal_rows) else
+    data.frame(feature_set_id = character(), analysis = character(), comparison = character(), reason_code = character(), reason = character(), stringsAsFactors = FALSE)
+  write_tsv(refusals_df, "refusals.tsv", "permanova_refusals", "PermanovaResult")
   write_tsv(do.call(rbind, nulls), "permutation_null.tsv", "permanova_permutation_null", "FigureSource")
   write_tsv(do.call(rbind, ord), "ordination.tsv", "permanova_ordination", "FigureSource")
   write_tsv(do.call(rbind, axes), "ordination_axes.tsv", "permanova_ordination_axes", "FigureSource")
@@ -366,10 +421,10 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
   write_json(list(result_type = "PermanovaResult", settings = list(metric = settings$metric, scaling = settings$scaling, permutations_requested = settings$permutations,
                     seed = settings$seed, rng_kind = "L'Ecuyer-CMRG", adjustment = settings$adjustment, alpha = settings$alpha, pairwise = settings$pairwise,
                     covariates = settings$covariates, interaction = settings$interaction, group_column = settings$group_column,
-                    group_permutation_scheme = if (is.null(settings$subject_column)) "free" else paste0("within:", settings$subject_column),
+                    group_permutation_scheme = unique(tests_df$permutation_scheme[tests_df$analysis == "global"]),
                     feature_universe = "genuinely observed cells; complete and non-constant within each test's observations; no imputation"),
                   versions = list(vegan = as.character(utils::packageVersion("vegan")), permute = as.character(utils::packageVersion("permute"))),
-                  feature_sets = states, identity = unname(identity), figures = figures$records, interpretation_rule = PERMANOVA_INTERPRETATION_RULE,
+                  feature_sets = states, refusals = refusals_df, identity = unname(identity), figures = figures$records, interpretation_rule = PERMANOVA_INTERPRETATION_RULE,
                   limitations = c("PERMANOVA describes multivariate separation of the analysed biological units; it is not a classifier or held-out validation.",
                                   "R2 of a feature set chosen on the same data is optimistic by construction (see selection_context.tsv).",
                                   "Permutation P values are Monte Carlo estimates with resolution 1/(nperm+1).")),

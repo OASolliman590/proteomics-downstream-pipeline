@@ -4,7 +4,7 @@
     {
       "command": ".venv/bin/python -m pytest tests/scientific/test_response.py -q -rs -p no:cacheprovider",
       "exit_code": 0,
-      "summary": "7 passed in 42.41s",
+      "summary": "7 passed in 170.22s (0:02:50)",
       "log": "docs/validation/010-treatment-response/evidence/python-tests-1.log"
     },
     {
@@ -14,7 +14,7 @@
       "log": "docs/validation/010-treatment-response/evidence/r-test-response.log"
     }
   ],
-  "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
+  "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
   "n_files": 14,
   "environment": {
     "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",

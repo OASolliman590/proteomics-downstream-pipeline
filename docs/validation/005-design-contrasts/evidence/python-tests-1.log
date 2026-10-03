@@ -1,7 +1,7 @@
 $ <repo>/.venv/bin/python -m pytest tests/scientific/test_design_contract.py -q -rs -p no:cacheprovider
-# started 2026-10-01T23:13:33.604913+00:00  exit 0
+# started 2026-10-02T20:24:28.130357+00:00  exit 0
 
 ............................                                             [100%]
-28 passed in 81.39s (0:01:21)
+28 passed in 89.89s (0:01:29)
 
 --- stderr ---

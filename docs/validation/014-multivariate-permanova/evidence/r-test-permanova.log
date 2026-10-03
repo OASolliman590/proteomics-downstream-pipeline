@@ -1,9 +1,9 @@
 $ Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-permanova.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))
-# started 2026-10-01T23:03:37.588010+00:00  exit 0
+# started 2026-10-02T21:04:47.357528+00:00  exit 0
 
-permanova: ......................................................
+permanova: .......................................................................................
 
 ══ DONE ════════════════════════════════════════════════════════════════════════
-expectations=54 failed=0 skipped=0 errors=0
+expectations=87 failed=0 skipped=0 errors=0
 
 --- stderr ---

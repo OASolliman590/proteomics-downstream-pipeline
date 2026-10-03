@@ -93,11 +93,12 @@ def environment_inventory() -> dict:
         return info
     code = ("p <- commandArgs(TRUE); v <- lapply(p, function(x) if (requireNamespace(x, quietly=TRUE)) as.character(utils::packageVersion(x)) else NULL); names(v) <- p; "
             "cat(jsonlite::toJSON(list(r=R.version.string, packages=v), auto_unbox=TRUE, null='null'))")
-    result = subprocess.run([rscript, "--vanilla", "-e", code, *R_PACKAGES], capture_output=True, text=True, shell=False, check=False)
+    from .runtime import run_r_code
+    result = run_r_code(code, R_PACKAGES, rscript=rscript)
     if result.returncode != 0:
         info["rscript"] = {"available": False, "error": result.stderr.strip()[-500:]}
         return info
-    payload = json.loads(result.stdout)
+    payload = json.loads(result.stdout.strip().splitlines()[-1])
     info["rscript"] = {"available": True, "version": payload["r"]}
     info["r_packages"] = payload["packages"]
     return info

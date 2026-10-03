@@ -128,3 +128,55 @@ testthat::test_that("V029 detection Fisher P and detection-only BH match enumera
   testthat::expect_true(all(res$family_id == "detection-family" & res$hypothesis_type == "detection"))
   testthat::expect_error(fn("detection_tests")(observed, obs, "group", list(list(contrast_id = "a-b", required_groups = list("a", "b"))), "fixed_subject"), "E_DETECTION_DESIGN_UNSUPPORTED")
 })
+
+# audit 2026-10-02: the vectorized coverage_tables must equal the former per-feature loop (kept here verbatim as the oracle).
+old_coverage_tables <- function(observed, observations, group_column, rules, extra_exclusions = NULL) {
+  if (is.null(observed)) stop("E_ORIGINAL_MASK_REQUIRED: primary observed-coverage rules need a genuine original-observed mask", call. = FALSE)
+  groups <- observations[[group_column]]
+  all_missing <- rowSums(observed) == 0
+  summary_rows <- list(); group_rows <- list()
+  for (rule in rules) {
+    required <- unlist(rule$required_groups)
+    min_n <- if (is.null(rule$minimum_observed_per_group)) 2L else as.integer(rule$minimum_observed_per_group)
+    min_fraction <- if (is.null(rule$minimum_fraction)) 0.5 else as.numeric(rule$minimum_fraction)
+    policy <- if (is.null(rule$policy)) "available_case" else rule$policy
+    n_units <- vapply(required, function(g) sum(groups == g), integer(1))
+    counts <- vapply(required, function(g) rowSums(observed[, groups == g, drop = FALSE]), numeric(nrow(observed)))
+    counts <- matrix(counts, nrow = nrow(observed), dimnames = list(rownames(observed), required))
+    for (i in seq_len(nrow(observed))) {
+      feature <- rownames(observed)[i]
+      n_obs <- counts[i, ]
+      fraction <- ifelse(n_units > 0, n_obs / n_units, NA_real_)
+      if (policy == "native_dropout") { eligibility <- "not_run"; reason <- "native_dropout_policy_deferred_to_R06" }
+      else if (!is.null(extra_exclusions) && feature %in% names(extra_exclusions)) { eligibility <- "excluded"; reason <- extra_exclusions[[feature]] }
+      else if (all_missing[i]) { eligibility <- "excluded"; reason <- "all_study_missing" }
+      else if (any(n_units == 0)) { eligibility <- "nonestimable"; reason <- paste0("required_group_has_no_units:", paste(required[n_units == 0], collapse = ",")) }
+      else if (any(n_obs == 0)) { eligibility <- "nonestimable"; reason <- paste0("all_missing_required_group:", paste(required[n_obs == 0], collapse = ",")) }
+      else if (any(n_obs < min_n | fraction < min_fraction)) { eligibility <- "excluded"; reason <- paste0("coverage_below_minimum:", paste(required[n_obs < min_n | fraction < min_fraction], collapse = ",")) }
+      else { eligibility <- "eligible"; reason <- "eligible" }
+      summary_rows[[length(summary_rows) + 1L]] <- data.frame(model_id = rule$model_id, contrast_id = rule$contrast_id, feature_id = feature,
+        eligibility = eligibility, reason = reason, n_obs_by_required_group = as.character(jsonlite::toJSON(as.list(stats::setNames(as.integer(n_obs), required)), auto_unbox = TRUE)),
+        policy = policy, minimum_observed_per_group = min_n, minimum_fraction = min_fraction, stringsAsFactors = FALSE)
+    }
+    group_rows[[length(group_rows) + 1L]] <- data.frame(model_id = rule$model_id, contrast_id = rule$contrast_id,
+      feature_id = rep(rownames(observed), times = length(required)), group = rep(required, each = nrow(observed)),
+      n_observed = as.integer(as.vector(counts)), n_units = rep(as.integer(n_units), each = nrow(observed)),
+      observed_fraction = as.vector(counts) / rep(n_units, each = nrow(observed)), stringsAsFactors = FALSE)
+  }
+  list(summary = if (length(summary_rows)) do.call(rbind, summary_rows) else data.frame(),
+       by_group = if (length(group_rows)) do.call(rbind, group_rows) else data.frame())
+}
+testthat::test_that("audit: vectorized coverage_tables equals the former per-feature loop", {
+  set.seed(5); g <- rep(c("A", "B", "C"), c(4, 4, 3))
+  obs <- matrix(runif(80 * 11) > 0.3, 80, dimnames = list(sprintf("P%02d", 1:80), paste0("O", 1:11))); obs[3, ] <- FALSE; obs[4, g == "A"] <- FALSE
+  observations <- data.frame(observation_id = colnames(obs), group = g, stringsAsFactors = FALSE)
+  rules <- list(list(model_id = "m", contrast_id = "B-A", required_groups = list("B", "A"), minimum_observed_per_group = 2, minimum_fraction = 0.5),
+                list(model_id = "m", contrast_id = "D-A", required_groups = list("D", "A")),
+                list(model_id = "m", contrast_id = "C-B", required_groups = list("C", "B"), minimum_observed_per_group = 3, minimum_fraction = 0.9),
+                list(model_id = "p", contrast_id = "B-A", required_groups = list("B", "A"), policy = "native_dropout"))
+  extra <- list(P07 = "prespecified_exclusion")
+  new <- get("coverage_tables", envir = asNamespace("proteomicsCore"))(obs, observations, "group", rules, extra)
+  old <- old_coverage_tables(obs, observations, "group", rules, extra)
+  rownames(new$summary) <- NULL; rownames(old$summary) <- NULL
+  testthat::expect_identical(new$summary, old$summary); testthat::expect_identical(new$by_group, old$by_group)
+})

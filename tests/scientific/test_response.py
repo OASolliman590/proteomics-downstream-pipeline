@@ -30,14 +30,14 @@ def family(fid, htype, **sel):
 
 
 def run(tmp_path, mutate):
-    raw = json.loads((EXAMPLES / "example-independent.json").read_text())
+    raw = json.loads((EXAMPLES / "example-independent.json").read_text(encoding="utf-8"))
     for key in ("matrix", "observations", "features", "source_provenance"):
         raw["input"][key] = str((EXAMPLES / raw["input"][key]).resolve())
     raw["runtime"]["phase"] = 2
     raw["response"] = {"enabled": True, "axes": [dict(AXIS)], "selection": "all_eligible", "ri_minimum_abs_disease_effect": 0.25, "ratio_uncertainty": "fieller", "alpha": 0.05}
     mutate(raw)
     tmp_path.mkdir(parents=True, exist_ok=True)
-    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw))
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw), encoding="utf-8")
     payload, code = workflow.run_command(path, tmp_path / "run")
     return payload, code, tmp_path / "run"
 
@@ -54,7 +54,7 @@ def test_v081_v090_axes_covariance_and_algebra(tmp_path):
         if r["feature_id"] in ("P01", "P02", "P03", "P04", "P05", "P06"):           # complete features: group means of 4 -> diag(.25)
             assert abs(float(r["unscaled_var_d"]) - 0.5) <= 1e-12 and abs(float(r["unscaled_cov_dt"]) + 0.25) <= 1e-12 and abs(float(r["unscaled_var_r"]) - 0.5) <= 1e-12
     header = set(rows[0]); assert not {"p_value", "q_value", "native_q_value", "statistic"} & header      # descriptive: physically no P/q
-    warnings = json.loads((out / "warnings.json").read_text())
+    warnings = json.loads((out / "warnings.json").read_text(encoding="utf-8"))
     assert any(w["code"] == "W_SHARED_CONTROL" for w in warnings)
     p03 = next(r for r in rows if r["feature_id"] == "P03")
     assert p03["descriptive_class"] == "near_restoration" and p03["crossed_control"] in ("true", "false")
@@ -98,8 +98,8 @@ def test_v086_formal_rescue_with_independent_directions(tmp_path):
 
 
 def test_v086_negative_direction_overlapping_tested_units(tmp_path):
-    bad = json.loads((FIX / "direction_independent.json").read_text()); bad["selection_subject_ids"] = ["unit_C1"]
-    (tmp_path / "dir.json").parent.mkdir(parents=True, exist_ok=True); (tmp_path / "dir.json").write_text(json.dumps(bad))
+    bad = json.loads((FIX / "direction_independent.json").read_text(encoding="utf-8")); bad["selection_subject_ids"] = ["unit_C1"]
+    (tmp_path / "dir.json").parent.mkdir(parents=True, exist_ok=True); (tmp_path / "dir.json").write_text(json.dumps(bad), encoding="utf-8")
     def mutate(raw):
         raw["response_mode"] = "formal_rescue"
         raw["response"].update({"equivalence_margin": 0.5, "direction_resource_id": "dir", "disease_margin": 0.0, "treatment_margin": 0.0})
@@ -124,7 +124,7 @@ def test_v082_v087_v088_scores(tmp_path, manifest, inferential):
     if inferential:
         test = B.read_tsv(out / "response" / "independent_score_tests.tsv")[0]
         assert test["N"] == "70" and test["observed_allocation_count"] == "1" and test["method"] == "exact"
-        values = json.loads((FIX / manifest).read_text())["features"]
+        values = json.loads((FIX / manifest).read_text(encoding="utf-8"))["features"]
         m = {r["feature_id"]: r for r in B.read_tsv(out / "inputs" / "matrix.tsv")}
         groups = {"C": [f"C{i}" for i in range(1, 5)], "U": [f"U{i}" for i in range(1, 5)]}
         score = {o: sum(f["weight"] * (float(m[f["feature_id"]][o]) - f["center"]) / f["scale"] for f in values) for g in groups.values() for o in g}

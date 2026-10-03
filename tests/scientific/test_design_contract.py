@@ -136,7 +136,7 @@ def test_v033_confounded_batch_rejected_crossed_accepted(tmp_path):
     path = _plan(tmp_path / "cross", crossed, contrasts, ["A", "B"], design_overrides=over, extra_columns=("batch",))
     payload, code = workflow.plan_command(path, tmp_path / "cross" / "out" / "plan.json")
     assert code == 0 and payload["fits_performed"] == 0
-    diagnostics = json.loads((tmp_path / "cross" / "out" / "plan-artifacts" / "designs" / "design_diagnostics.json").read_text())
+    diagnostics = json.loads((tmp_path / "cross" / "out" / "plan-artifacts" / "designs" / "design_diagnostics.json").read_text(encoding="utf-8"))
     assert diagnostics["designs"][0]["rank"] == 3 and diagnostics["designs"][0]["full_rank"] is True
 
 
@@ -156,13 +156,13 @@ def test_v034_paired_fixed_subject_and_repeated_correlation(tmp_path):
     contrasts = [B.contrast("after-before", "after", "before")]
     fixed = _plan(tmp_path / "fixed", obs, contrasts, ["before", "after"], design_overrides={"blocking": {"mode": "fixed_subject", "subject_column": "subject_id"}})
     workflow.plan_command(fixed, tmp_path / "fixed" / "out" / "plan.json")
-    term_map = json.loads((tmp_path / "fixed" / "out" / "plan-artifacts" / "designs" / "designs" / "joint" / "term_map.json").read_text())
+    term_map = json.loads((tmp_path / "fixed" / "out" / "plan-artifacts" / "designs" / "designs" / "joint" / "term_map.json").read_text(encoding="utf-8"))
     assert term_map["coefficients"] == ["group.before", "group.after", "factor.subject_id.S2", "factor.subject_id.S3", "factor.subject_id.S4"]
-    diag = json.loads((tmp_path / "fixed" / "out" / "plan-artifacts" / "designs" / "design_diagnostics.json").read_text())
+    diag = json.loads((tmp_path / "fixed" / "out" / "plan-artifacts" / "designs" / "design_diagnostics.json").read_text(encoding="utf-8"))
     assert diag["contrasts"][0]["subjects_by_required_group"] == {"after": 4, "before": 4}
     repeated = _plan(tmp_path / "rep", obs, contrasts, ["before", "after"], design_overrides={"blocking": {"mode": "duplicate_correlation", "subject_column": "subject_id"}})
     workflow.plan_command(repeated, tmp_path / "rep" / "out" / "plan.json")
-    plan = json.loads((tmp_path / "rep" / "out" / "plan.json").read_text())
+    plan = json.loads((tmp_path / "rep" / "out" / "plan.json").read_text(encoding="utf-8"))
     rho = plan["blocking"][0]["consensus_correlation"]
     oracle = B.r_json("m <- as.matrix(read.delim(commandArgs(TRUE)[1], row.names=1, check.names=FALSE)); X <- cbind(before=rep(c(1,0),4), after=rep(c(0,1),4)); "
                       "cat(jsonlite::toJSON(limma::duplicateCorrelation(m, X, block=rep(paste0('S',1:4), each=2))$consensus.correlation, digits=NA))",
@@ -237,7 +237,7 @@ def test_v036_featurewise_n_df_and_named_reasons(tmp_path):
 
 # ----------------------------------------------------------------------------- V038
 def _phase2(engine, **model):
-    config = json.loads((B.EXAMPLES / "example-independent.json").read_text())
+    config = json.loads((B.EXAMPLES / "example-independent.json").read_text(encoding="utf-8"))
     config["runtime"]["phase"] = 2
     m = dict(config["models"][0]); m.update({"id": f"{engine}-opt", "engine": engine, "role": "sensitivity", "execution_requirement": "optional"}); m.update(model)
     config["models"].append(m)
@@ -287,7 +287,7 @@ def test_v039_plan_frozen_before_fit_and_meaningful_changes_change_hash(tmp_path
     p2, _ = workflow.plan_command(base, tmp_path / "a" / "o2" / "plan.json")
     assert p1["plan_hash"] == p2["plan_hash"] and p1["fits_performed"] == 0
     assert not list((tmp_path / "a" / "o1").rglob("zero_null.tsv"))
-    plan = json.loads((tmp_path / "a" / "o1" / "plan.json").read_text())
+    plan = json.loads((tmp_path / "a" / "o1" / "plan.json").read_text(encoding="utf-8"))
     kinds = {a["result_type"] for a in plan["artifacts"]}
     assert {"Design", "CoverageResult", "OriginalObservedMask", "DesignDiagnostics"} <= kinds and plan["families"][0]["members"] == [{"model_id": "limma-main", "contrast_id": "B-A"}]
     weighted = _plan(tmp_path / "b", obs, [B.contrast("B-A", "B", "A", weights={"group.B": 2, "group.A": -2})], ["A", "B"])
@@ -307,7 +307,7 @@ def test_v039_negative_fit_without_valid_plan_or_with_changed_input(tmp_path):
     path = _plan(tmp_path, obs, [B.contrast("B-A", "B", "A")], ["A", "B"])
     workflow.plan_command(path, tmp_path / "out" / "plan.json")
     plan_path = tmp_path / "out" / "plan.json"
-    plan = json.loads(plan_path.read_text())
+    plan = json.loads(plan_path.read_text(encoding="utf-8"))
     config = workflow.load(path)
     with pytest.raises(ProteomicsError) as error:
         design_service.verify_plan(tmp_path / "missing.json")
@@ -319,7 +319,7 @@ def test_v039_negative_fit_without_valid_plan_or_with_changed_input(tmp_path):
     matrix = tmp_path / "out" / "plan-artifacts" / "preprocessing" / "primary" / "matrix.tsv"
     request = inference_service.build_request(plan, plan_path=plan_path, config=config, run_id="neg", output_temp_dir=tmp_path / "fit2")
     from proteomics_pipeline.provenance import sha256_file
-    matrix.write_text(matrix.read_text().replace("\t1", "\t2", 1))
+    matrix.write_text(matrix.read_text(encoding="utf-8").replace("\t1", "\t2", 1), encoding="utf-8")
     for item in request["inputs"]:
         if item["artifact_id"] == "primary_matrix":
             item["sha256"] = sha256_file(matrix)
@@ -337,7 +337,7 @@ def test_v026_negative_display_matrix_cannot_feed_the_model(tmp_path):
     obs = _obs(4)
     path = _plan(tmp_path, obs, [B.contrast("B-A", "B", "A")], ["A", "B"])
     workflow.plan_command(path, tmp_path / "out" / "plan.json")
-    plan_path = tmp_path / "out" / "plan.json"; plan = json.loads(plan_path.read_text())
+    plan_path = tmp_path / "out" / "plan.json"; plan = json.loads(plan_path.read_text(encoding="utf-8"))
     request = inference_service.build_request(plan, plan_path=plan_path, config=workflow.load(path), run_id="neg", output_temp_dir=tmp_path / "fit")
     display = next(a for a in plan["artifacts"] if a["artifact_id"] == "qc_pca_display_input")
     request["inputs"].append({"artifact_id": "qc_pca_display_input", "path": str(tmp_path / "out" / display["relative_path"]), "sha256": display["sha256"]})
@@ -366,7 +366,7 @@ def test_v040_adversarial_designs(tmp_path):
     imbalanced = [{"observation_id": f"S{s}_{v}", "group": v, "subject_id": f"S{s}"} for s in range(1, 5) for v in ("pre", "post") if not (s == 4 and v == "post")]
     path = _plan(tmp_path / "i", imbalanced, [B.contrast("post-pre", "post", "pre")], ["pre", "post"], design_overrides={"blocking": {"mode": "fixed_subject", "subject_column": "subject_id"}})
     assert workflow.plan_command(path, tmp_path / "i" / "o" / "plan.json")[1] == 0
-    diag = json.loads((tmp_path / "i" / "o" / "plan-artifacts" / "designs" / "design_diagnostics.json").read_text())
+    diag = json.loads((tmp_path / "i" / "o" / "plan-artifacts" / "designs" / "design_diagnostics.json").read_text(encoding="utf-8"))
     assert diag["contrasts"][0]["subjects_by_required_group"] == {"post": 3, "pre": 4}
 
 

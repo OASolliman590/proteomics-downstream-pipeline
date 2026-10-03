@@ -33,9 +33,10 @@ def _binom_sf_upper(k, n, p):
 
 
 def test_v105_core_scenarios_meet_prespecified_gates_from_dataset_rows():
-    summary = json.loads((CAL / "calibration_summary.json").read_text())
+    summary = json.loads((CAL / "calibration_summary.json").read_text(encoding="utf-8"))
     assert summary["profile"] == "release" and summary["datasets_per_scenario"] >= 1000
-    for name in ("null", "mixture", "heavy_tail", "mnar"):
+    assert summary["fit_path"].startswith("production R path")
+    for name in ("null", "mixture", "mixture_high_power", "heavy_tail", "mnar"):
         rows = _rows(name)
         entry = summary["scenarios"][name]
         assert len(rows) == entry["n_datasets"] >= 1000
@@ -54,6 +55,8 @@ def test_v105_core_scenarios_meet_prespecified_gates_from_dataset_rows():
     assert abs(_binom_sf_upper(k, len(null), upper) - 0.05) < 1e-6 and upper <= 0.075
     assert summary["scenarios"]["mixture"]["mean_fdp_upper95"] <= 0.075
     assert summary["scenarios"]["mixture"]["mean_power"] is not None          # power reported, not only error
+    high = summary["scenarios"]["mixture_high_power"]                         # audit: FDR evidence with many rejections
+    assert high["mean_fdp_upper95"] <= 0.075 and high["mean_power"] > 0.3 and high["total_rejections"] > summary["scenarios"]["mixture"]["total_rejections"]
 
 
 def test_v105_negative_liberal_rate_fails_and_smoke_cannot_claim_release(tmp_path):
@@ -61,13 +64,13 @@ def test_v105_negative_liberal_rate_fails_and_smoke_cannot_claim_release(tmp_pat
     if shutil.which("Rscript") is None:
         pytest.skip("NOT_RUN: Rscript unavailable for the smoke-profile negative")
     code = RC.main(["--datasets", "5", "--pathway-datasets", "3", "--nrot", "49", "--features", "200", "--output", str(tmp_path)])
-    summary = json.loads((tmp_path / "calibration_summary.json").read_text())
+    summary = json.loads((tmp_path / "calibration_summary.json").read_text(encoding="utf-8"))
     assert summary["profile"].startswith("smoke") and code == 1
     assert all(summary["scenarios"][s]["gate"].startswith("NOT_RUN") for s in ("null", "mixture"))
 
 
 def test_v106_pathway_null_rates_under_their_own_hypotheses_with_mc_precision():
-    pathways = json.loads((CAL / "pathways.json").read_text())
+    pathways = json.loads((CAL / "pathways.json").read_text(encoding="utf-8"))
     assert pathways["n_datasets"] >= 300 and pathways["nrot"] >= 999
     assert "competitive" in pathways["hypotheses"]["camera"] and "self-contained" in pathways["hypotheses"]["roast"]
     for key in ("camera_null_rate", "roast_null_rate", "roast_mixed_null_rate"):
@@ -76,3 +79,27 @@ def test_v106_pathway_null_rates_under_their_own_hypotheses_with_mc_precision():
         assert abs(result["upper95"] - (result["mean"] + 1.6448536 * result["mc_se"])) < 1e-6
     assert "not calibrated" in pathways["fgsea"]
     assert all(pathways["gate"][k] for k in ("camera_pass", "roast_pass", "roast_mixed_pass"))
+
+
+def test_v105_calibration_uses_the_production_fit_and_eligibility_rule():
+    """Audit 2026-10-02: calibrate_once must run the production path.  With 6 units per group the
+    production rule (>= 2 observed AND >= 50 %, i.e. >= 3 of 6) differs from the old '>= 2' shortcut,
+    and the result must equal a direct limma_stage-equivalent fit of the same dataset."""
+    import subprocess
+    if shutil.which("Rscript") is None:
+        pytest.skip("NOT_RUN: Rscript unavailable")
+    code = r"""
+    ns <- asNamespace('proteomicsCore')
+    sim <- get('simulate_dataset', ns)(400, 6, 'mnar', 4242)
+    res <- get('calibrate_once', ns)(sim)
+    obsA <- rowSums(!is.na(sim$Y[, sim$X[, 1] == 1])); obsB <- rowSums(!is.na(sim$Y[, sim$X[, 2] == 1]))
+    cat(jsonlite::toJSON(list(n_tested = res$n_tested, fit_path = res$fit_path,
+        production_rule = sum(obsA >= 3 & obsB >= 3), shortcut_rule = sum(obsA >= 2 & obsB >= 2)), auto_unbox = TRUE))
+    """
+    from proteomics_pipeline.runtime import run_r_code
+    out = run_r_code(code)
+    assert out.returncode == 0, out.stderr
+    result = json.loads(out.stdout.strip().splitlines()[-1])
+    assert result["shortcut_rule"] > result["production_rule"]          # the fixture separates the two rules
+    assert result["n_tested"] == result["production_rule"]
+    assert result["fit_path"] == "production:fit_limma_model"

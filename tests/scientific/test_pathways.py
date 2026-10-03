@@ -76,7 +76,7 @@ def table(run, name):
 def test_v072_v074_v075_independent_camera_roast_fgsea_match_direct_calls(tmp_path):
     payload, code, run = make(tmp_path)
     assert code == 0, payload
-    seed = json.loads((run / "plan.json").read_text())["runtime"]["seed"]
+    seed = json.loads((run / "plan.json").read_text(encoding="utf-8"))["runtime"]["seed"]
     oracle = B.r_json("""a <- commandArgs(TRUE); G <- as.matrix(read.delim(a[1], row.names=1, check.names=FALSE)); mem <- read.delim(a[2]); sm <- read.delim(a[3])
       X <- as.matrix(read.delim(a[4], row.names=1, check.names=FALSE)); el <- sm$set_id[sm$eligible == "true"]
       mem <- mem[mem$in_universe == "true" & mem$set_id %in% el,]; sets <- split(mem$gene_id, mem$set_id); idx <- lapply(sets, function(g) match(g, rownames(G)))
@@ -116,7 +116,7 @@ def test_v072_v074_v075_independent_camera_roast_fgsea_match_direct_calls(tmp_pa
     ora = table(run, "ora_up")
     up = next(r for r in ora if r["contrast_id"] == "U-C" and r["set_id"] == "SET_UP")
     assert int(up["k"]) >= 1 and up["status"] == "tested" and all(r["N"] == ora[0]["N"] for r in ora if r["contrast_id"] == "U-C")
-    data = json.loads((run / "report" / "report_data.json").read_text())
+    data = json.loads((run / "report" / "report_data.json").read_text(encoding="utf-8"))
     assert data["sections"]["pathways"]["state"] in ("COMPLETED", "NOT_RUN")
 
 
@@ -125,7 +125,7 @@ def test_v071_v073_blocked_designs_dispatch_to_roast(tmp_path):
     assert code == 2 and payload["error"]["code"] == "E_CAMERA_BLOCKED_DESIGN"
     payload, code, run = make(tmp_path / "dc", design="duplicate_correlation", methods=("roast",))
     assert code == 0, payload
-    plan = json.loads((run / "plan.json").read_text()); rho = plan["blocking"][0]["consensus_correlation"]; seed = plan["runtime"]["seed"]
+    plan = json.loads((run / "plan.json").read_text(encoding="utf-8")); rho = plan["blocking"][0]["consensus_correlation"]; seed = plan["runtime"]["seed"]
     oracle = B.r_json("""a <- commandArgs(TRUE); G <- as.matrix(read.delim(a[1], row.names=1, check.names=FALSE)); mem <- read.delim(a[2]); sm <- read.delim(a[3])
       X <- as.matrix(read.delim(a[4], row.names=1, check.names=FALSE)); el <- sm$set_id[sm$eligible == "true"]; mem <- mem[mem$in_universe == "true" & mem$set_id %in% el,]
       idx <- lapply(split(mem$gene_id, mem$set_id), function(g) match(g, rownames(G))); block <- sub("_.*$", "", colnames(G))
@@ -140,7 +140,7 @@ def test_v071_v073_blocked_designs_dispatch_to_roast(tmp_path):
 
 
 def test_v078_alternative_engine_primary_needs_named_linear_sensitivity():
-    cfg = json.loads((B.EXAMPLES / "example-independent.json").read_text())
+    cfg = json.loads((B.EXAMPLES / "example-independent.json").read_text(encoding="utf-8"))
     cfg["runtime"]["phase"] = 2; cfg["primary_engine"] = "proda"
     cfg["models"][0].update({"engine": "proda", "coverage": {"policy": "native_dropout", "mask_source": "original_observed"}})
     cfg["pathways"] = {"enabled": True, "methods": ["camera"], "mapping_resource_id": "map", "gene_set_resource_ids": ["sets"]}

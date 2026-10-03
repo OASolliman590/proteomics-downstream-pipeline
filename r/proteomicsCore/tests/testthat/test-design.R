@@ -78,3 +78,46 @@ testthat::test_that("V038 absent adapter software is NOT_RUN, not inapplicable",
   limma <- fn("operational_availability")("limma", installed = function(pkg) TRUE)
   testthat::expect_identical(limma$state, "AVAILABLE")
 })
+
+# audit 2026-10-02: the vectorized featurewise_estimability must equal the former per-feature loop (kept here verbatim as the oracle).
+old_featurewise_estimability <- function(values, observed, X, contrasts, coverage, model_id, groups, tol = 1e-8) {
+  rows <- list()
+  usable <- !is.na(values) & (if (is.null(observed)) TRUE else observed)
+  for (contrast in contrasts) {
+    cov <- coverage[coverage$model_id == model_id & coverage$contrast_id == contrast$contrast_id, , drop = FALSE]
+    cov_by_feature <- stats::setNames(seq_len(nrow(cov)), cov$feature_id)
+    required <- unlist(contrast$required_groups)
+    for (i in seq_len(nrow(values))) {
+      feature <- rownames(values)[i]
+      use <- usable[i, ]
+      Xi <- X[use, , drop = FALSE]
+      rank <- if (any(use)) qr(Xi, tol = 1e-7)$rank else 0L
+      n <- sum(use); df <- n - rank
+      estimable <- any(use) && fn_ce(Xi, unlist(contrast$weights), tol)
+      n_req <- vapply(required, function(g) sum(use & groups == g), integer(1))
+      prior_state <- if (length(cov_by_feature) && !is.na(cov_by_feature[feature])) cov$eligibility[cov_by_feature[feature]] else "eligible"
+      prior_reason <- if (length(cov_by_feature) && !is.na(cov_by_feature[feature])) cov$reason[cov_by_feature[feature]] else "eligible"
+      if (prior_state != "eligible") { eligibility <- prior_state; reason <- prior_reason }
+      else if (!estimable) { eligibility <- "nonestimable"; reason <- "contrast_not_estimable_on_observed_rows" }
+      else if (df < 1L) { eligibility <- "nonestimable"; reason <- "no_residual_df" }
+      else { eligibility <- "eligible"; reason <- "eligible" }
+      rows[[length(rows) + 1L]] <- data.frame(model_id = model_id, contrast_id = contrast$contrast_id, feature_id = feature, n_obs = n, rank = rank,
+        df_residual = df, estimable = estimable, eligibility = eligibility, reason = reason,
+        n_obs_by_required_group = as.character(jsonlite::toJSON(as.list(stats::setNames(as.integer(n_req), required)), auto_unbox = TRUE)), stringsAsFactors = FALSE)
+    }
+  }
+  if (length(rows)) do.call(rbind, rows) else data.frame()
+}
+testthat::test_that("audit: vectorized featurewise_estimability equals the former per-feature loop", {
+  fn_ce <<- get("contrast_estimable", envir = asNamespace("proteomicsCore"))
+  set.seed(4); g <- rep(c("A", "B", "C"), each = 4)
+  values <- matrix(rnorm(60 * 12), 60, dimnames = list(sprintf("P%02d", 1:60), paste0(g, 1:12)))
+  values[sample(length(values), 160)] <- NA; values[5, g == "B"] <- NA; values[6, ] <- NA
+  X <- cbind(A = as.numeric(g == "A"), B = as.numeric(g == "B"), C = as.numeric(g == "C")); rownames(X) <- colnames(values)
+  contrasts <- list(list(contrast_id = "B-A", weights = list(-1, 1, 0), required_groups = list("B", "A")), list(contrast_id = "C-B", weights = list(0, -1, 1), required_groups = list("C", "B")))
+  coverage <- data.frame(model_id = "m", contrast_id = "B-A", feature_id = c("P01", "P02"), eligibility = c("excluded", "eligible"), reason = c("coverage_below_minimum:A", "eligible"), stringsAsFactors = FALSE)
+  new <- get("featurewise_estimability", envir = asNamespace("proteomicsCore"))(values, !is.na(values), X, contrasts, coverage, "m", g)
+  old <- old_featurewise_estimability(values, !is.na(values), X, contrasts, coverage, "m", g)
+  rownames(new) <- NULL; rownames(old) <- NULL
+  testthat::expect_identical(new, old)
+})

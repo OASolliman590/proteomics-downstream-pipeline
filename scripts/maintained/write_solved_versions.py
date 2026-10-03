@@ -11,9 +11,9 @@ def _safe_executable(path):
 def main(argv=None):
  output=Path(argv[0]) if argv else Path("docs/validation/002-foundation/solved-versions.json"); rscript=shutil.which("Rscript"); r=None; r_packages={name:None for name in ("jsonlite","openssl","testthat","proteomicsCore")}
  if rscript:
-  process=subprocess.run([rscript,"--version"],capture_output=True,text=True,check=False,shell=False); packages={}
+  process=subprocess.run([rscript,"--version"],capture_output=True,text=True,check=False,shell=False, encoding="utf-8"); packages={}
   for package_name in ("jsonlite","openssl","testthat","proteomicsCore"):
-   version_process=subprocess.run([rscript,"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,check=False,shell=False)
+   version_process=subprocess.run([rscript,"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,check=False,shell=False, encoding="utf-8")
    packages[package_name]=version_process.stdout.strip() or None
   r_packages=packages
   r={**_safe_executable(rscript),"version":(process.stdout or process.stderr).strip(),"exit_code":process.returncode,"packages":packages}

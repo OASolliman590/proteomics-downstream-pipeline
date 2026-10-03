@@ -37,6 +37,8 @@ Rscript --vanilla -e 'lib <- Sys.getenv("R_LIBS_USER"); .libPaths(c(lib, .Librar
 .venv/bin/proteomics compare --left runs/example --right runs/demo-phase2 --output runs/comparison --json
 ```
 
+On Windows (PowerShell) the same commands run as `.venv\Scripts\proteomics <command> ...` (or `python -m proteomics_pipeline <command> ...`), with `$env:R_LIBS_USER = "$PWD\.r-lib"` in place of `export`. Forward-slash paths such as `runs/example` work unchanged. All files are read and written as UTF-8 on every platform, and R child processes always run with UTF-8 input/output.
+
 - `validate` runs intake, preprocessing and design checks without fitting.
 - `plan` freezes the AnalysisPlan (hash over configuration, inputs, design, families, code and environment) next to `plan-artifacts/`.
 - `run` re-plans in the run directory, fits, and writes `report/index.html` (thin report) and `report-full/index.html` (full report with figures).

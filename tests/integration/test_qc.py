@@ -32,12 +32,12 @@ def _require_r():
 
 
 def _config(tmp_path, mutate=None, name="example-independent.json"):
-    raw = json.loads((EXAMPLES / name).read_text())
+    raw = json.loads((EXAMPLES / name).read_text(encoding="utf-8"))
     for key in ("matrix", "observations", "features", "source_provenance"):
         raw["input"][key] = str((EXAMPLES / raw["input"][key]).resolve())
     if mutate:
         mutate(raw)
-    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw))
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw), encoding="utf-8")
     return load_config(path), path
 
 
@@ -67,19 +67,19 @@ def test_v021_preserve_leaves_values_and_masks_unchanged(tmp_path):
     for a, b in zip(canonical[1:], primary[1:]):
         assert [None if t == "NA" else float(t) for t in a[1:]] == [None if t == "NA" else float(t) for t in b[1:]]
     assert _tsv(out / "primary" / "observed_mask.tsv") == _tsv(tmp_path / "inputs" / "observed_mask.tsv")
-    lineage = json.loads((out / "primary" / "lineage.json").read_text())
+    lineage = json.loads((out / "primary" / "lineage.json").read_text(encoding="utf-8"))
     assert lineage["source_sha256"] == _sha(tmp_path / "inputs" / "matrix.tsv") and lineage["display_matrix_used"] is False
     assert lineage["operations"][1]["values_changed"] is False and lineage["new_primary_imputation"] == "none"
     # display-only PCA input is a different artifact from the primary matrix
     assert _sha(out / "qc" / "pca_display_input.tsv") != _sha(out / "primary" / "matrix.tsv")
-    state = json.loads((out / "qc" / "pca_state.json").read_text())
+    state = json.loads((out / "qc" / "pca_state.json").read_text(encoding="utf-8"))
     assert state["primary_matrix_sha256"] == _sha(out / "primary" / "matrix.tsv")
 
 
 def test_v021_v022_requested_median_is_a_distinct_artifact(tmp_path):
     _, result, out = _run(tmp_path, lambda c: c["preprocessing"].update({"normalization": "median", "normalization_sensitivities": ["quantile"]}))
     assert result["state"] == "COMPLETED", result["message"]
-    lineage = json.loads((out / "primary" / "lineage.json").read_text())
+    lineage = json.loads((out / "primary" / "lineage.json").read_text(encoding="utf-8"))
     assert lineage["operations"][1]["values_changed"] is True and lineage["output_sha256"] != lineage["source_sha256"]
     factors = {r[0]: float(r[3]) for r in _tsv(out / "normalization_factors.tsv")[1:]}
     canonical = _tsv(tmp_path / "inputs" / "matrix.tsv")
@@ -90,7 +90,7 @@ def test_v021_v022_requested_median_is_a_distinct_artifact(tmp_path):
     centre = sorted(medians.values()); centre = (centre[5] + centre[6]) / 2
     for obs, med in medians.items():
         assert abs(factors[obs] - (med - centre)) <= 1e-10
-    q = json.loads((out / "sensitivity" / "quantile" / "parameters.json").read_text())
+    q = json.loads((out / "sensitivity" / "quantile" / "parameters.json").read_text(encoding="utf-8"))
     assert q["role"] == "named_normalization_sensitivity_only" and sorted(q["lost_features"]) == ["P07", "P08"]
 
 
@@ -112,7 +112,7 @@ def test_v027_extreme_sample_flagged_not_dropped_and_exclusion_changes_plan_hash
     assert watch["C4"][4] == "true" and watch["C4"][6] == "none_flag_only"
     retained = _tsv(out / "primary" / "matrix.tsv")[0][1:]
     assert "C4" in retained and "T4" not in retained and len(retained) == 11
-    fragment = json.loads((out / "exclusions" / "fragment.json").read_text())
+    fragment = json.loads((out / "exclusions" / "fragment.json").read_text(encoding="utf-8"))
     assert fragment["exclusions"] == [{"observation_id": "T4", "reason": reason}]
     envelope = {"schema_version": "1.2.0", "kind": "synthetic_plan_envelope", "inputs": {"matrix": "fixed"}, "preprocessing_fragment": fragment}
     changed = copy.deepcopy(envelope); changed["preprocessing_fragment"]["exclusions"][0]["reason"] = "different reason"
@@ -126,9 +126,13 @@ def test_v027_negative_blank_exclusion_reason(tmp_path):
 
 
 def test_v028_stage_sensitivities_leave_primary_unchanged(tmp_path):
-    sens = [{"id": "mindet", "method": "min_deterministic", "model_id": "limma-main"},
-            {"id": "gauss", "method": "left_shifted_gaussian", "model_id": "limma-main", "shift_sd": 1.8, "scale_sd": 0.3}]
-    _, result, out = _run(tmp_path, lambda c: c["preprocessing"].update({"sensitivities": sens}))
+    # Audit 2026-10-02: sensitivities may not target the primary model, so they target a declared role=sensitivity model.
+    sens = [{"id": "mindet", "method": "min_deterministic", "model_id": "limma-sens"},
+            {"id": "gauss", "method": "left_shifted_gaussian", "model_id": "limma-sens", "shift_sd": 1.8, "scale_sd": 0.3}]
+    def mutate(c):
+        model = copy.deepcopy(c["models"][0]); model.update({"id": "limma-sens", "role": "sensitivity", "execution_requirement": "optional"})
+        c["models"].append(model); c["preprocessing"].update({"sensitivities": sens})
+    _, result, out = _run(tmp_path, mutate)
     assert result["state"] == "COMPLETED", result["message"]
     canonical = _tsv(tmp_path / "inputs" / "matrix.tsv")
     assert _tsv(out / "primary" / "matrix.tsv")[1:] == [[r[0]] + r[1:] for r in canonical[1:]]
@@ -136,7 +140,7 @@ def test_v028_stage_sensitivities_leave_primary_unchanged(tmp_path):
     p07 = [float(x) for x in canonical[7][1:] if x != "NA"]
     header = canonical[0]
     assert float(mindet["P07"][header.index("U2")]) == min(p07)
-    params = json.loads((out / "sensitivity" / "gauss" / "parameters.json").read_text())
+    params = json.loads((out / "sensitivity" / "gauss" / "parameters.json").read_text(encoding="utf-8"))
     assert params["seed"] == 4812026 and params["draw_order"] == "feature_id then observation_id"
 
 
@@ -145,7 +149,7 @@ def test_v030_qc_only_scope_and_zero_variable_features(tmp_path):
         c["runtime"]["scope"] = "qc_only"; c["input"]["matrix"] = str(FIX / "constant-abundance.tsv")
     _, result, out = _run(tmp_path, mutate)
     assert result["state"] == "COMPLETED", result["message"]
-    summary = json.loads((out / "preprocessing_result.json").read_text())
+    summary = json.loads((out / "preprocessing_result.json").read_text(encoding="utf-8"))
     assert summary["model_fit_performed"] is False and summary["coverage"]["state"] == "NOT_REQUESTED"
     assert summary["pca"] == {"state": "INAPPLICABLE", "reason_code": "E_QC_CONSTANT"}
     assert not (out / "qc" / "pca_scores.tsv").exists() and not (out / "qc" / "pca_variance.tsv").exists()

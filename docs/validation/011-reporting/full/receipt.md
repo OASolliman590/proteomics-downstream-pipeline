@@ -5,15 +5,15 @@ Packet R10b (FR-095–FR-100 / T095–T100 / V095–V100) was implemented and ve
 ## Identities
 
 - Contract versions: kit 1.2.0 with the 2026-10-01 amendments (ADR 0006/0007); scientific methods contract v1.2.0.
-- Working-source manifest (packet allowlist, 11 files): `61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334` — lines in `evidence/working-source-manifest.txt` (`sha256  path`, sorted, LF).
-- `verified_commit`: **null** — nothing is committed (branch `claude/full-pipeline`, uncommitted working tree).
+- Working-source manifest (packet allowlist, 11 files): `635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89` — lines in `evidence/working-source-manifest.txt` (`sha256  path`, sorted, LF).
+- `verified_commit`: **null** — the packet was committed by Omar as `fd8dfa9`; the audit fixes and this re-verification are uncommitted on top of it (branch `claude/full-pipeline`).
 - Environment: macOS-26.7-x86_64-i386-64bit-Mach-O; Python 3.13.15; R 4.6.1 with limma 3.68.5, statmod 1.5.2, impute 1.86.0, vegan 2.7-6, permute 0.9-10, DEqMS, proDA and fgsea at the versions pinned in `renv.lock`, in a project-local library (`.r-lib/`); `LANG=en_US.UTF-8`.
 
 ## Gates executed
 
 | Command | Exit | Result | Log |
 |---|---|---|---|
-| `.venv/bin/python -m pytest tests/integration/test_reports.py tests/integration/test_report_stub.py -q -rs -p no:cacheprovider` | 0 | 16 passed in 110.60s (0:01:50) | `python-tests-1.log` |
+| `.venv/bin/python -m pytest tests/integration/test_reports.py tests/integration/test_report_stub.py -q -rs -p no:cacheprovider` | 0 | 16 passed in 458.77s (0:07:38) | `python-tests-1.log` |
 
 Phase-level regression (R01 suite, historical unittest, all R tests, baseline registry, spec checker, whole Python suite) is in [`docs/validation/phase-gates`](../../phase-gates/README.md).
 
@@ -31,9 +31,9 @@ Phase-level regression (R01 suite, historical unittest, all R tests, baseline re
 
 ## Notes
 
-- Decisions taken on ambiguous points are D-01–D-30 in [decisions.md](../../../../specs/001-downstream-proteomics/decisions.md).
-- Independent audit (Astra-equivalent): **NOT_RUN**. Private-study regression: **NOT_RUN** (Maintainer-only, out of scope). No private data or private-derived numbers were used.
+- Decisions taken on ambiguous points are D-01–D-38 in [decisions.md](../../../../specs/001-downstream-proteomics/decisions.md).
+- Independent audit: an external audit of fd8dfa9 (2026-10-02) returned ACCEPT WITH FIXES; its findings are fixed (ADR 0008). Private-study regression: **NOT_RUN** (Maintainer-only, out of scope). No private data or private-derived numbers were used.
 
 ## Acceptance
 
-All listed gates exited 0 and every acceptance case above, including its negative case, passed on re-execution. R10b is recorded as accepted by the operator-authorized Claude route (self-verified, uncommitted); independent review remains open.
+All listed gates exited 0 and every acceptance case above, including its negative case, passed on re-execution. R10b is recorded as accepted by the operator-authorized Claude route (self-verified); the independent audit of fd8dfa9 returned ACCEPT WITH FIXES, and the fixes are self-verified and not yet re-audited.

@@ -437,6 +437,35 @@
         "tests/contract/foundation/test_cli_contract.py"
       ],
       "change": "The R01 CLI contract used a required DEqMS model as the still-unimplemented capability; after R06 the child process blocks the assay_service module explicitly (same invariant: validate/plan/run exit 3 with E_CAPABILITY_NOT_IMPLEMENTED). The same regression exposed an untyped missing-count-evidence error, fixed inside R06 (E_DEQMS_COUNT_EVIDENCE, exit 2)."
+    },
+    {
+      "id": "A-2026-10-01-10",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/config.py"
+      ],
+      "change": "Independent audit 2026-10-02 (MAJOR 1): configuration validation rejects a preprocessing sensitivity whose model_id is the role=primary model (E_SENSITIVITY_PRIMARY_MODEL, exit 2), so an imputed matrix can never feed the primary fit."
+    },
+    {
+      "id": "A-2026-10-01-11",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "tests/contract/foundation/test_cli_contract.py",
+        "tests/contract/foundation/test_verify_contract.py"
+      ],
+      "change": "Portability fixes from the first real CI run (36982402784, V107 FAIL). runtime.run_r_code runs R snippets from a UTF-8 script file instead of `Rscript -e`, passes forward-slash path arguments and decodes as UTF-8. runtime.child_environment forces a UTF-8 locale for R children on POSIX. The CLI contract finds console scripts through sysconfig. Explicit encoding='utf-8' was added mechanically to every text-mode open/read_text/write_text/subprocess call across src/, tests/ and scripts/maintained/ (each file stays in its owning packet; behaviour is unchanged on UTF-8 platforms), and a lint test enforces it."
+    },
+    {
+      "id": "A-2026-10-01-12",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/cli.py",
+        "tests/contract/foundation/test_cli_contract.py",
+        "src/proteomics_pipeline/reproduction.py",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "Portability follow-up to A-2026-10-01-11, found by the coordinator's simulated non-UTF-8 run (LC_ALL=C; non-ASCII paths) of the CI-failing tests: cli._emit printed JSON with ensure_ascii=False through the console encoding, so `proteomics report` (and any command whose payload holds non-ASCII text) crashed with UnicodeEncodeError on ASCII/cp1252 consoles. CLI output is now written to stdout as UTF-8 bytes regardless of locale. Regression test test_json_output_is_utf8_under_non_utf8_console fails on fd8dfa9 (exit 1, UnicodeEncodeError) and passes after the fix. Also: build_acceptance_ledger now writes a reason on FAIL records (taken from the traceability verification reason); V110 requires a reason on every non-PASS record and failed once V107 became FAIL. The ledger was regenerated: V107 gains its reason and V001's artifact hash follows the edited test_cli_contract.py; no status changed."
     }
   ]
 }

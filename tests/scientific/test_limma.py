@@ -28,12 +28,12 @@ def rows_by(path, *keys):
 
 
 def run_example(tmp_path, mutate=None, name="example-independent.json"):
-    config = json.loads((B.EXAMPLES / name).read_text())
+    config = json.loads((B.EXAMPLES / name).read_text(encoding="utf-8"))
     for key in ("matrix", "observations", "features", "source_provenance"):
         config["input"][key] = str((B.EXAMPLES / config["input"][key]).resolve())
     if mutate:
         mutate(config)
-    path = tmp_path / "analysis.json"; path.write_text(json.dumps(config))
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(config), encoding="utf-8")
     payload, code = workflow.run_command(path, tmp_path / "run")
     return payload, code, tmp_path / "run"
 
@@ -127,11 +127,11 @@ def test_v042_weighted_sparse_blocked_contrasts_through_export(tmp_path, mode):
     path, x, w = _weighted_dataset(tmp_path / "data", blocking)
     payload, code = workflow.run_command(path, tmp_path / "run")
     assert any(s["stage_id"] == "limma" and s["state"] == "COMPLETED" for s in payload["stages"]), payload
-    plan = json.loads((tmp_path / "run" / "plan.json").read_text())
+    plan = json.loads((tmp_path / "run" / "plan.json").read_text(encoding="utf-8"))
     rho = plan["blocking"][0]["consensus_correlation"] if mode != "none" else float("nan")
     oracle = B.r_json(ORACLE_GLS, str(tmp_path / "run" / "inputs" / "matrix.tsv"), ",".join(map(repr, x)), ",".join(map(repr, w)), repr(rho))
     table = rows_by(tmp_path / "run" / "dea" / "zero_null.tsv", "feature_id")
-    status = json.loads((tmp_path / "run" / "dea" / "model_status.json").read_text())["settings"]["limma-main"]
+    status = json.loads((tmp_path / "run" / "dea" / "model_status.json").read_text(encoding="utf-8"))["settings"]["limma-main"]
     assert status["weights"] == "observation" and status["exactness"]["B-A"]["weights"] is True
     assert (status["block_correlation"] is None) == (mode == "none")
     for i, feature in enumerate(oracle["ids"]):
@@ -188,7 +188,7 @@ def test_v043_v044_v047_moderation_treat_and_omnibus(tmp_path):
     for i, feature in enumerate(oracle["ids"]):
         d = diag[(feature,)]
         assert close(float(d["s2_prior"]), oracle["s2prior"][i]) and close(float(d["df_prior"]), oracle["dfprior"][i]) and close(float(d["s2_posterior"]), oracle["s2post"][i])
-    settings = json.loads((run / "dea" / "model_status.json").read_text())["settings"]["limma-main"]
+    settings = json.loads((run / "dea" / "model_status.json").read_text(encoding="utf-8"))["settings"]["limma-main"]
     assert settings["trend_applied"] is True and settings["robust_applied"] is True and "not robust sample regression" in settings["robust_meaning"]
     assert settings["prior_identical_across_contrasts"] is True
     zn = rows_by(run / "dea" / "zero_null.tsv", "contrast_id", "feature_id")
@@ -288,8 +288,8 @@ def test_v050_zero_discoveries_completed_and_shared_control_algebra(tmp_path):
     assert float(cov[("d", "t")]["unscaled_covariance"]) == -0.25 and float(cov[("r", "r")]["unscaled_covariance"]) == 0.5
     assert not [p for p in (tmp_path / "run").rglob("*") if "score" in p.name.lower() and p.name != "pca_scores.tsv"]   # PCA scores are QC, not score tests
     for table in (tmp_path / "run" / "dea").glob("*.tsv"):
-        assert "independent_score_test" not in table.read_text() and "descriptive_score" not in table.read_text()
-    status = json.loads((tmp_path / "run" / "dea" / "model_status.json").read_text())
+        assert "independent_score_test" not in table.read_text(encoding="utf-8") and "descriptive_score" not in table.read_text(encoding="utf-8")
+    status = json.loads((tmp_path / "run" / "dea" / "model_status.json").read_text(encoding="utf-8"))
     assert status["score_p_values_emitted"] is False
 
 
@@ -314,3 +314,96 @@ def test_v029_rerun_detection_family_stays_separate_from_abundance_families(tmp_
     assert "detection-family" not in families
     for row in B.read_tsv(tmp_path / "run" / "dea" / "zero_null.tsv"):
         assert row["family_id"] != "detection-family" and row["hypothesis_type"] == "protein_zero_null"
+
+
+# ----------------------------------------------------------------------------- audit 2026-10-02, MAJOR 1
+# The primary model must be fitted only on genuinely observed cells; an imputed sensitivity matrix
+# can feed only a non-primary model, and downstream stages refuse a primary fitted on anything else.
+def _with_sensitivity_model(config, model_id="limma-sens", target=None):
+    sens_model = json.loads(json.dumps(config["models"][0]))
+    sens_model.update({"id": model_id, "role": "sensitivity", "execution_requirement": "optional"})
+    config["models"].append(sens_model)
+    config["preprocessing"]["sensitivities"] = [{"id": "mind", "method": "min_deterministic", "model_id": target or model_id}]
+    config["multiplicity_families"].append({"id": "protein-sensitivity", "hypothesis_type": "protein_zero_null", "model_ids": [model_id],
+                                            "contrast_ids": [c["id"] for c in config["contrasts"]], "adjustment": "BH", "denominator": "finite_eligible",
+                                            "q_cutoff": 0.05, "role": "secondary"})
+
+
+def test_audit_m1_sensitivity_targeting_primary_model_is_rejected(tmp_path):
+    from proteomics_pipeline.config import load_config
+    from proteomics_pipeline.errors import ConfigurationError
+    config = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    for key in ("matrix", "observations", "features", "source_provenance"):
+        config["input"][key] = str((B.EXAMPLES / config["input"][key]).resolve())
+    config["preprocessing"]["sensitivities"] = [{"id": "mind", "method": "min_deterministic", "model_id": "limma-main"}]
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(config), encoding="utf-8")
+    with pytest.raises(ConfigurationError) as error:
+        load_config(path)
+    assert error.value.code == "E_SENSITIVITY_PRIMARY_MODEL" and error.value.pointer == "/preprocessing/sensitivities/0/model_id"
+    import subprocess, sys
+    result = subprocess.run([sys.executable, "-m", "proteomics_pipeline", "run", "--config", str(path), "--output", str(tmp_path / "run"), "--json"], capture_output=True, text=True, encoding="utf-8")
+    assert result.returncode == 2 and "E_SENSITIVITY_PRIMARY_MODEL" in result.stdout
+    assert not (tmp_path / "run" / "dea" / "zero_null.tsv").exists()
+
+
+def test_audit_m1_service_layer_refuses_primary_on_sensitivity_matrix():
+    from proteomics_pipeline import inference_service
+    from proteomics_pipeline.errors import ProteomicsError
+    primary = {"id": "limma-main", "role": "primary"}
+    with pytest.raises(ProteomicsError) as error:
+        inference_service.matrix_for_model(primary, {"limma-main": "mind"})
+    assert error.value.code == "E_PRIMARY_NOT_OBSERVED"
+    assert inference_service.matrix_for_model(primary, {}) == ("primary_matrix", True)
+    assert inference_service.matrix_for_model({"id": "s", "role": "sensitivity"}, {"s": "mind"}) == ("sensitivity_mind_matrix", False)
+
+
+def test_audit_m1_sensitivity_model_settings_record_the_matrix_actually_used(tmp_path):
+    payload, code, run = run_example(tmp_path, _with_sensitivity_model)
+    assert code == 0, payload
+    settings = json.loads((run / "dea" / "model_status.json").read_text(encoding="utf-8"))["settings"]
+    main, sens = settings["limma-main"], settings["limma-sens"]
+    assert main["input_matrix"] == "primary_matrix" and main["observed_cells_only"] is True and main["input_imputation"] == "none"
+    assert sens["input_matrix"] == "sensitivity_mind_matrix" and sens["observed_cells_only"] is False and sens["input_imputation"] == "min_deterministic"
+    assert main["new_primary_imputation"] == "none" and sens["new_primary_imputation"] == "not_applicable_non_primary_model"
+    rows = [r for r in B.read_tsv(run / "dea" / "zero_null.tsv") if r["model_id"] == "limma-sens"]
+    assert rows and "primary" not in {r["role"] for r in rows}            # imputed-matrix rows are never labelled primary
+    from proteomics_pipeline import inference_service
+    inference_service.require_primary_observed(run / "dea", "limma-main")           # passes on the real run
+
+
+def test_audit_m1_downstream_refuses_primary_results_not_from_observed_data(tmp_path):
+    from proteomics_pipeline import inference_service
+    from proteomics_pipeline.errors import ProteomicsError
+    dea = tmp_path / "dea"; dea.mkdir()
+    bad = {"models": [{"model_id": "limma-main", "state": "COMPLETED"}],
+           "settings": {"limma-main": {"input_matrix": "sensitivity_mind_matrix", "observed_cells_only": False, "input_imputation": "min_deterministic"}}}
+    (dea / "model_status.json").write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(ProteomicsError) as error:
+        inference_service.require_primary_observed(dea, "limma-main")
+    assert error.value.code == "E_PRIMARY_NOT_OBSERVED"
+    (dea / "model_status.json").write_text(json.dumps({"models": [], "settings": {}}), encoding="utf-8")
+    with pytest.raises(ProteomicsError):
+        inference_service.require_primary_observed(dea, "limma-main")
+
+
+def test_audit_m1_pathways_response_and_permanova_builders_call_the_guard(tmp_path, monkeypatch):
+    from proteomics_pipeline import inference_service, pathway_service, permanova_service, response_service
+    from proteomics_pipeline.errors import ProteomicsError
+    calls = []
+    def guard(config, dea_dir):
+        calls.append(dea_dir); raise ProteomicsError("E_PRIMARY_NOT_OBSERVED", "guard reached", exit_code=5)
+    monkeypatch.setattr(inference_service, "guard_downstream", guard)
+    config = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    config["pathways"] = {"methods": ["camera"], "gene_set_resource_ids": [], "representative_rule": "coverage_median_stable_id", "multi_gene_policy": "exclude"}
+    config["response"] = {"axes": []}
+    config["multivariate"] = {"enabled": True, "permanova": {"feature_sets": [{"id": "d", "kind": "dep_derived", "model_id": "limma-main", "contrast_id": "disease-control", "criterion": "family_q", "threshold": 0.05}]}}
+    plan = {"artifacts": [{"artifact_id": a, "relative_path": "x", "sha256": "0" * 64} for a in ("primary_matrix", "primary_observed_mask", "primary_observations", "design_joint")],
+            "plan_hash": "h", "contrasts": [], "blocking": []}
+    (tmp_path / "plan.json").write_text("{}", encoding="utf-8")
+    for builder in (lambda: pathway_service.build_request(plan, plan_path=tmp_path / "plan.json", config=config, run_id="r", output_temp_dir=tmp_path, dea_dir=tmp_path, resources_dir=tmp_path),
+                    lambda: response_service.build_request(plan, plan_path=tmp_path / "plan.json", config=config, run_id="r", output_temp_dir=tmp_path, dea_dir=tmp_path, config_dir=tmp_path),
+                    lambda: permanova_service.build_request(plan, plan_path=tmp_path / "plan.json", config=config, run_id="r", output_temp_dir=tmp_path, dea_dir=tmp_path)):
+        with pytest.raises(ProteomicsError) as error:
+            builder()
+        assert error.value.code == "E_PRIMARY_NOT_OBSERVED"
+    assert len(calls) == 3

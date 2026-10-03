@@ -123,6 +123,8 @@ limma_stage <- function(request) .pc_run_stage(request, function(out) {
   all_rows <- list(); model_status <- list(); settings <- list(); fits <- list()
   for (model in p$models) {
     status <- tryCatch({
+      if (identical(model$role, "primary") && (!isTRUE(model$uses_observed_mask) || !identical(model$matrix_artifact, "primary_matrix")))
+        stop("E_PRIMARY_NOT_OBSERVED: the primary model must be fitted on observed cells of the primary matrix", call. = FALSE)   # audit 2026-10-02
       values <- .pc_matrix_from_tsv(.pc_find_input(request, model$matrix_artifact), "numeric")
       if (isTRUE(model$uses_observed_mask)) { mask <- observed[rownames(values), colnames(values), drop = FALSE]; values[!mask] <- NA }
       model_estimability <- estimability
@@ -148,8 +150,10 @@ limma_stage <- function(request) .pc_run_stage(request, function(out) {
       all_rows[[length(all_rows) + 1L]] <- fit$rows
       settings[[model$model_id]] <- c(fit$settings, list(fitting_universe_size = length(fit$universe), numerical_failures = I(fit$failures),
                                                          prior_identical_across_contrasts = fit$prior_spread <= 1e-12, exactness = fit$exactness,
-                                                         input_matrix = model$matrix_artifact, observed_cells_only = isTRUE(model$uses_observed_mask),
-                                                         new_primary_imputation = "none", weights = model$weights_kind, block_correlation = correlation))
+                                                         input_matrix = model$matrix_artifact, observed_cells_only = isTRUE(model$uses_observed_mask) && identical(model$matrix_artifact, "primary_matrix"),
+                                                         input_imputation = if (is.null(model$input_imputation)) "none" else model$input_imputation,
+                                                         new_primary_imputation = if (identical(model$role, "primary")) "none" else "not_applicable_non_primary_model",
+                                                         weights = model$weights_kind, block_correlation = correlation))
       write_tsv(fit$diagnostics, file.path("diagnostics", paste0(model$model_id, "_moderation.tsv")), paste0("moderation_", model$model_id), "ModelFit")
       list(model_id = model$model_id, state = "COMPLETED", required = identical(model$execution_requirement, "required"), reason_code = NULL)
     }, error = function(e) {

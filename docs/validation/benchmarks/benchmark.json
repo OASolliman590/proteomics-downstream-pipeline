@@ -17,49 +17,49 @@
   },
   "exit_code": 0,
   "run_state": "COMPLETED",
-  "wall_seconds": 883.7,
-  "data_generation_seconds": 3.1,
-  "peak_child_rss_bytes": 1735258112,
+  "wall_seconds": 558.8,
+  "data_generation_seconds": 3.3,
+  "peak_child_rss_bytes": 1595342848,
   "stages": [
     {
       "stage_id": "intake",
       "state": "COMPLETED",
-      "seconds": 80.119358
+      "seconds": 95.41632
     },
     {
       "stage_id": "preprocessing",
       "state": "COMPLETED",
-      "seconds": 224.0
+      "seconds": 135.0
     },
     {
       "stage_id": "design",
       "state": "COMPLETED",
-      "seconds": 382.0
+      "seconds": 84.0
     },
     {
       "stage_id": "limma",
       "state": "COMPLETED",
-      "seconds": 49.0
+      "seconds": 69.0
     },
     {
       "stage_id": "resources",
       "state": "COMPLETED",
-      "seconds": 99.0
+      "seconds": 118.0
     },
     {
       "stage_id": "pathways",
       "state": "COMPLETED",
-      "seconds": 22.0
+      "seconds": 26.0
     },
     {
       "stage_id": "report",
       "state": "COMPLETED",
-      "seconds": 3.601943
+      "seconds": 4.411743
     },
     {
       "stage_id": "report_full",
       "state": "COMPLETED",
-      "seconds": 13.332132
+      "seconds": 14.46059
     }
   ],
   "targets": {

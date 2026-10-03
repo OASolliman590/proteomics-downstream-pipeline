@@ -20,21 +20,29 @@ coverage_tables <- function(observed, observations, group_column, rules, extra_e
     n_units <- vapply(required, function(g) sum(groups == g), integer(1))
     counts <- vapply(required, function(g) rowSums(observed[, groups == g, drop = FALSE]), numeric(nrow(observed)))
     counts <- matrix(counts, nrow = nrow(observed), dimnames = list(rownames(observed), required))
-    for (i in seq_len(nrow(observed))) {
-      feature <- rownames(observed)[i]
-      n_obs <- counts[i, ]
-      fraction <- ifelse(n_units > 0, n_obs / n_units, NA_real_)
-      if (policy == "native_dropout") { eligibility <- "not_run"; reason <- "native_dropout_policy_deferred_to_R06" }
-      else if (!is.null(extra_exclusions) && feature %in% names(extra_exclusions)) { eligibility <- "excluded"; reason <- extra_exclusions[[feature]] }
-      else if (all_missing[i]) { eligibility <- "excluded"; reason <- "all_study_missing" }
-      else if (any(n_units == 0)) { eligibility <- "nonestimable"; reason <- paste0("required_group_has_no_units:", paste(required[n_units == 0], collapse = ",")) }
-      else if (any(n_obs == 0)) { eligibility <- "nonestimable"; reason <- paste0("all_missing_required_group:", paste(required[n_obs == 0], collapse = ",")) }
-      else if (any(n_obs < min_n | fraction < min_fraction)) { eligibility <- "excluded"; reason <- paste0("coverage_below_minimum:", paste(required[n_obs < min_n | fraction < min_fraction], collapse = ",")) }
-      else { eligibility <- "eligible"; reason <- "eligible" }
-      summary_rows[[length(summary_rows) + 1L]] <- data.frame(model_id = rule$model_id, contrast_id = rule$contrast_id, feature_id = feature,
-        eligibility = eligibility, reason = reason, n_obs_by_required_group = as.character(jsonlite::toJSON(as.list(stats::setNames(as.integer(n_obs), required)), auto_unbox = TRUE)),
-        policy = policy, minimum_observed_per_group = min_n, minimum_fraction = min_fraction, stringsAsFactors = FALSE)
-    }
+    # vectorized over features (audit 2026-10-02; same rules and outputs as the former per-feature loop)
+    fraction <- sweep(counts, 2L, ifelse(n_units > 0, n_units, NA_real_), "/")
+    features <- rownames(observed); nf <- length(features)
+    excluded_extra <- if (is.null(extra_exclusions)) rep(FALSE, nf) else features %in% names(extra_exclusions)
+    names_list <- function(mask) apply(mask, 1L, function(m) paste(required[m], collapse = ","))
+    zero_units <- any(n_units == 0)
+    no_obs <- counts == 0
+    low <- (counts < min_n) | (fraction < min_fraction); low[is.na(low)] <- FALSE
+    eligibility <- rep("eligible", nf); reason <- rep("eligible", nf)
+    set <- function(mask, e, r) { mask <- mask & eligibility == "eligible" & reason == "eligible" & !decided; eligibility[mask] <<- e; reason[mask] <<- r[mask]; decided[mask] <<- TRUE }
+    decided <- rep(FALSE, nf)
+    if (policy == "native_dropout") set(rep(TRUE, nf), "not_run", rep("native_dropout_policy_deferred_to_R06", nf))
+    if (any(excluded_extra)) { r <- rep(NA_character_, nf); r[excluded_extra] <- unlist(extra_exclusions[features[excluded_extra]]); set(excluded_extra, "excluded", r) }
+    set(all_missing, "excluded", rep("all_study_missing", nf))
+    if (zero_units) set(rep(TRUE, nf), "nonestimable", rep(paste0("required_group_has_no_units:", paste(required[n_units == 0], collapse = ",")), nf))
+    any_no <- rowSums(no_obs) > 0
+    if (any(any_no & !decided)) set(any_no, "nonestimable", paste0("all_missing_required_group:", names_list(no_obs)))
+    any_low <- rowSums(low) > 0
+    if (any(any_low & !decided)) set(any_low, "excluded", paste0("coverage_below_minimum:", names_list(low)))
+    counts_json <- vapply(seq_len(nf), function(i) as.character(jsonlite::toJSON(as.list(stats::setNames(as.integer(counts[i, ]), required)), auto_unbox = TRUE)), "")
+    summary_rows[[length(summary_rows) + 1L]] <- data.frame(model_id = rep(rule$model_id, nf), contrast_id = rep(rule$contrast_id, nf), feature_id = features,
+      eligibility = eligibility, reason = reason, n_obs_by_required_group = counts_json,
+      policy = rep(policy, nf), minimum_observed_per_group = rep(min_n, nf), minimum_fraction = rep(min_fraction, nf), stringsAsFactors = FALSE, row.names = NULL)
     group_rows[[length(group_rows) + 1L]] <- data.frame(model_id = rule$model_id, contrast_id = rule$contrast_id,
       feature_id = rep(rownames(observed), times = length(required)), group = rep(required, each = nrow(observed)),
       n_observed = as.integer(as.vector(counts)), n_units = rep(as.integer(n_units), each = nrow(observed)),

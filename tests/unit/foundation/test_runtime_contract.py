@@ -64,7 +64,7 @@ def test_subprocess_uses_literal_argv_and_captures_streams(tmp_path):
     import os
     result=runtime.run_subprocess([sys.executable,"-c",code,str(literal)],cwd=tmp_path)
     assert result.returncode==0 and "path-ok" in result.stdout and "stderr" in result.stderr
-    assert literal.read_text()=="stdout"
+    assert literal.read_text(encoding="utf-8")=="stdout"
 
 def test_real_child_failure_preserves_exit_code():
     result=runtime.run_subprocess([sys.executable,"-c","import sys; sys.exit(7)"])
@@ -84,13 +84,13 @@ def test_timeout_is_failed_and_never_completed(tmp_path,monkeypatch):
     monkeypatch.setattr(runtime,"run_subprocess",timeout)
     result=runtime.execute_stage(_request(tmp_path/"out"),rscript="Rscript",timeout=0.01)
     assert result["state"]=="CANCELLED" and result["exit_code"]==6 and result["reason_code"]=="E_CHILD_TIMEOUT"
-    assert (tmp_path/"out"/"stdout.log").read_text()=="partial-out" and (tmp_path/"out"/"stderr.log").read_text()=="partial-err"
+    assert (tmp_path/"out"/"stdout.log").read_text(encoding="utf-8")=="partial-out" and (tmp_path/"out"/"stderr.log").read_text(encoding="utf-8")=="partial-err"
 
 def test_nonzero_child_failure_is_preserved(tmp_path,monkeypatch):
     import subprocess
     def child(argv,**_kwargs):
         record=runtime.stage_result("r","s","foundation.io_roundtrip","FAILED",plan_hash=None,exit_code=7,reason_code="E_CHILD_EXIT")
-        Path(argv[-1]).write_text(__import__("json").dumps(record))
+        Path(argv[-1]).write_text(__import__("json").dumps(record), encoding="utf-8")
         return subprocess.CompletedProcess(argv,7,"child-out","child-err")
     monkeypatch.setattr(runtime,"run_subprocess",child)
     result=runtime.execute_stage(_request(tmp_path/"out"),rscript="Rscript")
@@ -121,7 +121,7 @@ def test_real_r_execute_stage_integration_when_local_package_exists(tmp_path):
     assert promoted.joinpath("metadata.tsv").read_text(encoding="utf-8").splitlines()==["observation_id\tlabel","obs-1\tα","obs-2\tβ"]
     sentinel=tmp_path/"outside sentinel Ω & ;.txt"; assert not sentinel.exists()
     assert not (tmp_path/"sentinel.txt").exists()
-    failed=subprocess.run([rscript,"--vanilla","-e","stop('R01 intentional failure')"],capture_output=True,text=True,shell=False,check=False)
+    failed=subprocess.run([rscript,"--vanilla","-e","stop('R01 intentional failure')"],capture_output=True,text=True,shell=False,check=False, encoding="utf-8")
     assert failed.returncode!=0 and "R01 intentional failure" in failed.stderr
 
 def test_real_r_wrapper_failure_is_failed_with_captured_stderr(tmp_path):
@@ -141,7 +141,7 @@ def test_missing_result_with_capability_exit_three_is_not_run(tmp_path,monkeypat
 def test_zero_process_with_nonzero_result_is_integrity_failure(tmp_path,monkeypatch):
     import json,subprocess
     def child(argv,**_kwargs):
-        record=runtime.stage_result("r","s","foundation.io_roundtrip","FAILED",plan_hash=None,exit_code=7,reason_code="E_CHILD_EXIT"); Path(argv[-1]).write_text(json.dumps(record)); return subprocess.CompletedProcess(argv,0,"","")
+        record=runtime.stage_result("r","s","foundation.io_roundtrip","FAILED",plan_hash=None,exit_code=7,reason_code="E_CHILD_EXIT"); Path(argv[-1]).write_text(json.dumps(record), encoding="utf-8"); return subprocess.CompletedProcess(argv,0,"","")
     monkeypatch.setattr(runtime,"run_subprocess",child)
     with pytest.raises(runtime.IntegrityError): runtime.execute_stage(_request(tmp_path/"out"),rscript="Rscript")
 
@@ -149,8 +149,8 @@ def test_execute_stage_requires_fresh_temp_and_atomically_promotes_complete_dire
     import json,subprocess
     run_root=tmp_path/"run"; run_root.mkdir(); request=_request(run_root/"stage-temp")
     def child(argv,**_kwargs):
-        request_value=json.loads(Path(argv[-3]).read_text()); out=Path(request_value["output_temp_dir"]); (out/"sessionInfo.txt").write_text("session"); (out/"value.txt").write_text("value")
-        record=runtime.stage_result("r","s","foundation.io_roundtrip","COMPLETED",plan_hash=None,exit_code=0); record["session_info_path"]="sessionInfo.txt"; record["outputs"]=[{"artifact_id":"session","relative_path":"sessionInfo.txt","sha256":hashlib.sha256((out/"sessionInfo.txt").read_bytes()).hexdigest(),"result_type":"session_info"},{"artifact_id":"value","relative_path":"value.txt","sha256":hashlib.sha256((out/"value.txt").read_bytes()).hexdigest(),"result_type":"text"}]; Path(argv[-1]).write_text(json.dumps(record)); return subprocess.CompletedProcess(argv,0,"","" )
+        request_value=json.loads(Path(argv[-3]).read_text(encoding="utf-8")); out=Path(request_value["output_temp_dir"]); (out/"sessionInfo.txt").write_text("session", encoding="utf-8"); (out/"value.txt").write_text("value", encoding="utf-8")
+        record=runtime.stage_result("r","s","foundation.io_roundtrip","COMPLETED",plan_hash=None,exit_code=0); record["session_info_path"]="sessionInfo.txt"; record["outputs"]=[{"artifact_id":"session","relative_path":"sessionInfo.txt","sha256":hashlib.sha256((out/"sessionInfo.txt").read_bytes()).hexdigest(),"result_type":"session_info"},{"artifact_id":"value","relative_path":"value.txt","sha256":hashlib.sha256((out/"value.txt").read_bytes()).hexdigest(),"result_type":"text"}]; Path(argv[-1]).write_text(json.dumps(record), encoding="utf-8"); return subprocess.CompletedProcess(argv,0,"","" )
     monkeypatch.setattr(runtime,"run_subprocess",child)
     result=runtime.execute_stage(request,rscript="Rscript",run_root=run_root)
     destination=run_root/"stages"/"s"; assert result["state"]=="COMPLETED" and destination.is_dir() and not Path(request["output_temp_dir"]).exists(); assert (destination/"sessionInfo.txt").exists()
@@ -162,8 +162,8 @@ def test_incomplete_stage_is_not_promoted_to_completed_destination(tmp_path,monk
     import json,subprocess
     run_root=tmp_path/"run"; run_root.mkdir(); request=_request(run_root/"stage-temp")
     def child(argv,**_kwargs):
-        out=Path(json.loads(Path(argv[-3]).read_text())["output_temp_dir"]); (out/"diagnostic.txt").write_text("partial")
-        record=runtime.stage_result("r","s","foundation.io_roundtrip","FAILED",plan_hash=None,exit_code=7,reason_code="E_CHILD_EXIT"); record["outputs"]=[{"artifact_id":"diagnostic","relative_path":"diagnostic.txt","sha256":hashlib.sha256((out/"diagnostic.txt").read_bytes()).hexdigest(),"result_type":"diagnostic"}]; Path(argv[-1]).write_text(json.dumps(record)); return subprocess.CompletedProcess(argv,7,"", "failed")
+        out=Path(json.loads(Path(argv[-3]).read_text(encoding="utf-8"))["output_temp_dir"]); (out/"diagnostic.txt").write_text("partial", encoding="utf-8")
+        record=runtime.stage_result("r","s","foundation.io_roundtrip","FAILED",plan_hash=None,exit_code=7,reason_code="E_CHILD_EXIT"); record["outputs"]=[{"artifact_id":"diagnostic","relative_path":"diagnostic.txt","sha256":hashlib.sha256((out/"diagnostic.txt").read_bytes()).hexdigest(),"result_type":"diagnostic"}]; Path(argv[-1]).write_text(json.dumps(record), encoding="utf-8"); return subprocess.CompletedProcess(argv,7,"", "failed")
     monkeypatch.setattr(runtime,"run_subprocess",child)
     result=runtime.execute_stage(request,rscript="Rscript",run_root=run_root)
     assert result["state"]=="FAILED" and not (run_root/"stages"/"s").exists() and Path(request["output_temp_dir"]).is_dir()

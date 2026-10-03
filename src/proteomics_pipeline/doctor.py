@@ -7,7 +7,7 @@ from .config import load_config
 def _r_inventory():
     executable=shutil.which("Rscript")
     if executable is None:return {"name":"Rscript","available":False,"status":"NOT_AVAILABLE","path":None,"version":None}
-    try: result=subprocess.run([executable,"--version"],capture_output=True,text=True,shell=False,check=False); version=(result.stdout or result.stderr).strip()
+    try: result=subprocess.run([executable,"--version"],capture_output=True,text=True,shell=False,check=False, encoding="utf-8"); version=(result.stdout or result.stderr).strip()
     except OSError as exc:return {"name":"Rscript","available":False,"status":"NOT_AVAILABLE","path":executable,"version":None,"error":str(exc)}
     return {"name":"Rscript","available":result.returncode==0,"status":"AVAILABLE" if result.returncode==0 else "NOT_AVAILABLE","path":executable,"version":version}
 def _requested(config):
@@ -50,7 +50,7 @@ def inspect(*,config_path: str|Path|None=None):
         packages=[]
         for package_name in package_names:
             result=subprocess.run([r["path"],"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) quit(status=0L) else quit(status=1L)"],capture_output=True,shell=False,check=False)
-            version_result=subprocess.run([r["path"],"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,shell=False,check=False)
+            version_result=subprocess.run([r["path"],"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,shell=False,check=False, encoding="utf-8")
             packages.append({"name":package_name,"available":result.returncode==0,"status":"AVAILABLE" if result.returncode==0 else "NOT_AVAILABLE","version":version_result.stdout.strip() or None})
     package_by_name={item["name"]:item for item in packages}
     discovered_by_id={item["id"]:item for item in discovered}

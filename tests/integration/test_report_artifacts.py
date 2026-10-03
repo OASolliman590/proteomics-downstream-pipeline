@@ -83,11 +83,11 @@ def _png_size(path: Path) -> tuple[int, int]:
 
 
 def _run(tmp_path):
-    raw = json.loads((B.EXAMPLES / "example-independent.json").read_text())
+    raw = json.loads((B.EXAMPLES / "example-independent.json").read_text(encoding="utf-8"))
     for key in ("matrix", "observations", "features", "source_provenance"):
         raw["input"][key] = str((B.EXAMPLES / raw["input"][key]).resolve())
     raw["report"]["figure_formats"] = ["png", "pdf", "svg"]
-    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw))
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw), encoding="utf-8")
     payload, code = workflow.run_command(path, tmp_path / "run")
     assert code == 0, payload
     return tmp_path / "run"
@@ -96,7 +96,7 @@ def _run(tmp_path):
 def test_v109_figures_labels_coordinates_links_and_files(tmp_path):
     run = _run(tmp_path)
     full = run / "report-full"
-    figures = json.loads((full / "figures.json").read_text())
+    figures = json.loads((full / "figures.json").read_text(encoding="utf-8"))
     assert figures, "no figures produced"
     page = (full / "index.html").read_text(encoding="utf-8")
     for fig in figures:
@@ -132,7 +132,7 @@ def test_v109_figures_labels_coordinates_links_and_files(tmp_path):
 def test_v109_negative_tampered_source_or_mark_is_detected(tmp_path):
     run = _run(tmp_path)
     full = run / "report-full"
-    fig = next(f for f in json.loads((full / "figures.json").read_text()) if f["stem"].startswith("volcano_zero_null"))
+    fig = next(f for f in json.loads((full / "figures.json").read_text(encoding="utf-8")) if f["stem"].startswith("volcano_zero_null"))
     svg = (full / fig["source"].replace("figure_sources", "figures").replace(".tsv", ".svg")).read_text(encoding="utf-8")
     rows = _tsv(full / fig["source"])
     tampered = [dict(r) for r in rows]

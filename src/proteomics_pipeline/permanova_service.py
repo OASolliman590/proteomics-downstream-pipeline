@@ -3,8 +3,10 @@
 Builds the stage request from the frozen plan (primary matrix, observed
 mask, observations) and, for DEP-derived feature sets, the completed R05
 differential table.  Plan-time checks refuse requests that cannot be
-answered (empty interaction cells, insufficient permutation resolution,
-covariates in subject-blocked designs, unknown panel members).
+answered (insufficient permutation resolution, covariates in subject-blocked
+designs, mixed or unbalanced subject blocking, unknown panel members, and
+empty interaction cells when the analysis is required; for an optional
+analysis only the interaction term is refused, in R).
 """
 from __future__ import annotations
 
@@ -66,13 +68,29 @@ def plan_checks(config: dict, observations: list[dict], feature_ids: list[str]) 
     if settings["covariates"] and blocked:
         refusals.append(("E_PERMANOVA_DESIGN_UNSUPPORTED", "covariate PERMANOVA is not supported for subject-blocked designs"))
     group = design["group_column"]
+    if blocked:   # audit 2026-10-02: the group term needs a valid exchangeability scheme (see pm_group_scheme in permanova.R)
+        subject = design["blocking"]["subject_column"]
+        levels = set(design["group_levels"])
+        by_subject: dict[str, list[str]] = {}
+        for row in observations:
+            if row.get(group) in levels:
+                by_subject.setdefault(row.get(subject, ""), []).append(row[group])
+        distinct = {k: len(set(v)) for k, v in by_subject.items()}
+        if distinct and all(n == 1 for n in distinct.values()):
+            if len({len(v) for v in by_subject.values()}) != 1:
+                refusals.append(("E_PERMANOVA_BLOCKING_UNBALANCED", f"group is constant within each {subject} but subjects have unequal numbers of observations; whole-subject permutation needs balanced subjects"))
+        elif distinct and not all(n > 1 for n in distinct.values()):
+            refusals.append(("E_PERMANOVA_BLOCKING_MIXED", f"group is constant within some {subject} values and varies within others; no single valid permutation scheme exists"))
+    required = (config.get("multivariate") or {}).get("execution_requirement", "optional") == "required"
     for cov in settings["covariates"]:
         if any(cov["column"] not in row for row in observations[:1]):
             raise PermanovaRefusal("E_PERMANOVA_COVARIATE", f"covariate column {cov['column']!r} is not in the observation metadata", "/multivariate/permanova/covariates")
         if settings["interaction"] and cov["type"] == "categorical":
             levels = sorted({row[cov["column"]] for row in observations})
             empty = [f"{g}/{lvl}" for g in design["group_levels"] for lvl in levels if not any(r[group] == g and r[cov["column"]] == lvl for r in observations)]
-            if empty:
+            # audit 2026-10-02: for an optional analysis only the interaction term is refused (in R, recorded in refusals.tsv and
+            # warnings) and the other results are kept; a required analysis that requests an inestimable term is still rejected.
+            if empty and required:
                 refusals.append(("E_PERMANOVA_INTERACTION_NONESTIMABLE", f"group x {cov['column']} has empty cell(s) {empty}; the interaction is not estimable"))
     return refusals
 
@@ -88,6 +106,8 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
     if any(s["kind"] == "dep_derived" for s in settings["feature_sets"]):
         if dea_dir is None:
             raise PermanovaRefusal("E_PERMANOVA_FEATURE_SET", "DEP-derived feature sets need the completed differential stage")
+        from . import inference_service
+        inference_service.guard_downstream(config, dea_dir)   # audit 2026-10-02: DEP-derived sets only from observed-data primary results
         result = json.loads((Path(dea_dir) / "stage-result.json").read_text(encoding="utf-8"))
         output = next(o for o in result["outputs"] if o["relative_path"] == "zero_null.tsv")
         path = Path(dea_dir) / "zero_null.tsv"

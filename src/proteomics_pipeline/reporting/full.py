@@ -91,7 +91,8 @@ def _r_figure(source: Path, kind: str, target: Path, fmt: str) -> bool:
     if not rscript:
         return False
     code = "a <- commandArgs(TRUE); proteomicsCore:::plot_figure_source(a[1], a[2], a[3], a[4])"
-    result = subprocess.run([rscript, "--vanilla", "-e", code, str(source), kind, str(target), fmt], capture_output=True, text=True, shell=False)
+    from ..runtime import run_r_code
+    result = run_r_code(code, [source, kind, target, fmt], rscript=rscript)
     return result.returncode == 0 and target.is_file()
 
 

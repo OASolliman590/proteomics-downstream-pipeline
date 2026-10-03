@@ -16,10 +16,10 @@ def test_doctor_resource_hash_and_absolute_path_are_truthful(tmp_path,monkeypatc
     monkeypatch.setitem(sys.modules,"proteomics_pipeline.resources",None)
     resource=tmp_path/"resource.dat"; resource.write_bytes(b"stable-resource")
     digest=hashlib.sha256(resource.read_bytes()).hexdigest()
-    source=json.loads((__import__("pathlib").Path(__file__).parents[3]/"configs/examples/example-independent.json").read_text())
+    source=json.loads((__import__("pathlib").Path(__file__).parents[3]/"configs/examples/example-independent.json").read_text(encoding="utf-8"))
     source["runtime"]["phase"]=2
     source["resources"]=[{"id":"r","kind":"mapping","path":str(resource),"sha256":digest,"version":"1","source":"synthetic","source_taxonomy_id":1,"target_taxonomy_id":1,"terms":"term"}]
-    config_path=tmp_path/"analysis.json"; config_path.write_text(json.dumps(source))
+    config_path=tmp_path/"analysis.json"; config_path.write_text(json.dumps(source), encoding="utf-8")
     report=inspect(config_path=config_path); assert report["resources"][0]["available"] is True; assert exit_code(report)==3
     resource.write_bytes(b"mutated"); report=inspect(config_path=config_path); assert report["resources"][0]["status"]=="NOT_AVAILABLE" and exit_code(report)==3
     resource.unlink(); report=inspect(config_path=config_path); assert report["resources"][0]["status"]=="NOT_AVAILABLE" and exit_code(report)==3

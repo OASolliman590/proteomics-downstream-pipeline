@@ -1,5 +1,5 @@
 $ Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-response.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))
-# started 2026-10-01T22:58:21.368508+00:00  exit 0
+# started 2026-10-02T20:37:53.156007+00:00  exit 0
 
 response: ...................................
 

@@ -4,7 +4,7 @@
     {
       "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
       "exit_code": 0,
-      "summary": "9 passed in 48.74s",
+      "summary": "14 passed in 60.18s (0:01:00)",
       "log": "docs/validation/006-limma-inference/evidence/python-tests-1.log"
     },
     {
@@ -14,7 +14,7 @@
       "log": "docs/validation/006-limma-inference/evidence/r-test-limma.log"
     }
   ],
-  "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
+  "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
   "n_files": 9,
   "environment": {
     "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",

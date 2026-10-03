@@ -1,5 +1,5 @@
 $ Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-assay-engines.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))
-# started 2026-10-01T23:43:26.970512+00:00  exit 0
+# started 2026-10-02T20:32:28.394811+00:00  exit 0
 
 assay-engines: .............
 

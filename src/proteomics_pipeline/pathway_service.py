@@ -75,6 +75,8 @@ def _stage_output(stage_dir: Path, relative: str) -> dict:
 
 def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: str, output_temp_dir: str | Path, dea_dir: str | Path, resources_dir: str | Path,
                   stage_id: str = "pathways") -> dict:
+    from . import inference_service
+    inference_service.guard_downstream(config, dea_dir)    # audit 2026-10-02: primary results must come from observed data
     plan_path = Path(plan_path).resolve(); root = plan_path.parent
     pathways = config["pathways"]
     model, role = gene_model(config)

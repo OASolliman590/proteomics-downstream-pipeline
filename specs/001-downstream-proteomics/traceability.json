@@ -310,9 +310,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -346,9 +346,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -382,9 +382,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -418,9 +418,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -454,9 +454,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -490,9 +490,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -526,9 +526,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -562,9 +562,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -598,9 +598,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -634,9 +634,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "100ad8306f017027841434e880ee2d9580162d6016195cfdf8d6972ffb3ec729",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "ec8a84f27729be9b6845b16dfe33b28bd6609214e212623a9ffca833f2472f4d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -671,9 +671,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -708,9 +708,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -745,9 +745,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -782,9 +782,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -819,9 +819,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -856,9 +856,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -893,9 +893,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -930,9 +930,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -967,9 +967,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1004,9 +1004,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "bb5a6943d5d0d0b4257eb3aea5da63e2557d640889bfb4beb4325c8fd3a48039",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "99d7adaee57c892e47e5508d77ef84a55db3d0af6a7e4d4f1e08574d348d9905",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1040,9 +1040,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1076,9 +1076,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1112,9 +1112,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1148,9 +1148,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1184,9 +1184,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1220,9 +1220,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1256,9 +1256,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1292,9 +1292,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1328,9 +1328,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1364,9 +1364,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d1ab57e690e2e9c38a28705e688fd39c3f947e99ee59e3e41c05844c92bc4696",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "8a69c8867b328dbc739080f8d34f097ead5da565b25094bda01175e971360091",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1400,9 +1400,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1436,9 +1436,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1472,9 +1472,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1508,9 +1508,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1544,9 +1544,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1580,9 +1580,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1616,9 +1616,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1652,9 +1652,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1688,9 +1688,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1724,9 +1724,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1760,9 +1760,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1796,9 +1796,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1832,9 +1832,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1868,9 +1868,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1904,9 +1904,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1940,9 +1940,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -1976,9 +1976,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2012,9 +2012,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2048,9 +2048,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2084,9 +2084,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2120,9 +2120,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2156,9 +2156,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2192,9 +2192,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2228,9 +2228,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2264,9 +2264,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2300,9 +2300,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2336,9 +2336,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2372,9 +2372,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2408,9 +2408,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2444,9 +2444,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "ebeb8e7a008c80856a30ef94c32c45c83994153183f0ade504999e00c327d899",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "63a068a2e3ae4a8ce230fd29c9d65ce271abef10179b722b7b6262d1933e8b4b",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2480,9 +2480,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2516,9 +2516,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2552,9 +2552,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2588,9 +2588,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2624,9 +2624,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2660,9 +2660,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2696,9 +2696,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2732,9 +2732,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2768,9 +2768,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2804,9 +2804,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "b5e3cdf146e19bb8e2f8f0a2527b1b81d5c81732487a102e84b4727410b54d15",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "c0bd98cb7c552858c005394607357c0086995f0a847374bf3ba596369e13ebcb",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2840,9 +2840,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2876,9 +2876,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2912,9 +2912,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2948,9 +2948,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -2984,9 +2984,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3020,9 +3020,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3056,9 +3056,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3092,9 +3092,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3128,9 +3128,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3164,9 +3164,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "036590ebbf111492f168d9c87fdbee68134e3217c6ef49b135aefc4e052c38fa",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "58ca1c832f7edde14f330a6637bb9ae96ab2092f8aeab7ea0641067292610eac",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3199,9 +3199,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "a69b4db1ff0631b293fd06f130740a250dbd95cdd5f9476512a027cb7054648e",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3234,9 +3234,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "a69b4db1ff0631b293fd06f130740a250dbd95cdd5f9476512a027cb7054648e",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3269,9 +3269,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "a69b4db1ff0631b293fd06f130740a250dbd95cdd5f9476512a027cb7054648e",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3304,9 +3304,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "82a0918bbe29740dd0b3ebf824f812b510f81f9814fcc2bc08b2e0f5e35c6196",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "a69b4db1ff0631b293fd06f130740a250dbd95cdd5f9476512a027cb7054648e",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3340,9 +3340,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3376,9 +3376,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3412,9 +3412,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3448,9 +3448,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3484,9 +3484,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3520,9 +3520,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "61f2a927313893d4965470c6bcacb932b401171940bec047c97b399072e18334",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "635a5722556c95ec92687c31c644c53ef93cd5447e13bfcb06c6cc4ca4e77c89",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3562,9 +3562,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3601,9 +3601,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3640,9 +3640,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3680,9 +3680,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3720,9 +3720,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3760,9 +3760,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3782,9 +3782,9 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V107",
-        "status": "NOT_RUN"
+        "status": "FAIL"
       },
-      "status": "NOT_RUN",
+      "status": "FAIL",
       "evidence": [
         "tests/integration/test_offline.py",
         "tests/integration/test_resume.py",
@@ -3792,6 +3792,7 @@
         "tests/scientific/reference/test_reference_matrix.py",
         "tests/scientific/reference/test_calibration_evidence.py",
         ".github/workflows/maintained.yml",
+        "docs/validation/012-validation/evidence/ci-run-36982402784-failed.log",
         "docs/validation/012-validation/receipt.md",
         "docs/validation/012-validation/evidence/gate-results.json"
       ],
@@ -3800,10 +3801,10 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false,
-        "reason": "The Linux/Windows CI jobs have never run: pushing is not authorized. Only the workflow structure is tested."
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes",
+        "reason": "CI run 36982402784 on fd8dfa9 failed (ubuntu 2 failed/251 passed; windows 16 failed/237 passed). Portability fixes (A-2026-10-01-11) are verified locally only and pending a CI re-run on the pushed tree."
       }
     },
     {
@@ -3842,9 +3843,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3881,9 +3882,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -3921,9 +3922,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4197,9 +4198,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4233,9 +4234,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4269,9 +4270,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4305,9 +4306,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4341,9 +4342,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4377,9 +4378,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4413,9 +4414,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4449,9 +4450,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4486,9 +4487,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     },
     {
@@ -4522,9 +4523,9 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-02",
-        "working_source_manifest_sha256": "1ac3a27683ee55820426c6997f07410c856bec5a396005f5c4c4606a5e3fd574",
-        "independent_audit": "NOT_RUN",
-        "committed": false
+        "working_source_manifest_sha256": "6ef5cf24ef3174de639fd8100f504f808c435e2eeac604e7870346a50e701790",
+        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
+        "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
     }
   ],

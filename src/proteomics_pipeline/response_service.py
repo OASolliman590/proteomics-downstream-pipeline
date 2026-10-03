@@ -92,6 +92,8 @@ def _stage_output(stage_dir: Path, relative: str) -> dict:
 
 def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: str, output_temp_dir: str | Path, dea_dir: str | Path, config_dir: str | Path,
                   stage_id: str = "response") -> dict:
+    from . import inference_service
+    inference_service.guard_downstream(config, dea_dir)    # audit 2026-10-02: primary results must come from observed data
     plan_path = Path(plan_path).resolve(); root = plan_path.parent; dea_dir = Path(dea_dir)
     inputs = [{"artifact_id": "plan", "path": str(plan_path), "sha256": sha256_file(plan_path)}]
     seen = {"plan"}

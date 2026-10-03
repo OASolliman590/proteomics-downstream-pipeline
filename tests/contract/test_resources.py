@@ -37,7 +37,7 @@ def resource_entry(rid, kind, prepared, source_tax=10116, target_tax=10116):
 
 
 def config(tmp_path, snaps, *, gene_sets=("sets",), mutate=None):
-    raw = json.loads((EXAMPLES / "example-independent.json").read_text())
+    raw = json.loads((EXAMPLES / "example-independent.json").read_text(encoding="utf-8"))
     for key in ("matrix", "observations", "features", "source_provenance"):
         raw["input"][key] = str((EXAMPLES / raw["input"][key]).resolve())
     raw["runtime"]["phase"] = 2
@@ -47,7 +47,7 @@ def config(tmp_path, snaps, *, gene_sets=("sets",), mutate=None):
     if mutate:
         mutate(raw)
     tmp_path.mkdir(parents=True, exist_ok=True)
-    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw))
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw), encoding="utf-8")
     return path
 
 
@@ -58,7 +58,7 @@ def test_v061_snapshots_verified_before_analysis(tmp_path):
     cfg = workflow.load(path)
     verified = resources.verify_resources(cfg, path.parent)
     assert {v["resource_id"] for v in verified} == {"map", "sets", "orth", "hsets"}
-    manifest = json.loads((Path(snaps["mapping"]["snapshot"]) / "manifest.json").read_text())
+    manifest = json.loads((Path(snaps["mapping"]["snapshot"]) / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["terms"].startswith("synthetic") and manifest["source_taxonomy_id"] == 10116
     import hashlib
     assert manifest["files"][0]["sha256"] == hashlib.sha256((Path(snaps["mapping"]["snapshot"]) / "mapping.tsv").read_bytes()).hexdigest()
@@ -76,7 +76,7 @@ def test_v061_negative_mutation_missing_and_placeholder(tmp_path, mutation, code
     if mutation == "byte":
         manifest = Path(snaps["mapping"]["snapshot"]) / "manifest.json"; manifest.write_bytes(manifest.read_bytes() + b" ")
     if mutation == "inner":
-        inner = Path(snaps["mapping"]["snapshot"]) / "mapping.tsv"; inner.write_text(inner.read_text().replace("rat:G1", "rat:G9"))
+        inner = Path(snaps["mapping"]["snapshot"]) / "mapping.tsv"; inner.write_text(inner.read_text(encoding="utf-8").replace("rat:G1", "rat:G9"), encoding="utf-8")
     with pytest.raises(ProteomicsError) as error:
         resources.verify_resources(workflow.load(path), path.parent)
     assert error.value.code == code
@@ -85,12 +85,12 @@ def test_v061_negative_mutation_missing_and_placeholder(tmp_path, mutation, code
 # ----------------------------------------------------------------------------- V062
 def test_v062_explicit_preparation_then_offline_run(tmp_path, monkeypatch):
     out = subprocess.run([sys.executable, "-m", "proteomics_pipeline", "resources", "prepare", "--manifest", str(FIX / "prepare_mapping.json"), "--output", str(tmp_path / "snap"), "--json"],
-                         capture_output=True, text=True)
+                         capture_output=True, text=True, encoding="utf-8")
     assert out.returncode == 0, out.stdout + out.stderr
     payload = json.loads(out.stdout)
     assert payload["resource_id"] == "map" and (tmp_path / "snap" / "manifest.json").is_file()
-    remote = json.loads((FIX / "prepare_mapping.json").read_text()); remote["files"][0]["source"] = "https://example.invalid/mapping.tsv"
-    (tmp_path / "remote.json").write_text(json.dumps(remote))
+    remote = json.loads((FIX / "prepare_mapping.json").read_text(encoding="utf-8")); remote["files"][0]["source"] = "https://example.invalid/mapping.tsv"
+    (tmp_path / "remote.json").write_text(json.dumps(remote), encoding="utf-8")
     with pytest.raises(ProteomicsError) as error:
         resources.prepare(tmp_path / "remote.json", tmp_path / "snap2")
     assert error.value.code == "E_RESOURCE_SOURCE_UNSUPPORTED"
@@ -122,8 +122,8 @@ def test_v063_negative_cross_species_join_refused(tmp_path):
 
 
 def test_v064_negative_projection_without_evidence(tmp_path):
-    spec_ = json.loads((FIX / "prepare_orthology.json").read_text()); spec_.pop("projection")
-    (tmp_path / "p.json").write_text(json.dumps(spec_)); (tmp_path / "orthology_source.tsv").write_text((FIX / "orthology_source.tsv").read_text())
+    spec_ = json.loads((FIX / "prepare_orthology.json").read_text(encoding="utf-8")); spec_.pop("projection")
+    (tmp_path / "p.json").write_text(json.dumps(spec_), encoding="utf-8"); (tmp_path / "orthology_source.tsv").write_text((FIX / "orthology_source.tsv").read_text(encoding="utf-8"), encoding="utf-8")
     with pytest.raises(ProteomicsError) as error:
         resources.prepare(tmp_path / "p.json", tmp_path / "snap")
     assert error.value.code == "E_RESOURCE_TAXONOMY"
@@ -186,6 +186,6 @@ def test_v070_repeatable_and_label_permutation_invariant(tmp_path):
     def reps(d):
         return {r["feature_id"]: r["representative_state"] for r in B.read_tsv(d / "run" / "resources" / "gene_mapping.tsv")}
     assert reps(tmp_path / "a") == reps(tmp_path / "c")
-    corrupt = Path(snaps["genesets"]["snapshot"]) / "gene_sets.tsv"; corrupt.write_text(corrupt.read_text() + "SET_X\tx\trat:G1\n")
+    corrupt = Path(snaps["genesets"]["snapshot"]) / "gene_sets.tsv"; corrupt.write_text(corrupt.read_text(encoding="utf-8") + "SET_X\tx\trat:G1\n", encoding="utf-8")
     payload, code = workflow.run_command(config(tmp_path / "d", snaps), tmp_path / "d" / "run")
     assert code == 2 and payload["error"]["code"] == "E_RESOURCE_HASH"

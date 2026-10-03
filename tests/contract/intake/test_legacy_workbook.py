@@ -29,14 +29,14 @@ def _config(tmp_path, crosswalk, names):
     tmp_path.mkdir(parents=True, exist_ok=True)
     workbook = tmp_path / "synthetic.xlsx"
     expected = make_workbook.write_workbook(workbook)
-    cw_path = tmp_path / "crosswalk.json"; cw_path.write_text(json.dumps(crosswalk))
+    cw_path = tmp_path / "crosswalk.json"; cw_path.write_text(json.dumps(crosswalk), encoding="utf-8")
     config = minimal_config(tmp_path, matrix=workbook, observations=_observations(tmp_path, names), features="from_mapping", fmt="legacy_workbook",
                             profile="historical_workbook", mapping=cw_path, group_levels=sorted(set(names.values())))
     return config, expected
 
 
 def _crosswalk(name):
-    return json.loads((MAPPINGS / name).read_text())
+    return json.loads((MAPPINGS / name).read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize("name,names", [("legacy-crosswalk-method-a.json", A_NAMES), ("legacy-crosswalk-method-b.json", B_NAMES)])
@@ -59,7 +59,7 @@ def test_v017_wraps_parser_and_keeps_sheet_identity(tmp_path, name, names):
     assert sheets == {"DM_vs_CTL", "PDM_vs_CTL", "DM-Treated_vs_DM", "PDM-Treated_vs_PDM"}
     dm = next(dict(zip(source[0], r)) for r in source[1:] if r[1] == "DM_vs_CTL")
     assert (dm["numerator"], dm["denominator"]) == (names["DM"], "CTRL") and dm["status"] == "historical_source_value_not_refit"
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     assert report["legacy_crosswalk"]["method"] == _crosswalk(name)["method"]
 
 

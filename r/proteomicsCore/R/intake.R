@@ -101,8 +101,10 @@ read_canonical_bundle <- function(bundle_dir) {
   if (length(matches) == 0L) { if (required) stop(sprintf("E_REFERENCE_UNKNOWN: input artifact %s", artifact_id), call. = FALSE); return(NULL) }
   if (length(matches) > 1L) stop(sprintf("E_ID_DUPLICATE: input artifact %s", artifact_id), call. = FALSE)
   item <- matches[[1L]]
-  .pc_verify_hash(item$path, item$sha256, artifact_id)
-  item$path
+  if (!is.character(item$path) || length(item$path) != 1L || !nzchar(item$path)) stop(sprintf("E_REFERENCE_UNKNOWN: input artifact %s has no usable path", artifact_id), call. = FALSE)
+  path <- normalizePath(item$path, winslash = "/", mustWork = FALSE)   # forward slashes on every platform (CI run 36982402784)
+  .pc_verify_hash(path, item$sha256, artifact_id)
+  path
 }
 
 .pc_now <- function() format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")

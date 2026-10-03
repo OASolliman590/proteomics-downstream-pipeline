@@ -85,8 +85,8 @@ cat(jsonlite::toJSON(list(ids=rownames(m), p=r$sca.P.Value, t=r$sca.t, limma_p=r
 def test_v051_count_evidence_schema(tmp_path):
     files, values = dataset(tmp_path)
     assert len(check_count_table(tmp_path / "data" / "counts.tsv", model_id="deqms", aggregation="protein_level")) == 16
-    rows = (tmp_path / "data" / "counts.tsv").read_text().replace("search_engine_export", "observed_sample_count")
-    (tmp_path / "proxy.tsv").write_text(rows)
+    rows = (tmp_path / "data" / "counts.tsv").read_text(encoding="utf-8").replace("search_engine_export", "observed_sample_count")
+    (tmp_path / "proxy.tsv").write_text(rows, encoding="utf-8")
     with pytest.raises(ProteomicsError) as error:
         check_count_table(tmp_path / "proxy.tsv", model_id="deqms", aggregation="protein_level")
     assert error.value.code == "E_DEQMS_COUNT_EVIDENCE"
@@ -105,12 +105,12 @@ def test_v052_v053_deqms_matches_official_sequence(tmp_path):
         assert r["engine"] == "deqms" and r["statistic_type"] == "deqms_sca_t" and r["family_id"] == "deqms-family"
     assert any(r["p_value"] != r["native_limma_p_value"] for r in rows.values())
     # V053: shuffled count rows give identical results; duplicate IDs fail
-    lines = (tmp_path / "data" / "counts.tsv").read_text().splitlines()
-    (tmp_path / "data" / "counts.tsv").write_text("\n".join([lines[0]] + list(reversed(lines[1:]))) + "\n")
+    lines = (tmp_path / "data" / "counts.tsv").read_text(encoding="utf-8").splitlines()
+    (tmp_path / "data" / "counts.tsv").write_text("\n".join([lines[0]] + list(reversed(lines[1:]))) + "\n", encoding="utf-8")
     payload2, _ = workflow.run_command(make_config(tmp_path, files), tmp_path / "run2")
     again = {r["feature_id"]: r["p_value"] for r in B.read_tsv(tmp_path / "run2" / "assay_engines" / "assay_results.tsv") if r["model_id"] == "deqms"}
     assert again == {f: r["p_value"] for f, r in rows.items()}
-    (tmp_path / "data" / "counts.tsv").write_text("\n".join(lines + [lines[1]]) + "\n")
+    (tmp_path / "data" / "counts.tsv").write_text("\n".join(lines + [lines[1]]) + "\n", encoding="utf-8")
     payload3, code3 = workflow.run_command(make_config(tmp_path, files), tmp_path / "run3")
     status = next(s for s in payload3["stages"] if s["stage_id"] == "model.deqms")
     assert status["state"] == "FAILED" and status["reason_code"] == "E_DEQMS_COUNT_EVIDENCE" and payload3["state"] == "PARTIAL"
@@ -148,7 +148,7 @@ def test_v055_v056_v057_proda_native_results(tmp_path):
     files, values = dataset(tmp_path, dropout=True)
     payload, code = workflow.run_command(make_config(tmp_path, files, deqms=None, proda="optional"), tmp_path / "run")
     assert code == 0, payload
-    seed = json.loads((tmp_path / "run" / "plan.json").read_text())["runtime"]["seed"]
+    seed = json.loads((tmp_path / "run" / "plan.json").read_text(encoding="utf-8"))["runtime"]["seed"]
     oracle = B.r_json(PRODA_ORACLE, str(tmp_path / "run" / "inputs" / "matrix.tsv"), str(seed))
     rows = {r["feature_id"]: r for r in B.read_tsv(tmp_path / "run" / "assay_engines" / "assay_results.tsv") if r["model_id"] == "proda"}
     for i, f in enumerate(oracle["ids"]):
@@ -168,36 +168,46 @@ def test_v058_comparison_never_changes_primary(tmp_path):
     files, values = dataset(tmp_path, dropout=True)
     with_alt, _ = workflow.run_command(make_config(tmp_path, files, proda="optional"), tmp_path / "run")
     without, _ = workflow.run_command(make_config(tmp_path / "n", dataset(tmp_path / "n", dropout=True)[0], deqms=None), tmp_path / "n" / "run")
-    assert (tmp_path / "run" / "dea" / "zero_null.tsv").read_text().split("\n")[0] == (tmp_path / "n" / "run" / "dea" / "zero_null.tsv").read_text().split("\n")[0]
+    assert (tmp_path / "run" / "dea" / "zero_null.tsv").read_text(encoding="utf-8").split("\n")[0] == (tmp_path / "n" / "run" / "dea" / "zero_null.tsv").read_text(encoding="utf-8").split("\n")[0]
     strip = lambda p: [{k: v for k, v in r.items() if k not in ("run_id", "plan_hash")} for r in B.read_tsv(p)]
     assert strip(tmp_path / "run" / "dea" / "zero_null.tsv") == strip(tmp_path / "n" / "run" / "dea" / "zero_null.tsv")
     comp = B.read_tsv(tmp_path / "run" / "assay_engines" / "engine_comparison.tsv")
     assert {r["role"] for r in comp} == {"sensitivity_comparison_not_primary"}
     proda = [r for r in comp if r["model_id"] == "proda"]
     assert any(r["in_alternative_universe"] == "true" and r["in_primary_universe"] == "false" for r in proda)   # F07: proDA-only universe disclosed
-    plan = json.loads((tmp_path / "run" / "plan.json").read_text())
+    plan = json.loads((tmp_path / "run" / "plan.json").read_text(encoding="utf-8"))
     assert next(m for m in plan["models"] if m["role"] == "primary")["engine"] == "limma"
 
 
 def _lib_without(tmp_path, package):
-    lib = tmp_path / "lib"; lib.mkdir()
-    for entry in (ROOT / ".r-lib").iterdir():
-        if entry.name != package:
-            (lib / entry.name).symlink_to(entry)
+    """Shadow one package without assuming where R libraries live (CI run 36982402784: `.r-lib` absent on runners).
+    A library placed first on R_LIBS holds an invalid installation of the package, so requireNamespace() is FALSE
+    while every other package still resolves through R's own .libPaths(); no symlinks or copies (portable to Windows)."""
+    lib = tmp_path / "shadow-lib"; (lib / package).mkdir(parents=True)
+    (lib / package / "DESCRIPTION").write_text(f"Package: {package}\nVersion: 0.0.0\nTitle: shadow of a missing package\n", encoding="utf-8")
     return lib
+
+
+def _shadow_env(monkeypatch, lib, package):
+    from proteomics_pipeline.runtime import run_r_code
+    previous = os.environ.get("R_LIBS")
+    monkeypatch.setenv("R_LIBS", os.pathsep.join([str(lib)] + ([previous] if previous else [])))
+    probe = run_r_code(f"cat(requireNamespace('{package}', quietly = TRUE), requireNamespace('limma', quietly = TRUE), requireNamespace('proteomicsCore', quietly = TRUE))")
+    if probe.stdout.split() != ["FALSE", "TRUE", "TRUE"]:
+        pytest.skip(f"NOT_RUN: could not shadow {package} portably ({probe.stdout!r} {probe.stderr[-200:]!r})")
 
 
 @pytest.mark.parametrize("requirement,state,code", [("optional", "PARTIAL", 3), ("required", "FAILED", 3)])
 def test_v059_missing_engine_package(tmp_path, monkeypatch, requirement, state, code):
     files, _ = dataset(tmp_path)
-    monkeypatch.setenv("R_LIBS_USER", str(_lib_without(tmp_path, "DEqMS")))
+    _shadow_env(monkeypatch, _lib_without(tmp_path, "DEqMS"), "DEqMS")
     payload, exit_code = workflow.run_command(make_config(tmp_path, files, deqms=requirement), tmp_path / "run")
     assert payload["state"] == state and exit_code == code
-    plan = json.loads((tmp_path / "run" / "plan.json").read_text())
+    plan = json.loads((tmp_path / "run" / "plan.json").read_text(encoding="utf-8"))
     assert any(m["model_id"] == "deqms" for m in plan["models"])                 # never dropped from the frozen plan
     stage = next(s for s in payload["stages"] if s["stage_id"] in ("model.deqms", "assay_engines") and s["state"] != "COMPLETED")
     assert stage["state"] == "NOT_RUN" and stage["reason_code"] == "E_ENGINE_NOT_AVAILABLE"
-    assert not (tmp_path / "run" / "assay_engines" / "assay_results.tsv").exists() or "deqms" not in (tmp_path / "run" / "assay_engines" / "assay_results.tsv").read_text()
+    assert not (tmp_path / "run" / "assay_engines" / "assay_results.tsv").exists() or "deqms" not in (tmp_path / "run" / "assay_engines" / "assay_results.tsv").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("requirement,state", [("optional", "PARTIAL"), ("required", "FAILED")])

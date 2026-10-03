@@ -4,12 +4,12 @@
     {
       "command": ".venv/bin/python -m pytest tests/integration/test_offline.py tests/integration/test_resume.py tests/integration/test_report_artifacts.py tests/scientific/reference -q -rs -p no:cacheprovider",
       "exit_code": 0,
-      "summary": "25 passed in 88.62s (0:01:28)",
+      "summary": "28 passed in 450.31s (0:07:30)",
       "log": "docs/validation/012-validation/evidence/python-tests-1.log"
     }
   ],
-  "working_source_manifest_sha256": "8b5b78ec9480e027b52802b5e97dae59efb1b62be17e64ecb457c397ef30f675",
-  "n_files": 26,
+  "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+  "n_files": 28,
   "environment": {
     "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
     "python": "3.13.15"

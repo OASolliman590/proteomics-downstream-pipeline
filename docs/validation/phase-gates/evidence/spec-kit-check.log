@@ -8,7 +8,7 @@ $ .venv/bin/python scripts/check_spec_kit.py
   "acceptance_cases": 130,
   "markdown_files_checked": 61,
   "implementation_status": [
-    "NOT_RUN",
+    "FAIL",
     "PASS",
     "pending-after-freeze"
   ],

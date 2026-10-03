@@ -24,7 +24,8 @@ def _rscript():
 def _read(rscript, bundle):
     code = ("b <- proteomicsCore:::read_canonical_bundle(commandArgs(TRUE)[1]); "
             "cat(jsonlite::toJSON(list(ids=I(rownames(b$values)), obs=I(colnames(b$values)), na=which(is.na(b$values)), v=b$values[1,1], mask=b$mask_state, observed=sum(b$observed)), auto_unbox=TRUE, digits=NA))")
-    return subprocess.run([rscript, "--vanilla", "-e", code, str(bundle)], capture_output=True, text=True)
+    from proteomics_pipeline.runtime import run_r_code   # UTF-8 script file and UTF-8 decoding (CI run 36982402784, Windows cp1252 mojibake)
+    return run_r_code(code, [bundle], rscript=rscript)
 
 
 def test_v018_r_reader_returns_verified_values(tmp_path):
@@ -59,6 +60,6 @@ def test_v018_negative_r_reader_refuses_mutated_bundle(tmp_path, mutation):
         (tmp_path / "bundle" / "observed_mask.tsv").unlink()
     else:
         path = tmp_path / "bundle" / "matrix.tsv"
-        path.write_text(path.read_text().replace("9.7", "9.9", 1))
+        path.write_text(path.read_text(encoding="utf-8").replace("9.7", "9.9", 1), encoding="utf-8")
     result = _read(rscript, tmp_path / "bundle")
     assert result.returncode != 0 and "E_INTEGRITY" in result.stderr

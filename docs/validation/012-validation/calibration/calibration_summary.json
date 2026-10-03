@@ -1,23 +1,27 @@
 {
   "profile": "release",
   "datasets_per_scenario": 1000,
+  "fit_path": "production R path: coverage_tables -> featurewise_estimability -> fit_limma_model (trend=TRUE, robust=TRUE) -> adjust_family (BH, finite eligible)",
   "features": 2000,
   "units_per_group": 4,
   "seed_bank": {
     "null": 100000,
     "mixture": 200000,
+    "mixture_high_power": 500000,
     "heavy_tail": 300000,
     "mnar": 400000
   },
   "scenarios": {
     "null": {
       "n_datasets": 1000,
-      "seconds": 17.7,
+      "seconds": 2669.7,
       "core": true,
       "mean_coverage": 0.9498025,
       "coverage_mc_se": 0.0001566214353912773,
       "mean_power": null,
       "mean_fdp": 0.046,
+      "total_rejections": 47,
+      "datasets_with_rejections": 46,
       "any_rejection_k": 46,
       "any_rejection_rate": 0.046,
       "any_rejection_upper95": 0.05843637270256414,
@@ -25,34 +29,53 @@
     },
     "mixture": {
       "n_datasets": 1000,
-      "seconds": 17.3,
+      "seconds": 2670.9,
       "core": true,
       "mean_coverage": 0.9499075,
       "coverage_mc_se": 0.0001584196658894993,
       "mean_power": 0.023965,
       "mean_fdp": 0.05491191767101976,
+      "total_rejections": 5188,
+      "datasets_with_rejections": 746,
       "mean_fdp_upper95": 0.06234312021074204,
+      "gate": "PASS"
+    },
+    "mixture_high_power": {
+      "n_datasets": 1000,
+      "seconds": 2674.2,
+      "core": true,
+      "mean_coverage": 0.949929,
+      "coverage_mc_se": 0.00016195582326266846,
+      "mean_power": 0.987625,
+      "mean_fdp": 0.04431480220861716,
+      "total_rejections": 413418,
+      "datasets_with_rejections": 1000,
+      "mean_fdp_upper95": 0.04486220860379337,
       "gate": "PASS"
     },
     "heavy_tail": {
       "n_datasets": 1000,
-      "seconds": 21.8,
+      "seconds": 2682.6,
       "core": false,
       "mean_coverage": 0.9616615000000001,
       "coverage_mc_se": 0.00013873144619791213,
       "mean_power": 0.01716,
       "mean_fdp": 0.005321016969170541,
+      "total_rejections": 3488,
+      "datasets_with_rejections": 447,
       "mean_fdp_upper95": 0.0077789981802326245,
       "gate": "STRESS_REPORTED (not a nominal guarantee)"
     },
     "mnar": {
       "n_datasets": 1000,
-      "seconds": 151.9,
+      "seconds": 3151.6,
       "core": false,
       "mean_coverage": 0.9455704204057613,
       "coverage_mc_se": 0.0001656047030858746,
       "mean_power": 0.009522730462831494,
       "mean_fdp": 0.04628165151841622,
+      "total_rejections": 1777,
+      "datasets_with_rejections": 562,
       "mean_fdp_upper95": 0.05344842624695565,
       "gate": "STRESS_REPORTED (not a nominal guarantee)"
     }
@@ -98,6 +121,6 @@
       "roast_pass": true,
       "roast_mixed_pass": true
     },
-    "seconds": 20.5
+    "seconds": 24.2
   }
 }

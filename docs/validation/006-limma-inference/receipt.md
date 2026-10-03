@@ -5,15 +5,15 @@ Packet R05 (FR-041–FR-050 / T041–T050 / V041–V050) was implemented and ver
 ## Identities
 
 - Contract versions: kit 1.2.0 with the 2026-10-01 amendments (ADR 0006/0007); scientific methods contract v1.2.0.
-- Working-source manifest (packet allowlist, 9 files): `d0e31163d0549f1e0c702755f884f37f1b9a871eca580efbe62b2ddd14013ae7` — lines in `evidence/working-source-manifest.txt` (`sha256  path`, sorted, LF).
-- `verified_commit`: **null** — nothing is committed (branch `claude/full-pipeline`, uncommitted working tree).
+- Working-source manifest (packet allowlist, 9 files): `166403249af6acbd669e9bfd5280fcc782b16e512880620514a1dea5c8d54b2f` — lines in `evidence/working-source-manifest.txt` (`sha256  path`, sorted, LF).
+- `verified_commit`: **null** — the packet was committed by Omar as `fd8dfa9`; the audit fixes and this re-verification are uncommitted on top of it (branch `claude/full-pipeline`).
 - Environment: macOS-26.7-x86_64-i386-64bit-Mach-O; Python 3.13.15; R 4.6.1 with limma 3.68.5, statmod 1.5.2, impute 1.86.0, vegan 2.7-6, permute 0.9-10, DEqMS, proDA and fgsea at the versions pinned in `renv.lock`, in a project-local library (`.r-lib/`); `LANG=en_US.UTF-8`.
 
 ## Gates executed
 
 | Command | Exit | Result | Log |
 |---|---|---|---|
-| `.venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider` | 0 | 9 passed in 48.74s | `python-tests-1.log` |
+| `.venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider` | 0 | 14 passed in 60.18s (0:01:00) | `python-tests-1.log` |
 | `Rscript --vanilla -e res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-limma.R', reporter='summary', stop_on_failure=TRUE); df <- as.da` | 0 | expectations=20 failed=0 skipped=0 errors=0 | `r-test-limma.log` |
 
 Phase-level regression (R01 suite, historical unittest, all R tests, baseline registry, spec checker, whole Python suite) is in [`docs/validation/phase-gates`](../phase-gates/README.md).
@@ -22,7 +22,7 @@ Phase-level regression (R01 suite, historical unittest, all R tests, baseline re
 
 | Case | Status | Tests | Positive oracle | Negative case |
 |---|---|---|---|---|
-| V041 | PASS | test_limma.py::test_v041_* | effects/SE/t/P/df match a separate lmFit/eBayes reference on the declared universe; original NA retained | a filling adapter would differ (demonstrated) |
+| V041 | PASS | test_limma.py::test_v041_* | effects/SE/t/P/df match a separate lmFit/eBayes reference on the declared universe; original NA retained | a filling adapter would differ (demonstrated); audit M1: a sensitivity targeting the primary model is rejected (E_SENSITIVITY_PRIMARY_MODEL), the service/R guards refuse a primary fit on a non-observed matrix, settings record the matrix and imputation actually used, downstream builders refuse non-observed primary results (E_PRIMARY_NOT_OBSERVED) |
 | V042 | PASS | test_limma.py::test_v042_* (unblocked and duplicate_correlation) | exported effect/SE/P match direct reparameterized limma; stdev.unscaled equals independent GLS; weights/block provenance recorded | settings record weights and block; no shortcut path |
 | V043 | PASS | test_limma.py::test_v043_*; test-limma.R | prior/posterior variances match direct eBayes(trend, robust); settings saved; robust meaning stated | robust=TRUE without statmod fails preflight |
 | V044 | PASS | test_limma.py::test_v043_v044_v047_* | TREAT P equals limma::treat(lfc=.5); separate type and family; display filter does not change P | TREAT table is complete, not a filtered zero-null table |
@@ -34,11 +34,15 @@ Phase-level regression (R01 suite, historical unittest, all R tests, baseline re
 | V050 | PASS | test_limma.py::test_v050_* | zero discoveries COMPLETED/0; Cov(d,t) = −0.25, Var(r) = 0.5 | no score P artifact or column |
 
 
+## Independent audit 2026-10-02 (ADR 0008)
+
+MAJOR 1 fixed: the primary model can only be fitted on observed cells of the primary matrix (config, service and R guards), and settings record the matrix actually used. Tests: test_limma.py::test_audit_m1_* (fail on fd8dfa9, pass now). Before/after evidence: `docs/validation/audit-2026-10-02/`.
+
 ## Notes
 
-- Decisions taken on ambiguous points are D-01–D-30 in [decisions.md](../../../specs/001-downstream-proteomics/decisions.md).
-- Independent audit (Astra-equivalent): **NOT_RUN**. Private-study regression: **NOT_RUN** (Maintainer-only, out of scope). No private data or private-derived numbers were used.
+- Decisions taken on ambiguous points are D-01–D-38 in [decisions.md](../../../specs/001-downstream-proteomics/decisions.md).
+- Independent audit: an external audit of fd8dfa9 (2026-10-02) returned ACCEPT WITH FIXES; its findings are fixed (ADR 0008). Private-study regression: **NOT_RUN** (Maintainer-only, out of scope). No private data or private-derived numbers were used.
 
 ## Acceptance
 
-All listed gates exited 0 and every acceptance case above, including its negative case, passed on re-execution. R05 is recorded as accepted by the operator-authorized Claude route (self-verified, uncommitted); independent review remains open.
+All listed gates exited 0 and every acceptance case above, including its negative case, passed on re-execution. R05 is recorded as accepted by the operator-authorized Claude route (self-verified); the independent audit of fd8dfa9 returned ACCEPT WITH FIXES, and the fixes are self-verified and not yet re-audited.

@@ -36,7 +36,7 @@ def failing(tmp_path):
 
 
 def run_cli(*args, cwd=None):
-    return subprocess.run([sys.executable, "-m", "proteomics_pipeline", *args], capture_output=True, text=True, cwd=cwd, env=os.environ.copy())
+    return subprocess.run([sys.executable, "-m", "proteomics_pipeline", *args], capture_output=True, text=True, cwd=cwd, env=os.environ.copy(), encoding="utf-8")
 
 
 class Parser(html.parser.HTMLParser):
@@ -54,7 +54,7 @@ class Parser(html.parser.HTMLParser):
 def test_v091_zero_discoveries_reported_as_zero_from_actual_tables(tmp_path):
     payload, code = workflow.run_command(zero_discovery(tmp_path), tmp_path / "run")
     assert code == 0 and payload["state"] == "COMPLETED"
-    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text())
+    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text(encoding="utf-8"))
     assert data["dea"]["state"] == "COMPLETED"
     rows = B.read_tsv(tmp_path / "run" / "dea" / "zero_null.tsv")
     summary = {(c["contrast_id"], c["hypothesis_type"]): c for c in data["dea"]["contrast_summaries"]}
@@ -64,7 +64,7 @@ def test_v091_zero_discoveries_reported_as_zero_from_actual_tables(tmp_path):
         assert summary[(contrast, "protein_zero_null")]["n_q_at_or_below_cutoff"] == 0
     assert [f["rejection_count"] for f in data["dea"]["families"]] == ["0", "0"]
     assert all(s["verified"] for s in data["stages"])
-    page = (tmp_path / "run" / "report" / "index.html").read_text()
+    page = (tmp_path / "run" / "report" / "index.html").read_text(encoding="utf-8")
     assert "PASS" not in page
     lowered = page.lower()
     import re
@@ -76,7 +76,7 @@ def test_v091_missing_dea_stays_unknown_not_zero(tmp_path):
     path = zero_discovery(tmp_path, mutate=lambda c: c["runtime"].update({"scope": "qc_only"}))
     payload, code = workflow.run_command(path, tmp_path / "run")
     assert code == 0
-    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text())
+    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text(encoding="utf-8"))
     assert data["dea"]["state"] == "NOT_REQUESTED" and data["dea"]["values"] is None and "families" not in data["dea"]
     assert data["design"]["state"] == "NOT_REQUESTED"
 
@@ -86,15 +86,15 @@ def test_v091_failed_required_stage_remains_failed(tmp_path):
     assert payload["state"] == "FAILED" and code == 4
     limma = next(s for s in payload["stages"] if s["stage_id"] == "limma")
     assert limma["state"] == "FAILED" and limma["reason_code"] == "E_ENGINE_FAILED"
-    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text())
+    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text(encoding="utf-8"))
     assert data["run"]["state"] == "FAILED" and data["dea"]["state"] == "FAILED" and data["dea"]["values"] is None
     assert (tmp_path / "run" / "logs" / "limma-failed").is_dir() and not (tmp_path / "run" / "dea").exists()
 
 
 def test_v091_negative_unverified_artifact_is_not_completed(tmp_path):
     workflow.run_command(zero_discovery(tmp_path), tmp_path / "run")
-    status = json.loads((tmp_path / "run" / "run_status.json").read_text())
-    (tmp_path / "run" / "dea" / "families.tsv").write_text("family_id\trejection_count\nforged\t99\n")
+    status = json.loads((tmp_path / "run" / "run_status.json").read_text(encoding="utf-8"))
+    (tmp_path / "run" / "dea" / "families.tsv").write_text("family_id\trejection_count\nforged\t99\n", encoding="utf-8")
     snapshot = {"run_id": status["run_id"], "plan_hash": status["plan_hash"], "state": status["state"], "exit_code": status["exit_code"], "reason_code": status["reason_code"],
                 "requested_phase": 1, "implemented_capabilities": status["implemented_capabilities"], "stages": [dict(s, message="") for s in status["stages"]]}
     data = assembler.assemble(tmp_path / "run", snapshot)
@@ -113,10 +113,10 @@ def test_v092_one_command_runs_the_phase1_dag_with_plan_before_fit(tmp_path):
     assert [s["stage_id"] for s in payload["stages"]][:5] == ["intake", "preprocessing", "design", "limma", "report"]
     assert [s["stage_id"] for s in payload["stages"]][5:] in ([], ["report_full"])
     run = tmp_path / "run"
-    limma = json.loads((run / "dea" / "stage-result.json").read_text())
+    limma = json.loads((run / "dea" / "stage-result.json").read_text(encoding="utf-8"))
     started = datetime.fromisoformat(limma["started_at"].replace("Z", "+00:00")).timestamp()
     assert (run / "plan.json").stat().st_mtime <= started + 1.0
-    assert limma["plan_hash"] == json.loads((run / "plan.json").read_text())["plan_hash"] == payload["plan_hash"]
+    assert limma["plan_hash"] == json.loads((run / "plan.json").read_text(encoding="utf-8"))["plan_hash"] == payload["plan_hash"]
     assert limma["exit_code"] == 0 and limma["session_info_path"] == "sessionInfo.txt"
 
 
@@ -125,7 +125,7 @@ def test_v092_genuine_r_failure_stops_dependants_with_partial_report(tmp_path):
     assert result.returncode == 4
     payload = json.loads(result.stdout)
     assert payload["state"] == "FAILED" and payload["report"] == "report/index.html"
-    page = (tmp_path / "run" / "report" / "index.html").read_text()
+    page = (tmp_path / "run" / "report" / "index.html").read_text(encoding="utf-8")
     assert "state-FAILED" in page and "E_ENGINE_FAILED" in page
 
 
@@ -140,7 +140,7 @@ def test_v092_negative_phase1_score_request_is_rejected(tmp_path):
 def test_v093_offline_html_without_scripts_or_remote_resources(tmp_path):
     workflow.run_command(zero_discovery(tmp_path), tmp_path / "run")
     report = tmp_path / "run" / "report" / "index.html"
-    text = report.read_text()
+    text = report.read_text(encoding="utf-8")
     parser = Parser(); parser.feed(text)
     tags = [t for t, _ in parser.tags]
     assert "script" not in tags and "iframe" not in tags and "style" in tags
@@ -177,7 +177,7 @@ def test_v094_qc_inclusion_sections_show_biological_vs_technical_n(tmp_path):
     path = B.config(tmp_path / "data", files, groups=["C", "U"], contrasts=[B.contrast("U-C", "U", "C")], mutate=mutate)
     payload, code = workflow.run_command(path, tmp_path / "run")
     assert code == 0, payload
-    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text())
+    data = json.loads((tmp_path / "run" / "report" / "report_data.json").read_text(encoding="utf-8"))
     groups = {g["group"]: g for g in data["inputs"]["values"]["groups"]}
     assert groups["C"]["n_injections"] == 6 and groups["C"]["n_biological_units"] == 3        # 4 injections -> 1 specimen
     qc_n = {r["group"]: r for r in data["qc"]["tables"]["sample_n"]["rows"]}
@@ -188,7 +188,7 @@ def test_v094_qc_inclusion_sections_show_biological_vs_technical_n(tmp_path):
     assert analysed | {"U3"} == set(data["inputs"]["canonical_observation_ids"]) and "U3" not in analysed   # nobody silently disappears
     gaps = {g["field"] for g in data["inputs"]["values"]["provenance_gaps"]}
     assert {"study.tissue", "input.normalization_state"} <= gaps
-    page = (tmp_path / "run" / "report" / "index.html").read_text()
+    page = (tmp_path / "run" / "report" / "index.html").read_text(encoding="utf-8")
     assert reason in page and "Biological versus technical n by group" in page and "flag only; no sample removed" in page
     for source in (data["qc"]["tables"]["sample_n"]["source"], data["qc"]["tables"]["exclusions"]["source"], data["inputs"]["sources"]["sample_n"]):
         assert (tmp_path / "run" / source).is_file() and f'href="../{source}"' in page

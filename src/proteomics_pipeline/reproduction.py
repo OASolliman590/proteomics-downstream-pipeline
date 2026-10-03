@@ -58,7 +58,7 @@ def parse_python_lock(path: str | Path) -> dict[str, str]:
 def check_python_lock(lock: str | Path, python: str = sys.executable) -> list[dict]:
     pins = parse_python_lock(lock)
     code = "import json,importlib.metadata as m; print(json.dumps({d.metadata['Name'].lower().replace('_','-'): d.version for d in m.distributions()}))"
-    installed = json.loads(subprocess.run([python, "-c", code], capture_output=True, text=True, check=True).stdout)
+    installed = json.loads(subprocess.run([python, "-c", code], capture_output=True, text=True, check=True, encoding="utf-8").stdout)
     return [{"package": name, "locked": version, "installed": installed.get(name)} for name, version in pins.items() if installed.get(name) != version]
 
 
@@ -74,7 +74,8 @@ def check_r_lock(lock: str | Path, rscript: str | None = None) -> dict:
     code = ("p <- commandArgs(TRUE); v <- vapply(p, function(x) if (requireNamespace(x, quietly=TRUE)) utils::packageDescription(x)$Version else NA_character_, ''); "
             "probes <- list(" + ", ".join(f"{k} = tryCatch(isTRUE({v}), error = function(e) FALSE)" for k, v in API_PROBES.items()) + "); "
             "cat(jsonlite::toJSON(list(r = paste(R.version$major, R.version$minor, sep='.'), versions = as.list(v), probes = probes), auto_unbox = TRUE, null = 'null', na = 'null'))")
-    out = subprocess.run([rscript, "--vanilla", "-e", code, *names], capture_output=True, text=True)
+    from .runtime import run_r_code
+    out = run_r_code(code, names, rscript=rscript)
     if out.returncode != 0:
         raise ProteomicsError("E_LOCK_QUALIFICATION", out.stderr[-400:], exit_code=3)
     observed = json.loads(out.stdout.strip().splitlines()[-1])
@@ -193,13 +194,18 @@ def build_acceptance_ledger(root: str | Path = ROOT_DIR, extra: dict | None = No
         elif status == "PASS" and row.get("evidence"):
             artifacts = [{"path": e, "sha256": sha256_file(root / e)} for e in row["evidence"] if (root / e).is_file()]
             commands = [{"command": "historical Maintainer receipt (see artifact)", "exit_code": 0}]
+        external = [e for e in row.get("evidence", []) if "/evidence/" in e and not e.endswith("gate-results.json") and (root / e).is_file()]
+        artifacts += [{"path": e, "sha256": sha256_file(root / e)} for e in external if e not in {a["path"] for a in artifacts}]
         record = {"acceptance_id": row["acceptance"], "requirement": row["requirement"], "task": row["task"], "status": status,
                   "reviewed_tree": verification.get("working_source_manifest_sha256") or row.get("verified_commit"),
                   "commands": commands, "versions": {}, "artifacts": artifacts, "expected_oracle": row["criterion"],
-                  "observed": "see packet receipt and gate logs" if commands else "no execution recorded",
+                  "observed": (verification.get("reason") or "see packet receipt and gate logs") if status == "FAIL" else ("see packet receipt and gate logs" if commands else "no execution recorded"),
                   "reviewer_conclusion": (f"{status} by {verification.get('route', 'Maintainer receipt')}; independent audit {verification.get('independent_audit', 'n/a')}") if status == "PASS" else status,
                   "verified_commit": row.get("verified_commit")}
-        if status != "PASS" and status != "FAIL":
+        if status == "FAIL":
+            # Amendment A-2026-10-01-12: a FAIL record states why it failed (V110 requires a reason on every non-PASS record).
+            record["reason"] = verification.get("reason") or "failed; see observed and artifacts"
+        elif status != "PASS":
             record["reason"] = (extra or {}).get(row["acceptance"], "not executed in this working tree")
         validate_evidence(record)
         records.append(record)

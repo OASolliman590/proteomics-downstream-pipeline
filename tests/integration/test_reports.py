@@ -42,14 +42,14 @@ class Rows(html.parser.HTMLParser):
 
 
 def run_example(tmp_path, name="example-independent.json", mutate=None, formats=("png", "pdf", "svg")):
-    raw = json.loads((B.EXAMPLES / name).read_text())
+    raw = json.loads((B.EXAMPLES / name).read_text(encoding="utf-8"))
     for key in ("matrix", "observations", "features", "source_provenance"):
         raw["input"][key] = str((B.EXAMPLES / raw["input"][key]).resolve())
     raw["report"]["figure_formats"] = list(formats)
     if mutate:
         mutate(raw)
     tmp_path.mkdir(parents=True, exist_ok=True)
-    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw))
+    path = tmp_path / "analysis.json"; path.write_text(json.dumps(raw), encoding="utf-8")
     payload, code = workflow.run_command(path, tmp_path / "run")
     return payload, code, tmp_path / "run"
 
@@ -60,27 +60,27 @@ def test_v095_every_planned_endpoint_rendered(tmp_path):
     rows = B.read_tsv(run / "dea" / "zero_null.tsv")
     assert {r["contrast_id"] for r in rows} == {"disease-control", "treated-disease", "treated-control"}
     assert any(r["eligibility"] != "tested" for r in rows) and any(r["role"] == "secondary" for r in rows)
-    page = (run / "report-full" / "index.html").read_text()
+    page = (run / "report-full" / "index.html").read_text(encoding="utf-8")
     parser = Rows(); parser.feed(page)
     i = next(i for i, c in enumerate(parser.captions) if c.startswith("Complete zero_null table"))
     assert parser.counts[i] == len(rows) == 24
     for r in rows:
         assert f"<td>{r['feature_id']}</td>" in page
     families = B.read_tsv(run / "dea" / "families.tsv")
-    data = json.loads((run / "report-full" / "report_data.json").read_text())
+    data = json.loads((run / "report-full" / "report_data.json").read_text(encoding="utf-8"))
     assert [f["n_planned"] for f in data["dea"]["families"]] == [f["n_planned"] for f in families]   # totals, never display-filtered counts
 
 
 def test_v096_pathway_response_and_multivariate_views(tmp_path):
     payload, code = workflow.run_command(DEMO, tmp_path / "run")
     assert code == 0, payload
-    data = json.loads((tmp_path / "run" / "report-full" / "report_data.json").read_text())
+    data = json.loads((tmp_path / "run" / "report-full" / "report_data.json").read_text(encoding="utf-8"))
     response = data["sections"]["response"]
     desc = next(t for t in response["tables"] if t["caption"].startswith("Descriptive response"))
     assert "P" not in [c.upper() for c in desc["columns"]] and not any("p_value" in c for c in desc["columns"])
     assert any("not statistical equivalence" in n for n in response["notes"])
     assert data["sections"]["permanova"]["state"] == "COMPLETED"
-    page = (tmp_path / "run" / "report-full" / "index.html").read_text().lower()
+    page = (tmp_path / "run" / "report-full" / "index.html").read_text(encoding="utf-8").lower()
     for phrase in ("confirms the", "validated mechanism", "rescues", "proves"):
         assert phrase not in page
 
@@ -92,7 +92,7 @@ def test_v096_pathway_section_labels(tmp_path):
 
 def test_v097_figures_match_their_source_tables(tmp_path):
     payload, code, run = run_example(tmp_path)
-    figs = json.loads((run / "report-full" / "figures.json").read_text())
+    figs = json.loads((run / "report-full" / "figures.json").read_text(encoding="utf-8"))
     assert figs and all(f["source"] for f in figs)
     rows = {(r["contrast_id"], r["feature_id"]): r for r in B.read_tsv(run / "dea" / "zero_null.tsv")}
     for fig in figs:
@@ -102,7 +102,7 @@ def test_v097_figures_match_their_source_tables(tmp_path):
         for r in src:
             d = rows[(contrast, r["feature_id"])]
             assert float(r["effect_log2"]) == float(d["effect"]) and abs(float(r["neg_log10_p"]) + math.log10(float(d["p_value"]))) <= 1e-12
-        svg = (run / "report-full" / f"figures/{fig['stem']}.svg").read_text()
+        svg = (run / "report-full" / f"figures/{fig['stem']}.svg").read_text(encoding="utf-8")
         assert svg.count("<circle") == len(src) and "*" not in svg
         for f in fig["files"]:
             head = (run / "report-full" / f).read_bytes()[:8]
@@ -112,7 +112,7 @@ def test_v097_figures_match_their_source_tables(tmp_path):
 def test_v098_methods_follow_the_executed_run(tmp_path):
     _, _, zero = run_example(tmp_path / "a")
     _, _, treat = run_example(tmp_path / "b", name="example-effect-threshold.json")
-    m1 = (zero / "report-full" / "methods_full.md").read_text(); m2 = (treat / "report-full" / "methods_full.md").read_text()
+    m1 = (zero / "report-full" / "methods_full.md").read_text(encoding="utf-8"); m2 = (treat / "report-full" / "methods_full.md").read_text(encoding="utf-8")
     assert "protein_zero_null" in m1 and "protein_treat" in m2 and m1 != m2
     for text in (m1, m2):
         for engine in ("DEqMS", "proDA", "fgsea", "CAMERA", "PERMANOVA"):
@@ -122,35 +122,36 @@ def test_v098_methods_follow_the_executed_run(tmp_path):
 
 def test_v099_null_partial_failed_and_cancelled_reports_are_truthful(tmp_path):
     payload, code, qc = run_example(tmp_path / "qc", mutate=lambda c: c["runtime"].update({"scope": "qc_only"}))
-    page = (qc / "report-full" / "index.html").read_text()
+    page = (qc / "report-full" / "index.html").read_text(encoding="utf-8")
     assert code == 0 and "no differential rows exist for this run" in page
-    status = json.loads((qc / "run_status.json").read_text())
+    status = json.loads((qc / "run_status.json").read_text(encoding="utf-8"))
     snapshot = {k: status[k] for k in ("run_id", "plan_hash", "exit_code", "reason_code", "requested_phase", "implemented_capabilities")}
     snapshot.update(state="CANCELLED", reason_code="E_CHILD_TIMEOUT", exit_code=6,
                     stages=[dict(s, message="") for s in status["stages"]] + [{"stage_id": "limma", "capability": "limma", "required": True, "state": "CANCELLED", "reason_code": "E_CHILD_TIMEOUT", "result_path": None, "message": "interrupted"}])
     out = tmp_path / "cancelled"; out.mkdir()
     full.build_report(qc, snapshot, out, [])
-    text = (out / "index.html").read_text()
+    text = (out / "index.html").read_text(encoding="utf-8")
     assert "state-CANCELLED" in text and "COMPLETED — exit code 0" not in text
     values = {f"F{i}": [1e300 if j % 2 == 0 else -1e300 for j in range(12)] for i in range(4)}
     obs = [{"observation_id": f"{g}{i}", "group": g} for g in ("C", "U", "T") for i in range(4)]
     files = B.dataset(tmp_path / "crash" / "data", values, obs)
     path = B.config(tmp_path / "crash" / "data", files, groups=["C", "U", "T"], contrasts=[B.contrast("d", "U", "C"), B.contrast("t", "T", "U")])
     payload, code = workflow.run_command(path, tmp_path / "crash" / "run")
-    crash = (tmp_path / "crash" / "run" / "report-full" / "index.html").read_text()
+    crash = (tmp_path / "crash" / "run" / "report-full" / "index.html").read_text(encoding="utf-8")
     assert code == 4 and "state-FAILED" in crash and "E_ENGINE_FAILED" in crash
 
 
 def test_v100_documented_commands_run_verbatim(tmp_path):
-    guide = (ROOT / "docs" / "user-guide" / "usage.md").read_text()
+    guide = (ROOT / "docs" / "user-guide" / "usage.md").read_text(encoding="utf-8")
     block = guide.split("## Workflow", 1)[1].split("```bash", 1)[1].split("```", 1)[0]
     commands = [line.strip() for line in block.splitlines() if line.strip().startswith(".venv/bin/proteomics")]
     assert len(commands) == 7
     env = {**os.environ}
-    help_text = subprocess.run([sys.executable, "-m", "proteomics_pipeline", "--help"], capture_output=True, text=True).stdout
+    help_text = subprocess.run([sys.executable, "-m", "proteomics_pipeline", "--help"], capture_output=True, text=True, encoding="utf-8").stdout
     for command in commands:
-        argv = shlex.split(command.replace("runs/", f"{tmp_path}/runs/"))
+        # CI run 36982402784: a Windows tmp path has backslashes, which POSIX shlex treats as escapes; substitute a forward-slash path after splitting
+        argv = [arg.replace("runs/", f"{tmp_path.as_posix()}/runs/") for arg in shlex.split(command)]
         assert argv[1] in help_text                                            # only implemented commands are documented
-        result = subprocess.run([sys.executable, "-m", "proteomics_pipeline", *argv[1:]], cwd=ROOT, capture_output=True, text=True, env=env)
+        result = subprocess.run([sys.executable, "-m", "proteomics_pipeline", *argv[1:]], cwd=ROOT, capture_output=True, text=True, env=env, encoding="utf-8")
         assert result.returncode == 0, (command, result.stdout[-500:], result.stderr[-500:])
     assert (tmp_path / "runs" / "comparison" / "index.html").is_file() and (tmp_path / "runs" / "example" / "report" / "index.html").is_file()

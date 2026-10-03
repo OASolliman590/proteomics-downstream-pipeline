@@ -96,7 +96,7 @@ def test_v012_linear_values_logged_once_and_explicit_zero_is_missing(tmp_path):
     service.run_intake(config, tmp_path, tmp_path / "out")
     row = read_tsv(tmp_path / "out" / "matrix.tsv")[1]
     assert row[1:4] == ["0.0", "1.0", "2.0"] and row[4] == "NA"   # oracle log2([1,2,4]) = [0,1,2]
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     assert report["explicit_zero_missing_cells"] == 1 and report["scale"]["output_scale"] == "log2"
     assert read_tsv(tmp_path / "out" / "observed_mask.tsv")[1][1:] == ["true", "true", "true", "false"]
 
@@ -127,7 +127,7 @@ def test_v012_negative_second_log_fails_before_any_transform(tmp_path, monkeypat
 # ----------------------------------------------------------------------------- V018
 def test_v018_manifest_is_self_consistent_and_roundtrips_exactly(tmp_path):
     service.run_intake(example_config(), EXAMPLES, tmp_path / "bundle")
-    manifest = json.loads((tmp_path / "bundle" / "manifest.json").read_text())
+    manifest = json.loads((tmp_path / "bundle" / "manifest.json").read_text(encoding="utf-8"))
     for artifact in manifest["artifacts"]:
         assert sha256(tmp_path / "bundle" / artifact["relative_path"]) == artifact["sha256"]   # independent hashlib oracle
     assert service.verify_bundle(tmp_path / "bundle")["feature_ids"] == [f"P0{i}" for i in range(1, 9)]
@@ -148,8 +148,8 @@ def test_v018_rerun_collision_and_changed_source_are_refused(tmp_path):
     copy_dir = tmp_path / "src"; shutil.copytree(FIX, copy_dir)
     config["input"]["matrix"] = str(copy_dir / "independent-abundance.tsv")
     recorded = service.source_inputs(config, EXAMPLES)
-    text = (copy_dir / "independent-abundance.tsv").read_text().replace("9.7", "9.8", 1)
-    (copy_dir / "independent-abundance.tsv").write_text(text)
+    text = (copy_dir / "independent-abundance.tsv").read_text(encoding="utf-8").replace("9.7", "9.8", 1)
+    (copy_dir / "independent-abundance.tsv").write_text(text, encoding="utf-8")
     with pytest.raises(IntegrityError) as error:
         service.run_intake(config, EXAMPLES, tmp_path / "bundle2", expected_sources=recorded)
     assert error.value.code == "E_SOURCE_CHANGED" and not (tmp_path / "bundle2").exists()
@@ -162,7 +162,7 @@ def test_v018_negative_mutated_bundle_fails_verification(tmp_path, mutation):
         (tmp_path / "bundle" / "observed_mask.tsv").unlink()
     else:
         path = tmp_path / "bundle" / "observations.tsv"
-        path.write_text(path.read_text().replace("C1\t", "C1x\t", 1))
+        path.write_text(path.read_text(encoding="utf-8").replace("C1\t", "C1x\t", 1), encoding="utf-8")
     with pytest.raises(IntegrityError):
         service.verify_bundle(tmp_path / "bundle")
 
@@ -179,7 +179,7 @@ def test_v019_report_exports_declarations_counts_and_unknown_provenance(tmp_path
     config["input"]["normalization_state"] = "unknown"
     config["study"]["tissue"] = None
     service.run_intake(config, tmp_path, tmp_path / "out")
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     assert report["grain"] == "protein" and report["scale"]["source_scale"] == "log2"
     assert report["n_features"] == 2 and report["n_source_observations"] == 5 and report["n_canonical_observations"] == 4
     groups = {g["group"]: g for g in report["groups"]}
@@ -190,7 +190,7 @@ def test_v019_report_exports_declarations_counts_and_unknown_provenance(tmp_path
     fields = {gap["field"] for gap in report["provenance_gaps"]}
     assert {"study.tissue", "input.normalization_state"} <= fields
     assert report["asserted_unknown_facts"] == [] and report["declared"]["tissue"] is None
-    text = (tmp_path / "out" / "intake_report.json").read_text().lower()
+    text = (tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8").lower()
     assert "confirmed" not in text and "pass" not in text.split()
 
 
@@ -198,9 +198,9 @@ def test_v019_negative_unknown_mask_stays_unknown_not_all_observed(tmp_path):
     config = example_config()
     config["input"]["prior_imputation"] = "unknown"
     service.run_intake(config, EXAMPLES, tmp_path / "out")
-    manifest = json.loads((tmp_path / "out" / "manifest.json").read_text())
+    manifest = json.loads((tmp_path / "out" / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["original_observed_mask"]["state"] == "unknown"
     assert not (tmp_path / "out" / "observed_mask.tsv").exists()
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     assert report["missingness"]["originally_observed_cells"] is None
     assert any(g["field"] == "input.original_observed_mask" for g in report["provenance_gaps"])

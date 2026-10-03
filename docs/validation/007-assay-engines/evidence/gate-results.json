@@ -4,7 +4,7 @@
     {
       "command": ".venv/bin/python -m pytest tests/scientific/test_assay_engines.py -q -rs -p no:cacheprovider",
       "exit_code": 0,
-      "summary": "10 passed in 113.28s (0:01:53)",
+      "summary": "10 passed in 255.29s (0:04:15)",
       "log": "docs/validation/007-assay-engines/evidence/python-tests-1.log"
     },
     {
@@ -14,7 +14,7 @@
       "log": "docs/validation/007-assay-engines/evidence/r-test-assay-engines.log"
     }
   ],
-  "working_source_manifest_sha256": "5593d028037086e10ccbe9332d30feea84da567b547fe9030990aab35bef05ee",
+  "working_source_manifest_sha256": "d7832f09939eb2471b538e0c751c9a0ee276c18f90fb68a6faca79e32b32893d",
   "n_files": 11,
   "environment": {
     "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",

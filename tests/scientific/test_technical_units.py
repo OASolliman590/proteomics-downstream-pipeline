@@ -27,7 +27,7 @@ def _four_injections(tmp_path, technical):
 
 def test_v013_four_injections_of_one_specimen_are_one_biological_unit(tmp_path):
     service.run_intake(_four_injections(tmp_path, AGG("mean_log2")), tmp_path, tmp_path / "out")
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     ctrl = next(g for g in report["groups"] if g["group"] == "ctrl")
     assert ctrl["n_injections"] == 5 and ctrl["n_biological_units"] == 2          # spec1 (4 injections) + spec2
     lineage = read_tsv(tmp_path / "out" / "observation_lineage.tsv")
@@ -38,9 +38,9 @@ def test_v013_four_injections_of_one_specimen_are_one_biological_unit(tmp_path):
 def test_v013_paired_visits_keep_four_subjects_not_eight(tmp_path):
     config = example_config("example-paired.json")
     for key in ("matrix", "observations", "features", "source_provenance"):
-        config["input"][key] = str((EXAMPLES / json.loads((EXAMPLES / "example-paired.json").read_text())["input"][key]).resolve())
+        config["input"][key] = str((EXAMPLES / json.loads((EXAMPLES / "example-paired.json").read_text(encoding="utf-8"))["input"][key]).resolve())
     service.run_intake(config, EXAMPLES, tmp_path / "out")
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     assert report["n_subjects"] == 4 and report["n_canonical_observations"] == 8
     for group in report["groups"]:
         assert group["n_biological_units"] == 4 and group["n_subjects"] == 4
@@ -71,7 +71,7 @@ def test_v014_mean_linear_and_mean_log2_differ_as_specified(tmp_path, method, ex
     assert float(values["spec1_after"]) == 6.0 and "visit2" not in values        # distinct visit stays separate
     coverage = read_tsv(tmp_path / "out" / "aggregation_coverage.tsv")
     assert coverage[1][:4] == ["F1", "spec1", "2", "2"]
-    report = json.loads((tmp_path / "out" / "intake_report.json").read_text())
+    report = json.loads((tmp_path / "out" / "intake_report.json").read_text(encoding="utf-8"))
     before = next(g for g in report["groups"] if g["group"] == "before")
     assert before["n_biological_units"] == 2 and before["n_injections"] == 3
 

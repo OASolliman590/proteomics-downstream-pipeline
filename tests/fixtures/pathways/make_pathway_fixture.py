@@ -33,16 +33,16 @@ def build(directory: Path, *, design="independent", seed=7, n_features=40):
             base = 15 + 0.1 * f + (subject_effect[o["subject_id"]] if design != "independent" else 0.0)
             row.append(base + shift + rng.gauss(0, 0.3))
         values[f"P{f + 1:03d}"] = row
-    with (directory / "mapping_source.tsv").open("w", newline="") as h:
+    with (directory / "mapping_source.tsv").open("w", newline="", encoding="utf-8") as h:
         w = csv.writer(h, delimiter="\t", lineterminator="\n"); w.writerow(["source_id", "id_type", "gene_id", "gene_symbol", "taxonomy_id", "status"])
         for f in range(n_features):
             w.writerow([f"P{f + 1:03d}", "synthetic_accession", f"rat:G{f + 1:03d}", f"Gs{f + 1}", 10116, "current"])
-    with (directory / "genesets_source.tsv").open("w", newline="") as h:
+    with (directory / "genesets_source.tsv").open("w", newline="", encoding="utf-8") as h:
         w = csv.writer(h, delimiter="\t", lineterminator="\n"); w.writerow(["set_id", "set_name", "gene_id"])
         for s, idx in SETS.items():
             for i in idx:
                 w.writerow([s, f"synthetic {s}", f"rat:G{i + 1:03d}"])
     base = {"version": "synthetic-1", "source": "synthetic pathway fixture", "terms": "synthetic", "id_type": "synthetic", "source_taxonomy_id": 10116, "target_taxonomy_id": 10116}
-    (directory / "prepare_mapping.json").write_text(json.dumps({**base, "resource_id": "map", "kind": "mapping", "files": [{"name": "mapping.tsv", "source": "mapping_source.tsv"}]}))
-    (directory / "prepare_sets.json").write_text(json.dumps({**base, "resource_id": "sets", "kind": "gene_sets", "files": [{"name": "gene_sets.tsv", "source": "genesets_source.tsv"}]}))
+    (directory / "prepare_mapping.json").write_text(json.dumps({**base, "resource_id": "map", "kind": "mapping", "files": [{"name": "mapping.tsv", "source": "mapping_source.tsv"}]}), encoding="utf-8")
+    (directory / "prepare_sets.json").write_text(json.dumps({**base, "resource_id": "sets", "kind": "gene_sets", "files": [{"name": "gene_sets.tsv", "source": "genesets_source.tsv"}]}), encoding="utf-8")
     return values, obs

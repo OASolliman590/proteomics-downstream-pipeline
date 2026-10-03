@@ -11,7 +11,7 @@ test_unknown_group_rejected (test_runner.InputValidationTests.test_unknown_group
 test_valid_missing_preserved (test_runner.InputValidationTests.test_valid_missing_preserved) ... ok
 
 ----------------------------------------------------------------------
-Ran 10 tests in 0.022s
+Ran 10 tests in 0.026s
 
 OK
 exit=0

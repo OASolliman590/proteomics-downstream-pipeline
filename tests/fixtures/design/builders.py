@@ -84,7 +84,10 @@ def rscript() -> str | None:
 
 def r_json(code: str, *args: str):
     """Run an independent R oracle snippet that prints JSON."""
-    result = subprocess.run([rscript(), "--vanilla", "-e", code, *args], capture_output=True, text=True)
+    # CI run 36982402784 (Windows): `Rscript -e` with multi-line code lost its arguments ("invalid 'description' argument");
+    # the snippet now runs from a UTF-8 script file and every path is passed with forward slashes.
+    from proteomics_pipeline.runtime import run_r_code
+    result = run_r_code(code, args, rscript=rscript())
     if result.returncode != 0:
         raise RuntimeError(result.stderr)
     lines = [line for line in result.stdout.splitlines() if line.strip()]
