@@ -1,6 +1,6 @@
 # Release phases — normative scope
 
-Kit: **1.2.0-frozen** with the operator-authorized 2026-10-01 amendments (ADR 0006/0007). No maintained phase has shipped or been tagged. Phase 1 (R01–R05, R10a), Phase 2 (R13, R06, R07, R09, R08) and Phase 3 R10b pass their gates in an uncommitted working tree; R11 passes except V107 (CI FAIL in run 36982402784; fixes pending a re-run); R12 is NOT_RUN (Maintainer-only). See [progress.md](progress.md).
+Kit: **1.2.0-frozen** with the operator-authorized 2026-10-01 amendments (ADR 0006/0007). No maintained phase has shipped or been tagged. Phase 1 (R01–R05, R10a), Phase 2 (R13, R06, R07, R09, R08) and Phase 3 R10b pass their gates in an uncommitted working tree; R11 passes, including V107 (CI run 37087074374 on fa4d948, Ubuntu and Windows); R12 is NOT_RUN (Maintainer-only). See [progress.md](progress.md).
 
 | Phase | Packets | Release name | Meaning |
 |---|---|---|---|

@@ -46,6 +46,7 @@ Recorded by the Claude (Opus) route acting for the Maintainer role under the ope
 | D-38 | Performance | `coverage_tables` and `featurewise_estimability` are vectorized, and rank/estimability are memoized by observed pattern. Outputs are identical to the former loops (oracle tests keep the old code verbatim). The re-run release benchmark took 559 s (design 84 s), down from 884 s (design 382 s). This answers open question 9. |
 | D-39 | CI V107 | The first real CI run (36982402784, on fd8dfa9) failed: Ubuntu 2 and Windows 16 tests. V107 is recorded as **FAIL** with the log excerpt. The fixes are verified locally only, so V107 can pass only after a CI run on the pushed fixes succeeds. |
 | D-40 | Portability rules | R snippets run from UTF-8 script files (`runtime.run_r_code`), never `Rscript -e` with arguments. Paths reach R with forward slashes and are normalised again in `.pc_find_input`. All text I/O names UTF-8 (lint `tests/scientific/reference/test_text_encoding.py`), and R children run in a UTF-8 locale. Tests never assume the project-local `.r-lib`: a missing package is simulated by an invalid shadow installation placed first on `R_LIBS`. The recovered `scripts/run_pipeline.py` is baseline code and was not edited. |
+| D-41 | CI V107 PASS | After A-2026-10-01-11/12, CI run 37087074374 (https://github.com/OASolliman590/proteomics-downstream-pipeline/actions/runs/37087074374) on fa4d948 passed on Ubuntu and Windows: locks qualified, Python 269 passed, R 319 passed with 0 skipped (so V059 executed), synthetic end-to-end example COMPLETED, artifact manifest written. The dispatch-only release-calibration job is not part of V107. V107's verified_commit is fa4d948; the other Claude-route records keep verified_commit null. |
 
 ## Open questions for Omar
 
@@ -56,7 +57,7 @@ Recorded by the Claude (Opus) route acting for the Maintainer role under the ope
 5. **PERMANOVA milestone.** R13 is placed in Phase 2 (v0.2). Should it instead be released as a separately labelled extension?
 6. **Sex/sample key.** The private reanalysis that motivated PERMANOVA still has an unconfirmed sex key; nothing from it is in this repository, but any future private regression of PERMANOVA should wait for that confirmation.
 7. **R12 tooling.** Work stopped at the R11 boundary. R12 (legacy regression tooling, release builder, release docs) is not implemented and all of V111–V120 are NOT_RUN. Its criteria reference private-study details, so the private comparison must be run by you locally. Should R12 tooling be the next packet?
-8. **CI (V107).** The first CI run failed (D-39). Push the portability fixes and re-run the Linux and Windows jobs; only a green run can turn V107 into PASS.
+8. **CI (V107).** Resolved by D-41: run 37087074374 passed on Ubuntu and Windows.
 9. **Performance headroom.** Resolved by D-38: the benchmark now takes 559 s, down from 884 s.
 10. **Report layout findings (V109).** The SVG volcano does not mark overplotted identical points, has no padding at the range extremes and has no zero reference line. Should these be fixed in R10b before an independent visual review?
 11. **Accept the frozen-contract amendments (ADR 0008).** SM05/SM27/SM28 were amended by the Claude route acting for the Maintainer. Do you accept them explicitly?
@@ -69,3 +70,4 @@ Recorded by the Claude (Opus) route acting for the Maintainer role under the ope
       - A few single-line `Rscript -e` probes remain (`doctor.py`, `builders.py`, `test_qc.py`, `test_runtime_contract.py`).
       - The encoding lint does not cover `from subprocess import run` or `tempfile` text modes.
       - The bash-only lines of the documented demo are not exercised on Windows.
+    - **R11, cross-platform plan hash.** In CI run 37087074374 the synthetic example's plan hash differed between Ubuntu (`7ee163b2…`) and Windows (`5a774df3…`) for the same commit and config. Platform-specific content (absolute paths or line endings) likely enters the hashed plan. Semantic reproduction across platforms needs a normalised, platform-independent plan hash.

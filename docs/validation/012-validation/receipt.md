@@ -51,4 +51,4 @@ m1 fixed: calibration now runs the production fit path, a high-power mixture gat
 
 ## Acceptance
 
-All listed gates exited 0. V101–V106, V109 and V110 pass on re-execution including their negative cases; V107 is FAIL from the first real CI run (fixes pending a re-run); V108 is recorded as assessed above. 
+All listed gates exited 0. V101–V106, V109 and V110 pass on re-execution including their negative cases; V107 is PASS: the first real CI run (36982402784) failed, and after the portability fixes CI run 37087074374 on fa4d948 passed on Ubuntu and Windows (Python 269 passed, R 319 passed, 0 skipped; evidence `evidence/ci-run-37087074374/`); V108 is recorded as assessed above. 

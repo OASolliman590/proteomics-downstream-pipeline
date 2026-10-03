@@ -1,6 +1,6 @@
 # Packet index — v1.2.0-frozen
 
-Kit frozen 2026-09-20. R01 accepted 2026-09-21. On 2026-10-01 the operator gave GO for R02 onward in this order and authorized R13 (PERMANOVA, [ADR 0006](../../docs/adr/0006-permanova-scope-amendment.md)) with the Claude route ([ADR 0007](../../docs/adr/0007-claude-route-and-integration-amendments.md)). R02–R10b and R13 pass their gates, and R11 passes except V107 (CI FAIL in run 36982402784; fixes pending a re-run) — all uncommitted, independent audit NOT_RUN. R12 private gates are Maintainer-only and NOT_RUN.
+Kit frozen 2026-09-20. R01 accepted 2026-09-21. On 2026-10-01 the operator gave GO for R02 onward in this order and authorized R13 (PERMANOVA, [ADR 0006](../../docs/adr/0006-permanova-scope-amendment.md)) with the Claude route ([ADR 0007](../../docs/adr/0007-claude-route-and-integration-amendments.md)). R02–R10b and R13 pass their gates, and R11 passes, including V107 (CI run 37087074374 on fa4d948, Ubuntu and Windows) — all uncommitted, independent audit NOT_RUN. R12 private gates are Maintainer-only and NOT_RUN.
 
 [PHASES.md](PHASES.md) defines release scope. [packet-ownership.json](packet-ownership.json) is the authoritative exact write allowlist and dispatch-dependency record. All listed source/test paths are pending creation after freeze. All paths not assigned to a packet are forbidden to that implementer. There are twelve original slices plus the amended R13 slice, and fourteen dispatch units because R10 is split without changing any FR/T/V identity.
 

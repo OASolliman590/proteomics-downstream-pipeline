@@ -3782,29 +3782,25 @@
       "proposed_test_target": {
         "path": "tests/integration/test_offline.py",
         "case_id": "V107",
-        "status": "FAIL"
+        "status": "PASS"
       },
-      "status": "FAIL",
+      "status": "PASS",
       "evidence": [
-        "tests/integration/test_offline.py",
-        "tests/integration/test_resume.py",
-        "tests/integration/test_report_artifacts.py",
-        "tests/scientific/reference/test_reference_matrix.py",
-        "tests/scientific/reference/test_calibration_evidence.py",
+        "docs/validation/012-validation/evidence/ci-run-37087074374/gate-results.json",
+        "docs/validation/012-validation/evidence/ci-run-37087074374/summary.log",
+        "docs/validation/012-validation/evidence/ci-run-37087074374/run.json",
         ".github/workflows/maintained.yml",
         "docs/validation/012-validation/evidence/ci-run-36982402784-failed.log",
-        "docs/validation/012-validation/receipt.md",
-        "docs/validation/012-validation/evidence/gate-results.json"
+        "docs/validation/012-validation/receipt.md"
       ],
-      "verified_commit": null,
+      "verified_commit": "fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd",
       "acceptance_spec": "specs/012-validation/spec.md#V107",
       "verification": {
-        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
-        "date": "2026-10-02",
-        "working_source_manifest_sha256": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
-        "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
-        "committed": "fd8dfa9 plus uncommitted audit fixes",
-        "reason": "CI run 36982402784 on fd8dfa9 failed (ubuntu 2 failed/251 passed; windows 16 failed/237 passed). Portability fixes (A-2026-10-01-11) are verified locally only and pending a CI re-run on the pushed tree."
+        "route": "GitHub Actions CI (https://github.com/OASolliman590/proteomics-downstream-pipeline/actions/runs/37087074374)",
+        "date": "2026-10-03",
+        "independent_audit": "re-review ACCEPT WITH FIXES (2026-10-03); non-blocking follow-ups in decisions.md open item 12",
+        "committed": "fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd",
+        "history": "First CI run 36982402784 on fd8dfa9 failed (Ubuntu 2, Windows 16); fixed by A-2026-10-01-11/12 and passed on fa4d948."
       }
     },
     {

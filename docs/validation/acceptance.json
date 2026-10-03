@@ -2,8 +2,7 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 119,
-    "FAIL": 1,
+    "PASS": 120,
     "NOT_RUN": 10
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
@@ -3648,23 +3647,35 @@
       "acceptance_id": "V107",
       "requirement": "FR-107",
       "task": "T107",
-      "status": "FAIL",
-      "reviewed_tree": "258ee49a3c2b2e7b27a1e94f8b46a7122d8313f8b87e5837112ec13d7eb13932",
+      "status": "PASS",
+      "reviewed_tree": "fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd",
       "commands": [
         {
-          "command": ".venv/bin/python -m pytest tests/integration/test_offline.py tests/integration/test_resume.py tests/integration/test_report_artifacts.py tests/scientific/reference -q -rs -p no:cacheprovider",
+          "command": "GitHub Actions maintained.yml / smoke (ubuntu-latest), run 37087074374: locks, Python suite, R testthat, synthetic end-to-end, artifact manifest",
+          "exit_code": 0
+        },
+        {
+          "command": "GitHub Actions maintained.yml / smoke (windows-latest), run 37087074374: locks, Python suite, R testthat, synthetic end-to-end, artifact manifest",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "docs/validation/012-validation/evidence/gate-results.json",
-          "sha256": "64e29f54f506f68feddf8430c1dfd83be260a31f69eee11d15173b528889cf3f"
+          "path": "docs/validation/012-validation/evidence/ci-run-37087074374/gate-results.json",
+          "sha256": "25b0b9507d6d69c9f3fde2a70ff3a4b37625eaad3785b91e6bd1cf3c25d6d7d7"
         },
         {
-          "path": "docs/validation/012-validation/evidence/python-tests-1.log",
-          "sha256": "321148351a7081587b3ff0ef2b4ccf38dd38afa273944b4540b589ab15b8d887"
+          "path": "docs/validation/012-validation/evidence/ci-run-37087074374/summary.log",
+          "sha256": "b3550dea7adbc9f553e0637d84311ec6f9b835f9e0783043979f1d2f848bc18a"
+        },
+        {
+          "path": "docs/validation/012-validation/evidence/ci-run-37087074374/summary.log",
+          "sha256": "b3550dea7adbc9f553e0637d84311ec6f9b835f9e0783043979f1d2f848bc18a"
+        },
+        {
+          "path": "docs/validation/012-validation/evidence/ci-run-37087074374/run.json",
+          "sha256": "9eff6679fa2de70efeba05465d23a7d29191c49ab3dee5ce9a84fddcbeb2d3d4"
         },
         {
           "path": "docs/validation/012-validation/evidence/ci-run-36982402784-failed.log",
@@ -3672,10 +3683,9 @@
         }
       ],
       "expected_oracle": "Run real core Python/R examples on both systems and distinguish expensive release calibration from smoke CI; absent jobs remain NOT_RUN.",
-      "observed": "CI run 36982402784 on fd8dfa9 failed (ubuntu 2 failed/251 passed; windows 16 failed/237 passed). Portability fixes (A-2026-10-01-11) are verified locally only and pending a CI re-run on the pushed tree.",
-      "reviewer_conclusion": "FAIL",
-      "verified_commit": null,
-      "reason": "CI run 36982402784 on fd8dfa9 failed (ubuntu 2 failed/251 passed; windows 16 failed/237 passed). Portability fixes (A-2026-10-01-11) are verified locally only and pending a CI re-run on the pushed tree."
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by GitHub Actions CI (https://github.com/OASolliman590/proteomics-downstream-pipeline/actions/runs/37087074374); independent audit re-review ACCEPT WITH FIXES (2026-10-03); non-blocking follow-ups in decisions.md open item 12",
+      "verified_commit": "fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd"
     },
     {
       "acceptance_id": "V108",

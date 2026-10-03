@@ -25,8 +25,8 @@ Further amendments: R03 `tests/integration/test_qc.py` V028 now targets a declar
 
 ## Addendum: first CI run (V107)
 
-GitHub Actions run 36982402784 on fd8dfa9 failed: Ubuntu 2 tests (V059 assumed a local `.r-lib`) and Windows 16 tests. The Windows causes were argument loss with `Rscript -e`, cp1252 decoding of UTF-8 files and R output, the console-script lookup, and backslash paths split by POSIX `shlex`. Amendment A-2026-10-01-11 fixes these portably (D-40). V107 is recorded as FAIL until a CI run on the pushed fixes passes.
+GitHub Actions run 36982402784 on fd8dfa9 failed: Ubuntu 2 tests (V059 assumed a local `.r-lib`) and Windows 16 tests. The Windows causes were argument loss with `Rscript -e`, cp1252 decoding of UTF-8 files and R output, the console-script lookup, and backslash paths split by POSIX `shlex`. Amendment A-2026-10-01-11 fixes these portably (D-40). After A-2026-10-01-12, CI run 37087074374 on fa4d948 passed on Ubuntu and Windows, so V107 is PASS (D-41).
 
 ## Consequences
 
-The affected packet gates, the full R testthat suite and the full Python suite were re-run (`docs/validation/phase-gates`). Acceptance stays self-verified apart from this audit, and nothing is committed. Decisions D-31 to D-38 record the details.
+The affected packet gates, the full R testthat suite and the full Python suite were re-run (`docs/validation/phase-gates`). Acceptance stays self-verified apart from this audit and the 2026-10-03 re-review (ACCEPT WITH FIXES, non-blocking follow-ups). The fixes are committed as fa4d948. Decisions D-31 to D-38 record the details.

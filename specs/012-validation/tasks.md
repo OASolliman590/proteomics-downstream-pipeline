@@ -8,7 +8,7 @@
 - [x] T104 — R11: implement FR-104 (Scientific golden reference matrix); establish and pass V104, including its negative case, with independent evidence.
 - [x] T105 — R11: implement FR-105 (Null and mixture calibration); establish and pass V105, including its negative case, with independent evidence.
 - [x] T106 — R11: implement FR-106 (Correlated pathway calibration); establish and pass V106, including its negative case, with independent evidence.
-- [ ] T107 — R11: implement FR-107 (Cross-platform CI); establish and pass V107, including its negative case, with independent evidence.
+- [x] T107 — R11: implement FR-107 (Cross-platform CI); establish and pass V107, including its negative case, with independent evidence.
 - [x] T108 — R11: implement FR-108 (Performance and resource benchmark); establish and pass V108, including its negative case, with independent evidence.
 - [x] T109 — R11: implement FR-109 (Report numerical/visual validation); establish and pass V109, including its negative case, with independent evidence.
 - [x] T110 — R11: implement FR-110 (Machine-readable validation ledger); establish and pass V110, including its negative case, with independent evidence.
