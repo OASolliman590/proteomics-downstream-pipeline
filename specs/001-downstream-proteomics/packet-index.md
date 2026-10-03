@@ -20,6 +20,12 @@ Kit frozen 2026-09-20. R01 accepted 2026-09-21. On 2026-10-01 the operator gave 
 | R10b | 3 | R10a, R08, R09 | V095–V100 | high | [Unified offline report and streamlined workflow](../011-reporting/spec.md) |
 | R11 | 3 | R10b | V101–V110 | high | [Reproducibility, calibration and continuous validation](../012-validation/spec.md) |
 | R12 | 3 | R11 | V111–V120 | high | [Archived-study regression, documentation and versioned successor](../013-release/spec.md) |
+| R14a | 4 | R11, R13 | V131–V136 | high | [Post-DE: result structure and concordance](../015-post-de-analysis/spec.md) (amendment) |
+| R14b | 4 | R14a | V137–V143 | high | [Post-DE: robustness and sensitivity](../015-post-de-analysis/spec.md) (amendment) |
+| R14c | 4 | R14b | V144–V148 | high | [Post-DE: protein–phenotype association](../015-post-de-analysis/spec.md) (amendment) |
+| R14d | 4 | R14c, R09 | V149–V160 | high | [Post-DE: biomarker discrimination evaluation](../015-post-de-analysis/spec.md) (amendment) |
+| R14e | 4 | R14d, R07 | V161–V165 | high | [Post-DE: co-abundance modules and networks](../015-post-de-analysis/spec.md) (amendment) |
+| R14f | 4 | R14a–R14e, R10b | V166–V167 | high | [Post-DE: eligibility reporting and generality matrix](../015-post-de-analysis/spec.md) (amendment) |
 
 ## Ownership and scheduling
 
@@ -34,3 +40,5 @@ The only permitted concurrent group is **R06 ∥ R07 ∥ R09 after accepted R05 
 A packet receipt identifies its frozen tree/contract versions, changed paths, acceptance IDs, executed commands and actual outputs/failures. The Maintainer reviews the diff and independently runs the gates before recording completion. Evidence status remains pending-after-freeze or NOT_RUN when no verified execution exists. Independent Reviewer audit does not authorize its author to mark their own candidate frozen.
 
 Current next action: the Phase 2 group R06 ∥ R07 ∥ R09, then R08 (see [progress.md](progress.md) for what has been completed since). Shared-interface amendments made by the Maintainer route are listed in `maintainer_amendments` of [packet-ownership.json](packet-ownership.json). No lockfile or validated general platform is implied.
+
+Phase 4 amendment (2026-10-02, [ADR 0009](../../docs/adr/0009-post-de-scope-amendment.md)): slice 015 adds dispatch units R14a–R14f (FR/T/V-131–167), serial after accepted R11 and the R13 audit fixes. Not yet dispatched. The shared-interface amendment (capability maps, optional `post_de` schema block, R Suggests) is made by the Maintainer before R14a, as described in [the slice plan](../015-post-de-analysis/plan.md).

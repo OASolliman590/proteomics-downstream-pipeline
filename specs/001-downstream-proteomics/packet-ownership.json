@@ -335,6 +335,116 @@
         "tests/fixtures/permanova/**",
         "docs/validation/014-multivariate-permanova/**"
       ]
+    },
+    "R14a": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R11",
+        "R13"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "src/proteomics_pipeline/reporting/post_de_sets_data.py",
+        "r/proteomicsCore/R/post_de_sets.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "tests/scientific/test_post_de_sets.py",
+        "tests/fixtures/post_de/sets/**",
+        "docs/validation/015-post-de-analysis/R14a/**",
+        "src/proteomics_pipeline/post_de/__init__.py",
+        "tests/fixtures/post_de/design_factory.py"
+      ]
+    },
+    "R14b": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14a"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "src/proteomics_pipeline/reporting/post_de_sensitivity_data.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "tests/scientific/test_post_de_sensitivity.py",
+        "tests/fixtures/post_de/sensitivity/**",
+        "docs/validation/015-post-de-analysis/R14b/**"
+      ]
+    },
+    "R14c": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14b"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "src/proteomics_pipeline/reporting/post_de_association_data.py",
+        "r/proteomicsCore/R/post_de_association.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "tests/scientific/test_post_de_association.py",
+        "tests/fixtures/post_de/association/**",
+        "docs/validation/015-post-de-analysis/R14c/**"
+      ]
+    },
+    "R14d": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14c",
+        "R09"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "src/proteomics_pipeline/reporting/post_de_biomarker_data.py",
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "tests/scientific/test_post_de_biomarker.py",
+        "tests/fixtures/post_de/biomarker/**",
+        "docs/validation/015-post-de-analysis/R14d/**"
+      ]
+    },
+    "R14e": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14d",
+        "R07"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "src/proteomics_pipeline/reporting/post_de_networks_data.py",
+        "r/proteomicsCore/R/post_de_networks.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "tests/scientific/test_post_de_networks.py",
+        "tests/fixtures/post_de/networks/**",
+        "docs/validation/015-post-de-analysis/R14e/**"
+      ]
+    },
+    "R14f": {
+      "phase": 4,
+      "risk": "high",
+      "depends_on": [
+        "R14a",
+        "R14b",
+        "R14c",
+        "R14d",
+        "R14e",
+        "R10b"
+      ],
+      "scope_amendment": "ADR 0009 (operator-authorized 2026-10-02): slice 015-post-de-analysis",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/eligibility.py",
+        "src/proteomics_pipeline/reporting/post_de_data.py",
+        "tests/integration/test_post_de_generality.py",
+        "tests/fixtures/post_de/generality/**",
+        "docs/validation/015-post-de-analysis/R14f/**"
+      ]
     }
   },
   "parallel_groups": [
@@ -344,7 +454,7 @@
       "R09"
     ]
   ],
-  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments.",
+  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments. 2026-10-02 (ADR 0009): R14a–R14f added for slice 015 (Phase 4), serial; allowlists are disjoint and proposed before dispatch.",
   "maintainer_amendments": [
     {
       "id": "A-2026-10-01-01",

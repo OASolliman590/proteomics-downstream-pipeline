@@ -338,6 +338,58 @@
       ],
       "phase": 2,
       "amendment": "ADR 0006 (operator-authorized 2026-10-01)"
+    },
+    {
+      "id": "R14",
+      "slice": "015-post-de-analysis",
+      "title": "Post-differential analysis",
+      "story": "US8, US9",
+      "depends_on": [
+        "R11",
+        "R13"
+      ],
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-131",
+        "FR-132",
+        "FR-133",
+        "FR-134",
+        "FR-135",
+        "FR-136",
+        "FR-137",
+        "FR-138",
+        "FR-139",
+        "FR-140",
+        "FR-141",
+        "FR-142",
+        "FR-143",
+        "FR-144",
+        "FR-145",
+        "FR-146",
+        "FR-147",
+        "FR-148",
+        "FR-149",
+        "FR-150",
+        "FR-151",
+        "FR-152",
+        "FR-153",
+        "FR-154",
+        "FR-155",
+        "FR-156",
+        "FR-157",
+        "FR-158",
+        "FR-159",
+        "FR-160",
+        "FR-161",
+        "FR-162",
+        "FR-163",
+        "FR-164",
+        "FR-165",
+        "FR-166",
+        "FR-167"
+      ],
+      "phase": 4,
+      "amendment": "ADR 0009 (operator-authorized 2026-10-02); dispatched as R14a-R14f"
     }
   ],
   "phases": [
@@ -360,6 +412,11 @@
       "phase": 3,
       "release": "v1.0-defensible",
       "meaning": "R10b, R11 and R12: full report, locked reproduction, calibration and legacy reconciliation."
+    },
+    {
+      "phase": 4,
+      "release": "v1.1-post-de",
+      "meaning": "R14a-R14f: set logic and concordance, robustness, phenotype association, leakage-safe biomarker evaluation, co-abundance and networks, eligibility reporting."
     }
   ]
 }

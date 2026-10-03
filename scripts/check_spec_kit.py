@@ -12,10 +12,12 @@ def main():
     trace=json.loads((EPIC/'traceability.json').read_text(encoding='utf-8'))['requirements']
     roadmap=json.loads((EPIC/'roadmap.json').read_text(encoding='utf-8'))['slices']
     # Amendment A-2026-10-01-04 (ADR 0006): FR/T/V-121..130 appended for R13; the original 120 identities are unchanged.
-    assert len(trace)==130 and len(roadmap)==13
-    assert [x['requirement'] for x in trace[:120]]==[f'FR-{i:03d}' for i in range(1,121)]
+    # Amendment ADR 0009 (2026-10-02): FR/T/V-131..167 appended for slice 015 (R14a-R14f); 001-130 unchanged.
+    assert len(trace)==167 and len(roadmap)==14
+    assert [x['requirement'] for x in trace]==[f'FR-{i:03d}' for i in range(1,168)]
     for key in ['requirement','task','acceptance']:
-        assert len({x[key] for x in trace})==130,f'Duplicate {key}'
+        assert len({x[key] for x in trace})==167,f'Duplicate {key}'
+    expected_per_slice={'015-post-de-analysis':37}
     packet_ids={r['id'] for r in roadmap};seen=set()
     for row in roadmap:
         assert set(row['depends_on'])<=packet_ids,f'Unknown dependency: {row}'
@@ -23,7 +25,7 @@ def main():
         folder=ROOT/'specs'/row['slice']
         for filename in ['spec.md','plan.md','tasks.md']:assert (folder/filename).is_file()
         assigned=[t for t in trace if t['slice']==row['slice']]
-        assert len(assigned)==10
+        assert len(assigned)==expected_per_slice.get(row['slice'],10),row['slice']
         for t in assigned:
             assert t['requirement'] in (folder/'spec.md').read_text(encoding='utf-8')
             assert re.search(r'^- \[[ x]\] '+t['task']+r'\b',(folder/'tasks.md').read_text(encoding='utf-8'),re.M)

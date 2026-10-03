@@ -4523,8 +4523,1044 @@
         "independent_audit": "ACCEPT_WITH_FIXES on fd8dfa9 (2026-10-02, ADR 0008); fixes self-verified, re-audit NOT_RUN",
         "committed": "fd8dfa9 plus uncommitted audit fixes"
       }
+    },
+    {
+      "requirement": "FR-131",
+      "task": "T131",
+      "acceptance": "V131",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14a",
+      "phase": 4,
+      "capability": "Declarative set algebra",
+      "criterion": "The system MUST build feature sets from completed differential families using a finite grammar over named contrasts and models (`union`, `intersect`, `difference`, `complement_within_tested`). It MUST use declared membership criteria (family q threshold, or TREAT; raw-P criteria allowed only with the label `exploratory_raw_p`) and optional direction, and export the full membership matrix.",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "r/proteomicsCore/R/post_de_sets.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sets.py; r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "case_id": "V131",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V131",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-132",
+      "task": "T132",
+      "acceptance": "V132",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14a",
+      "phase": 4,
+      "capability": "Region provenance and refusals",
+      "criterion": "Every exported set or region MUST carry its rule, criterion, threshold, family IDs and null type. The system MUST refuse rules that reference undefined contrasts, mix zero-null with TREAT memberships, or combine families from different primary matrices.",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "r/proteomicsCore/R/post_de_sets.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sets.py; r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "case_id": "V132",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V132",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-133",
+      "task": "T133",
+      "acceptance": "V133",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14a",
+      "phase": 4,
+      "capability": "Exact region partition",
+      "criterion": "The system MUST compute the exclusive regions of up to the declared number of sets (UpSet for any k; circle-based Venn for k ≤ 3). Region counts MUST sum to the size of the union, and protein-group versus unique-gene counts MUST be reported separately.",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "r/proteomicsCore/R/post_de_sets.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sets.py; r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "case_id": "V133",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V133",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-134",
+      "task": "T134",
+      "acceptance": "V134",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14a",
+      "phase": 4,
+      "capability": "Direction-aware overlap",
+      "criterion": "For any two sets the system MUST report concordant-up, concordant-down and discordant counts, plus the features significant in only one.",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "r/proteomicsCore/R/post_de_sets.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sets.py; r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "case_id": "V134",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V134",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-135",
+      "task": "T135",
+      "acceptance": "V135",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14a",
+      "phase": 4,
+      "capability": "Effect concordance across contrasts and models",
+      "criterion": "The system MUST report descriptive concordance of log2 effects on common tested features: Pearson and Spearman correlation, sign agreement among features significant in either, and an origin-constrained slope. The label is descriptive.",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "r/proteomicsCore/R/post_de_sets.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sets.py; r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "case_id": "V135",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V135",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-136",
+      "task": "T136",
+      "acceptance": "V136",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14a",
+      "phase": 4,
+      "capability": "Overlap inference eligibility",
+      "criterion": "A hypergeometric overlap P is reported only when the two contrasts share no biological units. Otherwise overlap is descriptive and the output states why (shared control/arm dependence).",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sets.py",
+        "r/proteomicsCore/R/post_de_sets.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sets.py; r/proteomicsCore/tests/testthat/test-post-de-sets.R",
+        "case_id": "V136",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V136",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-137",
+      "task": "T137",
+      "acceptance": "V137",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Covariate-imbalance diagnostics",
+      "criterion": "The system MUST cross-tabulate declared covariates against groups. It MUST detect aliasing (e.g. a covariate level present in only one group) and classify each requested adjustment as estimable-additive, estimable-interaction or non-estimable, before any refit.",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V137",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V137",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-138",
+      "task": "T138",
+      "acceptance": "V138",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Covariate-adjusted sensitivity model",
+      "criterion": "The system MUST re-plan the frozen design with declared additive covariates as a named secondary sensitivity model through R04 rank/estimability checks, fit it with the primary engine settings, and keep its own family.",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V138",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V138",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-139",
+      "task": "T139",
+      "acceptance": "V139",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Subgroup re-analysis",
+      "criterion": "The system MUST re-plan the design on a declared observation subset (e.g. one covariate level) as a named sensitivity model. It MUST refuse with a typed reason when any required group falls below the coverage rules, and never redefine the primary families.",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V139",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V139",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-140",
+      "task": "T140",
+      "acceptance": "V140",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Primary-versus-sensitivity comparison",
+      "criterion": "For every sensitivity model the system MUST report retained, lost and gained members per declared criterion, effect correlation, origin-constrained attenuation slope and Jaccard index. It MUST warn that differing significance is not evidence of an interaction. Where estimable, it offers the formal group × covariate interaction contrast as its own family.",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V140",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V140",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-141",
+      "task": "T141",
+      "acceptance": "V141",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Matched-n resampling sensitivity",
+      "criterion": "The system MUST repeatedly subsample biological units of larger groups to declared target sizes. With a recorded seed and draw count, it refits and reports the distribution of discovery counts and per-feature selection frequency (descriptive).",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V141",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V141",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-142",
+      "task": "T142",
+      "acceptance": "V142",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Unit-level influence on discoveries",
+      "criterion": "Building on SM13, the system MUST omit each biological unit (with all its observations) in turn, refit the fixed model, and report per-unit changes in discovery membership and the maximum absolute effect change.",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V142",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V142",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-143",
+      "task": "T143",
+      "acceptance": "V143",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14b",
+      "phase": 4,
+      "capability": "Robustness summary",
+      "criterion": "The system MUST produce a per-feature robustness table across all requested sensitivities: fraction of analyses in which the feature meets the criterion, sign stability and influence flags. It is labelled descriptive and never re-adjusts primary P values.",
+      "scientific_rule": "SM32",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "r/proteomicsCore/R/post_de_sensitivity.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_sensitivity.py; r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
+        "case_id": "V143",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V143",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-144",
+      "task": "T144",
+      "acceptance": "V144",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14c",
+      "phase": 4,
+      "capability": "Continuous and ordinal phenotype models",
+      "criterion": "The system MUST test association of each feature with a declared numeric or ordinal phenotype using the primary engine. Proteins are the response; the phenotype is a design term, adjusted for declared covariates and, by default, for group. Results go in a separate family per phenotype.",
+      "scientific_rule": "SM33",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_association.py; r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "case_id": "V144",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V144",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-145",
+      "task": "T145",
+      "acceptance": "V145",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14c",
+      "phase": 4,
+      "capability": "Correlation alternative",
+      "criterion": "On request, the system MUST report Pearson or Spearman (and partial, given covariates) correlations with permutation P values on biological units, and BH within the phenotype family.",
+      "scientific_rule": "SM33",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_association.py; r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "case_id": "V145",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V145",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-146",
+      "task": "T146",
+      "acceptance": "V146",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14c",
+      "phase": 4,
+      "capability": "Missing phenotype values",
+      "criterion": "Phenotype-missing units are excluded per phenotype (complete case) with n reported. Phenotypes are never imputed.",
+      "scientific_rule": "SM33",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_association.py; r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "case_id": "V146",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V146",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-147",
+      "task": "T147",
+      "acceptance": "V147",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14c",
+      "phase": 4,
+      "capability": "Confounding guard",
+      "criterion": "The system MUST refuse a pooled association when the phenotype is aliased with group (e.g. measured in one group only, or perfectly separated), unless within-group analysis is declared. It MUST warn when pooled and within-group directions disagree (Simpson pattern).",
+      "scientific_rule": "SM33",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_association.py; r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "case_id": "V147",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V147",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-148",
+      "task": "T148",
+      "acceptance": "V148",
+      "slice": "015-post-de-analysis",
+      "story": "US8",
+      "packet": "R14c",
+      "phase": 4,
+      "capability": "Association outputs",
+      "criterion": "The system MUST export feature × phenotype effect, CI, P and q tables and a clustered heatmap with source tables, and report them offline.",
+      "scientific_rule": "SM33",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_association.py; r/proteomicsCore/tests/testthat/test-post-de-association.R",
+        "case_id": "V148",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V148",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-149",
+      "task": "T149",
+      "acceptance": "V149",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Scope and claims vocabulary",
+      "criterion": "Biomarker evaluation covers binary declared contrasts only. Every result carries one claim label: `in_sample`, `cross_validated_nested`, `fixed_panel_cv` or `independently_validated`. The system never emits diagnostic, clinical-utility or deployment claims.",
+      "scientific_rule": "SM34",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V149",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V149",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-150",
+      "task": "T150",
+      "acceptance": "V150",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Single-feature discrimination",
+      "criterion": "The system MUST report per-feature AUC with DeLong and stratified-bootstrap CIs on biological units. Direction is either prespecified or chosen on training data only. Auto-direction in-sample AUC is labelled `in_sample` and flagged as direction-optimistic.",
+      "scientific_rule": "SM34",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V150",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V150",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-151",
+      "task": "T151",
+      "acceptance": "V151",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Minimum-size refusal",
+      "criterion": "The system MUST refuse classifier evaluation when any class has fewer than the declared minimum of biological units (default 5) or when cross-validation folds cannot contain both classes. The error is typed.",
+      "scientific_rule": "SM35",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V151",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V151",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-152",
+      "task": "T152",
+      "acceptance": "V152",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Leakage-safe preprocessing",
+      "criterion": "Every learned transform MUST be fitted on the training portion of each fold only and applied to the held-out portion. This includes scaling, centring, feature filtering, feature selection, imputation where declared, and hyperparameters.",
+      "scientific_rule": "SM35",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V152",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V152",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-153",
+      "task": "T153",
+      "acceptance": "V153",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Nested cross-validation",
+      "criterion": "The system MUST estimate performance by repeated stratified outer CV (LOOCV permitted for tiny n), with an inner CV for selection and tuning. Folds are grouped by subject for repeated designs and seeds are recorded. It reports pooled out-of-fold AUC, per-repeat AUC mean ± SD and the out-of-fold predictions.",
+      "scientific_rule": "SM35",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V153",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V153",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-154",
+      "task": "T154",
+      "acceptance": "V154",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "In-fold feature selection and stability",
+      "criterion": "Supported selectors are top-k by training-fold AUC or moderated t, and penalised regression (elastic net/lasso). They run inside each training fold, with k or penalty tuned in the inner loop. The system MUST report per-feature selection frequency across all outer folds.",
+      "scientific_rule": "SM35",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V154",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V154",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-155",
+      "task": "T155",
+      "acceptance": "V155",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Classifier families and score orientation",
+      "criterion": "Supported classifiers are penalised logistic regression (default), SVM (linear, polynomial, radial; decision values) and random forest (optional dependency). Score orientation MUST be derived from the fitted model's class coding, never from outcome labels at evaluation time.",
+      "scientific_rule": "SM35",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V155",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V155",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-156",
+      "task": "T156",
+      "acceptance": "V156",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Permutation test of the whole procedure",
+      "criterion": "The system MUST permute class labels across biological units, respecting declared blocks, and rerun the entire nested procedure, including selection. It reports P = (k+1)/(B+1) with B recorded and a declared compute guard.",
+      "scientific_rule": "SM36",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V156",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V156",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-157",
+      "task": "T157",
+      "acceptance": "V157",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Fixed-panel evaluation and circularity",
+      "criterion": "A declared panel MUST carry provenance (`independent`, `same_data` or `unknown`).",
+      "scientific_rule": "SM37",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V157",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V157",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-158",
+      "task": "T158",
+      "acceptance": "V158",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Calibration and threshold metrics",
+      "criterion": "For probabilistic classifiers the system MUST report out-of-fold calibration (curve, Brier score) and sensitivity/specificity at a threshold chosen inside training folds by a declared rule, with bootstrap CIs. Thresholds tuned on test folds are forbidden.",
+      "scientific_rule": "SM35",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V158",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V158",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-159",
+      "task": "T159",
+      "acceptance": "V159",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "External validation",
+      "criterion": "When an independent validation cohort is declared and passes the SM23 disjointness audit, the system MUST lock the discovery-trained model (features, transforms, weights, threshold) and evaluate it once on the validation cohort. Without one, the report states \"not externally validated\".",
+      "scientific_rule": "SM38",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V159",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V159",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-160",
+      "task": "T160",
+      "acceptance": "V160",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14d",
+      "phase": 4,
+      "capability": "Biomarker outputs",
+      "criterion": "The system MUST export ROC curves with CI bands, CV performance distributions, selection-stability tables, permutation nulls, calibration plots and out-of-fold prediction tables with source data, and report them with the claim label.",
+      "scientific_rule": "SM34",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "r/proteomicsCore/R/post_de_biomarker.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "case_id": "V160",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V160",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-161",
+      "task": "T161",
+      "acceptance": "V161",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14e",
+      "phase": 4,
+      "capability": "Co-abundance module eligibility",
+      "criterion": "Co-abundance analysis runs only when declared, with at least the declared minimum biological units in the analysed set (default 20) and complete genuinely observed features. Otherwise it is refused with a typed reason. It is never on by default.",
+      "scientific_rule": "SM39",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "r/proteomicsCore/R/post_de_networks.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "case_id": "V161",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V161",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-162",
+      "task": "T162",
+      "acceptance": "V162",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14e",
+      "phase": 4,
+      "capability": "Module construction and stability",
+      "criterion": "The system MUST build modules from the declared correlation and network rule (e.g. signed weighted correlation with recorded soft-threshold selection, or hierarchical clustering of correlation distance). It reports module membership, eigengenes and bootstrap (unit-resampled) module stability.",
+      "scientific_rule": "SM39",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "r/proteomicsCore/R/post_de_networks.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "case_id": "V162",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V162",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-163",
+      "task": "T163",
+      "acceptance": "V163",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14e",
+      "phase": 4,
+      "capability": "Module–trait association",
+      "criterion": "The system MUST test module eigengenes against groups and phenotypes with the primary engine on eigengenes, in a separate family, labelled as module-level inference.",
+      "scientific_rule": "SM39",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "r/proteomicsCore/R/post_de_networks.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "case_id": "V163",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V163",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-164",
+      "task": "T164",
+      "acceptance": "V164",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14e",
+      "phase": 4,
+      "capability": "Offline interaction resources",
+      "criterion": "Protein–protein interaction analysis MUST read only a hashed, versioned local snapshot under SM14 rules (source, release, species, score type), prepared by a separate explicit action. There are no runtime downloads.",
+      "scientific_rule": "SM40",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "r/proteomicsCore/R/post_de_networks.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "case_id": "V164",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V164",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-165",
+      "task": "T165",
+      "acceptance": "V165",
+      "slice": "015-post-de-analysis",
+      "story": "US9",
+      "packet": "R14e",
+      "phase": 4,
+      "capability": "Network connectivity with a measured-universe null",
+      "criterion": "The system MUST report the induced interaction subnetwork of a declared set and test its connectivity against degree-preserving random sets drawn from the measured, mapped universe, not the whole genome. Hub and degree results are descriptive.",
+      "scientific_rule": "SM40",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/networks.py",
+        "r/proteomicsCore/R/post_de_networks.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "case_id": "V165",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V165",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-166",
+      "task": "T166",
+      "acceptance": "V166",
+      "slice": "015-post-de-analysis",
+      "story": "US8, US9",
+      "packet": "R14f",
+      "phase": 4,
+      "capability": "Post-DE eligibility and dependency report",
+      "criterion": "The report MUST show, for every requested post-DE module, its eligibility decision and reason, claim label and inputs. It also shows a \"what each conclusion depends on\" summary linking discoveries to their robustness and sensitivity outcomes.",
+      "scientific_rule": "SM41",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/eligibility.py",
+        "src/proteomics_pipeline/reporting/post_de_data.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_post_de_generality.py",
+        "case_id": "V166",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V166",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-167",
+      "task": "T167",
+      "acceptance": "V167",
+      "slice": "015-post-de-analysis",
+      "story": "US8, US9",
+      "packet": "R14f",
+      "phase": 4,
+      "capability": "Generality qualification matrix",
+      "criterion": "Each R14 module MUST either complete or refuse with its declared typed reason across a synthetic design matrix. The matrix covers: two-group independent; three-group; paired; repeated with subject blocks; continuous exposure; 3-vs-3 small n; 15-vs-80 unbalanced; 200-unit large n; and human, mouse and rat identifier sets. No module may crash, silently degrade or emit an ineligible claim.",
+      "scientific_rule": "SM41",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/eligibility.py",
+        "src/proteomics_pipeline/reporting/post_de_data.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_post_de_generality.py",
+        "case_id": "V167",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/015-post-de-analysis/spec.md#V167",
+      "verification": {
+        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      }
     }
   ],
   "redirects": [],
-  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired."
+  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for slice 015 (R14a-R14f); no existing identity renumbered or retired."
 }
