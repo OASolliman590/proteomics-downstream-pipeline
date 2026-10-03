@@ -7,7 +7,8 @@ from .errors import CapabilityError, CollisionError, IntegrityError, ProteomicsE
 from .paths import atomic_write_bytes
 from .provenance import sha256_file
 STAGE_STATES={"NOT_RUN","RUNNING","COMPLETED","INAPPLICABLE","FAILED","CANCELLED","NOT_REQUESTED"}
-R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova"}
+R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova",
+ "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks"}
 # Amendment A-2026-10-01-02: planning stages run before the plan exists, so their results carry plan_hash=null.
 PLANNING_CAPABILITIES={"intake","preprocessing","design"}
 CAPABILITY_MAP={
@@ -25,7 +26,14 @@ CAPABILITY_MAP={
  "reproduction":("proteomics_pipeline.reproduction","execute"),
  "legacy":("proteomics_pipeline.legacy_service","execute"),
  # Amendment A-2026-10-01-01 (operator-authorized PERMANOVA scope, packet R13)
- "permanova":("proteomics_pipeline.permanova_service","execute")}
+ "permanova":("proteomics_pipeline.permanova_service","execute"),
+ # Amendment A-2026-10-01-14 (operator-authorized post-differential scope, ADR 0009, packets R14a-R14f)
+ "post_de_sets":("proteomics_pipeline.post_de.sets","execute"),
+ "post_de_sensitivity":("proteomics_pipeline.post_de.sensitivity","execute"),
+ "post_de_association":("proteomics_pipeline.post_de.association","execute"),
+ "post_de_biomarker":("proteomics_pipeline.post_de.biomarker","execute"),
+ "post_de_networks":("proteomics_pipeline.post_de.networks","execute"),
+ "post_de_eligibility":("proteomics_pipeline.post_de.eligibility","execute")}
 REQUIRED_PACKAGES={"foundation.io_roundtrip":["Rscript","jsonlite","openssl","proteomicsCore"]}
 def _discovery(capability,module_name,function_name):
     record={"id":capability,"module":module_name,"function":function_name,

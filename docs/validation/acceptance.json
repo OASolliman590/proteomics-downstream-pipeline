@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 120,
-    "NOT_RUN": 47
+    "PASS": 126,
+    "NOT_RUN": 41
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -111,7 +111,7 @@
         },
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
-          "sha256": "e632b1c02f86f5c572e4009827f3e6343ed5ecc1c751219ba9771a3be64c65a0"
+          "sha256": "06dc34d862e5166cd3731fd800e611f923de14fd3b8211fc84235bb059d4fde0"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -199,7 +199,7 @@
       "artifacts": [
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
-          "sha256": "e632b1c02f86f5c572e4009827f3e6343ed5ecc1c751219ba9771a3be64c65a0"
+          "sha256": "06dc34d862e5166cd3731fd800e611f923de14fd3b8211fc84235bb059d4fde0"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -231,7 +231,7 @@
         },
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
-          "sha256": "e632b1c02f86f5c572e4009827f3e6343ed5ecc1c751219ba9771a3be64c65a0"
+          "sha256": "06dc34d862e5166cd3731fd800e611f923de14fd3b8211fc84235bb059d4fde0"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -4285,91 +4285,217 @@
       "acceptance_id": "V131",
       "requirement": "FR-131",
       "task": "T131",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/gate-results.json",
+          "sha256": "362d06391e5170476a4f89c3d160884bf5d1984dacceee13d8350687d55660e1"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log",
+          "sha256": "87c7dc6631cef6a508bb44bdfe23566fc96deff2ba62d42168be6fb2ce785397"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log",
+          "sha256": "d816d4fac3ac8745518858fe5a37a40bb24452aa198af64075ffbec80b1c69c7"
+        }
+      ],
       "expected_oracle": "The system MUST build feature sets from completed differential families using a finite grammar over named contrasts and models (`union`, `intersect`, `difference`, `complement_within_tested`). It MUST use declared membership criteria (family q threshold, or TREAT; raw-P criteria allowed only with the label `exploratory_raw_p`) and optional direction, and export the full membership matrix.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V132",
       "requirement": "FR-132",
       "task": "T132",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/gate-results.json",
+          "sha256": "362d06391e5170476a4f89c3d160884bf5d1984dacceee13d8350687d55660e1"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log",
+          "sha256": "87c7dc6631cef6a508bb44bdfe23566fc96deff2ba62d42168be6fb2ce785397"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log",
+          "sha256": "d816d4fac3ac8745518858fe5a37a40bb24452aa198af64075ffbec80b1c69c7"
+        }
+      ],
       "expected_oracle": "Every exported set or region MUST carry its rule, criterion, threshold, family IDs and null type. The system MUST refuse rules that reference undefined contrasts, mix zero-null with TREAT memberships, or combine families from different primary matrices.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V133",
       "requirement": "FR-133",
       "task": "T133",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/gate-results.json",
+          "sha256": "362d06391e5170476a4f89c3d160884bf5d1984dacceee13d8350687d55660e1"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log",
+          "sha256": "87c7dc6631cef6a508bb44bdfe23566fc96deff2ba62d42168be6fb2ce785397"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log",
+          "sha256": "d816d4fac3ac8745518858fe5a37a40bb24452aa198af64075ffbec80b1c69c7"
+        }
+      ],
       "expected_oracle": "The system MUST compute the exclusive regions of up to the declared number of sets (UpSet for any k; circle-based Venn for k ≤ 3). Region counts MUST sum to the size of the union, and protein-group versus unique-gene counts MUST be reported separately.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V134",
       "requirement": "FR-134",
       "task": "T134",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/gate-results.json",
+          "sha256": "362d06391e5170476a4f89c3d160884bf5d1984dacceee13d8350687d55660e1"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log",
+          "sha256": "87c7dc6631cef6a508bb44bdfe23566fc96deff2ba62d42168be6fb2ce785397"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log",
+          "sha256": "d816d4fac3ac8745518858fe5a37a40bb24452aa198af64075ffbec80b1c69c7"
+        }
+      ],
       "expected_oracle": "For any two sets the system MUST report concordant-up, concordant-down and discordant counts, plus the features significant in only one.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V135",
       "requirement": "FR-135",
       "task": "T135",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/gate-results.json",
+          "sha256": "362d06391e5170476a4f89c3d160884bf5d1984dacceee13d8350687d55660e1"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log",
+          "sha256": "87c7dc6631cef6a508bb44bdfe23566fc96deff2ba62d42168be6fb2ce785397"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log",
+          "sha256": "d816d4fac3ac8745518858fe5a37a40bb24452aa198af64075ffbec80b1c69c7"
+        }
+      ],
       "expected_oracle": "The system MUST report descriptive concordance of log2 effects on common tested features: Pearson and Spearman correlation, sign agreement among features significant in either, and an origin-constrained slope. The label is descriptive.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V136",
       "requirement": "FR-136",
       "task": "T136",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/gate-results.json",
+          "sha256": "362d06391e5170476a4f89c3d160884bf5d1984dacceee13d8350687d55660e1"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log",
+          "sha256": "87c7dc6631cef6a508bb44bdfe23566fc96deff2ba62d42168be6fb2ce785397"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log",
+          "sha256": "d816d4fac3ac8745518858fe5a37a40bb24452aa198af64075ffbec80b1c69c7"
+        }
+      ],
       "expected_oracle": "A hypergeometric overlap P is reported only when the two contrasts share no biological units. Otherwise overlap is descriptive and the output states why (shared control/arm dependence).",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V137",

@@ -15,4 +15,9 @@ Suggests:
     impute,
     vegan,
     permute,
-    svglite
+    svglite,
+    glmnet,
+    pROC,
+    e1071,
+    randomForest,
+    dynamicTreeCut

@@ -1,0 +1,7 @@
+$ Rscript --vanilla -e "res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\n', sum(df\$nb), sum(df\$failed), sum(df\$skipped), sum(df\$error)))"
+# started 2026-10-03T20:09:44.306758+00:00  exit 0
+
+post-de-sets: ..................................................................................................................................................
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations=146 failed=0 skipped=0 errors=0

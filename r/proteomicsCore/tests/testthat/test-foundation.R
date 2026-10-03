@@ -3,7 +3,9 @@ testthat::test_that("dispatch map contains only real handlers", {
  # and the fixed map gains only the operator-authorized permanova entry (A-2026-10-01-01).
  testthat::expect_true(is.function(proteomicsCore::dispatch_stage)); testthat::expect_true(is.function(proteomicsCore::io_roundtrip))
  handlers <- get("foundation_handlers", envir=asNamespace("proteomicsCore"))
- expected <- c("foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova")
+ # Amendment A-2026-10-01-14 adds the five R-backed post-DE handlers (ADR 0009)
+ expected <- c("foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova",
+               "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks")
  testthat::expect_setequal(names(handlers), expected)
  for (name in unlist(handlers)) if (exists(name, envir=asNamespace("proteomicsCore"), inherits=FALSE)) testthat::expect_true(is.function(get(name, envir=asNamespace("proteomicsCore"))))
  testthat::expect_identical(unname(unlist(exports <- getNamespaceExports("proteomicsCore")))[order(unlist(exports))], sort(c("dispatch_stage","io_roundtrip")))

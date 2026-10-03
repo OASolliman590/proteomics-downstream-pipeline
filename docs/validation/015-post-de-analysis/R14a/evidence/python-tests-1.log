@@ -1,0 +1,5 @@
+$ .venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider
+# started 2026-10-03T20:09:26.761239+00:00  exit 0
+
+...........                                                              [100%]
+11 passed in 16.26s

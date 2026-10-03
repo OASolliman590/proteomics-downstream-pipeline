@@ -44,6 +44,9 @@ def precheck(config_path: str | Path) -> dict:
     runtime = raw.get("runtime") or {}
     if runtime.get("phase") == 1 and raw.get("score_test", "off") != "off":
         raise PlanRejected("E_PHASE_CAPABILITY", "Phase 1 has no score-testing capability; score_test must be 'off'", "/score_test")
+    if (raw.get("post_de") or {}).get("enabled"):   # A-2026-10-01-14: typed post-DE declaration refusals win over schema messages
+        from . import post_de
+        post_de.precheck(raw)
     return raw
 
 
@@ -71,6 +74,13 @@ def requested_capabilities(config: dict) -> list[dict]:
     multivariate = config.get("multivariate") or {}
     if multivariate.get("enabled"):
         items.append({"capability": "permanova", "required": multivariate.get("execution_requirement", "optional") == "required", "source": "multivariate"})
+    post_de_block = config.get("post_de") or {}
+    if post_de_block.get("enabled"):   # A-2026-10-01-14 (ADR 0009): declared post-DE modules, then the R14f eligibility report
+        from . import post_de
+        for module in post_de.requested_modules(config):
+            items.append({"capability": post_de.CAPABILITIES[module], "required": post_de.required(config, module), "source": f"post_de.{module}"})
+        if post_de.module_impl("eligibility") is not None:   # the R14f eligibility/dependency report, once that packet exists
+            items.append({"capability": post_de.ELIGIBILITY_CAPABILITY, "required": False, "source": "post_de"})
     items.append({"capability": "report_stub", "required": False, "source": "report"})
     items.append({"capability": "report_full", "required": False, "source": "report"})
     merged: dict[str, dict] = {}
@@ -286,6 +296,7 @@ def plan_into(config_path: str | Path, config: dict, *, plan_root: Path, base: P
         if permanova_refusals and multivariate_required(config):
             code, message = permanova_refusals[0]
             raise PlanRejected(code, f"required PERMANOVA is scientifically ineligible: {message}", "/multivariate")
+    post_de_decisions = post_de_plan(config, config_path, base, analysis)
     environment = environment_inventory()
     code = code_manifest()
     capability_plan = []
@@ -293,6 +304,11 @@ def plan_into(config_path: str | Path, config: dict, *, plan_root: Path, base: P
         entry = dict(item, scientific_eligibility="eligible", reason_code=None)
         if item["capability"] == "permanova" and permanova_refusals:
             entry.update(scientific_eligibility="inapplicable", reason_code=permanova_refusals[0][0], reason=permanova_refusals[0][1])
+        decision = post_de_decisions.get(item["capability"])
+        if decision is not None:   # SM41: the planner records each post-DE module's eligibility before any computation
+            entry["post_de"] = {k: v for k, v in decision.items() if k not in ("resolved",)}
+            if decision["state"] == "INAPPLICABLE":
+                entry.update(scientific_eligibility="inapplicable", reason_code=decision["reason_code"], reason=decision.get("reason"))
         capability_plan.append(entry)
     plan = design_service.build_plan(config, plan_root=plan_root, stage_dirs=stage_dirs, sources=sources, environment=environment,
                                      code_sha256=code["sha256"], capability_plan=capability_plan)
@@ -410,6 +426,8 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
     multivariate = config.get("multivariate") or {}
     if multivariate.get("enabled"):
         _run_permanova(config, plan, root, ledger)
+    if analysis and (config.get("post_de") or {}).get("enabled"):
+        _run_post_de(config, plan, root, ledger, config_dir)
 
 
 def _run_assay_engines(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path, models: list[dict]) -> None:
@@ -469,6 +487,64 @@ def _run_permanova(config: dict, plan: dict, root: Path, ledger: Ledger) -> None
     dea_ready = (root / "dea" / "stage-result.json").is_file()
     ledger.run_stage("permanova", "permanova", required, lambda temp: permanova_service.build_request(plan, plan_path=root / "plan.json", config=config, run_id=ledger.run_id,
                      output_temp_dir=temp, dea_dir=(root / "dea") if dea_ready else None), root / "permanova")
+
+
+def post_de_plan(config: dict, config_path: Path, base: Path, analysis: bool) -> dict[str, dict]:
+    """Plan-time eligibility of every declared post-DE module (A-2026-10-01-14, SM41); required ineligible modules reject the plan."""
+    if not (config.get("post_de") or {}).get("enabled"):
+        return {}
+    from . import post_de
+    if not analysis:
+        raise PlanRejected("E_PHASE_CAPABILITY", "post-differential analysis needs runtime.scope = analysis", "/post_de")
+    import csv
+    with (base / "preprocessing" / "primary" / "observations.tsv").open(encoding="utf-8", newline="") as handle:
+        observations = list(csv.DictReader(handle, delimiter="\t"))
+    with (base / "preprocessing" / "primary" / "features.tsv").open(encoding="utf-8", newline="") as handle:
+        features = list(csv.DictReader(handle, delimiter="\t"))
+    design_request = json.loads((base / "designs" / "stage-request.json").read_text(encoding="utf-8"))
+    context = {"observations": observations, "features": features, "design_request": design_request, "config_dir": Path(config_path).parent,
+               "preprocessing_dir": base / "preprocessing", "design_dir": base / "designs"}
+    decisions = post_de.plan_checks(config, context)
+    out = {}
+    for module, decision in decisions.items():
+        if decision["state"] == "INAPPLICABLE" and post_de.required(config, module):
+            raise PlanRejected(decision["reason_code"], f"required post-DE module {module!r} is scientifically ineligible: {decision.get('reason')}", f"/post_de/{module}")
+        out[post_de.CAPABILITIES[module]] = decision
+    return out
+
+
+def _run_post_de(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path) -> None:
+    """Run the declared post-DE modules in dispatch order (R14a-R14e), then the R14f eligibility/dependency stage."""
+    from . import post_de
+    implemented = {c["id"] for c in discovered_capabilities() if c["implemented"]}
+    entries = {c["capability"]: c for c in plan["capability_plan"]}
+    for module in post_de.requested_modules(config):
+        capability = post_de.CAPABILITIES[module]
+        required = post_de.required(config, module)
+        entry = entries.get(capability, {})
+        if entry.get("scientific_eligibility") == "inapplicable":
+            ledger.virtual(capability, capability, required, "INAPPLICABLE", entry["reason_code"], entry.get("reason", ""), 0)
+            continue
+        if capability not in implemented:
+            continue   # recorded NOT_RUN (E_CAPABILITY_NOT_IMPLEMENTED) by the caller's optional-capability pass; required ones never reach here
+        impl = post_de.module_impl(module)
+        missing = [p for p in getattr(impl, "PREREQUISITES", ("dea",)) if not (root / p / "stage-result.json").is_file()]
+        if missing:
+            ledger.virtual(capability, capability, required, "NOT_RUN", "E_PREREQUISITE_FAILED", f"post-DE {module} needs completed {', '.join(missing)}", 4)
+            continue
+        decision = entry.get("post_de", {})
+        try:
+            ledger.run_stage(capability, capability, required, lambda temp, impl=impl, decision=decision: impl.build_request(
+                plan, plan_path=root / "plan.json", config=config, run_id=ledger.run_id, output_temp_dir=temp, root=root, decision=decision, config_dir=config_dir),
+                root / "post_de" / module)
+        except ProteomicsError as error:   # a request that cannot be built is a typed stage failure, never a crash
+            ledger.virtual(capability, capability, required, "FAILED", error.code, error.message, error.exit_code)
+    if post_de.ELIGIBILITY_CAPABILITY in implemented:
+        from .post_de import eligibility
+        snapshot = [dict(s) for s in ledger.stages]
+        ledger.run_stage(post_de.ELIGIBILITY_CAPABILITY, post_de.ELIGIBILITY_CAPABILITY, False, lambda temp: _python_request(
+            ledger.run_id, post_de.ELIGIBILITY_CAPABILITY, post_de.ELIGIBILITY_CAPABILITY, temp, config_path=None, inputs=[],
+            parameters={"run_root": str(root), "stages": snapshot}, plan_hash=plan["plan_hash"]), root / "post_de" / "eligibility")
 
 
 def multivariate_required(config: dict) -> bool:

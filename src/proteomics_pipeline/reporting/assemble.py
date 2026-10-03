@@ -20,7 +20,14 @@ SCHEMA_VERSION = "1.2.0"
 SECTION_PROVIDERS = {"permanova": ("proteomics_pipeline.reporting.permanova_data", "permanova_section"),
                      "response": ("proteomics_pipeline.reporting.response_data", "response_section"),
                      "pathways": ("proteomics_pipeline.reporting.pathway_data", "pathway_section"),
-                     "assay_engines": ("proteomics_pipeline.reporting.model_data", "model_section")}
+                     "assay_engines": ("proteomics_pipeline.reporting.model_data", "model_section"),
+                     # Amendment A-2026-10-01-14 (ADR 0009): post-DE module sections (R14a-R14e) and the integrated eligibility section (R14f)
+                     "post_de_sets": ("proteomics_pipeline.reporting.post_de_sets_data", "post_de_sets_section"),
+                     "post_de_sensitivity": ("proteomics_pipeline.reporting.post_de_sensitivity_data", "post_de_sensitivity_section"),
+                     "post_de_association": ("proteomics_pipeline.reporting.post_de_association_data", "post_de_association_section"),
+                     "post_de_biomarker": ("proteomics_pipeline.reporting.post_de_biomarker_data", "post_de_biomarker_section"),
+                     "post_de_networks": ("proteomics_pipeline.reporting.post_de_networks_data", "post_de_networks_section"),
+                     "post_de_eligibility": ("proteomics_pipeline.reporting.post_de_data", "post_de_section")}
 PHASE_LABEL = "Phase 1 thin offline report (R10a). This is not the full R10b report and not a v1.0-defensible release."
 
 

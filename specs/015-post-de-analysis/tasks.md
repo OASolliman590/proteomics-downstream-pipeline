@@ -2,12 +2,12 @@
 
 **Phase:** 4. Operator-authorized scope amendment (2026-10-02, ADR 0009). Status changes are recorded by the Maintainer in traceability. Dispatch order: R14a → R14b → R14c → R14d → R14e → R14f.
 
-- [ ] T131 — R14a: implement FR-131 (Declarative set algebra); establish and pass V131, including its negative case, with independent evidence.
-- [ ] T132 — R14a: implement FR-132 (Region provenance and refusals); establish and pass V132, including its negative case, with independent evidence.
-- [ ] T133 — R14a: implement FR-133 (Exact region partition); establish and pass V133, including its negative case, with independent evidence.
-- [ ] T134 — R14a: implement FR-134 (Direction-aware overlap); establish and pass V134, including its negative case, with independent evidence.
-- [ ] T135 — R14a: implement FR-135 (Effect concordance across contrasts and models); establish and pass V135, including its negative case, with independent evidence.
-- [ ] T136 — R14a: implement FR-136 (Overlap inference eligibility); establish and pass V136, including its negative case, with independent evidence.
+- [x] T131 — R14a: implement FR-131 (Declarative set algebra); establish and pass V131, including its negative case, with independent evidence.
+- [x] T132 — R14a: implement FR-132 (Region provenance and refusals); establish and pass V132, including its negative case, with independent evidence.
+- [x] T133 — R14a: implement FR-133 (Exact region partition); establish and pass V133, including its negative case, with independent evidence.
+- [x] T134 — R14a: implement FR-134 (Direction-aware overlap); establish and pass V134, including its negative case, with independent evidence.
+- [x] T135 — R14a: implement FR-135 (Effect concordance across contrasts and models); establish and pass V135, including its negative case, with independent evidence.
+- [x] T136 — R14a: implement FR-136 (Overlap inference eligibility); establish and pass V136, including its negative case, with independent evidence.
 - [ ] T137 — R14b: implement FR-137 (Covariate-imbalance diagnostics); establish and pass V137, including its negative case, with independent evidence.
 - [ ] T138 — R14b: implement FR-138 (Covariate-adjusted sensitivity model); establish and pass V138, including its negative case, with independent evidence.
 - [ ] T139 — R14b: implement FR-139 (Subgroup re-analysis); establish and pass V139, including its negative case, with independent evidence.

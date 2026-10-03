@@ -750,7 +750,8 @@
           "enum": [
             1,
             2,
-            3
+            3,
+            4
           ]
         }
       },
@@ -806,6 +807,9 @@
     },
     "multivariate": {
       "$ref": "#/$defs/multivariate"
+    },
+    "post_de": {
+      "$ref": "#/$defs/post_de"
     }
   },
   "required": [
@@ -1548,7 +1552,8 @@
             "gene_sets",
             "orthology",
             "independent_score",
-            "independent_direction"
+            "independent_direction",
+            "ppi"
           ]
         },
         "path": {
@@ -1576,6 +1581,10 @@
           "minimum": 1
         },
         "terms": {
+          "type": "string",
+          "minLength": 1
+        },
+        "score_type": {
           "type": "string",
           "minLength": 1
         }
@@ -1974,6 +1983,790 @@
           }
         }
       }
+    },
+    "post_de": {
+      "type": "object",
+      "required": [
+        "enabled"
+      ],
+      "additionalProperties": false,
+      "description": "Operator-authorized v1.3.0 amendment (ADR 0009): post-differential analysis, packets R14a-R14f, SM31-SM41 (contracts/post-de.md). Phase 4 only. Fields whose forbidden values have typed refusals (rule grammar, thresholds, permutation scope, null universe, imputation) are validated semantically, not by this schema.",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "execution_requirement": {
+          "enum": [
+            "required",
+            "optional"
+          ],
+          "default": "optional"
+        },
+        "sets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execution_requirement": {
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "definitions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "rule"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/post_de_id"
+                  },
+                  "rule": {}
+                }
+              }
+            },
+            "venn": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/post_de_id"
+              }
+            },
+            "upset": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/post_de_id"
+              }
+            },
+            "concordance_pairs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "left",
+                  "right"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/post_de_id"
+                  },
+                  "left": {
+                    "$ref": "#/$defs/post_de_endpoint"
+                  },
+                  "right": {
+                    "$ref": "#/$defs/post_de_endpoint"
+                  },
+                  "criterion": {
+                    "type": "string"
+                  },
+                  "threshold": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1
+                  }
+                }
+              }
+            },
+            "overlap_test": {
+              "type": "boolean"
+            }
+          }
+        },
+        "sensitivity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execution_requirement": {
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "covariate_models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "add_covariates"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/post_de_id"
+                  },
+                  "add_covariates": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "column",
+                            "type"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "column": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "type": {
+                              "enum": [
+                                "categorical",
+                                "continuous"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "interaction_with_group": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "subgroups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "filter"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/post_de_id"
+                  },
+                  "filter": {
+                    "type": "object",
+                    "required": [
+                      "column",
+                      "in"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "column": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "in": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "matched_n": {
+              "type": "object",
+              "required": [
+                "targets"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "targets": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "minimum": 2
+                  }
+                },
+                "draws": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                }
+              }
+            },
+            "influence": {
+              "type": "boolean"
+            },
+            "criteria": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "criterion",
+                  "threshold"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "criterion": {
+                    "type": "string"
+                  },
+                  "threshold": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1
+                  },
+                  "direction": {
+                    "enum": [
+                      "up",
+                      "down",
+                      "any"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "association": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execution_requirement": {
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "column",
+                  "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "column": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "type": {
+                    "enum": [
+                      "numeric",
+                      "ordinal"
+                    ]
+                  },
+                  "levels": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "adjust_for": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "column",
+                            "type"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "column": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "type": {
+                              "enum": [
+                                "categorical",
+                                "continuous"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "adjust_for_group": {
+                    "type": "boolean"
+                  },
+                  "scope": {
+                    "enum": [
+                      "pooled",
+                      "within_group",
+                      "both"
+                    ]
+                  },
+                  "missing": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "method": {
+              "enum": [
+                "model",
+                "correlation"
+              ]
+            },
+            "correlation": {
+              "enum": [
+                "pearson",
+                "spearman",
+                "partial"
+              ]
+            },
+            "permutations": {
+              "type": "integer",
+              "minimum": 19,
+              "maximum": 1000000
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            }
+          }
+        },
+        "biomarker": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execution_requirement": {
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "contrast": {
+              "type": "string",
+              "minLength": 1
+            },
+            "min_units_per_class": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "single_feature": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "features": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "direction": {
+                  "enum": [
+                    "prespecified",
+                    "train_only"
+                  ]
+                },
+                "expected_direction": {
+                  "enum": [
+                    "higher_in_positive",
+                    "lower_in_positive"
+                  ]
+                },
+                "ci": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "delong",
+                      "bootstrap"
+                    ]
+                  }
+                },
+                "bootstrap": {
+                  "type": "integer",
+                  "minimum": 100,
+                  "maximum": 100000
+                }
+              }
+            },
+            "cv": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "outer": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "scheme": {
+                      "enum": [
+                        "repeated_stratified_kfold",
+                        "loocv"
+                      ]
+                    },
+                    "k": {
+                      "type": "integer",
+                      "minimum": 2
+                    },
+                    "repeats": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                },
+                "inner": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "k": {
+                      "type": "integer",
+                      "minimum": 2
+                    }
+                  }
+                },
+                "group_by_subject": {
+                  "anyOf": [
+                    {
+                      "const": "auto"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              }
+            },
+            "selection": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "enum": [
+                    "top_k_auc",
+                    "top_k_t",
+                    "elastic_net",
+                    "lasso"
+                  ]
+                },
+                "k": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "alpha": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                }
+              }
+            },
+            "classifier": {
+              "enum": [
+                "penalized_logistic",
+                "svm_linear",
+                "svm_polynomial",
+                "svm_radial",
+                "random_forest"
+              ]
+            },
+            "threshold_rule": {
+              "type": "string",
+              "minLength": 1
+            },
+            "imputation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "calibration_bins": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 50
+            },
+            "permutation": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "B": {
+                  "type": "integer",
+                  "minimum": 19,
+                  "maximum": 1000000
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "compute_guard_hours": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "scope": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "fixed_panels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "feature_ids",
+                  "provenance"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/post_de_id"
+                  },
+                  "feature_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "provenance": {
+                    "enum": [
+                      "independent",
+                      "same_data",
+                      "unknown"
+                    ]
+                  }
+                }
+              }
+            },
+            "validation_cohort": {
+              "type": "object",
+              "required": [
+                "matrix",
+                "metadata",
+                "class_column"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "matrix": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "metadata": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "class_column": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "subject_column": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit_column": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "retune": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "networks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execution_requirement": {
+              "enum": [
+                "required",
+                "optional"
+              ]
+            },
+            "coabundance": {
+              "type": "object",
+              "required": [
+                "enabled"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "min_units": {
+                  "type": "integer",
+                  "minimum": 4
+                },
+                "rule": {
+                  "enum": [
+                    "wgcna_signed",
+                    "hclust_correlation"
+                  ]
+                },
+                "soft_threshold": {
+                  "anyOf": [
+                    {
+                      "const": "auto"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30
+                    }
+                  ]
+                },
+                "min_module_size": {
+                  "type": "integer",
+                  "minimum": 3
+                },
+                "bootstrap": {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 10000
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "traits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "deep_split": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 4
+                }
+              }
+            },
+            "ppi": {
+              "type": "object",
+              "required": [
+                "enabled"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "snapshot_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "mapping_resource_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "min_score": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "sets": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/post_de_id"
+                  }
+                },
+                "null_draws": {
+                  "type": "integer",
+                  "minimum": 19,
+                  "maximum": 1000000
+                },
+                "seed": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "null_universe": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "post_de_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "post_de_endpoint": {
+      "type": "object",
+      "required": [
+        "family_id",
+        "contrast_id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "family_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contrast_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   },
   "allOf": [
@@ -2164,6 +2957,35 @@
             "maxItems": 0
           },
           "multivariate": {
+            "properties": {
+              "enabled": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "Amendment ADR 0009 (A-2026-10-01-14): post-differential analysis is Phase 4 only; Phase 1-3 configurations cannot enable it.",
+      "if": {
+        "properties": {
+          "runtime": {
+            "properties": {
+              "phase": {
+                "enum": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "post_de": {
             "properties": {
               "enabled": {
                 "const": false

@@ -609,6 +609,27 @@
         "docs/validation/review-2026-10-03/**"
       ],
       "change": "Re-review follow-ups of 2026-10-03 (decisions.md open item 12). D-42: platform-independent plan hash (LF-normalised content hashes for sources, planning artifacts and code; semantic plan hash with the solved environment and session information outside it, protected by integrity_sha256; R and intake text artifacts written UTF-8/LF; count_evidence by file name). D-43: PERMANOVA records N admissible relabellings and the minimum attainable P S/N, enumerates completely when N <= S x (nperm + 1), and never shows an unattainable floor with '<'; pairs involving an empty declared group are refused in refusals.tsv; SM27 amended. V059 setup failure is FAILED, never SKIPPED. Explicit UTF-8 R reads and LF writers; Rscript -e probes replaced by runtime.run_r_code; lint extended to direct subprocess imports, tempfile text modes, -e argv lists and R sources. PowerShell demo block and a cross-platform V100. Each fix has a test that fails on 106fb20 and passes after (docs/validation/review-2026-10-03)."
+    },
+    {
+      "id": "A-2026-10-01-14",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "r/proteomicsCore/R/dispatch.R",
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "src/proteomics_pipeline/schemas/run-status.schema.json",
+        "specs/001-downstream-proteomics/contracts/run-status.schema.json",
+        "src/proteomics_pipeline/schemas/report-data.schema.json",
+        "src/proteomics_pipeline/design_service.py",
+        "src/proteomics_pipeline/workflow.py",
+        "src/proteomics_pipeline/reporting/assemble.py",
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "scripts/maintained/install_r_dependencies.R"
+      ],
+      "change": "Phase 4 shared interfaces (ADR 0009, before R14a): six capability IDs (post_de_sets/sensitivity/association/biomarker/networks/eligibility) in the fixed Python map; the five R-backed ones in the R dispatch map (post_de_eligibility is Python-only, like report_full); optional post_de configuration block per contracts/post-de.md with runtime.phase 4 (Phase 1-3 configurations cannot enable it: schema rule plus typed E_PHASE_CAPABILITY precheck); resource kind 'ppi' with score_type; requested_phase 4 in run-status/report-data schemas; design_service.replan (named secondary designs through the same grammar with exact rational rank and estimability) and exact_rank; workflow: typed post-DE precheck, requested capabilities, plan-time eligibility recorded in the capability plan (SM41; required ineligible modules reject the plan), dispatch R14a-R14e in order then R14f; validation-cohort paths enter the plan by name; fixed report-section providers for every post-DE module; R Suggests glmnet, pROC, e1071, randomForest, dynamicTreeCut (installed in .r-lib and pinned in renv.lock with their dependencies foreach, iterators, shape, RcppEigen, proxy); WGCNA is not used (D-44)."
     }
   ]
 }

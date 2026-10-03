@@ -9,7 +9,10 @@ if (!nzchar(lib)) stop("Set R_LIBS_USER to a project-local library (for example 
 dir.create(lib, recursive = TRUE, showWarnings = FALSE)
 .libPaths(c(lib, .Library))
 options(repos = c(CRAN = Sys.getenv("PROTEOMICS_CRAN", "https://cran.rstudio.com")), timeout = 600)
-cran <- c("jsonlite", "openssl", "testthat", "statmod", "vegan", "permute", "BiocManager")
+# Phase 4 (ADR 0009, Maintainer amendment A-2026-10-01-14): glmnet (default penalised-logistic classifier), pROC (test
+# oracle for DeLong/bootstrap AUC), e1071 (SVM classifiers), randomForest (optional classifier) and dynamicTreeCut
+# (co-abundance module cutting).  WGCNA is deliberately not used (D-44).
+cran <- c("jsonlite", "openssl", "testthat", "statmod", "vegan", "permute", "BiocManager", "glmnet", "pROC", "e1071", "randomForest", "dynamicTreeCut")
 if ("--with-svg" %in% args) cran <- c(cran, "svglite")
 missing <- cran[!vapply(cran, requireNamespace, logical(1), quietly = TRUE)]
 if (length(missing)) utils::install.packages(missing, lib = lib)

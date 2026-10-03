@@ -404,6 +404,11 @@ def plan_config(config: dict) -> dict:
             model["count_evidence"] = Path(model["count_evidence"]).name
     for resource in value.get("resources", []):
         resource["path"] = Path(resource["path"]).name
+    cohort = ((value.get("post_de") or {}).get("biomarker") or {}).get("validation_cohort")
+    if cohort:   # A-2026-10-01-14: declared external files enter the plan by name; their content hashes are recorded by R14d
+        for key in ("matrix", "metadata"):
+            if cohort.get(key):
+                cohort[key] = Path(cohort[key]).name
     return value
 
 
@@ -512,3 +517,71 @@ def verify_plan(path: str | Path, *, expected_hash: str | None = None) -> dict:
 
 def plan_bytes(plan: dict) -> bytes:
     return canonical_json_bytes(plan)
+
+
+# --------------------------------------------------------------------------- re-plan API for named secondary designs
+# Maintainer amendment A-2026-10-01-14 (ADR 0009): R14b/R14c derive named secondary designs (covariate-adjusted,
+# subgroup, phenotype) through the same finite grammar (compile_design/compile_contrasts) and exact rank and
+# estimability checks, without editing the frozen primary design.  The R stages re-verify rank with design_rank.
+def exact_rank(matrix: list[list[float]]) -> tuple[int, list[int]]:
+    """Exact rank by rational Gaussian elimination; returns (rank, pivot column indices)."""
+    from fractions import Fraction
+    rows = [[Fraction(v) for v in row] for row in matrix]
+    n_cols = len(rows[0]) if rows else 0
+    pivots, r = [], 0
+    for c in range(n_cols):
+        pivot = next((i for i in range(r, len(rows)) if rows[i][c] != 0), None)
+        if pivot is None:
+            continue
+        rows[r], rows[pivot] = rows[pivot], rows[r]
+        lead = rows[r][c]
+        for i in range(len(rows)):
+            if i != r and rows[i][c] != 0:
+                factor = rows[i][c] / lead
+                rows[i] = [a - factor * b for a, b in zip(rows[i], rows[r])]
+        pivots.append(c); r += 1
+        if r == len(rows):
+            break
+    return r, pivots
+
+
+def replan(config: dict, observations: list[dict], *, design_id: str, group_levels: list[str] | None = None, continuous: list[str] = (),
+           categorical: list[str] = (), interactions: list[list[str]] = (), observation_ids: list[str] | None = None, contrast_ids: list[str] | None = None,
+           extra_contrasts: list[dict] = ()) -> dict:
+    """Compile a named secondary design from the frozen primary design plus declared terms on an optional observation subset.
+
+    Returns the compiled design, its compiled contrasts (planned contrasts whose required groups are all present, plus
+    ``extra_contrasts``), exact rank/aliasing and exact contrast estimability.  Raises DesignError for grammar errors.
+    """
+    primary = config["design"]
+    rows = [o for o in observations if observation_ids is None or o["observation_id"] in set(observation_ids)]
+    levels = list(group_levels) if group_levels is not None else [l for l in primary["group_levels"] if any(o[primary["group_column"]] == l for o in rows)]
+    rows = [o for o in rows if o[primary["group_column"]] in levels]
+    spec = copy.deepcopy(primary)
+    spec.update({"id": design_id, "group_levels": levels, "interactions": [list(i) for i in interactions]})
+    spec["continuous_covariates"] = [dict(c) for c in primary["continuous_covariates"]] + [{"column": c, "center": True} for c in continuous]
+    spec["categorical_covariates"] = [dict(c) for c in primary["categorical_covariates"]]
+    for column in categorical:
+        present = sorted({o[column] for o in rows if _nonnull(o.get(column))})
+        missing = [o["observation_id"] for o in rows if not _nonnull(o.get(column))]
+        if missing:
+            raise DesignError("E_DESIGN_COVARIATE_NONFINITE", f"covariate {column!r} is missing for {missing[:5]}; complete-case removal is not silent", f"/design[{design_id}]")
+        spec["categorical_covariates"].append({"column": column, "levels": present, "reference": present[0]})
+    compiled = compile_design(spec, rows, assay=config["assay"], tmt_strategy=config["preprocessing"].get("tmt_strategy"))
+    wanted = [c for c in config["contrasts"] if c["design_id"] == primary["id"] and (contrast_ids is None or c["id"] in contrast_ids)]
+    contrasts = []
+    for contrast in wanted:
+        if not all(g in levels for g in contrast["required_groups"]):
+            continue
+        contrasts.append(dict(contrast, design_id=design_id))
+    contrasts += [dict(c, design_id=design_id) for c in extra_contrasts]
+    compiled_contrasts = compile_contrasts({"contrasts": contrasts}, {design_id: compiled})
+    rank, pivots = exact_rank(compiled["matrix"])
+    names = compiled["coefficients"]
+    aliased = [names[j] for j in range(len(names)) if j not in pivots]
+    for contrast in compiled_contrasts:
+        augmented = compiled["matrix"] + [contrast["weights"]]
+        contrast["estimable"] = exact_rank(augmented)[0] == rank
+    return {"design": compiled, "contrasts": compiled_contrasts, "rank": rank, "full_rank": rank == len(names), "aliased": aliased,
+            "observation_ids": [o["observation_id"] for o in rows], "group_levels": levels,
+            "rank_method": "exact rational Gaussian elimination (re-verified by design_rank in R)"}

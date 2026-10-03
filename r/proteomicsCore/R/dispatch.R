@@ -8,7 +8,13 @@ foundation_handlers <- list(
  "pathways"="pathway_stage",
  "response"="response_stage",
  # Amendment A-2026-10-01-01: operator-authorized PERMANOVA scope (packet R13)
- "permanova"="permanova_stage"
+ "permanova"="permanova_stage",
+ # Amendment A-2026-10-01-14: operator-authorized post-differential scope (ADR 0009, packets R14a-R14e); post_de_eligibility (R14f) is Python-only
+ "post_de_sets"="post_de_sets_stage",
+ "post_de_sensitivity"="post_de_sensitivity_stage",
+ "post_de_association"="post_de_association_stage",
+ "post_de_biomarker"="post_de_biomarker_stage",
+ "post_de_networks"="post_de_networks_stage"
 )
 dispatch_stage <- function(request_path,result_path,requested=NULL) {
   request=jsonlite::fromJSON(request_path,simplifyVector=FALSE); capability=if(is.null(requested))request$capability else requested; handler_name=foundation_handlers[[capability]]
