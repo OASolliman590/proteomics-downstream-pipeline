@@ -30,3 +30,7 @@ GitHub Actions run 36982402784 on fd8dfa9 failed: Ubuntu 2 tests (V059 assumed a
 ## Consequences
 
 The affected packet gates, the full R testthat suite and the full Python suite were re-run (`docs/validation/phase-gates`). Acceptance stays self-verified apart from this audit and the 2026-10-03 re-review (ACCEPT WITH FIXES, non-blocking follow-ups). The fixes are committed as fa4d948. Decisions D-31 to D-38 record the details.
+
+## Addendum: re-review follow-ups (2026-10-03)
+
+The re-review of 2026-10-03 (ACCEPT WITH FIXES, non-blocking) listed follow-ups in decisions.md open item 12. They are fixed under amendment A-2026-10-01-13 with decisions D-42 (platform-independent plan hash: semantic hash over LF-normalised content; environment and session information outside it, protected by `integrity_sha256`) and D-43 (PERMANOVA records the admissible relabellings N and the minimum attainable P S/N, enumerates completely when N ≤ S × (nperm + 1), refuses every pair involving an empty declared group, and never shows an unattainable floor with "<"). V059 setup failures are FAILED instead of SKIPPED; R reads declare UTF-8; `Rscript -e` probes are gone; the encoding lint is extended; the demo has a PowerShell variant checked by V100. Fail-before/pass-after evidence: `docs/validation/review-2026-10-03`. `verified_commit` stays null until a CI run on a pushed commit.

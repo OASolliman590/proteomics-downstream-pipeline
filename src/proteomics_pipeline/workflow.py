@@ -21,7 +21,7 @@ from typing import Callable
 from . import __version__
 from .config import _read as read_raw_config, load_config
 from .errors import CapabilityError, CollisionError, IntegrityError, ProteomicsError
-from .provenance import canonical_json_bytes, sha256_bytes, sha256_file
+from .provenance import canonical_json_bytes, content_sha256, sha256_bytes, sha256_file
 from .runtime import RunLock, capabilities as discovered_capabilities, execute_capability, stage_result, utc_now, validate_run_status
 
 PLANNING_CAPABILITIES = ("intake", "preprocessing", "design")
@@ -104,17 +104,20 @@ def environment_inventory() -> dict:
     return info
 
 
-def code_manifest() -> dict:
+def code_manifest(package_root: Path | None = None, repository_root: Path | None = None) -> dict:
+    """Code identity: LF-normalised content hashes (D-42), so a CRLF checkout (for example DESCRIPTION or the HTML template
+    under `* text=auto` on Windows) has the same identity as an LF checkout."""
     files = []
-    package_root = Path(__file__).resolve().parent
+    package_root = Path(package_root) if package_root is not None else Path(__file__).resolve().parent
+    repository_root = Path(repository_root) if repository_root is not None else REPOSITORY_ROOT
     for path in sorted(package_root.rglob("*")):
         if path.is_file() and "__pycache__" not in path.parts and path.suffix in (".py", ".json", ".html", ".typed"):
-            files.append((f"src/proteomics_pipeline/{path.relative_to(package_root).as_posix()}", sha256_file(path)))
-    r_root = REPOSITORY_ROOT / "r" / "proteomicsCore"
+            files.append((f"src/proteomics_pipeline/{path.relative_to(package_root).as_posix()}", content_sha256(path)))
+    r_root = repository_root / "r" / "proteomicsCore"
     if r_root.is_dir():
-        for path in sorted((r_root / "R").glob("*.R")) + [r_root / "DESCRIPTION", r_root / "NAMESPACE", REPOSITORY_ROOT / "scripts" / "maintained" / "run_stage.R"]:
+        for path in sorted((r_root / "R").glob("*.R")) + [r_root / "DESCRIPTION", r_root / "NAMESPACE", repository_root / "scripts" / "maintained" / "run_stage.R"]:
             if path.is_file():
-                files.append((path.relative_to(REPOSITORY_ROOT).as_posix(), sha256_file(path)))
+                files.append((path.relative_to(repository_root).as_posix(), content_sha256(path)))
     lines = "".join(f"{digest}  {name}\n" for name, digest in sorted(files))
     return {"sha256": sha256_bytes(lines.encode("utf-8")), "n_files": len(files), "r_source_present": r_root.is_dir()}
 

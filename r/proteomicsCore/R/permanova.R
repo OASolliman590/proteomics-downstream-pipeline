@@ -26,11 +26,82 @@ PERMANOVA_INTERPRETATION_RULE <- paste(
   if (is.null(blocks)) permute::how(nperm = nperm) else permute::how(nperm = nperm, blocks = factor(blocks))
 }
 
+# ----------------------------------------------------------------------------- exact permutation accounting
+# Review follow-up 2026-10-03 (D-43).  A permutation scheme admits N distinct relabellings of the analysed units
+# (free: all observations; whole-subject: subjects; within-subject: within each subject; covariate terms: design
+# rows within each group).  S of them provably leave the statistic unchanged (permutations of group names that
+# keep every block's label multiset), so no exact permutation P can be below S / N (p_min_attainable).  When
+# N <= S * (nperm + 1) the Monte Carlo floor 1/(nperm+1) is unreachable or the admissible set is small, so every
+# distinct relabelling is enumerated once (complete enumeration, exact P = k / N); otherwise Monte Carlo is used.
+PM_ENUMERATION_CAP <- 100000
+
+.pm_log_arrangements <- function(labels) lfactorial(length(labels)) - sum(lfactorial(as.vector(table(labels))))
+
+# All distinct arrangements of a multiset of integer codes, one per row (lexicographic next-permutation).
+.pm_multiset_perms <- function(codes) {
+  x <- sort(as.integer(codes)); n <- length(x)
+  count <- round(exp(.pm_log_arrangements(x)))
+  rows <- vector("list", count); i <- 1L; rows[[1L]] <- x
+  if (n > 1L) repeat {
+    k <- n - 1L; while (k >= 1L && x[k] >= x[k + 1L]) k <- k - 1L
+    if (k < 1L) break
+    l <- n; while (x[k] >= x[l]) l <- l - 1L
+    tmp <- x[k]; x[k] <- x[l]; x[l] <- tmp
+    x[(k + 1L):n] <- rev(x[(k + 1L):n])
+    i <- i + 1L; rows[[i]] <- x
+  }
+  matrix(unlist(rows[seq_len(i)]), nrow = i, byrow = TRUE)
+}
+
+# Number of group-name permutations that keep the label multiset of every block (statistic-preserving relabellings).
+.pm_symmetry <- function(unit_labels, blocks) {
+  lev <- sort(unique(unit_labels)); k <- length(lev)
+  if (k > 7L) return(1L)    # conservative: 1 is always a valid lower bound
+  codes <- match(unit_labels, lev)
+  base <- lapply(blocks, function(b) sort(codes[b]))
+  taus <- .pm_multiset_perms(seq_len(k))
+  as.integer(sum(apply(taus, 1L, function(tau) all(vapply(seq_along(blocks), function(i) identical(sort(tau[codes[blocks[[i]]]]), base[[i]]), logical(1))))))
+}
+
+# units: list of observation-index vectors (equal lengths); unit_labels: label per unit; blocks: list of unit-index vectors.
+# Returns the permutation control (permute::how, or an explicit matrix of data-row permutations for vegan) and its accounting.
+.pm_permutations <- function(units, unit_labels, blocks, nperm, fallback_how, symmetric = TRUE) {
+  log_n <- sum(vapply(blocks, function(b) .pm_log_arrangements(unit_labels[b]), numeric(1)))
+  n_admissible <- exp(log_n)
+  symmetry <- if (symmetric) .pm_symmetry(unit_labels, blocks) else 1L
+  info <- list(n_admissible = n_admissible, symmetry = symmetry, p_min_attainable = min(1, symmetry / n_admissible), enumeration = "monte_carlo")
+  if (n_admissible - 1 > PM_ENUMERATION_CAP || n_admissible > symmetry * (nperm + 1) + 0.5 || n_admissible < 1.5) return(list(how = fallback_how, info = info))
+  lev <- sort(unique(unit_labels)); codes <- match(unit_labels, lev)
+  arrangements <- lapply(blocks, function(b) .pm_multiset_perms(codes[b]))
+  grid <- as.matrix(expand.grid(lapply(arrangements, function(a) seq_len(nrow(a)))))
+  n_obs <- sum(lengths(units))
+  rows <- matrix(0L, nrow = nrow(grid), ncol = n_obs); keep <- logical(nrow(grid))
+  for (r in seq_len(nrow(grid))) {
+    source_unit <- seq_along(units); identity <- TRUE
+    for (j in seq_along(blocks)) {
+      b <- blocks[[j]]; target <- arrangements[[j]][grid[r, j], ]
+      if (!identical(target, codes[b])) identity <- FALSE
+      for (v in unique(target)) source_unit[b[target == v]] <- b[codes[b] == v]
+    }
+    if (identity) next
+    sigma <- integer(n_obs)
+    for (u in seq_along(units)) sigma[units[[u]]] <- units[[source_unit[u]]]
+    rows[r, ] <- order(sigma); keep[r] <- TRUE    # vegan permutes data rows: the effective labels are labels[order(row)] = labels[sigma]
+  }
+  info$enumeration <- "complete"; info$n_admissible <- round(n_admissible)
+  list(how = rows[keep, , drop = FALSE], info = info)
+}
+
 # Exchangeability scheme for the group term (audit 2026-10-02).  Without subjects: free.
 # Group constant within every subject: whole subjects are permuted (balanced subjects required).
 # Group varying within every subject: permutation within subject.  Mixed designs are refused.
+# The returned `how` is a permute::how (Monte Carlo) or the complete matrix of distinct relabellings (D-43).
 pm_group_scheme <- function(groups, subjects, nperm, subject_column) {
-  if (is.null(subjects)) return(list(scheme = "free", how = permute::how(nperm = nperm)))
+  groups <- as.character(groups); n <- length(groups)
+  if (is.null(subjects)) {
+    pp <- .pm_permutations(as.list(seq_len(n)), groups, list(seq_len(n)), nperm, permute::how(nperm = nperm))
+    return(list(scheme = "free", how = pp$how, info = pp$info))
+  }
   if (any(is.na(subjects) | subjects == "" | subjects == "NA")) stop("E_PERMANOVA_BLOCKING: subject identifiers are missing for a subject-blocked design", call. = FALSE)
   n_groups <- tapply(groups, subjects, function(v) length(unique(v)))
   if (all(n_groups == 1L)) {
@@ -38,15 +109,34 @@ pm_group_scheme <- function(groups, subjects, nperm, subject_column) {
     if (length(unique(as.integer(sizes))) != 1L)
       stop(sprintf("E_PERMANOVA_BLOCKING_UNBALANCED: group is constant within each %s but subjects have unequal numbers of observations (%s); whole-subject permutation needs balanced subjects",
                    subject_column, paste(sort(unique(as.integer(sizes))), collapse = "/")), call. = FALSE)
-    return(list(scheme = paste0("between_subjects:", subject_column),
-                how = permute::how(nperm = nperm, plots = permute::Plots(strata = factor(subjects), type = "free"), within = permute::Within(type = "none"))))
+    units <- unname(split(seq_len(n), factor(subjects, levels = unique(subjects))))
+    pp <- .pm_permutations(units, vapply(units, function(u) groups[u[1L]], ""), list(seq_along(units)), nperm,
+                           permute::how(nperm = nperm, plots = permute::Plots(strata = factor(subjects), type = "free"), within = permute::Within(type = "none")))
+    return(list(scheme = paste0("between_subjects:", subject_column), how = pp$how, info = pp$info))
   }
-  if (all(n_groups > 1L)) return(list(scheme = paste0("within:", subject_column), how = permute::how(nperm = nperm, blocks = factor(subjects))))
+  if (all(n_groups > 1L)) {
+    pp <- .pm_permutations(as.list(seq_len(n)), groups, unname(split(seq_len(n), factor(subjects, levels = unique(subjects)))), nperm,
+                           permute::how(nperm = nperm, blocks = factor(subjects)))
+    return(list(scheme = paste0("within:", subject_column), how = pp$how, info = pp$info))
+  }
   stop(sprintf("E_PERMANOVA_BLOCKING_MIXED: group is constant within some %s values and varies within others; no single valid permutation scheme exists", subject_column), call. = FALSE)
 }
 
-# Covariate and interaction terms: permutations restricted within the primary group.
+# Covariate and interaction terms: permutations restricted within the primary grouping factor.
 pm_covariate_how <- function(groups, nperm) permute::how(nperm = nperm, blocks = factor(groups))
+
+# The same restriction with exact accounting: design rows (covariate value tuples) are exchanged within each group.
+pm_covariate_permutations <- function(groups, design_rows, nperm) {
+  n <- length(groups)
+  .pm_permutations(as.list(seq_len(n)), as.character(design_rows), unname(split(seq_len(n), factor(groups, levels = unique(groups)))), nperm,
+                   pm_covariate_how(groups, nperm), symmetric = FALSE)
+}
+
+# Free permutation of all design rows (the group term of the covariate-adjusted model), with exact accounting.
+pm_free_permutations <- function(design_rows, nperm) {
+  n <- length(design_rows)
+  .pm_permutations(as.list(seq_len(n)), as.character(design_rows), list(seq_len(n)), nperm, .pm_how(nperm), symmetric = FALSE)
+}
 
 # Usable features of a test: observed in every analysed observation and non-constant.
 pm_usable_features <- function(Y, features, keep) {
@@ -76,11 +166,17 @@ pm_distance <- function(X, metric) {
        residual_df = a["Residual", "Df"], residual_ss = a["Residual", "SumOfSqs"], total_ss = a["Total", "SumOfSqs"])
 }
 
-pm_display <- function(p, nperm) {
+# "< 1/(nperm+1)" is shown only for a Monte Carlo P at its floor when that floor is attainable (D-43); an exact
+# (completely enumerated) P is shown as its value, and so is a Monte Carlo P whose floor lies below S / N.
+pm_display <- function(p, nperm, info = NULL) {
   floor <- 1 / (nperm + 1)
   if (is.na(p)) return(NA_character_)
-  if (p <= floor * (1 + 1e-9)) paste0("< ", formatC(floor, format = "g", digits = 3)) else formatC(p, format = "g", digits = 3)
+  if (!is.null(info) && identical(info$enumeration, "complete")) return(formatC(p, format = "g", digits = 3))
+  attainable <- is.null(info) || info$p_min_attainable < floor * (1 - 1e-9)
+  if (p <= floor * (1 + 1e-9) && attainable) paste0("< ", formatC(floor, format = "g", digits = 3)) else formatC(p, format = "g", digits = 3)
 }
+
+.pm_floor <- function(nperm, info) if (!is.null(info) && identical(info$enumeration, "complete")) info$p_min_attainable else 1 / (nperm + 1)
 
 # by is always explicit: vegan >= 2.7 defaults to a single "Model" row when by = NULL.
 pm_adonis <- function(D, data, formula_rhs, permutations, seed, by = "terms") {
@@ -109,6 +205,9 @@ pm_univariate_r2 <- function(X, groups) {
   g <- factor(groups)
   vapply(seq_len(ncol(X)), function(j) { a <- stats::anova(stats::lm(X[, j] ~ g)); a[["Sum Sq"]][1] / sum(a[["Sum Sq"]]) }, numeric(1))
 }
+
+# Exact text label of a design value (continuous values at full precision) for counting distinct design rows.
+.pm_exact_label <- function(x) if (is.numeric(x)) sprintf("%.17g", x) else as.character(x)
 
 pm_check_interaction <- function(groups, covariate, column) {
   cells <- table(factor(groups), factor(covariate))
@@ -140,13 +239,15 @@ pm_feature_set <- function(Y, set, obs, settings) {
     X <- pm_scaled(Y, feats, keep, scaling)
     list(refused = FALSE, features = feats, X = X, D = pm_distance(X, metric))
   }
-  add_row <- function(analysis, comparison, term, n, n_features, stats, actual_nperm, scheme, disp = NULL, disp_scheme = NA_character_) {
+  add_row <- function(analysis, comparison, term, n, n_features, stats, actual_nperm, scheme, disp = NULL, disp_scheme = NA_character_, info = NULL) {
     rows[[length(rows) + 1L]] <<- data.frame(feature_set_id = set$id, analysis = analysis, comparison = comparison, term = term, n = n, n_features = n_features,
       df = stats$df, ss = stats$ss, r2 = stats$r2, pseudo_f = stats$f, residual_df = stats$residual_df, residual_ss = stats$residual_ss, total_ss = stats$total_ss,
-      p_value = stats$p, p_floor = 1 / (actual_nperm + 1), p_display = pm_display(stats$p, actual_nperm), p_adjusted = NA_real_, p_adjusted_display = NA_character_,
+      p_value = stats$p, p_floor = .pm_floor(actual_nperm, info), p_display = pm_display(stats$p, actual_nperm, info), p_adjusted = NA_real_, p_adjusted_display = NA_character_,
       adjustment = NA_character_, adjustment_family_size = NA_integer_, adjustment_family_planned = NA_integer_, nperm = actual_nperm, seed = seed, permutation_scheme = scheme,
+      permutation_enumeration = if (is.null(info)) NA_character_ else info$enumeration, n_admissible_permutations = if (is.null(info)) NA_real_ else info$n_admissible,
+      p_min_attainable = if (is.null(info)) NA_real_ else info$p_min_attainable,
       permdisp_f = if (is.null(disp)) NA_real_ else disp$f, permdisp_p = if (is.null(disp)) NA_real_ else disp$p,
-      permdisp_p_display = if (is.null(disp)) NA_character_ else pm_display(disp$p, disp$nperm), permdisp_scheme = disp_scheme,
+      permdisp_p_display = if (is.null(disp)) NA_character_ else pm_display(disp$p, disp$nperm, info), permdisp_scheme = disp_scheme,
       interpretation = NA_character_, metric = metric, scaling = scaling, stringsAsFactors = FALSE)
   }
   record_null <- function(a, term, test_id) {
@@ -166,7 +267,7 @@ pm_feature_set <- function(Y, set, obs, settings) {
   a <- pm_adonis(g$D, data, "group", gs$how, seed)
   actual <- record_null(a, "group", "global:all_groups")
   disp <- pm_permdisp(g$D, data$group, gs$how, seed)
-  add_row("global", "all_groups", "group", sum(keep), length(g$features), .pm_term(a, "group"), actual, group_scheme, disp, group_scheme)
+  add_row("global", "all_groups", "group", sum(keep), length(g$features), .pm_term(a, "group"), actual, group_scheme, disp, group_scheme, gs$info)
   bd <- disp$betadisper
   eig <- bd$eig[bd$eig > 0]
   coords <- bd$vectors[, seq_len(min(2L, ncol(bd$vectors))), drop = FALSE]
@@ -191,8 +292,9 @@ pm_feature_set <- function(Y, set, obs, settings) {
                    state = if (!identity_applicable) "not_applicable" else if (abs(mean(r2_uni) - global_r2) <= 1e-8) "pass" else "fail")
   if (identical(identity$state, "fail")) stop(sprintf("E_PERMANOVA_IDENTITY: feature set %s: mean univariate R2 %.12g differs from multivariate R2 %.12g", set$id, mean(r2_uni), global_r2), call. = FALSE)
 
-  # pairwise
-  if (isTRUE(settings$pairwise) && length(levels_present) > 2L) {
+  # pairwise: every declared pair once more than two groups are declared (review follow-up 2026-10-03: with one of three
+  # declared groups empty, the pairs involving it are refused in refusals.tsv instead of silently skipping the loop)
+  if (isTRUE(settings$pairwise) && length(settings$group_levels) > 2L) {
     declared <- settings$group_levels
     pairs <- utils::combn(declared, 2L, simplify = FALSE)
     first <- length(rows) + 1L
@@ -212,14 +314,15 @@ pm_feature_set <- function(Y, set, obs, settings) {
       ap <- pm_adonis(t$D, dpair, "group", ps$how, seed)
       act <- record_null(ap, "group", paste0("pairwise:", paste(pair, collapse = "_vs_")))
       dp <- pm_permdisp(t$D, dpair$group, ps$how, seed)
-      add_row("pairwise", label, "group", sum(keep_pair), length(t$features), .pm_term(ap, "group"), act, ps$scheme, dp, ps$scheme)
+      add_row("pairwise", label, "group", sum(keep_pair), length(t$features), .pm_term(ap, "group"), act, ps$scheme, dp, ps$scheme, ps$info)
     }
     if (length(rows) >= first) {
       idx <- seq.int(first, length(rows))
       adjusted <- .pm_adjust(vapply(rows[idx], function(r) r$p_value, numeric(1)), settings$adjustment)
       for (k in seq_along(idx)) { rows[[idx[k]]]$p_adjusted <- adjusted[k]; rows[[idx[k]]]$adjustment <- settings$adjustment
         rows[[idx[k]]]$adjustment_family_size <- length(idx); rows[[idx[k]]]$adjustment_family_planned <- length(pairs)
-        rows[[idx[k]]]$p_adjusted_display <- pm_display(adjusted[k], rows[[idx[k]]]$nperm) }
+        info_k <- list(enumeration = rows[[idx[k]]]$permutation_enumeration, p_min_attainable = rows[[idx[k]]]$p_min_attainable)
+        rows[[idx[k]]]$p_adjusted_display <- pm_display(adjusted[k], rows[[idx[k]]]$nperm, info_k) }
     }
   }
 
@@ -245,17 +348,21 @@ pm_feature_set <- function(Y, set, obs, settings) {
       names_cov <- c(names_cov, internal)
     }
     rhs <- paste(c("group", names_cov), collapse = " + ")
-    free <- pm_adonis(g$D, cdata, rhs, .pm_how(nperm), seed, by = "margin")
+    design_rows <- do.call(paste, c(lapply(c("group", names_cov), function(v) .pm_exact_label(cdata[[v]])), sep = "\r"))
+    cov_rows <- do.call(paste, c(lapply(names_cov, function(v) .pm_exact_label(cdata[[v]])), sep = "\r"))
+    fp <- pm_free_permutations(design_rows, nperm)
+    free <- pm_adonis(g$D, cdata, rhs, fp$how, seed, by = "margin")
     act <- record_null(free, "group", "group_adjusted:all_groups")
     add_row("group_adjusted", paste("all groups adjusted for", paste(vapply(covariates, function(cv) cv$column, ""), collapse = ", ")), "group",
-            sum(keep), length(g$features), .pm_term(free, "group"), act, "free", disp, "free")
-    blocked <- pm_adonis(g$D, cdata, rhs, pm_covariate_how(cdata$group, nperm), seed, by = "margin")
+            sum(keep), length(g$features), .pm_term(free, "group"), act, "free", disp, "free", fp$info)
+    cp <- pm_covariate_permutations(cdata$group, cov_rows, nperm)
+    blocked <- pm_adonis(g$D, cdata, rhs, cp$how, seed, by = "margin")
     for (k in seq_along(covariates)) {
       term <- names_cov[k]; cv <- covariates[[k]]
       act_b <- record_null(blocked, term, paste0("covariate:", cv$column))
-      cdisp <- if (identical(cv$type, "categorical")) pm_permdisp(g$D, cdata[[term]], pm_covariate_how(cdata$group, nperm), seed) else NULL
+      cdisp <- if (identical(cv$type, "categorical")) pm_permdisp(g$D, cdata[[term]], cp$how, seed) else NULL
       add_row("covariate", paste(cv$column, "adjusted for group"), cv$column, sum(keep), length(g$features), .pm_term(blocked, term), act_b,
-              paste0("within:", group_col), cdisp, if (is.null(cdisp)) NA_character_ else paste0("within:", group_col))
+              paste0("within:", group_col), cdisp, if (is.null(cdisp)) NA_character_ else paste0("within:", group_col), cp$info)
     }
     if (isTRUE(settings$interaction)) {
       for (k in seq_along(covariates)) {
@@ -266,10 +373,10 @@ pm_feature_set <- function(Y, set, obs, settings) {
           refuse("interaction", paste("group x", cv$column), "E_PERMANOVA_INTERACTION_NONESTIMABLE", sub("^E_[A-Z_]+: ", "", conditionMessage(cells_ok))); next
         }
         rhs_i <- paste(c(paste0("group * ", term), setdiff(names_cov, term)), collapse = " + ")
-        ai <- pm_adonis(g$D, cdata, rhs_i, pm_covariate_how(cdata$group, nperm), seed, by = "margin")
+        ai <- pm_adonis(g$D, cdata, rhs_i, cp$how, seed, by = "margin")
         iterm <- paste0("group:", term)
         act_i <- record_null(ai, iterm, paste0("interaction:", cv$column))
-        add_row("interaction", paste("group x", cv$column), paste0("group:", cv$column), sum(keep), length(g$features), .pm_term(ai, iterm), act_i, paste0("within:", group_col))
+        add_row("interaction", paste("group x", cv$column), paste0("group:", cv$column), sum(keep), length(g$features), .pm_term(ai, iterm), act_i, paste0("within:", group_col), info = cp$info)
       }
     }
   }
@@ -425,9 +532,12 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
                     feature_universe = "genuinely observed cells; complete and non-constant within each test's observations; no imputation"),
                   versions = list(vegan = as.character(utils::packageVersion("vegan")), permute = as.character(utils::packageVersion("permute"))),
                   feature_sets = states, refusals = refusals_df, identity = unname(identity), figures = figures$records, interpretation_rule = PERMANOVA_INTERPRETATION_RULE,
+                  permutation_rule = paste("Each test records its admissible relabellings N and the minimum attainable exact P (S/N, S = statistic-preserving",
+                                           "relabellings). When N <= S x (nperm + 1) every distinct relabelling is enumerated once and P = k/N is exact;",
+                                           "otherwise P is a Monte Carlo estimate (k+1)/(nperm+1), shown as '< 1/(nperm+1)' at its floor only when that floor is attainable."),
                   limitations = c("PERMANOVA describes multivariate separation of the analysed biological units; it is not a classifier or held-out validation.",
                                   "R2 of a feature set chosen on the same data is optimistic by construction (see selection_context.tsv).",
-                                  "Permutation P values are Monte Carlo estimates with resolution 1/(nperm+1).")),
+                                  "Monte Carlo permutation P values have resolution 1/(nperm+1); completely enumerated P values are exact (k/N).")),
              "permanova_result.json", "permanova_result", "PermanovaResult")
   list(outputs = outputs, warnings = warnings, message = sprintf("PERMANOVA: %d test row(s) over %d feature set(s)", nrow(tests_df), length(tests)))
 })

@@ -137,7 +137,9 @@ def test_v018_manifest_is_self_consistent_and_roundtrips_exactly(tmp_path):
             value = oracle[(row[0], observation)]
             assert (token == "NA" and value is None) or float(token) == value
     sources = {s["artifact_id"]: s["sha256"] for s in manifest["sources"]}
-    assert sources["source.matrix"] == sha256(FIX / "independent-abundance.tsv")
+    # D-42: sources are identified by their LF-normalised content hash (independent hashlib oracle; equals the raw hash for an LF file)
+    import hashlib
+    assert sources["source.matrix"] == hashlib.sha256((FIX / "independent-abundance.tsv").read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def test_v018_rerun_collision_and_changed_source_are_refused(tmp_path):

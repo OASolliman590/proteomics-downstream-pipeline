@@ -188,12 +188,18 @@ testthat::test_that("audit M2: group constant within subjects permutes whole sub
   testthat::expect_false(identical(row$interpretation, "dispersion_difference_location_not_established"))
   n0 <- fn("pm_feature_set")(make_subjects("between_null")$Y, list(id = "all", features = rownames(d$Y)), make_subjects("between_null")$obs, blocked())$tests[1, ]
   testthat::expect_gt(n0$p_value, 0.2)
-  # the pipeline's own permutation design: every permutation moves whole subjects and is not the identity
+  # the pipeline's own permutation design: every permutation moves whole subjects and is not the identity.
+  # Review follow-up 2026-10-03 (D-43): 8 subjects admit only choose(8, 4) = 70 relabellings, so they are enumerated
+  # completely (69 non-identity rows) instead of drawing 999 Monte Carlo permutations; the Monte Carlo fallback is
+  # still a whole-plot permute::how (checked with nperm = 9 below).
   how <- fn("pm_group_scheme")(d$obs$group, d$obs$subject, 999L, "subject")
   testthat::expect_identical(how$scheme, "between_subjects:subject")
-  set.seed(1); P <- permute::shuffleSet(nrow(d$obs), 200, control = how$how)
-  testthat::expect_true(all(apply(P, 1L, function(i) all(tapply(d$obs$group[i], d$obs$subject, function(v) length(unique(v))) == 1))))
-  testthat::expect_lt(mean(apply(P, 1L, function(i) all(d$obs$group[i] == d$obs$group))), 0.1)
+  P <- how$how; testthat::expect_true(is.matrix(P)); testthat::expect_identical(nrow(P), 69L)
+  testthat::expect_true(all(apply(P, 1L, function(i) all(tapply(d$obs$group[order(i)], d$obs$subject, function(v) length(unique(v))) == 1))))
+  testthat::expect_false(any(apply(P, 1L, function(i) all(d$obs$group[order(i)] == d$obs$group))))
+  mc <- fn("pm_group_scheme")(d$obs$group, d$obs$subject, 9L, "subject")
+  set.seed(1); Q <- permute::shuffleSet(nrow(d$obs), 200, control = mc$how)
+  testthat::expect_true(all(apply(Q, 1L, function(i) all(tapply(d$obs$group[i], d$obs$subject, function(v) length(unique(v))) == 1))))
   # unbalanced subjects cannot be permuted as whole plots: typed refusal
   ub <- d; ub$obs <- ub$obs[-1, ]; ub$Y <- ub$Y[, -1]
   testthat::expect_error(fn("pm_feature_set")(ub$Y, list(id = "all", features = rownames(ub$Y)), ub$obs, blocked()), "E_PERMANOVA_BLOCKING_UNBALANCED")
@@ -208,7 +214,10 @@ testthat::test_that("audit M2: group varying within every subject permutes withi
   n0 <- make_subjects("within_null")
   testthat::expect_gt(fn("pm_feature_set")(n0$Y, list(id = "all", features = rownames(n0$Y)), n0$obs, blocked())$tests[1, ]$p_value, 0.2)
   how <- fn("pm_group_scheme")(d$obs$group, d$obs$subject, 999L, "subject")
-  set.seed(1); P <- permute::shuffleSet(nrow(d$obs), 100, control = how$how)
+  testthat::expect_identical(nrow(how$how), 255L)                  # D-43: 2^8 within-subject relabellings, enumerated completely
+  testthat::expect_true(all(apply(how$how, 1L, function(i) all(d$obs$subject[i] == d$obs$subject))))
+  mc <- fn("pm_group_scheme")(d$obs$group, d$obs$subject, 9L, "subject")
+  set.seed(1); P <- permute::shuffleSet(nrow(d$obs), 100, control = mc$how)
   testthat::expect_true(all(apply(P, 1L, function(i) all(d$obs$subject[i] == d$obs$subject))))
 })
 
@@ -282,4 +291,77 @@ testthat::test_that("audit m5: the R side verifies the DEP table hash like the P
   testthat::expect_error(fn(".pm_verify_inputs")(req), "E_INTEGRITY: differential table")
   req$inputs[[2]]$sha256 <- fn("sha256_file")(file.path(dir, "zero_null.tsv"))
   testthat::expect_silent(fn(".pm_verify_inputs")(req))
+})
+
+# ----------------------------------------------------------------------------- review follow-up 2026-10-03 (decisions.md item 12)
+testthat::test_that("review m3 gap: with three declared groups and one empty, every pair involving the empty group is refused", {
+  skip_vegan()
+  d <- make_location(groups = c("A", "B"))
+  res <- fn("pm_feature_set")(d$Y, list(id = "all", features = rownames(d$Y)), d$obs, settings_for(c("A", "B", "C")))
+  testthat::expect_true(any(res$refusals$analysis == "group" & res$refusals$comparison == "C"))
+  testthat::expect_setequal(res$refusals$comparison[res$refusals$analysis == "pairwise"], c("C vs A", "C vs B"))
+  testthat::expect_true(all(res$refusals$reason[res$refusals$analysis == "pairwise"] == "group_without_observations"))
+  pw <- res$tests[res$tests$analysis == "pairwise", ]
+  testthat::expect_identical(pw$comparison, "B vs A")
+  testthat::expect_identical(pw$adjustment_family_size, 1L); testthat::expect_identical(pw$adjustment_family_planned, 3L)
+})
+
+# Independent oracle: enumerate every admissible relabelling by hand (combn over subjects) and compute pseudo-F from
+# Gower sums of squares; the exact permutation P is the fraction of relabellings with F >= the observed F.
+hand_f <- function(D2, g) {
+  n <- length(g); k <- length(unique(g)); tot <- sum(D2[upper.tri(D2)]) / n
+  within <- sum(vapply(unique(g), function(l) { m <- D2[g == l, g == l, drop = FALSE]; sum(m[upper.tri(m)]) / sum(g == l) }, numeric(1)))
+  ((tot - within) / (k - 1)) / (within / (n - k))
+}
+
+testthat::test_that("review P floor: whole-subject permutation is enumerated exactly; N, S/N and the display are honest", {
+  skip_vegan()
+  d <- make_subjects("between")
+  row <- fn("pm_feature_set")(d$Y, list(id = "all", features = rownames(d$Y)), d$obs, blocked())$tests[1, ]
+  subjects <- unique(d$obs$subject)
+  testthat::expect_identical(row$permutation_enumeration, "complete")
+  testthat::expect_equal(row$n_admissible_permutations, choose(8, 4))
+  testthat::expect_equal(row$p_min_attainable, 2 / 70)                    # A/B label swap leaves F unchanged: S = 2
+  testthat::expect_identical(row$nperm, 69L); testthat::expect_equal(row$p_floor, 2 / 70)
+  X <- scale(t(d$Y)); D2 <- as.matrix(stats::dist(X))^2
+  f_obs <- hand_f(D2, d$obs$group)
+  fs <- apply(utils::combn(8, 4), 2L, function(a) { lab <- ifelse(d$obs$subject %in% subjects[a], "A", "B"); hand_f(D2, lab) })
+  exact <- mean(fs >= f_obs - 1e-12)
+  testthat::expect_equal(row$p_value, exact, tolerance = 1e-12)
+  testthat::expect_gte(row$p_value, 2 / 70)
+  testthat::expect_false(startsWith(row$p_display, "<"))                  # 1/1000 is unreachable: never displayed as "< 0.001"
+  testthat::expect_identical(row$p_display, formatC(exact, format = "g", digits = 3))
+  # PERMDISP uses the same complete relabelling set
+  bd <- vegan::betadisper(stats::dist(X), factor(d$obs$group))
+  how <- fn("pm_group_scheme")(d$obs$group, d$obs$subject, 999L, "subject")
+  testthat::expect_equal(row$permdisp_p, vegan::permutest(bd, permutations = how$how)$tab[1, "Pr(>F)"])
+})
+
+testthat::test_that("review P floor: free designs enumerate when N <= S x (nperm + 1); otherwise Monte Carlo with an attainable floor", {
+  skip_vegan()
+  d <- make_location(groups = c("A", "B"), n = 4)                         # choose(8, 4) = 70 relabellings, S = 2
+  row <- fn("pm_feature_set")(d$Y, list(id = "all", features = rownames(d$Y)), d$obs, settings_for(c("A", "B"), permutations = 999L))$tests[1, ]
+  D2 <- as.matrix(stats::dist(scale(t(d$Y))))^2
+  fs <- apply(utils::combn(8, 4), 2L, function(a) hand_f(D2, ifelse(seq_len(8) %in% a, "A", "B")))
+  testthat::expect_identical(row$permutation_enumeration, "complete")
+  testthat::expect_equal(row$p_value, mean(fs >= hand_f(D2, d$g) - 1e-12), tolerance = 1e-12)
+  big <- make_location()                                                   # 3 x 6: N = 18!/(6!)^3, S = 6
+  rb <- fn("pm_feature_set")(big$Y, list(id = "all", features = rownames(big$Y)), big$obs, settings_for(c("A", "B", "C"), permutations = 999L))$tests[1, ]
+  testthat::expect_identical(rb$permutation_enumeration, "monte_carlo")
+  testthat::expect_equal(rb$n_admissible_permutations, factorial(18) / factorial(6)^3, tolerance = 1e-9)
+  testthat::expect_equal(rb$p_min_attainable, 6 / (factorial(18) / factorial(6)^3), tolerance = 1e-9)
+  testthat::expect_equal(rb$p_floor, 1 / 1000); testthat::expect_identical(rb$p_value, 1 / 1000); testthat::expect_identical(rb$p_display, "< 0.001")
+  # a Monte Carlo P at a floor below S/N is shown as its value, not "< floor"
+  testthat::expect_identical(fn("pm_display")(1 / 1000, 999, list(enumeration = "monte_carlo", p_min_attainable = 2 / 1500)), "0.001")
+  testthat::expect_identical(fn("pm_display")(1 / 1000, 999, list(enumeration = "monte_carlo", p_min_attainable = 1e-6)), "< 0.001")
+})
+
+testthat::test_that("review P floor: the enumerator yields each distinct admissible relabelling exactly once", {
+  g <- c("A", "A", "B", "B", "C"); s <- c("1", "1", "2", "2", "3")
+  pp <- fn(".pm_permutations")(as.list(1:5), g, list(1:5), 999L, NULL)
+  labels <- apply(pp$how, 1L, function(i) paste(g[order(i)], collapse = ""))
+  testthat::expect_identical(length(unique(labels)), nrow(pp$how)); testthat::expect_identical(nrow(pp$how), 30L - 1L)   # 5!/(2!2!1!) = 30
+  testthat::expect_false(paste(g, collapse = "") %in% labels)
+  testthat::expect_identical(pp$info$symmetry, 2L)                                # A <-> B swap only (C has a different size)
+  testthat::expect_identical(fn(".pm_symmetry")(c("A", "B", "A", "B"), list(1:2, 3:4)), 2L)
 })

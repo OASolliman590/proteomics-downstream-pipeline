@@ -576,6 +576,39 @@
         "docs/validation/acceptance.json"
       ],
       "change": "Portability follow-up to A-2026-10-01-11, found by the coordinator's simulated non-UTF-8 run (LC_ALL=C; non-ASCII paths) of the CI-failing tests: cli._emit printed JSON with ensure_ascii=False through the console encoding, so `proteomics report` (and any command whose payload holds non-ASCII text) crashed with UnicodeEncodeError on ASCII/cp1252 consoles. CLI output is now written to stdout as UTF-8 bytes regardless of locale. Regression test test_json_output_is_utf8_under_non_utf8_console fails on fd8dfa9 (exit 1, UnicodeEncodeError) and passes after the fix. Also: build_acceptance_ledger now writes a reason on FAIL records (taken from the traceability verification reason); V110 requires a reason on every non-PASS record and failed once V107 became FAIL. The ledger was regenerated: V107 gains its reason and V001's artifact hash follows the edited test_cli_contract.py; no status changed."
+    },
+    {
+      "id": "A-2026-10-01-13",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/provenance.py",
+        "src/proteomics_pipeline/intake/service.py",
+        "src/proteomics_pipeline/design_service.py",
+        "src/proteomics_pipeline/workflow.py",
+        "r/proteomicsCore/R/preprocess.R",
+        "r/proteomicsCore/R/dispatch.R",
+        "r/proteomicsCore/R/io.R",
+        "r/proteomicsCore/R/permanova.R",
+        "src/proteomics_pipeline/reporting/permanova_data.py",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md",
+        "specs/014-multivariate-permanova/contracts/permanova.md",
+        "src/proteomics_pipeline/doctor.py",
+        "scripts/maintained/write_solved_versions.py",
+        "tests/fixtures/design/builders.py",
+        "tests/integration/test_qc.py",
+        "tests/unit/foundation/test_runtime_contract.py",
+        "tests/unit/foundation/test_doctor_contract.py",
+        "tests/contract/intake/test_r_bundle_reader.py",
+        "tests/contract/intake/test_canonical_intake.py",
+        "tests/scientific/test_assay_engines.py",
+        "tests/scientific/reference/test_text_encoding.py",
+        "tests/integration/test_reports.py",
+        "tests/integration/test_plan_portability.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/user-guide/usage.md",
+        "docs/validation/review-2026-10-03/**"
+      ],
+      "change": "Re-review follow-ups of 2026-10-03 (decisions.md open item 12). D-42: platform-independent plan hash (LF-normalised content hashes for sources, planning artifacts and code; semantic plan hash with the solved environment and session information outside it, protected by integrity_sha256; R and intake text artifacts written UTF-8/LF; count_evidence by file name). D-43: PERMANOVA records N admissible relabellings and the minimum attainable P S/N, enumerates completely when N <= S x (nperm + 1), and never shows an unattainable floor with '<'; pairs involving an empty declared group are refused in refusals.tsv; SM27 amended. V059 setup failure is FAILED, never SKIPPED. Explicit UTF-8 R reads and LF writers; Rscript -e probes replaced by runtime.run_r_code; lint extended to direct subprocess imports, tempfile text modes, -e argv lists and R sources. PowerShell demo block and a cross-platform V100. Each fix has a test that fails on 106fb20 and passes after (docs/validation/review-2026-10-03)."
     }
   ]
 }

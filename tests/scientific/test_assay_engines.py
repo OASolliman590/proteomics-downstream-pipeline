@@ -194,7 +194,18 @@ def _shadow_env(monkeypatch, lib, package):
     monkeypatch.setenv("R_LIBS", os.pathsep.join([str(lib)] + ([previous] if previous else [])))
     probe = run_r_code(f"cat(requireNamespace('{package}', quietly = TRUE), requireNamespace('limma', quietly = TRUE), requireNamespace('proteomicsCore', quietly = TRUE))")
     if probe.stdout.split() != ["FALSE", "TRUE", "TRUE"]:
-        pytest.skip(f"NOT_RUN: could not shadow {package} portably ({probe.stdout!r} {probe.stderr[-200:]!r})")
+        # Review follow-up 2026-10-03: a setup that cannot simulate the missing package is a FAILED acceptance run, never a
+        # SKIP (a skip would let V059 pass CI without executing; R and the engines are present whenever this module runs).
+        pytest.fail(f"V059 setup failed: could not shadow {package} portably ({probe.stdout!r} {probe.stderr[-200:]!r})")
+
+
+def test_v059_shadow_setup_failure_fails_instead_of_skipping(monkeypatch, tmp_path):
+    import subprocess
+    from proteomics_pipeline import runtime
+    monkeypatch.setattr(runtime, "run_r_code", lambda *a, **k: subprocess.CompletedProcess([], 0, stdout="TRUE TRUE TRUE", stderr=""))
+    with pytest.raises(BaseException) as outcome:
+        _shadow_env(monkeypatch, _lib_without(tmp_path, "DEqMS"), "DEqMS")
+    assert outcome.type is pytest.fail.Exception, outcome.type          # pytest.skip.Exception before the fix
 
 
 @pytest.mark.parametrize("requirement,state,code", [("optional", "PARTIAL", 3), ("required", "FAILED", 3)])

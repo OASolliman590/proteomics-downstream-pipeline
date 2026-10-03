@@ -8,6 +8,7 @@ import json
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -141,17 +142,34 @@ def test_v099_null_partial_failed_and_cancelled_reports_are_truthful(tmp_path):
     assert code == 4 and "state-FAILED" in crash and "E_ENGINE_FAILED" in crash
 
 
+def _documented_block(guide: str, fence: str) -> list[str]:
+    block = guide.split("## Workflow", 1)[1].split(f"```{fence}", 1)[1].split("```", 1)[0]
+    return [line.strip() for line in block.splitlines() if line.strip()]
+
+
 def test_v100_documented_commands_run_verbatim(tmp_path):
+    import sysconfig
     guide = (ROOT / "docs" / "user-guide" / "usage.md").read_text(encoding="utf-8")
-    block = guide.split("## Workflow", 1)[1].split("```bash", 1)[1].split("```", 1)[0]
-    commands = [line.strip() for line in block.splitlines() if line.strip().startswith(".venv/bin/proteomics")]
-    assert len(commands) == 7
+    bash = [line for line in _documented_block(guide, "bash") if line.startswith(".venv/bin/proteomics")]
+    # review follow-up 2026-10-03: the PowerShell variant is documented and checked token-for-token against the bash one
+    powershell = _documented_block(guide, "powershell")
+    assert powershell[0] == '$env:R_LIBS_USER = "$PWD\\.r-lib"'
+    ps_commands = [line for line in powershell[1:]]
+    assert len(bash) == len(ps_commands) == 7
+    for posix, windows in zip(bash, ps_commands):
+        p_args, w_args = posix.split(), windows.split()          # no quoting in either block; PowerShell is not parsed with POSIX shlex
+        assert p_args[0] == ".venv/bin/proteomics" and w_args[0] == ".venv\\Scripts\\proteomics.exe" and p_args[1:] == w_args[1:]
     env = {**os.environ}
     help_text = subprocess.run([sys.executable, "-m", "proteomics_pipeline", "--help"], capture_output=True, text=True, encoding="utf-8").stdout
+    # The documented executable is the installed console script; it lives in sysconfig's scripts directory
+    # (<venv>/bin on POSIX, <venv>\\Scripts on Windows), so the block for this platform runs through it.
+    console = shutil.which("proteomics", path=os.pathsep.join([sysconfig.get_path("scripts"), str(Path(sys.executable).parent)]))
+    executable = [console] if console else [sys.executable, "-m", "proteomics_pipeline"]
+    commands = ps_commands if os.name == "nt" else bash
     for command in commands:
         # CI run 36982402784: a Windows tmp path has backslashes, which POSIX shlex treats as escapes; substitute a forward-slash path after splitting
-        argv = [arg.replace("runs/", f"{tmp_path.as_posix()}/runs/") for arg in shlex.split(command)]
+        argv = [arg.replace("runs/", f"{tmp_path.as_posix()}/runs/") for arg in command.split()]
         assert argv[1] in help_text                                            # only implemented commands are documented
-        result = subprocess.run([sys.executable, "-m", "proteomics_pipeline", *argv[1:]], cwd=ROOT, capture_output=True, text=True, env=env, encoding="utf-8")
+        result = subprocess.run([*executable, *argv[1:]], cwd=ROOT, capture_output=True, text=True, env=env, encoding="utf-8")
         assert result.returncode == 0, (command, result.stdout[-500:], result.stderr[-500:])
     assert (tmp_path / "runs" / "comparison" / "index.html").is_file() and (tmp_path / "runs" / "example" / "report" / "index.html").is_file()

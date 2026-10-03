@@ -13,7 +13,7 @@ def main(argv=None):
  if rscript:
   process=subprocess.run([rscript,"--version"],capture_output=True,text=True,check=False,shell=False, encoding="utf-8"); packages={}
   for package_name in ("jsonlite","openssl","testthat","proteomicsCore"):
-   version_process=subprocess.run([rscript,"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,check=False,shell=False, encoding="utf-8")
+   version_process=__import__("proteomics_pipeline.runtime",fromlist=["run_r_code"]).run_r_code(f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))",rscript=rscript)
    packages[package_name]=version_process.stdout.strip() or None
   r_packages=packages
   r={**_safe_executable(rscript),"version":(process.stdout or process.stderr).strip(),"exit_code":process.returncode,"packages":packages}

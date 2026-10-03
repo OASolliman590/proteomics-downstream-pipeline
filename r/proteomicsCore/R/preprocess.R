@@ -6,10 +6,18 @@
 # coverage masks, missingness diagnostics, QC tables, optional imputation
 # sensitivities and the optional detection-only endpoint.  No model is fit.
 
+# D-42: every text artifact is written as UTF-8 with LF line endings through a binary connection, so its bytes (and the
+# plan hash built from them) do not depend on the platform (a text-mode connection writes CRLF on Windows).
+.pc_write_lf <- function(text, path) {
+  connection <- file(path, open = "wb")
+  on.exit(close(connection), add = TRUE)
+  writeBin(charToRaw(paste0(enc2utf8(paste(text, collapse = "\n")), "\n")), connection)
+  invisible(path)
+}
+
 .pc_write_json <- function(value, path) {
   dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
-  jsonlite::write_json(value, path, auto_unbox = TRUE, pretty = TRUE, null = "null", na = "null", digits = NA)
-  invisible(path)
+  .pc_write_lf(jsonlite::toJSON(value, auto_unbox = TRUE, pretty = TRUE, null = "null", na = "null", digits = NA), path)
 }
 
 .pc_matrix_df <- function(values, formatter = .pc_fmt) {

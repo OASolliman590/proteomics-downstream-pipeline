@@ -1,0 +1,12 @@
+# after: fixed working tree on claude/post-de (106fb20 + follow-ups), project .r-lib; 2026-10-03T19:37:13Z
+PASSED tests/integration/test_plan_portability.py::test_same_plan_hash_from_two_roots_and_from_crlf_inputs
+PASSED tests/integration/test_plan_portability.py::test_hash_ignores_platform_bytes_of_planning_artifacts_and_environment
+PASSED tests/integration/test_plan_portability.py::test_verify_plan_detects_provenance_and_semantic_tampering
+PASSED tests/integration/test_plan_portability.py::test_content_hash_and_code_identity_are_line_ending_independent
+PASSED tests/scientific/reference/test_text_encoding.py::test_every_r_text_io_names_utf8_and_lf
+PASSED tests/scientific/reference/test_text_encoding.py::test_r_lint_detects_locale_dependent_io
+PASSED tests/scientific/reference/test_text_encoding.py::test_every_text_io_names_utf8
+PASSED tests/scientific/reference/test_text_encoding.py::test_lint_detects_locale_dependent_io
+PASSED tests/scientific/test_assay_engines.py::test_v059_shadow_setup_failure_fails_instead_of_skipping
+PASSED tests/integration/test_reports.py::test_v100_documented_commands_run_verbatim
+10 passed in 68.55s (0:01:08)

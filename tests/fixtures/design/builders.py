@@ -78,7 +78,8 @@ def rscript() -> str | None:
     executable = os.environ.get("PROTEOMICS_RSCRIPT") or shutil.which("Rscript")
     if not executable:
         return None
-    probe = subprocess.run([executable, "--vanilla", "-e", "quit(status=if(exists('limma_stage', envir=asNamespace('proteomicsCore')) && requireNamespace('limma', quietly=TRUE)) 0L else 1L)"], capture_output=True)
+    from proteomics_pipeline.runtime import run_r_code   # review follow-up 2026-10-03: no `Rscript -e` probes
+    probe = run_r_code("quit(status=if(exists('limma_stage', envir=asNamespace('proteomicsCore')) && requireNamespace('limma', quietly=TRUE)) 0L else 1L)", rscript=executable)
     return executable if probe.returncode == 0 else None
 
 

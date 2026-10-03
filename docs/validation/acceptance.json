@@ -79,7 +79,7 @@
       "artifacts": [
         {
           "path": "tests/unit/foundation/test_runtime_contract.py",
-          "sha256": "6bd61f15e7c833facba05b762ad9c7812ddce08fc755690ac3cf939e6e9fb6bd"
+          "sha256": "77bf9ef1ddd6657e81efb5fac1758e68c96234689dbf9e988b7bf64ed043a00c"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -107,7 +107,7 @@
       "artifacts": [
         {
           "path": "tests/unit/foundation/test_runtime_contract.py",
-          "sha256": "6bd61f15e7c833facba05b762ad9c7812ddce08fc755690ac3cf939e6e9fb6bd"
+          "sha256": "77bf9ef1ddd6657e81efb5fac1758e68c96234689dbf9e988b7bf64ed043a00c"
         },
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
@@ -167,7 +167,7 @@
       "artifacts": [
         {
           "path": "tests/unit/foundation/test_doctor_contract.py",
-          "sha256": "9720da58e6eee2769eb8d4f7cd71631eabed4b1a307cd75b623903e1ef790c37"
+          "sha256": "ecf02f3ee043d9fba913f1114b3cc3851f910cf10bcd8c00c1bc92ce41fa9e4c"
         },
         {
           "path": "docs/validation/002-foundation/solved-versions.json",
