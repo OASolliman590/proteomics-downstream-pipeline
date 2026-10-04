@@ -5,9 +5,43 @@
 #   the PPI connectivity null (pd_connectivity_null) on random measured sets: uniform P; planted dense clusters: P at the floor.
 # Seeds are frozen here before any result is read.
 # Usage: Rscript --vanilla tests/scientific/calibration_post_de.R <n_auc> <n_perm> <B> <n_ppi> <cores> <out_dir>
+# Mode "blocked" (review 2026-10-05, D-54) runs only the subject-blocked scenario: <n_datasets> <unused> <B> <unused> <cores> <out_dir> blocked
 args <- commandArgs(TRUE)
 n_auc <- as.integer(args[1]); n_perm <- as.integer(args[2]); B <- as.integer(args[3]); n_ppi <- as.integer(args[4]); cores <- as.integer(args[5]); out <- args[6]
+mode <- if (length(args) >= 7L) args[7] else "simple"
 ns <- asNamespace("proteomicsCore"); f <- function(name) get(name, envir = ns)
+lapply_cores <- function(x, fun) if (cores > 1L && .Platform$OS.type == "unix") parallel::mclapply(x, fun, mc.cores = cores) else lapply(x, fun)
+w <- function(df, name) utils::write.table(df, file.path(out, name), sep = "\t", quote = FALSE, row.names = FALSE, eol = "\n")
+if (identical(mode, "blocked")) {
+  SEED <- 1000000L
+  bset <- function(ids) list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5,
+                             classifier = "penalized_logistic", lambda = 0.1, cost = NULL, threshold_rule = "youden_train", scheme = "repeated_stratified_kfold",
+                             outer_k = 5L, repeats = 2L, inner_k = 3L, observation_ids = ids, fixed_features = NULL)
+  blocked <- function(seed, n_subj = 10L, reps = 2L, p = 200L) {
+    set.seed(seed, kind = "L'Ecuyer-CMRG")
+    subj <- sprintf("s%02d", seq_len(2L * n_subj)); units <- rep(subj, each = reps)
+    S <- matrix(stats::rnorm(length(subj) * p), length(subj), p, dimnames = list(subj, NULL))       # subject effect per feature
+    X <- S[units, , drop = FALSE] + matrix(stats::rnorm(length(units) * p), length(units), p)
+    dimnames(X) <- list(sprintf("%s_%d", units, rep(seq_len(reps), times = length(subj))), sprintf("F%03d", seq_len(p)))
+    list(X = X, y = rep(rep(c(1L, 0L), each = n_subj), each = reps), units = units)
+  }
+  t0 <- Sys.time()
+  res <- lapply_cores(seq_len(n_auc), function(i) { d <- blocked(SEED + i); s <- bset(rownames(d$X))
+    grouped <- f("pd_bm_nested")(d$X, d$y, d$units, s, f(".bm_stream")(SEED + i, 0L), record = FALSE)$pooled
+    ungrouped <- f("pd_bm_nested")(d$X, d$y, rownames(d$X), s, f(".bm_stream")(SEED + i, 0L), record = FALSE)$pooled   # observation-level folds (the grouping leak)
+    null <- vapply(seq_len(B), function(b) { f(".bm_use_stream")(f(".bm_stream")(SEED + i, b)); yb <- f("pd_bm_permute_labels")(d$y, d$units)
+      f("pd_bm_nested")(d$X, yb, d$units, s, .Random.seed, record = FALSE)$pooled }, numeric(1))
+    c(grouped = grouped, ungrouped = ungrouped, p = (sum(null >= grouped - 1e-12) + 1) / (B + 1)) })
+  m <- do.call(rbind, res)
+  dir.create(out, recursive = TRUE, showWarnings = FALSE)
+  w(data.frame(dataset = seq_len(nrow(m)), seed = SEED + seq_len(nrow(m)), pooled_oof_auc = m[, "grouped"]), "blocked_nested_auc_null.tsv")
+  w(data.frame(dataset = seq_len(nrow(m)), seed = SEED + seq_len(nrow(m)), permutation_p = m[, "p"], B = B), "blocked_permutation_p_null.tsv")
+  w(data.frame(dataset = seq_len(nrow(m)), seed = SEED + seq_len(nrow(m)), ungrouped_auc = m[, "ungrouped"]), "blocked_ungrouped_reference.tsv")
+  jsonlite::write_json(list(seed = SEED, n = n_auc, B = B, seconds = as.numeric(difftime(Sys.time(), t0, units = "secs")),
+                            design = "10 vs 10 subjects x 2 observations, subject effect SD 1 on each of 200 pure-noise features; nested CV grouped by subject 2 x 5-fold outer, 3-fold inner, top-5 AUC, ridge glmnet lambda 0.1; permutation of whole subjects; ungrouped reference uses observation-level folds"),
+                       file.path(out, "post_de_calibration_blocked_raw.json"), auto_unbox = TRUE, digits = NA)
+  quit(save = "no", status = 0)
+}
 SEEDS <- list(auc = 600000L, perm = 700000L, leaky = 800000L, ppi = 900000L)
 settings <- function(ids) list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5,
                                classifier = "penalized_logistic", lambda = 0.1, cost = NULL, threshold_rule = "youden_train", scheme = "repeated_stratified_kfold",
@@ -16,7 +50,6 @@ noise <- function(seed, n = 15L, p = 200L) {
   set.seed(seed, kind = "L'Ecuyer-CMRG"); X <- matrix(stats::rnorm(2L * n * p), 2L * n, p, dimnames = list(sprintf("u%02d", seq_len(2L * n)), sprintf("F%03d", seq_len(p))))
   list(X = X, y = rep(c(1L, 0L), each = n), units = rownames(X))
 }
-lapply_cores <- function(x, fun) if (cores > 1L && .Platform$OS.type == "unix") parallel::mclapply(x, fun, mc.cores = cores) else lapply(x, fun)
 t0 <- Sys.time()
 auc <- unlist(lapply_cores(seq_len(n_auc), function(i) { d <- noise(SEEDS$auc + i); f("pd_bm_nested")(d$X, d$y, d$units, settings(d$units), f(".bm_stream")(SEEDS$auc + i, 0L), record = FALSE)$pooled }))
 perm <- unlist(lapply_cores(seq_len(n_perm), function(i) { d <- noise(SEEDS$perm + i); s <- settings(d$units)
@@ -40,7 +73,6 @@ ppi_null <- unlist(lapply_cores(seq_len(n_ppi), function(i) { set.seed(SEEDS$ppi
   r <- f("pd_connectivity_null")(s, universe, edges, degree, 199L, SEEDS$ppi + i); (sum(r$null >= r$observed) + 1) / 200 }))
 r <- f("pd_connectivity_null")(cluster, universe, edges, degree, 199L, SEEDS$ppi); cluster_p <- (sum(r$null >= r$observed) + 1) / 200
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
-w <- function(df, name) utils::write.table(df, file.path(out, name), sep = "\t", quote = FALSE, row.names = FALSE, eol = "\n")
 w(data.frame(dataset = seq_along(auc), seed = SEEDS$auc + seq_along(auc), pooled_oof_auc = auc), "nested_auc_null.tsv")
 w(data.frame(dataset = seq_along(perm), seed = SEEDS$perm + seq_along(perm), permutation_p = perm, B = B), "permutation_p_null.tsv")
 w(data.frame(dataset = seq_along(leaky), seed = SEEDS$leaky + seq_along(leaky), leaky_auc = leaky), "leaky_reference.tsv")
