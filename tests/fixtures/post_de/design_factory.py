@@ -177,3 +177,41 @@ def phenotype_design(*, n: int = 10, seed: int = 41, n_features: int = 30, missi
             column.append(10 + 0.1 * f + shift + 0.02 * float(o["age"]) + rng.gauss(0, 0.3))
         values[f"F{f + 1:02d}"] = column
     return values, observations
+
+
+# ----------------------------------------------------------------------------- R14d fixtures
+def biomarker_design(*, n_pos: int = 15, n_neg: int = 15, n_features: int = 40, up: int = 3, down: int = 3, shift: float = 1.0, sd: float = 0.5,
+                     seed: int = 51, reps: int = 1, prefix: str = "", start: int = 1):
+    """Two classes, case 'P' (positive, numerator) and control 'N'.  F01..F{up} are higher and the next `down` features
+    lower in P by `shift`; the rest are noise.  reps > 1 gives each subject `reps` observations with a shared subject
+    effect (repeated design, class constant within subject).  prefix/start give disjoint subject ids for a second cohort."""
+    rng = random.Random(seed)
+    observations = []
+    for g, n in (("P", n_pos), ("N", n_neg)):
+        for i in range(n):
+            subject = f"{prefix}{g}{start + i}"
+            for j in range(reps):
+                oid = subject if reps == 1 else f"{subject}_{j + 1}"
+                observations.append({"observation_id": oid, "biological_unit_id": oid, "subject_id": subject if reps > 1 else "NA", "group": g})
+    subject_effect = {}
+    values = {}
+    for f in range(n_features):
+        column = []
+        for o in observations:
+            subject = o["subject_id"] if reps > 1 else o["observation_id"]
+            key = (subject, f)
+            if key not in subject_effect:
+                subject_effect[key] = rng.gauss(0, sd)
+            delta = shift if (o["group"] == "P" and f < up) else (-shift if (o["group"] == "P" and up <= f < up + down) else 0.0)
+            column.append(10 + 0.05 * f + delta + subject_effect[key] + (rng.gauss(0, 0.1) if reps > 1 else 0.0))
+        values[f"F{f + 1:04d}" if n_features > 99 else f"F{f + 1:02d}"] = column
+    return values, observations
+
+
+def write_validation_cohort(directory: Path, values: dict, observations: list[dict]) -> dict:
+    """A separate cohort: features x samples matrix and sample metadata (sample id, group, subject)."""
+    directory.mkdir(parents=True, exist_ok=True)
+    ids = [o["observation_id"] for o in observations]
+    B.write_tsv(directory / "validation_matrix.tsv", [["feature_id"] + ids] + [[f] + [repr(float(v)) for v in vals] for f, vals in values.items()])
+    B.write_tsv(directory / "validation_metadata.tsv", [["sample_id", "group", "subject_id"]] + [[o["observation_id"], o["group"], o.get("subject_id", "NA") if o.get("subject_id", "NA") != "NA" else o["observation_id"]] for o in observations])
+    return {"matrix": str(directory / "validation_matrix.tsv"), "metadata": str(directory / "validation_metadata.tsv"), "class_column": "group", "subject_column": "subject_id"}

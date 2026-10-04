@@ -39,6 +39,9 @@ API_PROBES = {
     "proDA": "all(c('contrast','reduced_model') %in% names(formals(proDA::test_diff)))",
     "vegan": "'by' %in% names(formals(vegan::adonis2))",
     "fgsea": "all(c('pathways','stats','minSize','maxSize') %in% names(formals(fgsea::fgsea)))",
+    # A-2026-10-01-17 (R14d): the classifier APIs the biomarker stage calls
+    "glmnet": "all(c('alpha','lambda','family','standardize') %in% names(formals(glmnet::glmnet)))",
+    "e1071": "all(c('kernel','cost','scale') %in% names(formals(e1071:::svm.default)))",
 }
 
 

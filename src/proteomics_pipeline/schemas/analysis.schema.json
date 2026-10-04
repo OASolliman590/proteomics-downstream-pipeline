@@ -2615,6 +2615,29 @@
                   "type": "boolean"
                 }
               }
+            },
+            "classifier_params": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Optional fixed tuning grids (A-2026-10-01-17): lambda for penalised logistic, cost for SVM; default grids are derived in-fold.",
+              "properties": {
+                "lambda": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "cost": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                }
+              }
             }
           }
         },

@@ -5208,14 +5208,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V149",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V149",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5236,14 +5245,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V150",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V150",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5264,14 +5282,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V151",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V151",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5292,14 +5319,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V152",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V152",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5320,14 +5356,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V153",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V153",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5348,14 +5393,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V154",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V154",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5376,14 +5430,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V155",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V155",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5404,14 +5467,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V156",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V156",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5432,14 +5504,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V157",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V157",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5460,14 +5541,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V158",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V158",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5488,14 +5578,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V159",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V159",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5516,14 +5615,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_biomarker.py; r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "case_id": "V160",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_biomarker.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
+        "docs/validation/015-post-de-analysis/R14d/receipt.md",
+        "docs/validation/015-post-de-analysis/R14d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V160",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-03",
+        "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {

@@ -652,6 +652,16 @@
         "src/proteomics_pipeline/design_service.py"
       ],
       "change": "R14c re-plan API extension: design_service.replan(..., group_term=False) drops the group coefficients for pooled unadjusted and within-group phenotype designs (interactions with group are then refused, E_DESIGN_TERM); exact rank and estimability are computed on the reduced design."
+    },
+    {
+      "id": "A-2026-10-01-17",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "src/proteomics_pipeline/reproduction.py"
+      ],
+      "change": "R14d: optional post_de.biomarker.classifier_params (fixed lambda grid for penalised logistic, cost grid for SVM; default grids are derived in-fold); R11 lock qualification probes the glmnet and e1071 APIs the biomarker stage calls."
     }
   ]
 }
