@@ -673,6 +673,14 @@
         "specs/001-downstream-proteomics/contracts/analysis.schema.json"
       ],
       "change": "R14e: R07 snapshot kind 'ppi' (columns gene_a, gene_b, score; the preparation manifest must record score_type, which is kept in the snapshot and checked against the declared resource; target taxonomy must equal the study organism); a resource path naming a remote location fails E_RESOURCE_DOWNLOAD before analysis (analysis never downloads); the shared post-DE input check (R14a .pd_verify_inputs) accepts resource_/resfile_ inputs, which verify_resources and the hash-on-read rule already verify; optional co-abundance cut_height."
+    },
+    {
+      "id": "A-2026-10-01-19",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "r/proteomicsCore/R/model_limma.R"
+      ],
+      "change": "R14e follow-up (found by the R14f generality matrix): limma drops the row names of a one-row fit, so fit_limma_model failed in moderation_diagnostics for a model with exactly one eligible feature (a single co-abundance module); the row names of the full fit are restored from the tested universe. Fail-before/pass-after: test-post-de-networks.R 'V163 a single module ...'."
     }
   ]
 }

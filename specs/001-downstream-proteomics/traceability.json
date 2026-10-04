@@ -5666,7 +5666,7 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-04",
-        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "working_source_manifest_sha256": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -5703,7 +5703,7 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-04",
-        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "working_source_manifest_sha256": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -5740,7 +5740,7 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-04",
-        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "working_source_manifest_sha256": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -5777,7 +5777,7 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-04",
-        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "working_source_manifest_sha256": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -5814,7 +5814,7 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-04",
-        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "working_source_manifest_sha256": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }

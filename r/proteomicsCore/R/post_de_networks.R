@@ -178,7 +178,7 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
       Em <- t(E); colnames(Em) <- rownames(X)
       observedE <- matrix(TRUE, nrow(Em), ncol(Em), dimnames = dimnames(Em))
       settings <- list(group_column = p$group_column, subject_column = p$subject_column, blocking_mode = p$blocking_mode, consensus_correlation = p$consensus_correlation,
-                       trend = isTRUE(p$trend), robust = isTRUE(p$robust), ci_level = p$ci_level)
+                       trend = FALSE, robust = isTRUE(p$robust), ci_level = p$ci_level)   # eigengenes are centred: their means are identically 0, so a mean-variance trend is undefined (D-49)
       for (tr in co$trait_designs) {
         Xd <- .pd_design_from(tr$design); ids <- rownames(Xd)
         fam <- list(family_id = tr$family_id, hypothesis_type = "protein_zero_null", role = "secondary", adjustment = "BH", q_cutoff = 0.05, dependence_assumption = "BH",
@@ -186,7 +186,7 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
         res <- pd_fit_model(tr$model_id, Em[, ids, drop = FALSE], observedE[, ids, drop = FALSE], obs[match(ids, obs$observation_id), , drop = FALSE], Xd, tr$contrasts, settings, list(fam), list(run_id = request$run_id, plan_hash = request$plan_hash), p$coverage)
         r <- res$rows
         trait_rows[[length(trait_rows) + 1L]] <- data.frame(trait = tr$trait, model_id = tr$model_id, contrast_id = r$contrast_id, module = r$feature_id, eligibility = r$eligibility,
-          effect = r$effect, statistic = r$statistic, p_value = r$p_value, q_value = r$q_value, family_id = r$family_id, inference = "module-level (eigengene), not individual proteins",
+          effect = r$effect, statistic = r$statistic, p_value = r$p_value, q_value = r$q_value, family_id = r$family_id, inference = "module-level (eigengene), not individual proteins", moderation = sprintf("limma eBayes trend=FALSE (eigengene means are 0), robust=%s", if (isTRUE(p$robust)) "TRUE" else "FALSE"),
           claim_label = "module_level", stringsAsFactors = FALSE)
       }
       if (length(trait_rows)) write_tsv(do.call(rbind, trait_rows), "module_trait.tsv", "post_de_module_trait", "ModuleTraitResult")

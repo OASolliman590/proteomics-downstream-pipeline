@@ -1,0 +1,13 @@
+post-de-networks: .......................1
+
+══ Failed ══════════════════════════════════════════════════════════════════════
+── 1. Error ('test-post-de-networks.R:86:3'): V163 a single module is tested (on
+Error in `data.frame(model_id = model_id, feature_id = rownames(eb$coefficients), mean_abundance = eb$Amean, sigma = eb$sigma, s2_residual = eb$sigma^2, df_residual = eb$df.residual, s2_prior = prior, df_prior = df_prior, s2_posterior = eb$s2.post, df_total = eb$df.total, trend_requested = trend, robust_requested = robust, stringsAsFactors = FALSE)`: arguments imply differing number of rows: 1, 0
+Backtrace:
+    ▆
+ 1. └─fn("pd_fit_model")(...) at test-post-de-networks.R:86:3
+ 2.   └─proteomicsCore:::fit_limma_model(...)
+ 3.     └─proteomicsCore:::moderation_diagnostics(...)
+ 4.       └─base::data.frame(...)
+
+══ DONE ════════════════════════════════════════════════════════════════════════

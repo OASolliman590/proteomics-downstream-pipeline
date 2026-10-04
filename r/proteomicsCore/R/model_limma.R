@@ -48,6 +48,7 @@ fit_limma_model <- function(model, Y, X, contrasts, estimability, observations, 
   YU <- Y[universe, , drop = FALSE]
   WU <- if (is.matrix(weights)) weights[universe, , drop = FALSE] else weights
   full <- .pc_lmfit(YU, X, WU, block, correlation)
+  if (is.null(rownames(full$coefficients))) rownames(full$coefficients) <- universe   # limma drops row names of a one-row fit (A-2026-10-01-19)
   eb_full <- limma::eBayes(full, trend = trend, robust = robust)
   rows <- list(); priors <- list(); exactness <- list()
   hypotheses <- unlist(model$hypotheses)

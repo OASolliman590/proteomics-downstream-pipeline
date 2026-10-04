@@ -74,3 +74,19 @@ testthat::test_that("V162 bootstrap stability resamples biological units, never 
     lb <- build(Z); lb <- lb[!duplicated(cols)]; names(lb) <- cols[!duplicated(cols)]; vapply(mods, function(m) jaccard(lb, m), numeric(1)) }, numeric(length(mods))))
   testthat::expect_false(isTRUE(all.equal(unname(res$jaccard), unname(feature_variant))))
 })
+
+testthat::test_that("V163 a single module is tested (one-row eigengene fit) and equals a direct limma fit without trend", {
+  set.seed(31); g <- rep(c("A", "B"), each = 12); E <- matrix(stats::rnorm(24) + (g == "B"), 1, 24, dimnames = list("M1", sprintf("o%02d", 1:24)))
+  obs <- data.frame(observation_id = colnames(E), group = g, stringsAsFactors = FALSE)
+  X <- cbind("(Intercept)" = 1, group.B = as.numeric(g == "B")); rownames(X) <- colnames(E)
+  contrasts <- list(list(contrast_id = "B-A", weights = list(0, 1), required_groups = list("A", "B")))
+  fam <- list(family_id = "module_trait__group", hypothesis_type = "protein_zero_null", role = "secondary", adjustment = "BH", q_cutoff = 0.05, dependence_assumption = "BH",
+              members = list(list(model_id = "module_trait_group", contrast_id = "B-A")))
+  settings <- list(group_column = "group", subject_column = NULL, blocking_mode = "none", consensus_correlation = NULL, trend = FALSE, robust = TRUE, ci_level = 0.95)
+  res <- fn("pd_fit_model")("module_trait_group", E, matrix(TRUE, 1, 24, dimnames = dimnames(E)), obs, X, contrasts, settings, list(fam), list(run_id = "r", plan_hash = "h"),
+                           list(policy = "available_case", minimum_observed_per_group = 2, minimum_fraction = 0.5))
+  eb <- limma::eBayes(limma::lmFit(E, X), trend = FALSE, robust = TRUE)
+  testthat::expect_identical(res$rows$feature_id, "M1"); testthat::expect_identical(res$rows$eligibility, "tested")
+  testthat::expect_equal(res$rows$statistic, unname(eb$t[1, 2]), tolerance = 1e-10); testthat::expect_equal(res$rows$p_value, unname(eb$p.value[1, 2]), tolerance = 1e-12)
+  testthat::expect_equal(res$rows$q_value, res$rows$p_value)                                      # one member: BH leaves P unchanged
+})

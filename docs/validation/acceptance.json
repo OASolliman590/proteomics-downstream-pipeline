@@ -5366,7 +5366,7 @@
       "requirement": "FR-161",
       "task": "T161",
       "status": "PASS",
-      "reviewed_tree": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+      "reviewed_tree": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
@@ -5375,21 +5375,37 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', reporter = 'summary', stop_on_failure = FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error))); quit(status = as.integer(sum(df\\$failed) + sum(df\\$error) > 0))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json",
-          "sha256": "2dd872ce5599e7c2fa54c0746f45c8fe921914686d19f8d306c3b7ac40a6bd23"
+          "sha256": "973e8d8b03f0c6f836580e56d18ad565c5cbb097c408c6da562e821a8d8b044a"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log",
-          "sha256": "cf2454fdce8a1246b0e3ac1d448e03489fa3207ce6880e016e3715b32c4080a1"
+          "sha256": "da5e20de5d13a8fb154ad6716ec5e83f3805988b7a8e56f8a0b03e5a97b134cd"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log",
-          "sha256": "32b17b979823b2aa887a60c99ea64e7914705a821fa53ecaf2774f8d14e36c12"
+          "sha256": "c092dce84c9b6ab7322dc7eaf4b861948cae441da0397d2742e0e7778fd666de"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-limma-1.log",
+          "sha256": "8e101e848f0ceb71fefc702fd106115f1c1b133fa79887d5fb2c618596f4ea15"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-all-testthat.log",
+          "sha256": "3855fed0a83840f70300d1b42a88499f55d7ed5694d5bc75abf4af37b523de4f"
         }
       ],
       "expected_oracle": "Co-abundance analysis runs only when declared, with at least the declared minimum biological units in the analysed set (default 20) and complete genuinely observed features. Otherwise it is refused with a typed reason. It is never on by default.",
@@ -5402,7 +5418,7 @@
       "requirement": "FR-162",
       "task": "T162",
       "status": "PASS",
-      "reviewed_tree": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+      "reviewed_tree": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
@@ -5411,21 +5427,37 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', reporter = 'summary', stop_on_failure = FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error))); quit(status = as.integer(sum(df\\$failed) + sum(df\\$error) > 0))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json",
-          "sha256": "2dd872ce5599e7c2fa54c0746f45c8fe921914686d19f8d306c3b7ac40a6bd23"
+          "sha256": "973e8d8b03f0c6f836580e56d18ad565c5cbb097c408c6da562e821a8d8b044a"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log",
-          "sha256": "cf2454fdce8a1246b0e3ac1d448e03489fa3207ce6880e016e3715b32c4080a1"
+          "sha256": "da5e20de5d13a8fb154ad6716ec5e83f3805988b7a8e56f8a0b03e5a97b134cd"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log",
-          "sha256": "32b17b979823b2aa887a60c99ea64e7914705a821fa53ecaf2774f8d14e36c12"
+          "sha256": "c092dce84c9b6ab7322dc7eaf4b861948cae441da0397d2742e0e7778fd666de"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-limma-1.log",
+          "sha256": "8e101e848f0ceb71fefc702fd106115f1c1b133fa79887d5fb2c618596f4ea15"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-all-testthat.log",
+          "sha256": "3855fed0a83840f70300d1b42a88499f55d7ed5694d5bc75abf4af37b523de4f"
         }
       ],
       "expected_oracle": "The system MUST build modules from the declared correlation and network rule (e.g. signed weighted correlation with recorded soft-threshold selection, or hierarchical clustering of correlation distance). It reports module membership, eigengenes and bootstrap (unit-resampled) module stability.",
@@ -5438,7 +5470,7 @@
       "requirement": "FR-163",
       "task": "T163",
       "status": "PASS",
-      "reviewed_tree": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+      "reviewed_tree": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
@@ -5447,21 +5479,37 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', reporter = 'summary', stop_on_failure = FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error))); quit(status = as.integer(sum(df\\$failed) + sum(df\\$error) > 0))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json",
-          "sha256": "2dd872ce5599e7c2fa54c0746f45c8fe921914686d19f8d306c3b7ac40a6bd23"
+          "sha256": "973e8d8b03f0c6f836580e56d18ad565c5cbb097c408c6da562e821a8d8b044a"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log",
-          "sha256": "cf2454fdce8a1246b0e3ac1d448e03489fa3207ce6880e016e3715b32c4080a1"
+          "sha256": "da5e20de5d13a8fb154ad6716ec5e83f3805988b7a8e56f8a0b03e5a97b134cd"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log",
-          "sha256": "32b17b979823b2aa887a60c99ea64e7914705a821fa53ecaf2774f8d14e36c12"
+          "sha256": "c092dce84c9b6ab7322dc7eaf4b861948cae441da0397d2742e0e7778fd666de"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-limma-1.log",
+          "sha256": "8e101e848f0ceb71fefc702fd106115f1c1b133fa79887d5fb2c618596f4ea15"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-all-testthat.log",
+          "sha256": "3855fed0a83840f70300d1b42a88499f55d7ed5694d5bc75abf4af37b523de4f"
         }
       ],
       "expected_oracle": "The system MUST test module eigengenes against groups and phenotypes with the primary engine on eigengenes, in a separate family, labelled as module-level inference.",
@@ -5474,7 +5522,7 @@
       "requirement": "FR-164",
       "task": "T164",
       "status": "PASS",
-      "reviewed_tree": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+      "reviewed_tree": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
@@ -5483,21 +5531,37 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', reporter = 'summary', stop_on_failure = FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error))); quit(status = as.integer(sum(df\\$failed) + sum(df\\$error) > 0))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json",
-          "sha256": "2dd872ce5599e7c2fa54c0746f45c8fe921914686d19f8d306c3b7ac40a6bd23"
+          "sha256": "973e8d8b03f0c6f836580e56d18ad565c5cbb097c408c6da562e821a8d8b044a"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log",
-          "sha256": "cf2454fdce8a1246b0e3ac1d448e03489fa3207ce6880e016e3715b32c4080a1"
+          "sha256": "da5e20de5d13a8fb154ad6716ec5e83f3805988b7a8e56f8a0b03e5a97b134cd"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log",
-          "sha256": "32b17b979823b2aa887a60c99ea64e7914705a821fa53ecaf2774f8d14e36c12"
+          "sha256": "c092dce84c9b6ab7322dc7eaf4b861948cae441da0397d2742e0e7778fd666de"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-limma-1.log",
+          "sha256": "8e101e848f0ceb71fefc702fd106115f1c1b133fa79887d5fb2c618596f4ea15"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-all-testthat.log",
+          "sha256": "3855fed0a83840f70300d1b42a88499f55d7ed5694d5bc75abf4af37b523de4f"
         }
       ],
       "expected_oracle": "Protein–protein interaction analysis MUST read only a hashed, versioned local snapshot under SM14 rules (source, release, species, score type), prepared by a separate explicit action. There are no runtime downloads.",
@@ -5510,7 +5574,7 @@
       "requirement": "FR-165",
       "task": "T165",
       "status": "PASS",
-      "reviewed_tree": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+      "reviewed_tree": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
@@ -5519,21 +5583,37 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', reporter = 'summary', stop_on_failure = FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error))); quit(status = as.integer(sum(df\\$failed) + sum(df\\$error) > 0))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json",
-          "sha256": "2dd872ce5599e7c2fa54c0746f45c8fe921914686d19f8d306c3b7ac40a6bd23"
+          "sha256": "973e8d8b03f0c6f836580e56d18ad565c5cbb097c408c6da562e821a8d8b044a"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log",
-          "sha256": "cf2454fdce8a1246b0e3ac1d448e03489fa3207ce6880e016e3715b32c4080a1"
+          "sha256": "da5e20de5d13a8fb154ad6716ec5e83f3805988b7a8e56f8a0b03e5a97b134cd"
         },
         {
           "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log",
-          "sha256": "32b17b979823b2aa887a60c99ea64e7914705a821fa53ecaf2774f8d14e36c12"
+          "sha256": "c092dce84c9b6ab7322dc7eaf4b861948cae441da0397d2742e0e7778fd666de"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/python-limma-1.log",
+          "sha256": "8e101e848f0ceb71fefc702fd106115f1c1b133fa79887d5fb2c618596f4ea15"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14e/evidence/r-all-testthat.log",
+          "sha256": "3855fed0a83840f70300d1b42a88499f55d7ed5694d5bc75abf4af37b523de4f"
         }
       ],
       "expected_oracle": "The system MUST report the induced interaction subnetwork of a declared set and test its connectivity against degree-preserving random sets drawn from the measured, mapped universe, not the whole genome. Hub and degree results are descriptive.",

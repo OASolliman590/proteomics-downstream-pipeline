@@ -12,4 +12,3 @@
   ],
   "schema_note": "Draft 2020-12 schema and three examples separately validated with jsonschema 4.25.1; semantic/runtime validation remains an implementation task."
 }
-exit=0

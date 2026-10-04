@@ -129,9 +129,10 @@ def test_v162_modules_recover_planted_structure_with_unit_bootstrap(modules):
 def test_v163_module_trait_equals_direct_limma_on_eigengenes(modules):
     rows = F.read_tsv(_net(modules) / "module_trait.tsv")
     assert {r["claim_label"] for r in rows} == {"module_level"} and {r["family_id"] for r in rows} == {"module_trait__group"}
+    assert {r["moderation"] for r in rows} == {"limma eBayes trend=FALSE (eigengene means are 0), robust=TRUE"}
     oracle = B.r_json("""a <- commandArgs(TRUE); e <- read.delim(a[1], check.names = FALSE, encoding = 'UTF-8'); o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8')
       o <- o[match(e$observation_id, o$observation_id), ]; E <- t(as.matrix(e[, grep('^M', names(e))])); colnames(E) <- e$observation_id
-      eb <- limma::eBayes(limma::lmFit(E, model.matrix(~ factor(o$group, levels = c('A', 'B')))), trend = TRUE, robust = TRUE)
+      eb <- limma::eBayes(limma::lmFit(E, model.matrix(~ factor(o$group, levels = c('A', 'B')))), trend = FALSE, robust = TRUE)
       cat(jsonlite::toJSON(list(m = rownames(E), t = unname(eb$t[, 2]), p = unname(eb$p.value[, 2]), q = p.adjust(eb$p.value[, 2], 'BH')), digits = NA))""",
                       _net(modules) / "eigengenes.tsv", modules / "preprocessing" / "primary" / "observations.tsv")
     by = {r["module"]: r for r in rows}
@@ -160,7 +161,7 @@ def test_v163_phenotype_trait_equals_direct_limma_with_group_adjustment(tmp_path
     oracle = B.r_json("""a <- commandArgs(TRUE); e <- read.delim(a[1], check.names = FALSE, encoding = 'UTF-8'); o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8')
       o <- o[match(e$observation_id, o$observation_id), ]; E <- t(as.matrix(e[, grep('^M', names(e))])); colnames(E) <- e$observation_id
       s <- as.numeric(o$score); X <- model.matrix(~ factor(o$group, levels = c('A', 'B')) + I(s - mean(s)))
-      eb <- limma::eBayes(limma::lmFit(E, X), trend = TRUE, robust = TRUE)
+      eb <- limma::eBayes(limma::lmFit(E, X), trend = FALSE, robust = TRUE)
       cat(jsonlite::toJSON(list(m = rownames(E), t = unname(eb$t[, 3]), p = unname(eb$p.value[, 3]), q = p.adjust(eb$p.value[, 3], 'BH')), digits = NA))""",
                       _net(out) / "eigengenes.tsv", out / "preprocessing" / "primary" / "observations.tsv")
     by = {r["module"]: r for r in rows}

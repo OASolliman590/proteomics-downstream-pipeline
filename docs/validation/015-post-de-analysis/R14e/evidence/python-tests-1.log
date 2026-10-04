@@ -1,5 +1,5 @@
 $ .venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider
-# started 2026-10-04T10:04:11.119580+00:00  exit 0
+# started 2026-10-04T12:08:26.719692+00:00  exit 0
 
 ...........                                                              [100%]
-11 passed in 53.48s
+11 passed in 43.72s
