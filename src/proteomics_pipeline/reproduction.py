@@ -246,7 +246,9 @@ def check_reference_matrix(matrix_path: str | Path, lock_path: str | Path, root:
 def write_acceptance_ledger(path: str | Path = ROOT_DIR / "docs" / "validation" / "acceptance.json", root: str | Path = ROOT_DIR) -> dict:
     root = Path(root)
     trace = json.loads((root / "specs" / "001-downstream-proteomics" / "traceability.json").read_text(encoding="utf-8"))["requirements"]
-    reasons = {r["acceptance"]: "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer" for r in trace if r["packet"] == "R12"}
+    # A-2026-10-01-21: an R12 row keeps its own recorded reason (Maintainer-only gate, operator decision or final review); the generic text is a fallback.
+    reasons = {r["acceptance"]: (r.get("verification") or {}).get("reason") or "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+               for r in trace if r["packet"] == "R12"}
     for r in trace:
         if r["acceptance"] not in reasons and r["status"] not in ("PASS", "FAIL"):
             reasons[r["acceptance"]] = (r.get("verification") or {}).get("reason") or "not executed or not passed in this working tree"

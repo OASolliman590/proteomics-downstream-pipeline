@@ -3940,12 +3940,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V111",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V111"
+      "acceptance_spec": "specs/013-release/spec.md#V111",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "Maintainer-only private regression; run locally by Omar (docs/validation/013-release/MAINTAINER_RUNBOOK.md). The tooling is tested on synthetic stand-ins only (tests/regression/test_legacy_tooling.py)."
+      }
     },
     {
       "requirement": "FR-112",
@@ -3964,12 +3969,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V112",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V112"
+      "acceptance_spec": "specs/013-release/spec.md#V112",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "Maintainer-only private regression; run locally by Omar: needs Maintainer-local historical tables and an actually provisioned compatible historical R/resource environment (MAINTAINER_RUNBOOK.md section 3). The comparison tooling is tested on synthetic stand-ins only."
+      }
     },
     {
       "requirement": "FR-113",
@@ -3988,12 +3998,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V113",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V113"
+      "acceptance_spec": "specs/013-release/spec.md#V113",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "Maintainer-only: needs Maintainer-approved local comparison summaries and a disclosure review; an implementer may not author study-derived numbers in the public repository (MAINTAINER_RUNBOOK.md section 4)."
+      }
     },
     {
       "requirement": "FR-114",
@@ -4012,12 +4027,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V114",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V114"
+      "acceptance_spec": "specs/013-release/spec.md#V114",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "Maintainer-only private regression; run locally by Omar (docs/validation/013-release/MAINTAINER_RUNBOOK.md). The tooling is tested on synthetic stand-ins only (tests/regression/test_legacy_tooling.py)."
+      }
     },
     {
       "requirement": "FR-115",
@@ -4034,14 +4054,25 @@
         "docs/user-guide/release.md"
       ],
       "proposed_test_target": {
-        "path": "tests/regression/**",
+        "path": "tests/regression/test_docs.py",
         "case_id": "V115",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/regression/test_docs.py",
+        "docs/validation/013-release/receipt.md",
+        "docs/validation/013-release/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V115"
+      "acceptance_spec": "specs/013-release/spec.md#V115",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
+      }
     },
     {
       "requirement": "FR-116",
@@ -4058,14 +4089,25 @@
         "docs/validation/final-acceptance.md"
       ],
       "proposed_test_target": {
-        "path": "tests/regression/**",
+        "path": "tests/regression/test_traceability_reconciliation.py",
         "case_id": "V116",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/regression/test_traceability_reconciliation.py",
+        "docs/validation/013-release/receipt.md",
+        "docs/validation/013-release/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V116"
+      "acceptance_spec": "specs/013-release/spec.md#V116",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
+      }
     },
     {
       "requirement": "FR-117",
@@ -4082,14 +4124,25 @@
         "scripts/maintained/build_release.py"
       ],
       "proposed_test_target": {
-        "path": "tests/regression/**",
+        "path": "tests/regression/test_release.py",
         "case_id": "V117",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/regression/test_release.py",
+        "docs/validation/013-release/receipt.md",
+        "docs/validation/013-release/evidence/gate-results.json"
+      ],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V117"
+      "acceptance_spec": "specs/013-release/spec.md#V117",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
+      }
     },
     {
       "requirement": "FR-118",
@@ -4108,12 +4161,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V118",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V118"
+      "acceptance_spec": "specs/013-release/spec.md#V118",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "operator decision required (AGENTS.md): no release authorization and no license decision exist. The export tooling and its refusals (collision, missing authorization, unresolved license) are tested in tests/regression/test_release.py."
+      }
     },
     {
       "requirement": "FR-119",
@@ -4132,12 +4190,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V119",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V119"
+      "acceptance_spec": "specs/013-release/spec.md#V119",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "Needs the final reviewed tree, CI on its pushed commit and the Maintainer-only gates V111/V114. The local re-run of every gate on this tree (docs/validation/final-acceptance.md) cannot support v1.0 completion."
+      }
     },
     {
       "requirement": "FR-120",
@@ -4156,12 +4219,17 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V120",
-        "status": "pending-after-freeze"
+        "status": "NOT_RUN"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
-      "acceptance_spec": "specs/013-release/spec.md#V120"
+      "acceptance_spec": "specs/013-release/spec.md#V120",
+      "verification": {
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "reason": "Maintainer review and handoff required: the oracle is the Maintainer's review of all changes, evidence and authorization records; a worker receipt cannot close the roadmap."
+      }
     },
     {
       "requirement": "FR-121",
@@ -5893,5 +5961,5 @@
     }
   ],
   "redirects": [],
-  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for slice 015 (R14a-R14f); no existing identity renumbered or retired."
+  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for slice 015 (R14a-R14f); no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for R14a-R14f; no existing identity renumbered or retired."
 }

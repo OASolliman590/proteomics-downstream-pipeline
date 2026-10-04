@@ -1,0 +1,31 @@
+$ .venv/bin/python -m pytest tests/regression/test_traceability_reconciliation.py -q -p no:cacheprovider  (reproduction.py as at 85fb53d, ledger regenerated with it)
+F.........                                                               [100%]
+=================================== FAILURES ===================================
+___________ test_v116_identities_tasks_evidence_and_ledger_reconcile ___________
+
+    def test_v116_identities_tasks_evidence_and_ledger_reconcile():
+        trace, ledger, specs = load()
+        problems = reconcile(trace, ledger, specs)
+>       assert problems == [], "\n".join(problems)
+E       AssertionError: V115: unresolved status without an explicit reason
+E         V116: unresolved status without an explicit reason
+E         V117: unresolved status without an explicit reason
+E         V111: ledger reason differs from the recorded reason
+E         V112: ledger reason differs from the recorded reason
+E         V113: ledger reason differs from the recorded reason
+E         V114: ledger reason differs from the recorded reason
+E         V115: ledger reason differs from the recorded reason
+E         V116: ledger reason differs from the recorded reason
+E         V117: ledger reason differs from the recorded reason
+E         V118: ledger reason differs from the recorded reason
+E         V119: ledger reason differs from the recorded reason
+E         V120: ledger reason differs from the recorded reason
+E       assert ['V115: unres... reason', ...] == []
+E         
+E         Left contains 13 more items, first extra item: 'V115: unresolved status without an explicit reason'
+E         Use -v to get more diff
+
+tests/regression/test_traceability_reconciliation.py:111: AssertionError
+=========================== short test summary info ============================
+FAILED tests/regression/test_traceability_reconciliation.py::test_v116_identities_tasks_evidence_and_ledger_reconcile
+1 failed, 9 passed in 1.10s

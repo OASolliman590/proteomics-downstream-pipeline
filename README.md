@@ -1,19 +1,20 @@
 # Proteomics downstream pipeline
 
-This repository contains a **recovered study baseline** and a **maintained successor in progress**, governed by a frozen v1.2.0 Spec Kit (with operator-authorized 2026-10-01 amendments). It is **not yet a released or independently audited platform**. Private study files are not included and must not be uploaded or committed.
+This repository contains a **recovered study baseline** and a **maintained successor**, governed by a frozen Spec Kit (v1.2.0 core, with the operator-authorized amendments of ADR 0006 and ADR 0009). It is **not a released platform** and not a v1.0 release. Private study files are not included and must not be uploaded or committed.
 
 ## What exists today
 
 | Scope | Status |
 |---|---|
-| Recovered study scripts + immutable audit (`pipeline/`, `legacy/`, `docs/audit/`) | Inspectable baseline; unchanged. |
+| Recovered study scripts + immutable audit (`pipeline/`, `legacy/`, `docs/audit/`) | Inspectable baseline; unchanged (hash-checked). |
 | R01 foundation (CLI, configuration, runtime, Python↔R I/O) | Accepted 2026-09-21. |
-| R02 intake, R03 QC, R04 design, R05 limma, R10a thin report (Phase 1, `v0.1-limma-core` scope) | Implemented; all acceptance cases pass on synthetic fixtures (2026-10-01), **uncommitted** and self-verified by the operator-chosen Claude route; independent audit not yet done. |
-| R13 PERMANOVA/PERMDISP (operator-authorized amendment, Phase 2) | Implemented; acceptance cases pass on synthetic fixtures (same caveats). |
-| R06 DEqMS/proDA, R07 resources/mapping, R09 response, R08 pathways (Phase 2); R10b full report/compare; R11 locks, offline reproduction, resume, calibration, benchmark, validation ledger (Phase 3) | Implemented; acceptance cases pass on synthetic fixtures (same caveats). R11 V107 cross-platform CI passes on Ubuntu and Windows (CI run 37087074374). |
-| R12 private regression and release | NOT_RUN (Maintainer-only). See [progress](specs/001-downstream-proteomics/progress.md). |
+| R02–R11 (intake, QC, design, limma, DEqMS/proDA, resources/mapping, pathways, response, thin and full reports, locks/reproduction/calibration/validation ledger) and R13 PERMANOVA | Merged into `main` (PR #1). Acceptance cases pass on synthetic fixtures. An independent audit (2026-10-02) and re-review (2026-10-03) returned ACCEPT WITH FIXES; the fixes are done. V107 cross-platform CI passed on Ubuntu and Windows (run 37087074374). |
+| R14a–R14f post-differential analysis (spec 015, Phase 4) | On branch `claude/post-de`: V131–V167 pass on synthetic fixtures, self-verified by the operator-authorized Claude route; independent audit not run; post-DE calibration evidence in `docs/validation/015-post-de-analysis/R14f/calibration`. |
+| R12 release tooling and documentation | V115–V117 pass (methods/reason-code docs, spec-task-evidence reconciliation, release hygiene). V111–V114 and V118–V120 are NOT_RUN: Maintainer-only private gates, operator decisions (license, publication) and final review. See the [Maintainer runbook](docs/validation/013-release/MAINTAINER_RUNBOOK.md). |
 
-The maintained target is declared protein-abundance intake/QC → frozen design → qualified limma (and eligible adapters) → design-valid enrichment → descriptive response and restricted independent inference → honest offline reporting. It excludes raw-MS search/quantification, PTM localization, single-cell, classifier training, web UI/databases, network deployment and causal drug-mechanism claims.
+Every status comes from executed evidence in the [acceptance ledger](docs/validation/acceptance.json); `verified_commit` stays null until CI runs on a pushed commit. Methods and capabilities: [docs/methods](docs/methods/README.md). Release rules: [docs/user-guide/release.md](docs/user-guide/release.md). Changes: [CHANGELOG](CHANGELOG.md).
+
+The maintained target is declared protein-abundance intake/QC → frozen design → qualified limma (and eligible adapters) → design-valid enrichment → descriptive response and restricted independent inference → honest offline reporting. Phase 4 adds opt-in post-differential analysis (sets, sensitivity, phenotype association, leakage-safe biomarker evaluation, co-abundance and interaction networks). It excludes raw-MS search/quantification, PTM localization, single-cell, web UI/databases, network deployment, clinical/diagnostic claims and causal drug-mechanism claims.
 
 ## Quick start (synthetic examples only)
 
@@ -37,4 +38,4 @@ The historical runner remains documented in [docs/PIPELINE.md](docs/PIPELINE.md)
 
 ## Specification
 
-Start with [START_HERE](specs/001-downstream-proteomics/START_HERE.md), [PHASES](specs/001-downstream-proteomics/PHASES.md), the [packet index](specs/001-downstream-proteomics/packet-index.md), the [scientific methods contract](specs/001-downstream-proteomics/contracts/scientific-methods.md) (v1.2.0) and [decisions and open questions](specs/001-downstream-proteomics/decisions.md). No phase is complete merely because its specification exists; acceptance is recorded only from executed evidence in [traceability](specs/001-downstream-proteomics/traceability.json). No license has been selected.
+Start with [START_HERE](specs/001-downstream-proteomics/START_HERE.md), [PHASES](specs/001-downstream-proteomics/PHASES.md), the [packet index](specs/001-downstream-proteomics/packet-index.md), the [scientific methods contract](specs/001-downstream-proteomics/contracts/scientific-methods.md) (v1.3.0) and [decisions and open questions](specs/001-downstream-proteomics/decisions.md). No phase is complete merely because its specification exists; acceptance is recorded only from executed evidence in [traceability](specs/001-downstream-proteomics/traceability.json). No license has been selected.

@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 157,
-    "NOT_RUN": 10
+    "PASS": 160,
+    "NOT_RUN": 7
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -3784,7 +3784,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "Maintainer-only private regression; run locally by Omar (docs/validation/013-release/MAINTAINER_RUNBOOK.md). The tooling is tested on synthetic stand-ins only (tests/regression/test_legacy_tooling.py)."
     },
     {
       "acceptance_id": "V112",
@@ -3799,7 +3799,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "Maintainer-only private regression; run locally by Omar: needs Maintainer-local historical tables and an actually provisioned compatible historical R/resource environment (MAINTAINER_RUNBOOK.md section 3). The comparison tooling is tested on synthetic stand-ins only."
     },
     {
       "acceptance_id": "V113",
@@ -3814,7 +3814,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "Maintainer-only: needs Maintainer-approved local comparison summaries and a disclosure review; an implementer may not author study-derived numbers in the public repository (MAINTAINER_RUNBOOK.md section 4)."
     },
     {
       "acceptance_id": "V114",
@@ -3829,52 +3829,139 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "Maintainer-only private regression; run locally by Omar (docs/validation/013-release/MAINTAINER_RUNBOOK.md). The tooling is tested on synthetic stand-ins only (tests/regression/test_legacy_tooling.py)."
     },
     {
       "acceptance_id": "V115",
       "requirement": "FR-115",
       "task": "T115",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/regression -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/maintained/build_release.py check",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/013-release/evidence/gate-results.json",
+          "sha256": "42191933077c4c106d50bbb147ebd446b70d757281296cd277920f065991d55f"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/python-tests-1.log",
+          "sha256": "51e489a682e79bd01b40757ac20d0dd465cf2148fa404df9125a05f9d6aee8bd"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/release-hygiene-check.log",
+          "sha256": "d1c0e6281953cebe3e1f3de3477a50a585d823ddf95d57e4eb470fb164df8086"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/spec-kit-check.log",
+          "sha256": "2970529e7c60d70a9beebdf4019c2288e44b1073f0c41c1faf8d565093a3aa7d"
+        }
+      ],
       "expected_oracle": "Document supported assays/designs/engines, rejection messages and exact tested commands; separate phase milestones from completed v1.0.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V116",
       "requirement": "FR-116",
       "task": "T116",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/regression -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/maintained/build_release.py check",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/013-release/evidence/gate-results.json",
+          "sha256": "42191933077c4c106d50bbb147ebd446b70d757281296cd277920f065991d55f"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/python-tests-1.log",
+          "sha256": "51e489a682e79bd01b40757ac20d0dd465cf2148fa404df9125a05f9d6aee8bd"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/release-hygiene-check.log",
+          "sha256": "d1c0e6281953cebe3e1f3de3477a50a585d823ddf95d57e4eb470fb164df8086"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/spec-kit-check.log",
+          "sha256": "2970529e7c60d70a9beebdf4019c2288e44b1073f0c41c1faf8d565093a3aa7d"
+        }
+      ],
       "expected_oracle": "Retain exactly 120 unique requirement/task/acceptance identities, reviewed evidence or explicit unresolved status, and no silently retired ID.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V117",
       "requirement": "FR-117",
       "task": "T117",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/regression -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/maintained/build_release.py check",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/013-release/evidence/gate-results.json",
+          "sha256": "42191933077c4c106d50bbb147ebd446b70d757281296cd277920f065991d55f"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/python-tests-1.log",
+          "sha256": "51e489a682e79bd01b40757ac20d0dd465cf2148fa404df9125a05f9d6aee8bd"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/release-hygiene-check.log",
+          "sha256": "d1c0e6281953cebe3e1f3de3477a50a585d823ddf95d57e4eb470fb164df8086"
+        },
+        {
+          "path": "docs/validation/013-release/evidence/spec-kit-check.log",
+          "sha256": "2970529e7c60d70a9beebdf4019c2288e44b1073f0c41c1faf8d565093a3aa7d"
+        }
+      ],
       "expected_oracle": "Exclude private data, credentials, environments and private execution logs; retain only permitted resource content/terms and explicitly unresolved ownership/license.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V118",
@@ -3889,7 +3976,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "operator decision required (AGENTS.md): no release authorization and no license decision exist. The export tooling and its refusals (collision, missing authorization, unresolved license) are tested in tests/regression/test_release.py."
     },
     {
       "acceptance_id": "V119",
@@ -3904,7 +3991,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "Needs the final reviewed tree, CI on its pushed commit and the Maintainer-only gates V111/V114. The local re-run of every gate on this tree (docs/validation/final-acceptance.md) cannot support v1.0 completion."
     },
     {
       "acceptance_id": "V120",
@@ -3919,7 +4006,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+      "reason": "Maintainer review and handoff required: the oracle is the Maintainer's review of all changes, evidence and authorization records; a worker receipt cannot close the roadmap."
     },
     {
       "acceptance_id": "V121",

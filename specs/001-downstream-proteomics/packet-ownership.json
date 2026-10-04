@@ -695,6 +695,15 @@
         "tests/scientific/reference/test_post_de_calibration_evidence.py"
       ],
       "change": "Calibration extension for R14d/R14e (spec 015 plan: 'recorded in R14f'): the post-DE calibration runner, its R driver and its evidence test are added to the R14f allowlist. Gates were fixed before the first run (D-52)."
+    },
+    {
+      "id": "A-2026-10-01-21",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/reproduction.py",
+        "specs/001-downstream-proteomics/traceability.json"
+      ],
+      "change": "R12: write_acceptance_ledger keeps each R12 row's recorded NOT_RUN reason (Maintainer-only private gate, operator decision, final review) instead of overwriting all ten with one generic sentence; the generic text remains the fallback. Fail-before/pass-after: tests/regression/test_traceability_reconciliation.py (V116). The traceability identity note now records the ADR 0009 identities."
     }
   ]
 }

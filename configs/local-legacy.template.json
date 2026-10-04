@@ -1,0 +1,20 @@
+{
+  "_comment": "Maintainer-local template (R12 V111/V112). Copy this file OUTSIDE the repository before filling in paths; never commit the filled copy. Paths below are placeholders.",
+  "archive": "/absolute/path/outside/the/repository/original-archive.zip",
+  "maintained_run": "/absolute/path/outside/the/repository/maintained-run",
+  "output_dir": "/absolute/path/outside/the/repository/legacy-regression-output",
+  "tables": [
+    {
+      "id": "limma_primary",
+      "legacy_table": "/absolute/path/outside/the/repository/historical-limma-table.tsv",
+      "maintained_table": "dea/zero_null.tsv",
+      "keys": ["feature_id", "contrast_id"],
+      "fields": {
+        "effect": {"legacy": "logFC", "kind": "effect"},
+        "statistic": {"legacy": "t", "kind": "statistic"},
+        "p_value": {"legacy": "P.Value", "kind": "statistic"},
+        "q_value": {"legacy": "adj.P.Val", "kind": "statistic"}
+      }
+    }
+  ]
+}
