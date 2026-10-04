@@ -32,10 +32,10 @@
 - [x] T158 — R14d: implement FR-158 (Calibration and threshold metrics); establish and pass V158, including its negative case, with independent evidence.
 - [x] T159 — R14d: implement FR-159 (External validation); establish and pass V159, including its negative case, with independent evidence.
 - [x] T160 — R14d: implement FR-160 (Biomarker outputs); establish and pass V160, including its negative case, with independent evidence.
-- [ ] T161 — R14e: implement FR-161 (Co-abundance module eligibility); establish and pass V161, including its negative case, with independent evidence.
-- [ ] T162 — R14e: implement FR-162 (Module construction and stability); establish and pass V162, including its negative case, with independent evidence.
-- [ ] T163 — R14e: implement FR-163 (Module–trait association); establish and pass V163, including its negative case, with independent evidence.
-- [ ] T164 — R14e: implement FR-164 (Offline interaction resources); establish and pass V164, including its negative case, with independent evidence.
-- [ ] T165 — R14e: implement FR-165 (Network connectivity with a measured-universe null); establish and pass V165, including its negative case, with independent evidence.
+- [x] T161 — R14e: implement FR-161 (Co-abundance module eligibility); establish and pass V161, including its negative case, with independent evidence.
+- [x] T162 — R14e: implement FR-162 (Module construction and stability); establish and pass V162, including its negative case, with independent evidence.
+- [x] T163 — R14e: implement FR-163 (Module–trait association); establish and pass V163, including its negative case, with independent evidence.
+- [x] T164 — R14e: implement FR-164 (Offline interaction resources); establish and pass V164, including its negative case, with independent evidence.
+- [x] T165 — R14e: implement FR-165 (Network connectivity with a measured-universe null); establish and pass V165, including its negative case, with independent evidence.
 - [ ] T166 — R14f: implement FR-166 (Post-DE eligibility and dependency report); establish and pass V166, including its negative case, with independent evidence.
 - [ ] T167 — R14f: implement FR-167 (Generality qualification matrix); establish and pass V167, including its negative case, with independent evidence.

@@ -1,0 +1,7 @@
+$ Rscript --vanilla -e "res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\$nb), sum(df\$failed), sum(df\$skipped), sum(df\$error)))"
+# started 2026-10-04T10:05:05.767166+00:00  exit 0
+
+post-de-networks: .......................
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations=23 failed=0 skipped=0 errors=0

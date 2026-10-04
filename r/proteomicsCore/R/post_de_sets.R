@@ -20,6 +20,7 @@ PD_CLAIM_LABELS <- c("descriptive", "exploratory_raw_p", "in_sample", "cross_val
       next
     }
     if (startsWith(item$artifact_id, "input__")) next   # declared external input (hash recorded at plan time, verified on read)
+    if (startsWith(item$artifact_id, "resource_") || startsWith(item$artifact_id, "resfile_")) next   # SM14 snapshot verified by verify_resources and on read (A-2026-10-01-18)
     ref <- planned[[item$artifact_id]]
     if (is.null(ref) || !identical(ref$sha256, item$sha256)) stop(sprintf("E_PLAN_CHANGED: input %s differs from the frozen plan", item$artifact_id), call. = FALSE)
     if (identical(ref$result_type, "DisplayOnlyMatrix")) stop("E_DISPLAY_MATRIX_REJECTED: display-only matrices cannot feed post-DE analysis", call. = FALSE)

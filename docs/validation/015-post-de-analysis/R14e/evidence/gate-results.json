@@ -1,0 +1,23 @@
+{
+  "packet": "R14e",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "11 passed in 53.48s",
+      "log": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+      "exit_code": 0,
+      "summary": "expectations=23 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log"
+    }
+  ],
+  "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+  "n_files": 7,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

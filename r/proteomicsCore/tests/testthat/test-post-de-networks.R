@@ -1,0 +1,76 @@
+# R14e network acceptance at the R level (V162, V165).  Oracles are hand formulas for the signed adjacency and TOM,
+# prcomp() eigengenes, a hand adjusted Rand index and the measured-universe invariants of the null.
+
+ns <- asNamespace("proteomicsCore")
+fn <- function(name) get(name, envir = ns)
+
+testthat::test_that("V162 signed adjacency, TOM, eigengenes and ARI equal hand computations", {
+  set.seed(3); X <- matrix(rnorm(200), 40, 5); X[, 2] <- X[, 1] + rnorm(40, 0, 0.2); C <- stats::cor(X)
+  A <- fn("pd_signed_adjacency")(C, 6)
+  testthat::expect_equal(A[1, 2], ((1 + C[1, 2]) / 2)^6); testthat::expect_true(all(diag(A) == 0))
+  T <- fn("pd_signed_tom")(A); k <- rowSums(A)
+  testthat::expect_equal(T[1, 3], (sum(A[1, ] * A[, 3]) + A[1, 3]) / (min(k[1], k[3]) + 1 - A[1, 3]), tolerance = 1e-12)
+  colnames(X) <- paste0("F", 1:5)
+  eg <- fn("pd_eigengenes")(X, c(F1 = 1L, F2 = 1L, F3 = 0L, F4 = 2L, F5 = 2L))
+  pc <- stats::prcomp(scale(X[, 1:2]), center = FALSE)$x[, 1]
+  testthat::expect_equal(abs(unname(eg$eigengenes[, "M1"])), abs(unname(pc)), tolerance = 1e-10)
+  testthat::expect_gt(stats::cor(eg$eigengenes[, "M1"], rowMeans(scale(X[, 1:2]))), 0)    # sign aligned with the module mean
+  a <- c(1, 1, 1, 2, 2, 3); b <- c(1, 1, 2, 2, 2, 3)
+  tab <- table(a, b); n <- 6; c2 <- function(x) sum(x * (x - 1) / 2)
+  e <- c2(rowSums(tab)) * c2(colSums(tab)) / c2(n)
+  testthat::expect_equal(fn("pd_adjusted_rand")(a, b), (c2(tab) - e) / (0.5 * (c2(rowSums(tab)) + c2(colSums(tab))) - e))
+  testthat::expect_equal(fn("pd_adjusted_rand")(a, a), 1)
+})
+
+testthat::test_that("V165 degree-preserving null draws stay in the measured universe and keep degree bins", {
+  universe <- sprintf("G%02d", 1:30)
+  set.seed(2); edges <- data.frame(a = sample(universe, 80, TRUE), b = sample(universe, 80, TRUE), stringsAsFactors = FALSE); edges <- edges[edges$a != edges$b, ]
+  degree <- stats::setNames(vapply(universe, function(g) sum(edges$a == g | edges$b == g), numeric(1)), universe)
+  bins <- fn("pd_degree_bins")(degree)
+  testthat::expect_true(all(table(bins) >= 5L))
+  res <- fn("pd_connectivity_null")(universe[1:6], universe, edges, degree, 50L, 4L)
+  testthat::expect_length(res$null, 50L); testthat::expect_identical(res$observed, sum(edges$a %in% universe[1:6] & edges$b %in% universe[1:6]))
+  testthat::expect_true(all(is.finite(res$null)) && all(res$null >= 0))
+  # a set gene outside the measured universe can never be drawn: the null refuses to leave the universe
+  testthat::expect_error(fn("pd_connectivity_null")(c("G01", "X99"), universe, edges, degree, 5L, 4L))
+})
+
+testthat::test_that("V164/V165 undirected edges: one row per unordered pair, best score, no self-loops, min_score applied", {
+  e <- data.frame(gene_a = c("A", "B", "A", "C", "D", "E"), gene_b = c("B", "A", "A", "D", "C", "F"), score = c(500, 700, 900, 100, 400, 350), stringsAsFactors = FALSE)
+  u <- fn("pd_undirected_edges")(e, 300)
+  testthat::expect_identical(u$gene_a, c("A", "C", "E")); testthat::expect_identical(u$gene_b, c("B", "D", "F")); testthat::expect_identical(u$score, c(700, 400, 350))
+  testthat::expect_identical(nrow(fn("pd_undirected_edges")(e, 1000)), 0L)
+})
+
+testthat::test_that("V162 scale-free fit index equals the published definition computed by hand", {
+  set.seed(11); k <- stats::rexp(200, 0.2)
+  breaks <- seq(min(k), max(k), length.out = 11L); cls <- findInterval(k, breaks, rightmost.closed = TRUE, left.open = TRUE); cls[cls == 0L] <- 1L
+  mids <- (breaks[-1] + breaks[-11]) / 2
+  dk <- vapply(1:10, function(j) if (any(cls == j)) mean(k[cls == j]) else mids[j], numeric(1))
+  pk <- vapply(1:10, function(j) sum(cls == j) / length(k), numeric(1))
+  x <- log10(dk); y <- log10(pk + 1e-9); slope <- sum((x - mean(x)) * (y - mean(y))) / sum((x - mean(x))^2)
+  r2 <- stats::cor(x, y)^2
+  got <- fn("pd_scale_free_fit")(k)
+  testthat::expect_equal(got$slope, slope, tolerance = 1e-10); testthat::expect_equal(got$r2, -sign(slope) * r2, tolerance = 1e-10)
+  testthat::expect_true(is.na(fn("pd_scale_free_fit")(rep(3, 10))$r2))
+})
+
+testthat::test_that("V162 bootstrap stability resamples biological units, never features (hand loop oracle)", {
+  testthat::skip_if_not_installed("dynamicTreeCut")
+  set.seed(21); n <- 40L; f1 <- rnorm(n); f2 <- rnorm(n)
+  X <- cbind(sapply(1:8, function(i) f1 + rnorm(n, 0, 0.3)), sapply(1:8, function(i) f2 + rnorm(n, 0, 0.3)), matrix(rnorm(n * 6), n, 6))
+  colnames(X) <- sprintf("F%02d", 1:22); rownames(X) <- sprintf("u%02d", 1:n)
+  build <- function(Z) fn("pd_modules")(Z, "hclust_correlation", NA, 5L, 2L, 0.5)
+  labels <- build(X); units <- rownames(X)
+  res <- fn("pd_module_stability")(X, labels, units, "hclust_correlation", NA, 5L, 2L, 0.5, 6L, 17L)
+  jaccard <- function(lb, m) { a <- names(labels)[labels == m]; max(c(0, vapply(setdiff(unique(lb), 0L), function(bm) { g <- names(lb)[lb == bm]; length(intersect(a, g)) / length(union(a, g)) }, numeric(1)))) }
+  mods <- sort(setdiff(unique(labels), 0L))
+  set.seed(17, kind = "L'Ecuyer-CMRG"); unit_oracle <- t(vapply(1:6, function(b) { lb <- build(X[sample(units, n, replace = TRUE), ]); vapply(mods, function(m) jaccard(lb, m), numeric(1)) }, numeric(length(mods))))
+  testthat::expect_equal(unname(res$jaccard), unname(unit_oracle), tolerance = 1e-12)
+  testthat::expect_true(all(vapply(res$picks, function(p) all(p %in% units) && length(p) == n, logical(1))))   # draws are units
+  testthat::expect_identical(res$failed, 0L)
+  # a feature-level bootstrap with the same stream is a different procedure and does not reproduce the result
+  set.seed(17, kind = "L'Ecuyer-CMRG"); feature_variant <- t(vapply(1:6, function(b) { cols <- sample(colnames(X), ncol(X), replace = TRUE); Z <- X[, cols]; colnames(Z) <- make.unique(cols)
+    lb <- build(Z); lb <- lb[!duplicated(cols)]; names(lb) <- cols[!duplicated(cols)]; vapply(mods, function(m) jaccard(lb, m), numeric(1)) }, numeric(length(mods))))
+  testthat::expect_false(isTRUE(all.equal(unname(res$jaccard), unname(feature_variant))))
+})

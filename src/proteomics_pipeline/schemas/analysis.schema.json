@@ -2714,6 +2714,12 @@
                   "type": "integer",
                   "minimum": 0,
                   "maximum": 4
+                },
+                "cut_height": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1,
+                  "description": "Dendrogram cut height (A-2026-10-01-18): TOM dissimilarity for wgcna_signed (default 0.9), 1 - r for hclust_correlation (default 0.5)."
                 }
               }
             },

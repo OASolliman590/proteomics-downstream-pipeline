@@ -215,3 +215,55 @@ def write_validation_cohort(directory: Path, values: dict, observations: list[di
     B.write_tsv(directory / "validation_matrix.tsv", [["feature_id"] + ids] + [[f] + [repr(float(v)) for v in vals] for f, vals in values.items()])
     B.write_tsv(directory / "validation_metadata.tsv", [["sample_id", "group", "subject_id"]] + [[o["observation_id"], o["group"], o.get("subject_id", "NA") if o.get("subject_id", "NA") != "NA" else o["observation_id"]] for o in observations])
     return {"matrix": str(directory / "validation_matrix.tsv"), "metadata": str(directory / "validation_metadata.tsv"), "class_column": "group", "subject_column": "subject_id"}
+
+
+# ----------------------------------------------------------------------------- R14e fixtures
+def coabundance_design(*, n_per_group: int = 30, modules: int = 3, size: int = 12, noise: int = 24, seed: int = 61, group_shift: float = 1.5):
+    """Two groups (A, B) of independent units.  Module m (features F01-F12, F13-F24, F25-F36) follows its own latent
+    factor (loading 1, residual SD 0.3); module 1's factor is shifted by `group_shift` in group B.  The remaining
+    `noise` features are independent.  Planted labels: PLANTED_MODULES(size, modules, noise)."""
+    rng = random.Random(seed)
+    observations = [{"observation_id": f"{g}{i + 1}", "group": g} for g in ("A", "B") for i in range(n_per_group)]
+    latent = {(o["observation_id"], m): rng.gauss(group_shift if (m == 0 and o["group"] == "B") else 0.0, 1.0) for o in observations for m in range(modules)}
+    values = {}
+    for f in range(modules * size + noise):
+        m = f // size if f < modules * size else None
+        values[f"F{f + 1:02d}"] = [10 + (latent[(o["observation_id"], m)] if m is not None else 0.0) + rng.gauss(0, 0.3 if m is not None else 1.0) for o in observations]
+    return values, observations
+
+
+def planted_modules(size: int = 12, modules: int = 3, noise: int = 24) -> dict:
+    return {f"F{f + 1:02d}": (f // size + 1 if f < modules * size else 0) for f in range(modules * size + noise)}
+
+
+def write_ppi_snapshot(directory: Path, features: list[str], *, cluster: list[str], seed: int = 71, species: str = "rat", extra_genes: int = 30) -> dict:
+    """Synthetic mapping and PPI sources plus their preparation manifests (prepared later by `resources prepare`).
+    Every measured feature maps to one gene; the genes of `cluster` are fully connected (planted dense cluster); every
+    other measured gene has six random partners (so cluster genes are not degree outliers); `extra_genes` unmeasured genes carry edges too."""
+    rng = random.Random(seed)
+    style = SPECIES[species]
+    directory.mkdir(parents=True, exist_ok=True)
+    index = {f: i for i, f in enumerate(features, start=1)}
+    genes = {f: style["gene"](i) for f, i in index.items()}
+    B.write_tsv(directory / "mapping_source.tsv", [["source_id", "id_type", "gene_id", "gene_symbol", "taxonomy_id", "status"]] +
+                [[style["accession"](i), "synthetic_accession", genes[f], genes[f], style["taxonomy_id"], "current"] for f, i in index.items()])
+    edges = set()
+    cl = [genes[f] for f in cluster]
+    for i, a in enumerate(cl):
+        for b in cl[i + 1:]:
+            edges.add((a, b))
+    others = [genes[f] for f in features if f not in cluster]
+    unmeasured = [style["gene"](9000 + j) for j in range(extra_genes)]
+    for g in others:
+        for partner in rng.sample([x for x in others + unmeasured if x != g], 6):
+            edges.add(tuple(sorted((g, partner))))
+    for g in unmeasured:
+        edges.add(tuple(sorted((g, rng.choice(unmeasured + others)))))
+    B.write_tsv(directory / "ppi_source.tsv", [["gene_a", "gene_b", "score"]] + [[a, b, 900 if (a in cl and b in cl) else rng.randint(400, 900)] for a, b in sorted(edges) if a != b])
+    common = {"version": "synthetic-ppi-1", "source": "synthetic test fixture (not a real database)", "terms": "synthetic; no redistribution restrictions",
+              "source_taxonomy_id": style["taxonomy_id"], "target_taxonomy_id": style["taxonomy_id"]}
+    (directory / "prepare_mapping.json").write_text(json.dumps({**common, "resource_id": "map", "kind": "mapping", "id_type": "synthetic_accession",
+                                                               "files": [{"name": "mapping.tsv", "source": "mapping_source.tsv"}]}), encoding="utf-8")
+    (directory / "prepare_ppi.json").write_text(json.dumps({**common, "resource_id": "ppi", "kind": "ppi", "id_type": "synthetic_gene", "score_type": "combined_score",
+                                                           "files": [{"name": "edges.tsv", "source": "ppi_source.tsv"}]}), encoding="utf-8")
+    return {"mapping_manifest": directory / "prepare_mapping.json", "ppi_manifest": directory / "prepare_ppi.json", "genes": genes, "unmeasured": unmeasured}

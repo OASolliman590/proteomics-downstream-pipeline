@@ -5652,14 +5652,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "case_id": "V161",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_networks.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "docs/validation/015-post-de-analysis/R14e/receipt.md",
+        "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V161",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5680,14 +5689,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "case_id": "V162",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_networks.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "docs/validation/015-post-de-analysis/R14e/receipt.md",
+        "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V162",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5708,14 +5726,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "case_id": "V163",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_networks.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "docs/validation/015-post-de-analysis/R14e/receipt.md",
+        "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V163",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5736,14 +5763,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "case_id": "V164",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_networks.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "docs/validation/015-post-de-analysis/R14e/receipt.md",
+        "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V164",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5764,14 +5800,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_post_de_networks.py; r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "case_id": "V165",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_post_de_networks.py",
+        "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
+        "docs/validation/015-post-de-analysis/R14e/receipt.md",
+        "docs/validation/015-post-de-analysis/R14e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V165",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "5a2fdfef45e58787d6e5cb1582411593599e6093fa1406ded436d20543e17679",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
