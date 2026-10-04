@@ -139,3 +139,41 @@ def unbalanced_with_injections(*, n_a: int = 31, n_b: int = 11, n_features: int 
             column.append(10 + 0.1 * f + shift + unit_noise[key] + rng.gauss(0, 0.05))
         values[f"F{f + 1:02d}"] = column
     return values, observations
+
+
+# ----------------------------------------------------------------------------- R14c fixtures
+def phenotype_design(*, n: int = 10, seed: int = 41, n_features: int = 30, missing: int = 0, kind: str = "linear"):
+    """Groups A and B (n units each), continuous covariate age and phenotype score.
+    kind 'linear': F01-F10 rise 0.4 log2 per phenotype unit; group B shifts F11-F15 by +1; age adds 0.02 per year everywhere.
+    kind 'one_group': the phenotype is recorded only in group B.  kind 'simpson': phenotype ranges overlap (A 1-7, B 4-10);
+    F01-F05 fall 0.6 per unit within each group while group B is 3 log2 higher, so the pooled slope is positive.
+    missing: the phenotype is missing ("NA") for the first `missing` units."""
+    rng = random.Random(seed)
+    observations = []
+    for g in ("A", "B"):
+        for i in range(n):
+            if kind == "simpson":
+                score = rng.uniform(1, 7) if g == "A" else rng.uniform(4, 10)
+            else:
+                score = rng.gauss(5, 2)
+            observations.append({"observation_id": f"{g}{i + 1}", "group": g, "age": f"{rng.uniform(20, 60):.3f}", "score": f"{score:.6f}"})
+    for o in observations[:missing]:
+        o["score"] = "NA"
+    if kind == "one_group":
+        for o in observations:
+            if o["group"] == "A":
+                o["score"] = "NA"
+    means = {g: sum(float(o["score"]) for o in observations if o["group"] == g and o["score"] != "NA") / max(1, sum(1 for o in observations if o["group"] == g and o["score"] != "NA"))
+             for g in ("A", "B")}
+    values = {}
+    for f in range(n_features):
+        column = []
+        for o in observations:
+            s = float(o["score"]) if o["score"] != "NA" else means[o["group"]]
+            if kind == "simpson":
+                shift = (3.0 * (o["group"] == "B") - 0.6 * (s - means[o["group"]])) if f < 5 else 0.0
+            else:
+                shift = (0.4 * s if f < 10 else 0.0) + (1.0 if o["group"] == "B" and 10 <= f < 15 else 0.0)
+            column.append(10 + 0.1 * f + shift + 0.02 * float(o["age"]) + rng.gauss(0, 0.3))
+        values[f"F{f + 1:02d}"] = column
+    return values, observations

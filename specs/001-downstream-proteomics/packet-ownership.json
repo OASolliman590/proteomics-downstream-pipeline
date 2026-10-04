@@ -370,7 +370,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
         "tests/scientific/test_post_de_sensitivity.py",
         "tests/fixtures/post_de/sensitivity/**",
-        "docs/validation/015-post-de-analysis/R14b/**"
+        "docs/validation/015-post-de-analysis/R14b/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14c": {
@@ -387,7 +388,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-association.R",
         "tests/scientific/test_post_de_association.py",
         "tests/fixtures/post_de/association/**",
-        "docs/validation/015-post-de-analysis/R14c/**"
+        "docs/validation/015-post-de-analysis/R14c/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14d": {
@@ -405,7 +407,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "tests/scientific/test_post_de_biomarker.py",
         "tests/fixtures/post_de/biomarker/**",
-        "docs/validation/015-post-de-analysis/R14d/**"
+        "docs/validation/015-post-de-analysis/R14d/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14e": {
@@ -423,7 +426,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "tests/scientific/test_post_de_networks.py",
         "tests/fixtures/post_de/networks/**",
-        "docs/validation/015-post-de-analysis/R14e/**"
+        "docs/validation/015-post-de-analysis/R14e/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14f": {
@@ -443,7 +447,8 @@
         "src/proteomics_pipeline/reporting/post_de_data.py",
         "tests/integration/test_post_de_generality.py",
         "tests/fixtures/post_de/generality/**",
-        "docs/validation/015-post-de-analysis/R14f/**"
+        "docs/validation/015-post-de-analysis/R14f/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     }
   },
@@ -630,6 +635,15 @@
         "scripts/maintained/install_r_dependencies.R"
       ],
       "change": "Phase 4 shared interfaces (ADR 0009, before R14a): six capability IDs (post_de_sets/sensitivity/association/biomarker/networks/eligibility) in the fixed Python map; the five R-backed ones in the R dispatch map (post_de_eligibility is Python-only, like report_full); optional post_de configuration block per contracts/post-de.md with runtime.phase 4 (Phase 1-3 configurations cannot enable it: schema rule plus typed E_PHASE_CAPABILITY precheck); resource kind 'ppi' with score_type; requested_phase 4 in run-status/report-data schemas; design_service.replan (named secondary designs through the same grammar with exact rational rank and estimability) and exact_rank; workflow: typed post-DE precheck, requested capabilities, plan-time eligibility recorded in the capability plan (SM41; required ineligible modules reject the plan), dispatch R14a-R14e in order then R14f; validation-cohort paths enter the plan by name; fixed report-section providers for every post-DE module; R Suggests glmnet, pROC, e1071, randomForest, dynamicTreeCut (installed in .r-lib and pinned in renv.lock with their dependencies foreach, iterators, shape, RcppEigen, proxy); WGCNA is not used (D-44)."
+    },
+    {
+      "id": "A-2026-10-01-15",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/workflow.py",
+        "specs/001-downstream-proteomics/packet-ownership.json"
+      ],
+      "change": "R14b integration: a required post-DE module may publish required_refusal(decision); when a declared sub-analysis of a required module is ineligible (for example a non-estimable interaction, E_SENSITIVITY_NONESTIMABLE) the plan is rejected (exit 2) before any fit (V137 negative). Optional modules record the refusal and run the remaining analyses. Allowlist amendment: plan.md requires one synthetic design factory reused by every R14 packet, so tests/fixtures/post_de/design_factory.py (created by R14a) is added to the R14b-R14f allowlists; each packet appends its own generator functions and changes no existing one."
     }
   ]
 }

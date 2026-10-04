@@ -1,0 +1,5 @@
+$ .venv/bin/python -m pytest tests/scientific/test_post_de_sensitivity.py -q -rs -p no:cacheprovider
+# started 2026-10-04T01:20:23.500317+00:00  exit 0
+
+..........                                                               [100%]
+10 passed in 40.63s

@@ -509,6 +509,10 @@ def post_de_plan(config: dict, config_path: Path, base: Path, analysis: bool) ->
     for module, decision in decisions.items():
         if decision["state"] == "INAPPLICABLE" and post_de.required(config, module):
             raise PlanRejected(decision["reason_code"], f"required post-DE module {module!r} is scientifically ineligible: {decision.get('reason')}", f"/post_de/{module}")
+        impl = post_de.module_impl(module)
+        refusal = impl.required_refusal(decision) if post_de.required(config, module) and hasattr(impl, "required_refusal") else None
+        if refusal:   # a required module whose declared analysis is ineligible is rejected before any fit
+            raise PlanRejected(refusal[0], f"required post-DE module {module!r}: {refusal[1]}", f"/post_de/{module}")
         out[post_de.CAPABILITIES[module]] = decision
     return out
 

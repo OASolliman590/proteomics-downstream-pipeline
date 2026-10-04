@@ -8,13 +8,13 @@
 - [x] T134 — R14a: implement FR-134 (Direction-aware overlap); establish and pass V134, including its negative case, with independent evidence.
 - [x] T135 — R14a: implement FR-135 (Effect concordance across contrasts and models); establish and pass V135, including its negative case, with independent evidence.
 - [x] T136 — R14a: implement FR-136 (Overlap inference eligibility); establish and pass V136, including its negative case, with independent evidence.
-- [ ] T137 — R14b: implement FR-137 (Covariate-imbalance diagnostics); establish and pass V137, including its negative case, with independent evidence.
-- [ ] T138 — R14b: implement FR-138 (Covariate-adjusted sensitivity model); establish and pass V138, including its negative case, with independent evidence.
-- [ ] T139 — R14b: implement FR-139 (Subgroup re-analysis); establish and pass V139, including its negative case, with independent evidence.
-- [ ] T140 — R14b: implement FR-140 (Primary-versus-sensitivity comparison); establish and pass V140, including its negative case, with independent evidence.
-- [ ] T141 — R14b: implement FR-141 (Matched-n resampling sensitivity); establish and pass V141, including its negative case, with independent evidence.
-- [ ] T142 — R14b: implement FR-142 (Unit-level influence on discoveries); establish and pass V142, including its negative case, with independent evidence.
-- [ ] T143 — R14b: implement FR-143 (Robustness summary); establish and pass V143, including its negative case, with independent evidence.
+- [x] T137 — R14b: implement FR-137 (Covariate-imbalance diagnostics); establish and pass V137, including its negative case, with independent evidence.
+- [x] T138 — R14b: implement FR-138 (Covariate-adjusted sensitivity model); establish and pass V138, including its negative case, with independent evidence.
+- [x] T139 — R14b: implement FR-139 (Subgroup re-analysis); establish and pass V139, including its negative case, with independent evidence.
+- [x] T140 — R14b: implement FR-140 (Primary-versus-sensitivity comparison); establish and pass V140, including its negative case, with independent evidence.
+- [x] T141 — R14b: implement FR-141 (Matched-n resampling sensitivity); establish and pass V141, including its negative case, with independent evidence.
+- [x] T142 — R14b: implement FR-142 (Unit-level influence on discoveries); establish and pass V142, including its negative case, with independent evidence.
+- [x] T143 — R14b: implement FR-143 (Robustness summary); establish and pass V143, including its negative case, with independent evidence.
 - [ ] T144 — R14c: implement FR-144 (Continuous and ordinal phenotype models); establish and pass V144, including its negative case, with independent evidence.
 - [ ] T145 — R14c: implement FR-145 (Correlation alternative); establish and pass V145, including its negative case, with independent evidence.
 - [ ] T146 — R14c: implement FR-146 (Missing phenotype values); establish and pass V146, including its negative case, with independent evidence.
