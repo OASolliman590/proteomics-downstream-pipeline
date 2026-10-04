@@ -37,5 +37,5 @@
 - [x] T163 — R14e: implement FR-163 (Module–trait association); establish and pass V163, including its negative case, with independent evidence.
 - [x] T164 — R14e: implement FR-164 (Offline interaction resources); establish and pass V164, including its negative case, with independent evidence.
 - [x] T165 — R14e: implement FR-165 (Network connectivity with a measured-universe null); establish and pass V165, including its negative case, with independent evidence.
-- [ ] T166 — R14f: implement FR-166 (Post-DE eligibility and dependency report); establish and pass V166, including its negative case, with independent evidence.
-- [ ] T167 — R14f: implement FR-167 (Generality qualification matrix); establish and pass V167, including its negative case, with independent evidence.
+- [x] T166 — R14f: implement FR-166 (Post-DE eligibility and dependency report); establish and pass V166, including its negative case, with independent evidence.
+- [x] T167 — R14f: implement FR-167 (Generality qualification matrix); establish and pass V167, including its negative case, with independent evidence.

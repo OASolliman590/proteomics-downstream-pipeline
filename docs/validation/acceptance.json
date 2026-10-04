@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 155,
-    "NOT_RUN": 12
+    "PASS": 157,
+    "NOT_RUN": 10
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -5625,31 +5625,57 @@
       "acceptance_id": "V166",
       "requirement": "FR-166",
       "task": "T166",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "6fd59ad6f46502ab3a1a25936742e74b4a5540387730812ab2db8b4cd0ba5bd9",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_post_de_generality.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14f/evidence/gate-results.json",
+          "sha256": "e1b37d7768955a27fb7fcc771a7b99ded96c24ab6eb32d2850008ca44c101a2b"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14f/evidence/python-tests-1.log",
+          "sha256": "001ad2374c2c56cf7fcf9c79cb3ee309374bddb896e120bfc8dfce098ed15d77"
+        }
+      ],
       "expected_oracle": "The report MUST show, for every requested post-DE module, its eligibility decision and reason, claim label and inputs. It also shows a \"what each conclusion depends on\" summary linking discoveries to their robustness and sensitivity outcomes.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V167",
       "requirement": "FR-167",
       "task": "T167",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "6fd59ad6f46502ab3a1a25936742e74b4a5540387730812ab2db8b4cd0ba5bd9",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_post_de_generality.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14f/evidence/gate-results.json",
+          "sha256": "e1b37d7768955a27fb7fcc771a7b99ded96c24ab6eb32d2850008ca44c101a2b"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14f/evidence/python-tests-1.log",
+          "sha256": "001ad2374c2c56cf7fcf9c79cb3ee309374bddb896e120bfc8dfce098ed15d77"
+        }
+      ],
       "expected_oracle": "Each R14 module MUST either complete or refuse with its declared typed reason across a synthetic design matrix. The matrix covers: two-group independent; three-group; paired; repeated with subject blocks; continuous exposure; 3-vs-3 small n; 15-vs-80 unbalanced; 200-unit large n; and human, mouse and rat identifier sets. No module may crash, silently degrade or emit an ineligible claim.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     }
   ]
 }

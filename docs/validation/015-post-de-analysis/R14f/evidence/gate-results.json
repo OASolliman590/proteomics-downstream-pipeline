@@ -1,0 +1,17 @@
+{
+  "packet": "R14f",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/integration/test_post_de_generality.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "12 passed in 245.61s (0:04:05)",
+      "log": "docs/validation/015-post-de-analysis/R14f/evidence/python-tests-1.log"
+    }
+  ],
+  "working_source_manifest_sha256": "6fd59ad6f46502ab3a1a25936742e74b4a5540387730812ab2db8b4cd0ba5bd9",
+  "n_files": 5,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

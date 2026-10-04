@@ -267,3 +267,83 @@ def write_ppi_snapshot(directory: Path, features: list[str], *, cluster: list[st
     (directory / "prepare_ppi.json").write_text(json.dumps({**common, "resource_id": "ppi", "kind": "ppi", "id_type": "synthetic_gene", "score_type": "combined_score",
                                                            "files": [{"name": "edges.tsv", "source": "ppi_source.tsv"}]}), encoding="utf-8")
     return {"mapping_manifest": directory / "prepare_mapping.json", "ppi_manifest": directory / "prepare_ppi.json", "genes": genes, "unmeasured": unmeasured}
+
+
+# ----------------------------------------------------------------------------- R14f generality matrix (V167)
+GENERALITY_CELLS = ("two_group", "three_group", "paired", "repeated", "continuous_exposure", "small_3v3", "unbalanced_15v80", "large_200", "human", "mouse", "rat")
+_GENERALITY_SIZES = {"two_group": {"A": 12, "B": 12}, "three_group": {"A": 10, "B": 10, "C": 10}, "continuous_exposure": {"A": 12, "B": 12}, "small_3v3": {"A": 3, "B": 3},
+                     "unbalanced_15v80": {"A": 80, "B": 15}, "large_200": {"A": 100, "B": 100}, "human": {"A": 12, "B": 12}, "mouse": {"A": 12, "B": 12}, "rat": {"A": 12, "B": 12}}
+
+
+def generality_cell(name: str, seed: int = 90) -> dict:
+    """One synthetic V167 cell: data, design declarations and the species convention.  Planted structure (30 features):
+    F01-F05 shift +1 in the first non-reference group (in `continuous_exposure` they follow the exposure `dose`
+    instead, slope 0.5 per unit), F06-F10 follow the phenotype `score` (0.4 per unit), F11-F20 share one latent factor
+    per subject (a co-abundance module); every subject has its own random effect, so repeated observations correlate."""
+    rng = random.Random(seed + GENERALITY_CELLS.index(name))
+    species = name if name in ("human", "mouse", "rat") else "rat"
+    units, blocking = [], None
+    if name == "paired":                                   # every subject observed once in each group
+        for s in range(10):
+            units += [{"observation_id": f"S{s + 1}_{g}", "subject_id": f"S{s + 1}", "group": g} for g in ("A", "B")]
+        blocking = {"mode": "duplicate_correlation", "subject_column": "subject_id"}
+    elif name == "repeated":                               # two visits per subject, group constant within subject
+        for s in range(12):
+            units += [{"observation_id": f"S{s + 1}_{r + 1}", "subject_id": f"S{s + 1}", "group": "A" if s < 6 else "B"} for r in range(2)]
+        blocking = {"mode": "duplicate_correlation", "subject_column": "subject_id"}
+    else:
+        for g, n in _GENERALITY_SIZES[name].items():
+            units += [{"observation_id": f"{g}{i + 1}", "group": g} for i in range(n)]
+    subjects = sorted({o.get("subject_id", o["observation_id"]) for o in units})
+    subject_score = {s: rng.gauss(5, 2) for s in subjects}
+    latent = {s: rng.gauss(0, 1) for s in subjects}
+    for o in units:
+        s = o.get("subject_id", o["observation_id"])
+        o["sex"] = "M" if subjects.index(s) % 2 else "F"
+        o["score"] = f"{subject_score[s] + (rng.gauss(0, 0.5) if name == 'paired' else 0.0):.6f}"
+        o["dose"] = f"{rng.uniform(0, 4):.6f}"
+    groups = sorted({o["group"] for o in units})
+    exposure = name == "continuous_exposure"
+
+    def effect(o, f):
+        s = o.get("subject_id", o["observation_id"])
+        shift = (0.5 * float(o["dose"]) if exposure else (1.0 if o["group"] == groups[1] else 0.0)) if f < 5 else 0.0
+        return shift + (0.4 * float(o["score"]) if 5 <= f < 10 else 0.0) + (latent[s] if 10 <= f < 20 else 0.0)
+
+    subject_effect, values = {}, {}
+    for f in range(30):
+        column = []
+        for o in units:
+            key = (o.get("subject_id", o["observation_id"]), f)
+            if key not in subject_effect:
+                subject_effect[key] = rng.gauss(0, 0.3)
+            column.append(10 + 0.05 * f + effect(o, f) + subject_effect[key] + rng.gauss(0, 0.2))
+        values[f"F{f + 1:02d}"] = column
+    group_contrasts = [B.contrast(f"{g}-{groups[0]}", g, groups[0], role="secondary") for g in groups[1:]]
+    design = {}
+    if blocking:
+        design["blocking"] = blocking
+    if exposure:                                           # the primary contrast is the exposure slope; group contrasts are secondary
+        design["continuous_covariates"] = [{"column": "dose", "center": True}]
+        contrasts = [{"id": "dose", "design_id": "joint", "label": "dose slope", "estimand": "log2 abundance change per unit dose", "weights": {"continuous.dose": 1},
+                      "role": "primary", "required_groups": list(groups)}] + group_contrasts
+    else:
+        contrasts = [dict(group_contrasts[0], role="primary")] + group_contrasts[1:]
+    return {"name": name, "values": values, "observations": units, "groups": groups, "contrasts": contrasts, "design_overrides": design or None, "species": species,
+            "extra_columns": ("sex", "score", "dose"), "biomarker_contrast": group_contrasts[0]["id"], "planted_primary": [f"F{i:02d}" for i in range(1, 6)],
+            "planted_phenotype": [f"F{i:02d}" for i in range(6, 11)], "planted_module": [f"F{i:02d}" for i in range(11, 21)]}
+
+
+def generality_post_de(cell: dict, *, ppi: bool = False) -> dict:
+    """Every post-DE module declared identically on every cell (study-agnostic declarations)."""
+    primary = cell["contrasts"][0]["id"]
+    block = {"enabled": True,
+             "sets": {"enabled": True, "definitions": [{"id": "primary_any", "rule": leaf("protein-primary", primary)}]},
+             "sensitivity": {"enabled": True, "covariate_models": [{"id": "adj_sex", "add_covariates": [{"column": "sex", "type": "categorical"}]}], "influence": True},
+             "association": {"enabled": True, "phenotypes": [{"column": "score", "type": "numeric", "adjust_for_group": True}], "method": "model"},
+             "biomarker": {"enabled": True, "contrast": cell["biomarker_contrast"], "cv": {"outer": {"k": 5, "repeats": 2}, "inner": {"k": 3}}, "selection": {"method": "top_k_auc", "k": [3]},
+                           "classifier_params": {"lambda": [0.1]}, "permutation": {"B": 19}, "single_feature": {"bootstrap": 200}, "seed": 3},
+             "networks": {"enabled": True, "coabundance": {"enabled": True, "min_units": 20, "min_module_size": 5, "bootstrap": 10, "seed": 4, "traits": ["group"]}}}
+    if ppi:
+        block["networks"]["ppi"] = {"enabled": True, "snapshot_id": "ppi", "mapping_resource_id": "map", "min_score": 300, "sets": ["primary_any"], "null_draws": 99, "seed": 5}
+    return block

@@ -5837,14 +5837,22 @@
       "proposed_test_target": {
         "path": "tests/integration/test_post_de_generality.py",
         "case_id": "V166",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_post_de_generality.py",
+        "docs/validation/015-post-de-analysis/R14f/receipt.md",
+        "docs/validation/015-post-de-analysis/R14f/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V166",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "6fd59ad6f46502ab3a1a25936742e74b4a5540387730812ab2db8b4cd0ba5bd9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -5865,14 +5873,22 @@
       "proposed_test_target": {
         "path": "tests/integration/test_post_de_generality.py",
         "case_id": "V167",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_post_de_generality.py",
+        "docs/validation/015-post-de-analysis/R14f/receipt.md",
+        "docs/validation/015-post-de-analysis/R14f/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/015-post-de-analysis/spec.md#V167",
       "verification": {
-        "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
+        "date": "2026-10-04",
+        "working_source_manifest_sha256": "6fd59ad6f46502ab3a1a25936742e74b4a5540387730812ab2db8b4cd0ba5bd9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
     }
   ],
