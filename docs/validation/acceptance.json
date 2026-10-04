@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 133,
-    "NOT_RUN": 34
+    "PASS": 138,
+    "NOT_RUN": 29
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -4753,76 +4753,181 @@
       "acceptance_id": "V144",
       "requirement": "FR-144",
       "task": "T144",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "7996980e435ecee08d108f5f5035d85ecdb115522bcae5a77dbf51c53a5b189e",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_association.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-association.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/gate-results.json",
+          "sha256": "20c8a4bc57d8e50f4b5815c5651ce56657acf4d093b0100577aa9c0ac2aa13bd"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/python-tests-1.log",
+          "sha256": "0211144d02905909f043ed43c3f88502d879f3fbaf63e6fa41bd0ec401254ce0"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/r-test-post-de-association.log",
+          "sha256": "1c2ffc6e98726e942d14a013f784ec94bdde232236c69f94b6448b21026812da"
+        }
+      ],
       "expected_oracle": "The system MUST test association of each feature with a declared numeric or ordinal phenotype using the primary engine. Proteins are the response; the phenotype is a design term, adjusted for declared covariates and, by default, for group. Results go in a separate family per phenotype.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V145",
       "requirement": "FR-145",
       "task": "T145",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "7996980e435ecee08d108f5f5035d85ecdb115522bcae5a77dbf51c53a5b189e",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_association.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-association.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/gate-results.json",
+          "sha256": "20c8a4bc57d8e50f4b5815c5651ce56657acf4d093b0100577aa9c0ac2aa13bd"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/python-tests-1.log",
+          "sha256": "0211144d02905909f043ed43c3f88502d879f3fbaf63e6fa41bd0ec401254ce0"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/r-test-post-de-association.log",
+          "sha256": "1c2ffc6e98726e942d14a013f784ec94bdde232236c69f94b6448b21026812da"
+        }
+      ],
       "expected_oracle": "On request, the system MUST report Pearson or Spearman (and partial, given covariates) correlations with permutation P values on biological units, and BH within the phenotype family.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V146",
       "requirement": "FR-146",
       "task": "T146",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "7996980e435ecee08d108f5f5035d85ecdb115522bcae5a77dbf51c53a5b189e",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_association.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-association.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/gate-results.json",
+          "sha256": "20c8a4bc57d8e50f4b5815c5651ce56657acf4d093b0100577aa9c0ac2aa13bd"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/python-tests-1.log",
+          "sha256": "0211144d02905909f043ed43c3f88502d879f3fbaf63e6fa41bd0ec401254ce0"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/r-test-post-de-association.log",
+          "sha256": "1c2ffc6e98726e942d14a013f784ec94bdde232236c69f94b6448b21026812da"
+        }
+      ],
       "expected_oracle": "Phenotype-missing units are excluded per phenotype (complete case) with n reported. Phenotypes are never imputed.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V147",
       "requirement": "FR-147",
       "task": "T147",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "7996980e435ecee08d108f5f5035d85ecdb115522bcae5a77dbf51c53a5b189e",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_association.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-association.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/gate-results.json",
+          "sha256": "20c8a4bc57d8e50f4b5815c5651ce56657acf4d093b0100577aa9c0ac2aa13bd"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/python-tests-1.log",
+          "sha256": "0211144d02905909f043ed43c3f88502d879f3fbaf63e6fa41bd0ec401254ce0"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/r-test-post-de-association.log",
+          "sha256": "1c2ffc6e98726e942d14a013f784ec94bdde232236c69f94b6448b21026812da"
+        }
+      ],
       "expected_oracle": "The system MUST refuse a pooled association when the phenotype is aliased with group (e.g. measured in one group only, or perfectly separated), unless within-group analysis is declared. It MUST warn when pooled and within-group directions disagree (Simpson pattern).",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V148",
       "requirement": "FR-148",
       "task": "T148",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "7996980e435ecee08d108f5f5035d85ecdb115522bcae5a77dbf51c53a5b189e",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_association.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-association.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/gate-results.json",
+          "sha256": "20c8a4bc57d8e50f4b5815c5651ce56657acf4d093b0100577aa9c0ac2aa13bd"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/python-tests-1.log",
+          "sha256": "0211144d02905909f043ed43c3f88502d879f3fbaf63e6fa41bd0ec401254ce0"
+        },
+        {
+          "path": "docs/validation/015-post-de-analysis/R14c/evidence/r-test-post-de-association.log",
+          "sha256": "1c2ffc6e98726e942d14a013f784ec94bdde232236c69f94b6448b21026812da"
+        }
+      ],
       "expected_oracle": "The system MUST export feature × phenotype effect, CI, P and q tables and a clustered heatmap with source tables, and report them offline.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 4 (ADR 0009, operator-authorized 2026-10-02): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V149",

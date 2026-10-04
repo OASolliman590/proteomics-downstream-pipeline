@@ -547,7 +547,7 @@ def exact_rank(matrix: list[list[float]]) -> tuple[int, list[int]]:
 
 def replan(config: dict, observations: list[dict], *, design_id: str, group_levels: list[str] | None = None, continuous: list[str] = (),
            categorical: list[str] = (), interactions: list[list[str]] = (), observation_ids: list[str] | None = None, contrast_ids: list[str] | None = None,
-           extra_contrasts: list[dict] = ()) -> dict:
+           extra_contrasts: list[dict] = (), group_term: bool = True) -> dict:
     """Compile a named secondary design from the frozen primary design plus declared terms on an optional observation subset.
 
     Returns the compiled design, its compiled contrasts (planned contrasts whose required groups are all present, plus
@@ -568,6 +568,13 @@ def replan(config: dict, observations: list[dict], *, design_id: str, group_leve
             raise DesignError("E_DESIGN_COVARIATE_NONFINITE", f"covariate {column!r} is missing for {missing[:5]}; complete-case removal is not silent", f"/design[{design_id}]")
         spec["categorical_covariates"].append({"column": column, "levels": present, "reference": present[0]})
     compiled = compile_design(spec, rows, assay=config["assay"], tmt_strategy=config["preprocessing"].get("tmt_strategy"))
+    if not group_term:   # A-2026-10-01-16: an association design without the group term (pooled unadjusted or within-group analysis)
+        if interactions:
+            raise DesignError("E_DESIGN_TERM", "a design without the group term cannot hold group interactions", f"/design[{design_id}]")
+        keep = [j for j, t in enumerate(compiled["term_map"]) if t["term"] != "group"]
+        compiled["coefficients"] = [compiled["coefficients"][j] for j in keep]
+        compiled["term_map"] = [compiled["term_map"][j] for j in keep]
+        compiled["matrix"] = [[row[j] for j in keep] for row in compiled["matrix"]]
     wanted = [c for c in config["contrasts"] if c["design_id"] == primary["id"] and (contrast_ids is None or c["id"] in contrast_ids)]
     contrasts = []
     for contrast in wanted:

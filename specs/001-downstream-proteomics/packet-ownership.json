@@ -644,6 +644,14 @@
         "specs/001-downstream-proteomics/packet-ownership.json"
       ],
       "change": "R14b integration: a required post-DE module may publish required_refusal(decision); when a declared sub-analysis of a required module is ineligible (for example a non-estimable interaction, E_SENSITIVITY_NONESTIMABLE) the plan is rejected (exit 2) before any fit (V137 negative). Optional modules record the refusal and run the remaining analyses. Allowlist amendment: plan.md requires one synthetic design factory reused by every R14 packet, so tests/fixtures/post_de/design_factory.py (created by R14a) is added to the R14b-R14f allowlists; each packet appends its own generator functions and changes no existing one."
+    },
+    {
+      "id": "A-2026-10-01-16",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/design_service.py"
+      ],
+      "change": "R14c re-plan API extension: design_service.replan(..., group_term=False) drops the group coefficients for pooled unadjusted and within-group phenotype designs (interactions with group are then refused, E_DESIGN_TERM); exact rank and estimability are computed on the reduced design."
     }
   ]
 }

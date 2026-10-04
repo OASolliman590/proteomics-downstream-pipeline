@@ -15,11 +15,11 @@
 - [x] T141 — R14b: implement FR-141 (Matched-n resampling sensitivity); establish and pass V141, including its negative case, with independent evidence.
 - [x] T142 — R14b: implement FR-142 (Unit-level influence on discoveries); establish and pass V142, including its negative case, with independent evidence.
 - [x] T143 — R14b: implement FR-143 (Robustness summary); establish and pass V143, including its negative case, with independent evidence.
-- [ ] T144 — R14c: implement FR-144 (Continuous and ordinal phenotype models); establish and pass V144, including its negative case, with independent evidence.
-- [ ] T145 — R14c: implement FR-145 (Correlation alternative); establish and pass V145, including its negative case, with independent evidence.
-- [ ] T146 — R14c: implement FR-146 (Missing phenotype values); establish and pass V146, including its negative case, with independent evidence.
-- [ ] T147 — R14c: implement FR-147 (Confounding guard); establish and pass V147, including its negative case, with independent evidence.
-- [ ] T148 — R14c: implement FR-148 (Association outputs); establish and pass V148, including its negative case, with independent evidence.
+- [x] T144 — R14c: implement FR-144 (Continuous and ordinal phenotype models); establish and pass V144, including its negative case, with independent evidence.
+- [x] T145 — R14c: implement FR-145 (Correlation alternative); establish and pass V145, including its negative case, with independent evidence.
+- [x] T146 — R14c: implement FR-146 (Missing phenotype values); establish and pass V146, including its negative case, with independent evidence.
+- [x] T147 — R14c: implement FR-147 (Confounding guard); establish and pass V147, including its negative case, with independent evidence.
+- [x] T148 — R14c: implement FR-148 (Association outputs); establish and pass V148, including its negative case, with independent evidence.
 - [ ] T149 — R14d: implement FR-149 (Scope and claims vocabulary); establish and pass V149, including its negative case, with independent evidence.
 - [ ] T150 — R14d: implement FR-150 (Single-feature discrimination); establish and pass V150, including its negative case, with independent evidence.
 - [ ] T151 — R14d: implement FR-151 (Minimum-size refusal); establish and pass V151, including its negative case, with independent evidence.
