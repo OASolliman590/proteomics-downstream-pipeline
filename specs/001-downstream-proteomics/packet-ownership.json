@@ -448,7 +448,10 @@
         "tests/integration/test_post_de_generality.py",
         "tests/fixtures/post_de/generality/**",
         "docs/validation/015-post-de-analysis/R14f/**",
-        "tests/fixtures/post_de/design_factory.py"
+        "tests/fixtures/post_de/design_factory.py",
+        "scripts/maintained/run_post_de_calibration.py",
+        "tests/scientific/calibration_post_de.R",
+        "tests/scientific/reference/test_post_de_calibration_evidence.py"
       ]
     }
   },
@@ -681,6 +684,17 @@
         "r/proteomicsCore/R/model_limma.R"
       ],
       "change": "R14e follow-up (found by the R14f generality matrix): limma drops the row names of a one-row fit, so fit_limma_model failed in moderation_diagnostics for a model with exactly one eligible feature (a single co-abundance module); the row names of the full fit are restored from the tested universe. Fail-before/pass-after: test-post-de-networks.R 'V163 a single module ...'."
+    },
+    {
+      "id": "A-2026-10-01-20",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "scripts/maintained/run_post_de_calibration.py",
+        "tests/scientific/calibration_post_de.R",
+        "tests/scientific/reference/test_post_de_calibration_evidence.py"
+      ],
+      "change": "Calibration extension for R14d/R14e (spec 015 plan: 'recorded in R14f'): the post-DE calibration runner, its R driver and its evidence test are added to the R14f allowlist. Gates were fixed before the first run (D-52)."
     }
   ]
 }

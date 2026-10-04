@@ -31,9 +31,18 @@ Packet R14f (FR-166–FR-167 / T166–T167 / V166–V167) was implemented and ve
 - The first draft of the matrix asserted association *power* in the repeated cell (12 subjects). Power is not an oracle, so it was replaced by a direct limma oracle on every cell. A power check is kept only for independent cells with at least 24 units.
 - The `continuous_exposure` cell of the inherited draft was an ordinary two-group design. It now has the exposure `dose` as a centred design term and the primary contrast is the exposure slope.
 
-## Calibration
+## Calibration (R11 extension for R14d and R14e; separate commit)
 
-The R11-style calibration extension for R14d (nested-CV AUC under the null, permutation-P uniformity, leaky-reference inflation) and for the R14e connectivity null is recorded in `calibration/` and its own section of this receipt after it runs (separate commit).
+The calibration ran through the production R functions (`pd_bm_nested`, `pd_bm_permute_labels`, `pd_connectivity_null`) on 8 workers: `scripts/maintained/run_post_de_calibration.py` with driver `tests/scientific/calibration_post_de.R`. It took 1193 s wall-clock; log in `calibration/run.log`. The gates were fixed before the first run (D-52); the inherited draft's gates were revised, also before any run, because two of them would have failed a correct procedure (see D-52). Per-dataset tables, raw record and summary are in `calibration/`.
+
+| Scenario | Datasets | Result | Gate |
+|---|---|---|---|
+| Nested-CV pooled out-of-fold AUC on pure noise (15 vs 15 units, 200 features) | 400 | mean 0.4969, MC SE 0.0067 (95 % interval 0.4838–0.5100, covers 0.5) | PASS (\|mean − 0.5\| ≤ 0.03, upper bound ≤ 0.53) |
+| Whole-procedure permutation P, B = 19 | 400 | 23 of 400 at P ≤ 0.05 (rate 0.0575; binomial upper-tail P 0.275); chi-square over the 20 attainable values 17.0 on 19 df (P 0.59) | PASS (both ≥ 0.01) |
+| Deliberately leaky reference (selection and scaling on all data) | 400 | mean AUC 0.875 | PASS (> 0.75): inflation is visible |
+| Connectivity null: random sets from the measured universe; planted 10-gene complete cluster | 400 sets | 10 of 400 at P ≤ 0.05 (rate 0.025, exact upper 95 % bound 0.042); cluster P = 1/200 | PASS (≤ 0.10; floor) |
+
+The connectivity null is mildly conservative on random sets (rate 0.025 at a nominal 0.05), as expected for a degree-binned null. `tests/scientific/reference/test_post_de_calibration_evidence.py` re-derives every summary number from the per-dataset tables with its own arithmetic (log-space binomial tails, a numerically integrated chi-square tail). It also shows that a liberal permutation P, an inflated null AUC and a planted cluster off the floor each fail their gate (5 passed; `calibration/evidence-test.log`). The calibration supports V152 (nested AUC near 0.5 against the leaky reference), V156 (permutation P) and V165 (connectivity null); those cases were already PASS on their own oracles.
 
 ## Acceptance
 
