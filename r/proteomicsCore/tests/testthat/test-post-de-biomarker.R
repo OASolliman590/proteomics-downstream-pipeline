@@ -68,3 +68,38 @@ testthat::test_that("V158 the Youden threshold maximises sensitivity + specifici
   testthat::expect_equal(J(t), max(vapply(c(0, s, 1), J, numeric(1))))
   testthat::expect_error(fn(".bm_threshold")("youden_test", s, y), "E_BIOMARKER_THRESHOLD_LEAKAGE")
 })
+
+# ----------------------------------------------------------------------------- review 2026-10-05 (minor 1, minor 2)
+.review_settings <- function(ids) list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 3L, alpha = 0.5,
+                                       classifier = "penalized_logistic", lambda = 0.1, cost = NULL, threshold_rule = "youden_train", scheme = "repeated_stratified_kfold",
+                                       outer_k = 3L, repeats = 1L, inner_k = 3L, observation_ids = ids, fixed_features = NULL)
+.review_data <- function() {
+  set.seed(5); X <- matrix(stats::rnorm(24 * 12), 24, 12, dimnames = list(sprintf("u%02d", 1:24), sprintf("F%02d", 1:12)))
+  y <- rep(c(1L, 0L), each = 12); X[y == 1L, 1:2] <- X[y == 1L, 1:2] + 1.5
+  list(X = X, y = y, units = rownames(X))
+}
+
+testthat::test_that("review minor 1: a locked model applies to a cohort that lacks unselected features", {
+  skip_bm(); d <- .review_data()
+  locked <- fn("pd_bm_lock")(d$X, d$y, d$units, .review_settings(d$units), fn(".bm_stream")(11L, 0L))
+  set.seed(6); Xv <- matrix(stats::rnorm(10 * 12), 10, 12, dimnames = list(sprintf("v%02d", 1:10), colnames(d$X)))
+  full <- fn("pd_bm_apply_locked")(locked, Xv)
+  dropped <- setdiff(colnames(Xv), locked$features)[1]
+  testthat::expect_false(is.na(dropped))
+  testthat::expect_equal(fn("pd_bm_apply_locked")(locked, Xv[, setdiff(colnames(Xv), dropped), drop = FALSE]), full, tolerance = 1e-12)
+  testthat::expect_error(fn("pd_bm_apply_locked")(locked, Xv[, setdiff(colnames(Xv), locked$features[1]), drop = FALSE]), "E_VALIDATION_FEATURES")
+})
+
+testthat::test_that("review minor 2: the transform audit records the rows actually used and trips on a leaky wiring", {
+  skip_bm(); d <- .review_data(); s <- .review_settings(d$units)
+  res <- fn("pd_bm_nested")(d$X, d$y, d$units, s, fn(".bm_stream")(12L, 0L), record = TRUE)
+  test_of <- split(res$oof$observation_id, paste(res$oof$repeat_id, res$oof$fold))
+  for (a in res$audit) testthat::expect_setequal(unlist(a$fitted_on), setdiff(d$units, test_of[[paste(a$repeat_id, a$fold)]]))
+  orig <- fn(".bm_fit_score")
+  leaky <- function(Xtr, ytr, Xte, s, cfg, ranking = NULL, prep = NULL) {   # scaling fitted on training + held-out rows (a transductive leak)
+    if (is.null(prep)) prep <- fn(".bm_fit_prep")(rbind(Xtr, Xte), s$imputation)
+    orig(Xtr, ytr, Xte, s, cfg, ranking, prep)
+  }
+  testthat::local_mocked_bindings(.bm_fit_score = leaky, .package = "proteomicsCore")
+  testthat::expect_error(fn("pd_bm_nested")(d$X, d$y, d$units, s, fn(".bm_stream")(12L, 0L), record = TRUE), "E_BIOMARKER_LEAKAGE")
+})

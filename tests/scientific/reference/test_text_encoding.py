@@ -136,3 +136,36 @@ def test_lint_detects_locale_dependent_io():
     good = ("from subprocess import run\nimport tempfile\nfrom tempfile import NamedTemporaryFile as N\nrun(['x'], text=True, encoding='utf-8')\n"
             "tempfile.NamedTemporaryFile()\nN(mode='w', encoding='utf-8')\ntempfile.TemporaryFile('w+b')\nrun([r, '--vanilla', script])\n")
     assert len(violations(bad, "bad")) == 6 and violations(good, "good") == []
+
+
+# Review 2026-10-05 (minor 6): files that write hashed release/regression artifacts must write LF bytes on every
+# platform (D-42). A text-mode write without newline="\n" translates "\n" to os.linesep (CRLF on Windows).
+NEWLINE_STRICT = [ROOT / "scripts" / "maintained" / "build_release.py", ROOT / "src" / "proteomics_pipeline" / "legacy_service.py"]
+
+
+def newline_violations(source: str, label: str) -> list[str]:
+    found = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", None)
+        has_newline = any(k.arg == "newline" for k in node.keywords)
+        if name == "write_text" and isinstance(func, ast.Attribute) and not has_newline:
+            found.append(f"{label}:{node.lineno}: write_text() without newline=\"\\n\" (CRLF on Windows)")
+        elif name == "open" and any(c in _mode(node) for c in "wax") and "b" not in _mode(node) and not has_newline:
+            found.append(f"{label}:{node.lineno}: text-mode open() for writing without newline=\"\\n\"")
+    return found
+
+
+def test_release_artifact_writers_use_lf_on_every_platform():
+    problems = []
+    for path in NEWLINE_STRICT:
+        problems += newline_violations(path.read_text(encoding="utf-8"), path.relative_to(ROOT).as_posix())
+    assert problems == [], "\n".join(problems)
+
+
+def test_newline_lint_detects_platform_dependent_writes():
+    bad = "from pathlib import Path\nPath('m').write_text('x\\n', encoding='utf-8')\nopen('r', 'w', encoding='utf-8')\n"
+    good = "from pathlib import Path\nPath('m').write_bytes(b'x\\n')\nPath('m').write_text('x\\n', encoding='utf-8', newline='\\n')\nopen('r', 'w', encoding='utf-8', newline='\\n')\nopen('r', encoding='utf-8')\n"
+    assert len(newline_violations(bad, "bad")) == 2 and newline_violations(good, "good") == []

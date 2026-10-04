@@ -12,7 +12,7 @@ PD_SCALE_FREE_TARGET <- 0.8
 PD_SOFT_THRESHOLDS <- c(1:10, seq(12L, 30L, by = 2L))
 
 # Scale-free topology fit index of a connectivity vector, as defined for WGCNA's pickSoftThreshold (Zhang and Horvath
-# 2005): k is cut into `bins` equal-width bins, log10(mean k per bin) is regressed on log10(bin frequency + 1e-9)
+# 2005): k is cut into `bins` equal-width bins, log10(bin frequency + 1e-9) is regressed on log10(mean k per bin)
 # (empty bins enter at their midpoint with frequency 0), and the index is -sign(slope) * R^2.
 pd_scale_free_fit <- function(k, bins = 10L) {
   if (length(unique(k)) < 2L) return(list(r2 = NA_real_, slope = NA_real_))
@@ -92,9 +92,13 @@ pd_degree_bins <- function(degree, min_bin = 5L) {
   bin
 }
 
-pd_connectivity_null <- function(set_genes, universe, edges_in, degree, draws, seed) {
+# `stream` selects the L'Ecuyer stream derived from `seed` (1 = the seed's own stream, 2 = the next, ...), so every
+# declared set draws its own reproducible stream (review 2026-10-05 minor 5). The degree-binned null is approximate and
+# was mildly conservative in calibration (R14f receipt).
+pd_connectivity_null <- function(set_genes, universe, edges_in, degree, draws, seed, stream = 1L) {
   bins <- pd_degree_bins(degree[universe])
   set.seed(seed, kind = "L'Ecuyer-CMRG")
+  if (stream > 1L) { st <- .Random.seed; for (i in seq_len(stream - 1L)) st <- parallel::nextRNGStream(st); assign(".Random.seed", st, envir = globalenv()) }
   count_edges <- function(g) sum(edges_in$a %in% g & edges_in$b %in% g)
   null <- vapply(seq_len(draws), function(i) {
     chosen <- character()
@@ -213,14 +217,15 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
     edges_in <- edges_in[edges_in$a %in% universe & edges_in$b %in% universe, , drop = FALSE]
     degree <- stats::setNames(vapply(universe, function(g) sum(edges_in$a == g | edges_in$b == g), numeric(1)), universe)
     conn <- list(); subnet <- list(); hubs <- list()
-    for (set in pp$sets) {
+    for (si in seq_along(pp$sets)) {
+      set <- pp$sets[[si]]
       genes <- unique(stats::na.omit(mapped$gene_id[mapped$feature_id %in% unlist(set$members) & mapped$mapping_state == "mapped"]))
       genes <- intersect(genes, universe)
       if (length(genes) < 2L) { refusals[[length(refusals) + 1L]] <- data.frame(analysis = "ppi", item = set$id, reason_code = "E_NETWORK_SET_SIZE", reason = "fewer than two set genes in the measured mapped network universe", stringsAsFactors = FALSE); next }
-      res <- pd_connectivity_null(genes, universe, edges_in, degree, as.integer(pp$null_draws), as.integer(pp$seed))
+      res <- pd_connectivity_null(genes, universe, edges_in, degree, as.integer(pp$null_draws), as.integer(pp$seed), stream = si)
       k <- sum(res$null >= res$observed)
       conn[[length(conn) + 1L]] <- data.frame(set_id = set$id, n_set_features = length(unlist(set$members)), n_set_genes_in_universe = length(genes), universe = "measured mapped genes in the snapshot",
-        universe_size = length(universe), observed_edges = res$observed, null_mean_edges = mean(res$null), null_draws = length(res$null), seed = as.integer(pp$seed), k = k,
+        universe_size = length(universe), observed_edges = res$observed, null_mean_edges = mean(res$null), null_draws = length(res$null), seed = as.integer(pp$seed), stream = si, k = k,
         p_value = (k + 1) / (length(res$null) + 1), null = "degree-preserving random sets from the measured mapped universe", snapshot_release = pp$release, snapshot_sha256 = pp$snapshot_sha256,
         claim_label = "descriptive", stringsAsFactors = FALSE)
       inside <- edges[edges$gene_a %in% genes & edges$gene_b %in% genes, , drop = FALSE]

@@ -87,7 +87,7 @@ pd_bm_permute_labels <- function(y, units) {
   keep <- colSums(is.na(X)) == 0
   center <- colMeans(X[, keep, drop = FALSE]); sds <- apply(X[, keep, drop = FALSE], 2L, stats::sd)
   usable <- names(sds)[is.finite(sds) & sds > sqrt(.Machine$double.eps)]
-  list(medians = med, features = usable, center = center[usable], scale = sds[usable])
+  list(medians = med, features = usable, center = center[usable], scale = sds[usable], fitted_on = rownames(X))   # rows the transforms were fitted on (audit)
 }
 .bm_apply_prep <- function(prep, X) {
   X <- X[, prep$features, drop = FALSE]
@@ -163,10 +163,12 @@ pd_youden <- function(score, y) {
   Ztr <- .bm_apply_prep(prep, Xtr); Zte <- .bm_apply_prep(prep, Xte)
   feats <- cfg$features(Ztr, ytr, ranking)
   labels <- ifelse(ytr == 1L, s$positive, s$negative)
-  if (!length(feats)) return(list(score = matrix(0.5, nrow(Xte), length(s$classifier_grid)), features = character(), prep = prep, probability = TRUE))
+  if (!length(feats)) return(list(score = matrix(0.5, nrow(Xte), length(s$classifier_grid)), features = character(), prep = prep, probability = TRUE,
+                                  fitted_on = rownames(Ztr), applied_to = rownames(Zte)))
   model <- .bm_fit_classifier(Ztr[, feats, drop = FALSE], labels, s$levels, s$positive, s$classifier, s$classifier_grid)
   pr <- .bm_predict(model, Zte[, feats, drop = FALSE])
-  list(score = pr$score, features = feats, prep = prep, probability = pr$probability, model = model)
+  list(score = pr$score, features = feats, prep = prep, probability = pr$probability, model = model,
+       fitted_on = rownames(Ztr), applied_to = rownames(Zte))   # rows the selection/classifier saw and the rows scored (audit)
 }
 
 # Selection configurations of the grid (each returns the selected features of prepared training data).
@@ -211,7 +213,8 @@ pd_youden <- function(score, y) {
   }
   scores <- inner[, best[1], best[2]]; ok <- is.finite(scores)
   list(s = s, grid = grid, best = best, threshold = .bm_threshold(s$threshold_rule, scores[ok], ytr[ok]),
-       tuning = sprintf("%s; classifier parameter %s", grid[[best[1]]]$label, format(s$classifier_grid[best[2]])))
+       tuning = sprintf("%s; classifier parameter %s", grid[[best[1]]]$label, format(s$classifier_grid[best[2]])),
+       fitted_on = rownames(Xtr), threshold_on = rownames(Xtr)[ok])   # tuning and the threshold use only the training fold's rows (audit)
 }
 
 # One outer fold: tune on the training fold, refit the whole pipeline on it, score the held-out fold, record the audit.
@@ -220,9 +223,12 @@ pd_youden <- function(score, y) {
   Xtr <- X[train, , drop = FALSE]; ytr <- y[train]
   tune <- .bm_tune(Xtr, ytr, units[train], s)
   fit <- .bm_fit_score(Xtr, ytr, X[test, , drop = FALSE], tune$s, tune$grid[[tune$best[1]]])
-  ids_tr <- s$observation_ids[train]; ids_te <- s$observation_ids[test]
+  # review 2026-10-05 minor 2: the audit records the row names of the matrices each step was actually fitted on and applied to
+  # (X carries the observation ids as row names), so a step wired to see held-out rows is caught by pd_bm_audit_check
+  used <- list(imputation = fit$prep$fitted_on, filter_nonconstant = fit$prep$fitted_on, scaling = fit$prep$fitted_on, selection = fit$fitted_on,
+               tuning = tune$fitted_on, classifier = fit$fitted_on, threshold = tune$threshold_on)
   if (!is.null(audit)) for (tr in c(if (identical(s$imputation, "train_median")) "imputation", "filter_nonconstant", "scaling", "selection", "tuning", "classifier", "threshold"))
-    audit[[length(audit) + 1L]] <- list(repeat_id = rep_id, fold = fold_id, transform = tr, fitted_on = ids_tr, applied_to = ids_te,
+    audit[[length(audit) + 1L]] <- list(repeat_id = rep_id, fold = fold_id, transform = tr, fitted_on = used[[tr]], applied_to = fit$applied_to,
                                         detail = switch(tr, selection = paste(fit$features, collapse = ";"), tuning = tune$tuning,
                                                         threshold = sprintf("%s = %.6g (inner out-of-fold scores of the training fold)", s$threshold_rule, tune$threshold), ""))
   list(score = fit$score[, tune$best[2]], probability = fit$probability, features = fit$features, threshold = tune$threshold, audit = audit, tuning = tune$tuning)
@@ -239,6 +245,8 @@ pd_bm_audit_check <- function(audit, folds) {
 
 # The whole nested procedure for one label vector (one job = one RNG stream).
 pd_bm_nested <- function(X, y, units, s, stream, record = TRUE) {
+  if (is.null(rownames(X))) rownames(X) <- s$observation_ids
+  if (!identical(rownames(X), as.character(s$observation_ids))) stop("E_INTEGRITY: biomarker matrix rows differ from the declared observation ids", call. = FALSE)
   .bm_use_stream(stream)
   oof <- list(); audit <- if (record) list() else NULL; per_repeat <- numeric(); selected <- list(); folds_test <- list()
   ut <- .bm_unit_table(units, y)
@@ -299,8 +307,12 @@ pd_bm_lock <- function(X, y, units, s, stream) {
 pd_bm_apply_locked <- function(locked, Xv) {
   missing <- setdiff(locked$features, colnames(Xv))
   if (length(missing)) stop(sprintf("E_VALIDATION_FEATURES: the validation cohort lacks locked features %s", paste(missing, collapse = ", ")), call. = FALSE)
-  Z <- .bm_apply_prep(locked$prep, Xv[, locked$prep$features, drop = FALSE])
-  as.numeric(.bm_predict(locked$model, Z[, locked$features, drop = FALSE])$score[, 1])
+  # review 2026-10-05 minor 1: only the locked features are needed (centring/scaling are per feature), so the
+  # preparation is restricted to them and a cohort may lack features the model does not use
+  f <- locked$features; prep <- locked$prep
+  prep <- list(medians = if (is.null(prep$medians)) NULL else prep$medians[f], features = f, center = prep$center[f], scale = prep$scale[f])
+  Z <- .bm_apply_prep(prep, Xv[, f, drop = FALSE])
+  as.numeric(.bm_predict(locked$model, Z[, f, drop = FALSE])$score[, 1])
 }
 
 # ----------------------------------------------------------------------------- stage handler

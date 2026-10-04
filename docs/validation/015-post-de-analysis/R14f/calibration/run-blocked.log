@@ -1,0 +1,6 @@
+$ R_LIBS_USER=<repo>/.r-lib LANG=en_US.UTF-8 /usr/bin/time -p .venv/bin/python scripts/maintained/run_post_de_calibration.py --blocked --cores 8
+{"nested_auc_null": "PASS", "permutation_p_null": "PASS", "leaky_reference": "PASS", "connectivity_null": "PASS", "blocked_nested_auc_null": "PASS", "blocked_permutation_p_null": "PASS", "blocked_ungrouped_reference": "PASS"}
+real 425.50
+user 3234.13
+sys 50.10
+exit=0

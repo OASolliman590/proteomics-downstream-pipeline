@@ -232,34 +232,26 @@ def test_v164_negative_hash_mismatch_and_download_are_refused(tmp_path):
 
 
 def test_v165_connectivity_null_from_the_measured_mapped_universe(ppi):
+    """Observed edges, set sizes and the universe are counted independently here; the null sampler itself is checked
+    against exact enumeration on a tiny graph in test-post-de-networks.R (review 2026-10-05, minor 5)."""
     out, snap, _ = ppi
     rows = {r["set_id"]: r for r in F.read_tsv(_net(out) / "connectivity.tsv")}
     dep, rest = rows["dep"], rows["rand"]
     assert float(dep["p_value"]) == 1 / 200 and float(rest["p_value"]) > 0.1      # planted cluster at the floor; random-like set non-small
     oracle = B.r_json("""a <- commandArgs(TRUE); e <- read.delim(a[1], colClasses = 'character', encoding = 'UTF-8'); e <- e[as.numeric(e$score) >= 300 & e$gene_a != e$gene_b, ]
+      e <- unique(data.frame(a = pmin(e$gene_a, e$gene_b), b = pmax(e$gene_a, e$gene_b)))
       mp <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); mem <- read.delim(a[3], colClasses = 'character', encoding = 'UTF-8')
-      measured <- unique(mp$gene_id); universe <- sort(intersect(measured, unique(c(e$gene_a, e$gene_b))))
-      ein <- e[e$gene_a %in% universe & e$gene_b %in% universe, ]
-      deg <- setNames(vapply(universe, function(g) sum(ein$gene_a == g | ein$gene_b == g), numeric(1)), universe)
-      bins <- setNames(integer(length(deg)), names(deg)); cur <- 1L; n <- 0L
-      for (v in sort(unique(deg))) { bins[deg == v] <- cur; n <- n + sum(deg == v); if (n >= 5L) { cur <- cur + 1L; n <- 0L } }
-      if (n > 0L && cur > 1L) bins[bins == cur] <- cur - 1L
-      acc <- setNames(mp$gene_id, mp$source_id); f2g <- function(ids) unique(na.omit(acc[ids]))
-      res <- list()
-      for (s in c('dep', 'rand')) {
-        genes <- intersect(f2g(mem$accession_key[mem[[s]] == 'true']), universe)
-        cnt <- function(g) sum(ein$gene_a %in% g & ein$gene_b %in% g)
-        set.seed(9, kind = "L'Ecuyer-CMRG")
-        null <- vapply(1:199, function(i) { ch <- character(); for (g in genes) { w <- 0L
-          repeat { pool <- setdiff(universe[abs(bins[universe] - bins[[g]]) <= w], ch); if (length(pool) || w > max(bins)) break; w <- w + 1L }
-          ch <- c(ch, if (length(pool) == 1L) pool else sample(pool, 1L)) }; cnt(ch) }, numeric(1))
-        res[[s]] <- list(obs = cnt(genes), k = sum(null >= cnt(genes)), mean = mean(null), n = length(genes)) }
-      res$universe <- length(universe)
+      universe <- intersect(unique(mp$gene_id), unique(c(e$a, e$b))); acc <- setNames(mp$gene_id, mp$source_id)
+      res <- list(universe = length(universe))
+      for (s in c('dep', 'rand')) { genes <- intersect(unique(na.omit(acc[mem$accession_key[mem[[s]] == 'true']])), universe)
+        res[[s]] <- list(obs = sum(e$a %in% genes & e$b %in% genes), n = length(genes)) }
       cat(jsonlite::toJSON(res, auto_unbox = TRUE, digits = NA))""",
                       Path(snap["ppi_manifest"]).parent / "ppi_source.tsv", Path(snap["mapping_manifest"]).parent / "mapping_source.tsv", _accession_membership(out, snap))
     for s in ("dep", "rand"):
-        assert int(rows[s]["observed_edges"]) == oracle[s]["obs"] and int(rows[s]["k"]) == oracle[s]["k"]
-        assert abs(float(rows[s]["null_mean_edges"]) - oracle[s]["mean"]) <= 1e-12 and int(rows[s]["n_set_genes_in_universe"]) == oracle[s]["n"]
+        assert int(rows[s]["observed_edges"]) == oracle[s]["obs"] and int(rows[s]["n_set_genes_in_universe"]) == oracle[s]["n"]
+        assert abs(float(rows[s]["p_value"]) - (int(rows[s]["k"]) + 1) / (int(rows[s]["null_draws"]) + 1)) <= 1e-15
+        assert rows[s]["seed"] == "9"
+    assert (dep["stream"], rest["stream"]) == ("1", "2")                          # one derived L'Ecuyer stream per set, never a shared seed
     assert int(dep["universe_size"]) == oracle["universe"] and dep["universe"] == "measured mapped genes in the snapshot"
     assert int(dep["universe_size"]) < len(snap["genes"]) + len(snap["unmeasured"])                 # not the whole snapshot
     hubs = F.read_tsv(_net(out) / "hub_degree.tsv")

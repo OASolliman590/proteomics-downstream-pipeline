@@ -181,3 +181,68 @@ def test_v148_heatmap_source_and_report_agree_with_tables(linear):
     assert table["rows"][0][table["columns"].index("adjusted for")] == "group;age"
     for figure in section["figures"]:
         assert (linear / figure["source"]).is_file() and (linear / figure["src"]).is_file()
+
+
+# ----------------------------------------------------------------------------- review 2026-10-05 (M1, M2, minor 3)
+def test_review_m1_default_pearson_with_group_adjustment_is_refused(tmp_path):
+    """Pearson/Spearman are unadjusted correlations (SM33, FR-145): with the default adjust_for_group (and a declared
+    covariate) they are refused instead of being reported as 'adjusted for group'; partial correlation is the adjusted form."""
+    with pytest.raises(ProteomicsError) as error:
+        run(tmp_path, method="correlation", correlation="pearson")                     # defaults: adjust_for_group true, adjust_for age
+    assert error.value.code == "E_PHENOTYPE_CORRELATION_ADJUSTMENT" and not (tmp_path / "run" / "dea").exists()
+    with pytest.raises(ProteomicsError) as error:
+        run(tmp_path / "s", method="correlation", correlation="spearman", phenotype={"adjust_for_group": False})   # a covariate alone also needs partial
+    assert error.value.code == "E_PHENOTYPE_CORRELATION_ADJUSTMENT"
+
+
+def test_review_m1_adjusted_for_reports_only_what_was_used(tmp_path):
+    payload, code, out = run(tmp_path / "p", n=6, method="correlation", correlation="pearson", phenotype={"adjust_for": [], "adjust_for_group": False}, permutations=99)
+    assert code == 0, payload
+    assert {r["adjusted_for"] for r in _assoc(out)} == {"none"}
+    payload, code, out = run(tmp_path / "q", n=6, method="correlation", correlation="partial", permutations=99)   # default group adjustment plus age
+    assert code == 0, payload
+    rows = {r["feature_id"]: r for r in _assoc(out)}
+    assert {r["adjusted_for"] for r in rows.values()} == {"group;age"}
+    oracle = B.r_json("""a <- commandArgs(TRUE); y <- as.matrix(read.delim(a[1], row.names = 1, check.names = FALSE, encoding = 'UTF-8'))
+      o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); o <- o[match(colnames(y), o$observation_id), ]
+      s <- as.numeric(o$score); age <- as.numeric(o$age); g <- factor(o$group)
+      rs <- residuals(lm(s ~ g + age)); r <- sapply(rownames(y), function(f) cor(residuals(lm(y[f, ] ~ g + age)), rs))
+      cat(jsonlite::toJSON(list(f = rownames(y), r = unname(r)), digits = NA))""", out / "preprocessing" / "primary" / "matrix.tsv", out / "preprocessing" / "primary" / "observations.tsv")
+    for f, r in zip(oracle["f"], oracle["r"]):
+        assert abs(float(rows[f]["effect"]) - r) <= 1e-12                             # partial r on group + age residuals
+
+
+def _group_determined(tmp_path, required="optional"):
+    values, obs = F.phenotype_design(kind="linear", n=10)
+    for o in obs:
+        o["score"] = "2.0" if o["group"] == "A" else "6.0"                            # one phenotype value per group: determined by group
+    files = F.write_dataset(tmp_path / "data", values, obs, extra_columns=("age", "score"))
+    post = {"enabled": True, "association": {"enabled": True, "execution_requirement": required, "method": "model",
+                                             "phenotypes": [{"column": "score", "type": "numeric", "adjust_for": [], "adjust_for_group": False, "scope": "pooled"}]}}
+    path = F.config(tmp_path / "data", files, groups=["A", "B"], contrasts=[B.contrast("B-A", "B", "A")], post_de=post)
+    return workflow.run_command(path, tmp_path / "run")
+
+
+def test_review_m2_group_determined_phenotype_is_aliased_even_without_group_term(tmp_path):
+    payload, code = _group_determined(tmp_path / "opt")
+    stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_association")
+    assert code == 0 and stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_PHENOTYPE_ALIASED"
+    assert not (tmp_path / "opt" / "run" / "post_de" / "association" / "association_score.tsv").exists()
+    payload, code = _group_determined(tmp_path / "req", required="required")
+    assert code == 2 and payload["error"]["code"] == "E_PHENOTYPE_ALIASED"
+
+
+def test_review_minor3_simpson_flag_fires_under_default_group_adjustment(tmp_path):
+    payload, code, out = run(tmp_path, kind="simpson", phenotype={"scope": "pooled", "adjust_for": []})   # adjust_for_group default (true)
+    assert code == 0, payload
+    rows = {r["feature_id"]: r for r in _assoc(out)}
+    slopes = B.r_json("""a <- commandArgs(TRUE); y <- as.matrix(read.delim(a[1], row.names = 1, check.names = FALSE, encoding = 'UTF-8'))
+      o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); o <- o[match(colnames(y), o$observation_id), ]; s <- as.numeric(o$score)
+      cat(jsonlite::toJSON(lapply(1:5, function(i) unname(coef(lm(y[i, ] ~ s))[2])), auto_unbox = TRUE, digits = NA))""",
+                      out / "preprocessing" / "primary" / "matrix.tsv", out / "preprocessing" / "primary" / "observations.tsv")
+    for i, slope in enumerate(slopes, start=1):
+        f = f"F{i:02d}"
+        assert float(rows[f]["effect"]) < 0                                           # the group-adjusted effect agrees with the within-group slopes ...
+        assert abs(float(rows[f]["pooled_unadjusted_slope"]) - slope) <= 1e-10 and slope > 0   # ... the unadjusted pooled slope does not
+        assert rows[f]["simpson_flag"] == "true"
+    assert any(w["code"] == "W_PHENOTYPE_SIMPSON" for w in json.loads((out / "warnings.json").read_text(encoding="utf-8")))

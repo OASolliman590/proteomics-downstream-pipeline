@@ -163,6 +163,6 @@ def run(config_path: str | Path) -> dict:
     output.mkdir(parents=True)
     summary = {"result_type": "LegacyRegression", "archive": archive, "comparisons": comparisons,
                "note": "Maintainer-local and private; review before any disclosure. Differences are preserved, not reconciled."}
-    (output / "legacy_regression.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    (output / "legacy_regression.json").write_bytes((json.dumps(summary, indent=2) + "\n").encode("utf-8"))   # LF on every platform (D-42)
     return {"output": str(output), "archive_verified": archive["verified"], "comparisons": [{k: c.get(k) for k in ("id", "state", "reason_code", "counts")} for c in comparisons]}
 

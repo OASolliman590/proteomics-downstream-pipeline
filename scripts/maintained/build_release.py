@@ -203,11 +203,11 @@ def export(root: Path, version: str, destination: Path, authorization: Path | No
             out.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(root / rel, out)
         manifest = [f"{sha256_file(staging / target.name / rel)}  {rel}" for rel in files]
-        (staging / target.name / "MANIFEST.sha256").write_text("".join(line + "\n" for line in manifest), encoding="utf-8")
+        (staging / target.name / "MANIFEST.sha256").write_bytes("".join(line + "\n" for line in manifest).encode("utf-8"))   # LF on every platform (D-42)
         release = {"result_type": "ReleaseRecord", "package": PACKAGE_NAME, "version": version, "scope": record["scope"], "authorized_by": record["authorized_by"],
                    "license": report["license"], "ownership": report["ownership"], "n_files": len(files),
                    "manifest_sha256": sha256_file(staging / target.name / "MANIFEST.sha256"), "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
-        (staging / target.name / "release.json").write_text(json.dumps(release, indent=2) + "\n", encoding="utf-8")
+        (staging / target.name / "release.json").write_bytes((json.dumps(release, indent=2) + "\n").encode("utf-8"))
         os.replace(staging, destination)
     except BaseException:
         shutil.rmtree(staging, ignore_errors=True)

@@ -73,7 +73,8 @@ def test_post_de_calibration_summary_is_re_derived_from_its_datasets():
 
 def test_post_de_calibration_gates_pass():
     summary = json.loads((CAL / "post_de_calibration_summary.json").read_text(encoding="utf-8"))
-    assert {k: v["gate"] for k, v in summary["scenarios"].items()} == dict.fromkeys(("nested_auc_null", "permutation_p_null", "leaky_reference", "connectivity_null"), "PASS")
+    assert {k: v["gate"] for k, v in summary["scenarios"].items()} == dict.fromkeys(("nested_auc_null", "permutation_p_null", "leaky_reference", "connectivity_null",
+                                                                                     "blocked_nested_auc_null", "blocked_permutation_p_null", "blocked_ungrouped_reference"), "PASS")
 
 
 @pytest.mark.parametrize("scenario, mutate", [
@@ -81,7 +82,8 @@ def test_post_de_calibration_gates_pass():
     ("nested_auc_null", lambda perm, auc, conn, raw: [a + 0.1 for a in auc]),
     ("connectivity_null", lambda perm, auc, conn, raw: raw.update(planted_cluster_p=0.2) or conn)])
 def test_post_de_calibration_negative_liberal_or_inflated_results_fail(tmp_path, scenario, mutate):
-    for name in ("nested_auc_null.tsv", "permutation_p_null.tsv", "leaky_reference.tsv", "connectivity_p_null.tsv", "post_de_calibration_raw.json"):
+    for name in ("nested_auc_null.tsv", "permutation_p_null.tsv", "leaky_reference.tsv", "connectivity_p_null.tsv", "post_de_calibration_raw.json",
+                 "blocked_nested_auc_null.tsv", "blocked_permutation_p_null.tsv", "blocked_ungrouped_reference.tsv", "post_de_calibration_blocked_raw.json"):
         (tmp_path / name).write_bytes((CAL / name).read_bytes())
     raw = json.loads((tmp_path / "post_de_calibration_raw.json").read_text(encoding="utf-8"))
     table = {"permutation_p_null": ("permutation_p_null.tsv", "permutation_p"), "nested_auc_null": ("nested_auc_null.tsv", "pooled_oof_auc"), "connectivity_null": ("connectivity_p_null.tsv", "connectivity_p")}[scenario]
@@ -94,3 +96,21 @@ def test_post_de_calibration_negative_liberal_or_inflated_results_fail(tmp_path,
         writer = csv.DictWriter(handle, fieldnames=list(data[0]), delimiter="\t", lineterminator="\n"); writer.writeheader(); writer.writerows(data)
     (tmp_path / "post_de_calibration_raw.json").write_text(json.dumps(raw), encoding="utf-8")
     assert RC.summarize(tmp_path)["scenarios"][scenario]["gate"] == "FAIL"
+
+
+def test_post_de_calibration_blocked_scenario_is_re_derived_and_passes():
+    """Review 2026-10-05 minor 4 (D-54): subject-blocked nested CV, whole-subject permutation and the ungrouped (leaky) reference."""
+    s = json.loads((CAL / "post_de_calibration_summary.json").read_text(encoding="utf-8"))["scenarios"]
+    auc = [float(r["pooled_oof_auc"]) for r in rows("blocked_nested_auc_null.tsv")]
+    ung = [float(r["ungrouped_auc"]) for r in rows("blocked_ungrouped_reference.tsv")]
+    perm = [float(r["permutation_p"]) for r in rows("blocked_permutation_p_null.tsv")]
+    assert len(auc) == len(ung) == len(perm) == s["blocked_nested_auc_null"]["n"] >= 200
+    mean = sum(auc) / len(auc); se = math.sqrt(sum((a - mean) ** 2 for a in auc) / (len(auc) - 1) / len(auc))
+    assert abs(mean - s["blocked_nested_auc_null"]["mean"]) < 1e-12 and (s["blocked_nested_auc_null"]["gate"] == "PASS") == (abs(mean - 0.5) <= 0.03 and mean + 1.96 * se <= 0.53)
+    B = s["blocked_permutation_p_null"]["B"]; k = sum(p <= 0.05 + 1e-12 for p in perm)
+    counts = [sum(round(p * (B + 1)) == j for p in perm) for j in range(1, B + 2)]
+    chi2 = sum((c - len(perm) / (B + 1)) ** 2 / (len(perm) / (B + 1)) for c in counts)
+    assert k == s["blocked_permutation_p_null"]["k_at_or_below_0_05"] and abs(chi2_sf(chi2, B) - s["blocked_permutation_p_null"]["chi_square_p"]) < 1e-5
+    assert (s["blocked_permutation_p_null"]["gate"] == "PASS") == (binom_upper_tail(k, len(perm), 0.05) >= 0.01 and chi2_sf(chi2, B) >= 0.01)
+    assert (s["blocked_ungrouped_reference"]["gate"] == "PASS") == (sum(ung) / len(ung) - mean > 0.05)
+    assert {s[k]["gate"] for k in ("blocked_nested_auc_null", "blocked_permutation_p_null", "blocked_ungrouped_reference")} == {"PASS"}

@@ -24,9 +24,17 @@ def capabilities():
 
 
 def precheck(block: dict, raw: dict) -> None:
+    unadjusted = block.get("method", "model") == "correlation" and block.get("correlation", "pearson") in ("pearson", "spearman")
     for i, ph in enumerate(block.get("phenotypes", []) or []):
         if not isinstance(ph, dict):
             continue
+        # Review 2026-10-05 M1 (D-54): Pearson/Spearman are marginal correlations (SM33, FR-145); the adjusted form is partial.
+        pooled = ph.get("scope", "pooled") in ("pooled", "both")
+        if unadjusted and ((pooled and ph.get("adjust_for_group", True)) or ph.get("adjust_for")):
+            raise PostDeRefusal("E_PHENOTYPE_CORRELATION_ADJUSTMENT",
+                                f"phenotype {ph.get('column')!r}: {block.get('correlation', 'pearson')} correlation is unadjusted, but an adjustment is declared "
+                                "(adjust_for_group defaults to true for pooled analyses); use correlation: partial to adjust for group/covariates, "
+                                "or declare adjust_for_group: false and no adjust_for", f"/post_de/association/phenotypes/{i}")
         if ph.get("missing", "complete_case") != "complete_case":
             raise PostDeRefusal("E_PHENOTYPE_IMPUTATION", f"phenotype {ph.get('column')!r}: missing values are handled by complete-case exclusion only; "
                                 f"{ph['missing']!r} would impute the phenotype", f"/post_de/association/phenotypes/{i}/missing")
@@ -91,6 +99,18 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
                 return None, (error.code, error.message)
             if not plan["full_rank"] or not plan["contrasts"][0]["estimable"]:
                 return None, ("E_PHENOTYPE_ALIASED", f"the phenotype is aliased with {'group/' if group_term else ''}covariates on the analysed units (aliased {plan['aliased']})")
+            if not group_term and analysis_scope == "pooled" and len(groups_here) > 1:
+                # Review 2026-10-05 M2 (D-55): aliasing with group is checked on [phenotype + group] even when group is not fitted;
+                # a phenotype determined by group stays full rank without the group term but must not be pooled (SM33, D-47).
+                try:
+                    check = design_service.replan(config, rows, design_id=f"{analysis_id}__alias_check", group_levels=groups_here, continuous=[column] + conts,
+                                                  categorical=cats, contrast_ids=[], extra_contrasts=[dict(extra[0], id=f"{analysis_id}__alias_check",
+                                                                                                             design_id=f"{analysis_id}__alias_check")], group_term=True)
+                except ProteomicsError as error:   # the same terms passed the first replan, so a failure here is the group term (rank)
+                    return None, ("E_PHENOTYPE_ALIASED", f"the phenotype is determined by group on the analysed units ({error.code}: {error.message})")
+                if not check["full_rank"] or not check["contrasts"][0]["estimable"]:
+                    return None, ("E_PHENOTYPE_ALIASED", f"the phenotype is determined by group on the analysed units (aliased {check['aliased']}), "
+                                                         "although the group term is not fitted")
             return {"analysis_id": analysis_id, "phenotype": column, "phenotype_type": phenotype["type"], "scope": analysis_scope, "group": group,
                     "adjust_for": [s["column"] for s in specs], "adjust_for_group": bool(group_term), "n_units": len({units(o) for o in rows}), "n_missing": n_missing,
                     "family_id": f"phenotype__{column}" + (f"__within_{group}" if group else ""), "coefficient": coef,

@@ -93,16 +93,24 @@ post_de_association_stage <- function(request) .pc_run_stage(request, function(o
         p_value = pv, q_value = q, family_id = a$family_id, method = sprintf("%s correlation, permutation P = (k+1)/(B+1), B = %d, seed %d, scheme %s", p$correlation, as.integer(p$permutations), as.integer(p$seed), scheme),
         permutation_k = kk, permutations = as.integer(p$permutations), permutation_scheme = scheme, stringsAsFactors = FALSE)
     }
-    tab$n_units <- a$n_units; tab$n_missing_phenotype <- a$n_missing; tab$adjusted_for <- paste(c(if (isTRUE(a$adjust_for_group)) "group", unlist(a$adjust_for)), collapse = ";")
-    tab$simpson_flag <- FALSE; tab$within_group_slopes <- NA_character_
+    # review 2026-10-05 M1: report only the adjustment actually applied (the model and partial correlation use the design's group/covariate columns;
+    # Pearson/Spearman use none, and the planner refuses them when an adjustment is declared)
+    used <- if (identical(p$method, "model") || identical(p$correlation, "partial")) c(if (isTRUE(a$adjust_for_group)) "group", unlist(a$adjust_for)) else character()
+    tab$n_units <- a$n_units; tab$n_missing_phenotype <- a$n_missing; tab$adjusted_for <- if (length(used)) paste(used, collapse = ";") else "none"
+    tab$simpson_flag <- FALSE; tab$within_group_slopes <- NA_character_; tab$pooled_unadjusted_slope <- NA_real_
     if (identical(a$scope, "pooled")) {
       groups <- o[[settings$group_column]]
       for (i in seq_len(nrow(tab))) {
         if (!identical(tab$eligibility[i], "tested")) next
-        sl <- .pd_within_slopes(Y[tab$feature_id[i], ], x, groups)
+        yi <- Y[tab$feature_id[i], ]; ok <- is.finite(yi) & is.finite(x)
+        # review 2026-10-05 minor 3: Simpson's pattern compares the within-group slopes with the *unadjusted* pooled slope
+        # (a group-adjusted pooled slope is a weighted average of the within-group slopes and cannot disagree with all of them)
+        pooled <- if (sum(ok) >= 3L && stats::var(x[ok]) > 0) unname(stats::coef(stats::lm.fit(cbind(1, x[ok]), yi[ok]))[2]) else NA_real_
+        tab$pooled_unadjusted_slope[i] <- pooled
+        sl <- .pd_within_slopes(yi, x, groups)
         if (length(sl)) {
           tab$within_group_slopes[i] <- paste(sprintf("%s:%.6g", names(sl), sl), collapse = ";")
-          tab$simpson_flag[i] <- length(sl) >= 2L && all(sign(sl) == sign(sl[1])) && sign(sl[1]) != sign(tab$effect[i]) && sign(tab$effect[i]) != 0
+          tab$simpson_flag[i] <- length(sl) >= 2L && is.finite(pooled) && all(sign(sl) == sign(sl[1])) && sign(sl[1]) != 0 && sign(pooled) != 0 && sign(sl[1]) != sign(pooled)
         }
       }
       if (any(tab$simpson_flag)) { simpson_any <- TRUE; warnings[[length(warnings) + 1L]] <- .pc_warning(request, "W_PHENOTYPE_SIMPSON", sprintf("%s: %d feature(s) with pooled/within-group sign disagreement", a$phenotype, sum(tab$simpson_flag)), "post_de/association") }

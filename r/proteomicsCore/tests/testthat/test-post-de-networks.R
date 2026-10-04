@@ -90,3 +90,36 @@ testthat::test_that("V163 a single module is tested (one-row eigengene fit) and 
   testthat::expect_equal(res$rows$statistic, unname(eb$t[1, 2]), tolerance = 1e-10); testthat::expect_equal(res$rows$p_value, unname(eb$p.value[1, 2]), tolerance = 1e-12)
   testthat::expect_equal(res$rows$q_value, res$rows$p_value)                                      # one member: BH leaves P unchanged
 })
+
+# ----------------------------------------------------------------------------- review 2026-10-05 (minor 5)
+testthat::test_that("review minor 5: the degree-preserving null matches exact enumeration on a tiny two-bin graph", {
+  # 12 universe genes; G01-G06 have degree 1-2 (bin 1), G07-G12 degree >= 3 (bin 2); exact null: an independent uniform
+  # subset of each bin with the set's bin counts, enumerated here by brute force (independent of the sampler).
+  universe <- sprintf("G%02d", 1:12)
+  edges <- data.frame(a = c("G01", "G02", "G03", "G04", "G05", "G06", "G07", "G07", "G07", "G08", "G08", "G09", "G09", "G10", "G11", "G12", "G12", "G10"),
+                      b = c("G07", "G08", "G09", "G10", "G11", "G12", "G08", "G09", "G10", "G09", "G11", "G10", "G12", "G11", "G12", "G01", "G03", "G12"), stringsAsFactors = FALSE)
+  degree <- stats::setNames(vapply(universe, function(g) sum(edges$a == g | edges$b == g), numeric(1)), universe)
+  bins <- fn("pd_degree_bins")(degree)
+  set_genes <- c("G01", "G07", "G08")
+  count <- function(g) sum(edges$a %in% g & edges$b %in% g)
+  b1 <- names(bins)[bins == bins[["G01"]]]; b2 <- names(bins)[bins == bins[["G07"]]]
+  testthat::expect_identical(length(unique(bins)), 2L)
+  combos <- expand.grid(i = seq_along(b1), j = seq_len(ncol(utils::combn(b2, 2))))
+  pairs2 <- utils::combn(b2, 2)
+  exact <- table(factor(apply(combos, 1, function(r) count(c(b1[r[1]], pairs2[, r[2]]))), levels = 0:3)) / nrow(combos)
+  res <- fn("pd_connectivity_null")(set_genes, universe, edges, degree, 20000L, 3L)
+  mc <- table(factor(res$null, levels = 0:3)) / 20000
+  testthat::expect_lt(max(abs(cumsum(mc) - cumsum(exact))), 0.015)                       # Monte Carlo within ~3 SE of the exact null
+  testthat::expect_identical(res$observed, count(set_genes))
+})
+
+testthat::test_that("review minor 5: each set draws from its own derived L'Ecuyer stream", {
+  universe <- sprintf("G%02d", 1:30)
+  set.seed(2); edges <- data.frame(a = sample(universe, 80, TRUE), b = sample(universe, 80, TRUE), stringsAsFactors = FALSE); edges <- edges[edges$a != edges$b, ]
+  degree <- stats::setNames(vapply(universe, function(g) sum(edges$a == g | edges$b == g), numeric(1)), universe)
+  one <- fn("pd_connectivity_null")(universe[1:6], universe, edges, degree, 50L, 4L, stream = 1L)
+  two <- fn("pd_connectivity_null")(universe[1:6], universe, edges, degree, 50L, 4L, stream = 2L)
+  testthat::expect_false(identical(one$null, two$null))
+  testthat::expect_identical(fn("pd_connectivity_null")(universe[1:6], universe, edges, degree, 50L, 4L, stream = 2L)$null, two$null)
+  testthat::expect_identical(fn("pd_connectivity_null")(universe[1:6], universe, edges, degree, 50L, 4L)$null, one$null)   # stream 1 (the seed itself) is the default
+})
