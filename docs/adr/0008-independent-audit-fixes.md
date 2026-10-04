@@ -1,6 +1,6 @@
 # ADR 0008: Fixes for the independent audit of fd8dfa9
 
-Status: accepted by the Maintainer route (Claude, operator-authorized; see ADR 0007). Date: 2026-10-02. `verified_commit`: null (uncommitted).
+Status: accepted by the Maintainer route (Claude, operator-authorized; see ADR 0007). Date: 2026-10-02. The SM05/SM27/SM28 amendments below were accepted explicitly by the Maintainer (Omar) on 2026-10-04 (decisions.md D-50; the later SM27 amendment D-43 of 2026-10-03 is outside that acceptance). The fixes are committed as `fa4d948` (merged into `main` by 1578bc8); `verified_commit`: null, as for every Claude-route receipt.
 
 ## Context
 
