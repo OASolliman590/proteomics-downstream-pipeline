@@ -1,0 +1,13 @@
+$ .venv/bin/python -m pytest tests/scientific/test_post_de_association.py tests/scientific/reference/test_text_encoding.py tests/scientific/test_post_de_networks.py -q -p no:cacheprovider -rA -k "review or newline or release_artifact or v165"   # after the fixes
+........                                                                 [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/scientific/test_post_de_association.py::test_review_m1_default_pearson_with_group_adjustment_is_refused
+PASSED tests/scientific/test_post_de_association.py::test_review_m1_adjusted_for_reports_only_what_was_used
+PASSED tests/scientific/test_post_de_association.py::test_review_m2_group_determined_phenotype_is_aliased_even_without_group_term
+PASSED tests/scientific/test_post_de_association.py::test_review_minor3_simpson_flag_fires_under_default_group_adjustment
+PASSED tests/scientific/reference/test_text_encoding.py::test_release_artifact_writers_use_lf_on_every_platform
+PASSED tests/scientific/reference/test_text_encoding.py::test_newline_lint_detects_platform_dependent_writes
+PASSED tests/scientific/test_post_de_networks.py::test_v165_connectivity_null_from_the_measured_mapped_universe
+PASSED tests/scientific/test_post_de_networks.py::test_v165_negative_genome_wide_null_is_refused
+8 passed, 22 deselected in 37.73s

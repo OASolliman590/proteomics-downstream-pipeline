@@ -704,6 +704,22 @@
         "specs/001-downstream-proteomics/traceability.json"
       ],
       "change": "R12: write_acceptance_ledger keeps each R12 row's recorded NOT_RUN reason (Maintainer-only private gate, operator decision, final review) instead of overwriting all ten with one generic sentence; the generic text remains the fallback. Fail-before/pass-after: tests/regression/test_traceability_reconciliation.py (V116). The traceability identity note now records the ADR 0009 identities."
+    },
+    {
+      "id": "A-2026-10-01-22",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/scientific/reference/test_text_encoding.py",
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R",
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "r/proteomicsCore/R/post_de_networks.R",
+        "scripts/maintained/build_release.py",
+        "src/proteomics_pipeline/legacy_service.py",
+        "scripts/maintained/run_post_de_calibration.py",
+        "tests/scientific/calibration_post_de.R"
+      ],
+      "change": "Fixes for the independent review of 106fb20..7bce0fd (2026-10-05, docs/validation/review-2026-10-05) inside the R14c, R14d, R14e, R14f and R12 allowlists after their receipts; the only path outside them is the R11 lint test, extended with an LF rule for release-artifact writers. Decisions D-54 to D-57."
     }
   ]
 }

@@ -37,6 +37,13 @@ R11 reproduction tooling (environment locks, offline reproduction, resume, calib
 - **Coverage policies:** `available_case`, `native_dropout`. **Sensitivity imputations** (never for the primary model): `min_deterministic`, `left_shifted_gaussian`, `knn`, `complete_case`.
 - **Post-DE (`post_de` block, Phase 4 only):** set rules (`union`, `intersect`, `difference`, `complement_within_tested`); association `model` or `correlation`; biomarker selection `top_k_auc`, `top_k_t`, `elastic_net`, `lasso` and classifiers `penalized_logistic` (glmnet), `svm_linear`, `svm_polynomial`, `svm_radial` (e1071), `random_forest` (optional); co-abundance rules `wgcna_signed`, `hclust_correlation` (base R plus dynamicTreeCut; the WGCNA package is not used, D-44). The block and its defaults are specified in [post-de.md](../../specs/015-post-de-analysis/contracts/post-de.md).
 
+## Notes on specific post-DE options
+
+- **Association correlations.** `pearson` and `spearman` are plain (unadjusted) correlations. `partial` residualises the protein and the phenotype on the design's group and covariate columns. Because pooled analyses adjust for group by default, a `pearson` or `spearman` request with any adjustment is refused (`E_PHENOTYPE_CORRELATION_ADJUSTMENT`, D-55). `adjusted_for` lists only the adjustment actually used.
+- **Aliasing.** A pooled association is refused (`E_PHENOTYPE_ALIASED`) when the phenotype is determined by group, even if the group term is not fitted (D-56). The Simpson flag compares the within-group slopes with the unadjusted pooled slope (D-57).
+- **Single-feature direction `train_only`.** Despite its name (kept because it is part of the frozen contract), this rule picks each feature's direction on the same data that the AUC is computed on. Such AUCs are labelled `in_sample` and flagged direction-optimistic. Use `prespecified` for a direction fixed in advance (D-57).
+- **PPI connectivity null.** Degree-preserving draws from the measured, mapped universe, one derived L'Ecuyer stream per declared set (`stream` column). The degree-binned null is approximate; in calibration it was mildly conservative on random sets.
+
 ## Claim labels for post-DE results
 
 `descriptive`, `exploratory_raw_p`, `in_sample`, `cross_validated_nested`, `fixed_panel_cv`, `independently_validated`, `module_level` (frozen vocabulary). A module that did not complete has no label and shows no values. NOT_RUN (software or implementation unavailable) and INAPPLICABLE (scientifically ineligible, typed reason) are shown as different states.
@@ -48,4 +55,4 @@ Raw-MS search and quantification, PTM localization, single-cell data, web UI or 
 ## Calibration evidence
 
 - Core limma calibration (R11, V105/V106): [012-validation/calibration](../validation/012-validation/calibration/).
-- Post-DE calibration (nested-CV AUC and permutation P under the null, leaky reference, connectivity null): [015-post-de-analysis/R14f/calibration](../validation/015-post-de-analysis/R14f/calibration/).
+- Post-DE calibration (nested-CV AUC and permutation P under the null, leaky reference, connectivity null, and a subject-blocked scenario with whole-subject permutation and an ungrouped reference): [015-post-de-analysis/R14f/calibration](../validation/015-post-de-analysis/R14f/calibration/). Only fixed ridge λ with top-k AUC selection and repeated k-fold CV are calibrated; LOOCV, lasso/elastic-net, SVM, random forest and tuned λ grids are not.

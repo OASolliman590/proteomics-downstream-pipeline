@@ -1,0 +1,13 @@
+{
+  "result_type": "ReleaseHygiene",
+  "root_name": "proteomics-downstream-pipeline",
+  "n_tracked_files": 554,
+  "findings": [],
+  "blocking": false,
+  "license": "unresolved (operator decision required, AGENTS.md)",
+  "ownership": "unresolved (operator decision required, AGENTS.md)",
+  "disclosure_review": "not recorded",
+  "public_release_allowed": false,
+  "untracked_files_included": false
+}
+exit=0
