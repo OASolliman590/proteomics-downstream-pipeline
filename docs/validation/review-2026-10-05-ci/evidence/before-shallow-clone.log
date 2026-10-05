@@ -1,0 +1,7 @@
+$ git clone --depth 1 <repo@136da9e> <shallow>; cd <shallow>; pytest tests/regression/test_traceability_reconciliation.py -k verified_commits   # before
+E           AssertionError: 88e7fb6773ab9403e8b57037a017204357ba75cd
+E           assert 128 == 0
+E            +  where 128 = CompletedProcess(args=['git', 'cat-file', '-e', '88e7fb6773ab9403e8b57037a017204357ba75cd^{commit}'], returncode=128).returncode
+E            +    where CompletedProcess(args=['git', 'cat-file', '-e', '88e7fb6773ab9403e8b57037a017204357ba75cd^{commit}'], returncode=128) = <function run at 0x1050893a0>(['git', 'cat-file', '-e', '88e7fb6773ab9403e8b57037a017204357ba75cd^{commit}'], cwd=PosixPath('<shallow>'))
+E            +      where <function run at 0x1050893a0> = subprocess.run
+1 failed, 9 deselected in 0.10s

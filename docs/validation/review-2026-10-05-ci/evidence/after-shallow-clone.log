@@ -1,0 +1,7 @@
+$ same shallow clone with the new test file   # after: still FAILS, with a specific message
+E       AssertionError: shallow clone: verified commits ['88e7fb6773ab9403e8b57037a017204357ba75cd', 'fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd'] cannot be checked; fetch full history (actions/checkout fetch-depth: 0, or `git fetch --unshallow`)
+E       assert ['shallow clo...-unshallow`)'] == []
+E         
+E         Left contains one more item: "shallow clone: verified commits ['88e7fb6773ab9403e8b57037a017204357ba75cd', 'fa4d9485bc2de6b4013ee3c03e1c0a7bd1d68dfd'] cannot be checked; fetch full history (actions/checkout fetch-depth: 0, or `git fetch --unshallow`)"
+E         Use -v to get more diff
+1 failed, 1 passed, 9 deselected in 5.04s

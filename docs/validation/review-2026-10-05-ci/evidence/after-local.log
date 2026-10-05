@@ -1,0 +1,9 @@
+$ .venv/bin/python -m pytest tests/integration/test_plan_portability.py tests/regression/test_traceability_reconciliation.py -q -p no:cacheprovider -rA -k "line_ending or verified_commits or shallow"   # after
+....                                                                     [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/integration/test_plan_portability.py::test_content_hash_and_code_identity_are_line_ending_independent[lf]
+PASSED tests/integration/test_plan_portability.py::test_content_hash_and_code_identity_are_line_ending_independent[crlf]
+PASSED tests/regression/test_traceability_reconciliation.py::test_v116_verified_commits_exist_in_history
+PASSED tests/regression/test_traceability_reconciliation.py::test_v116_shallow_clone_gives_a_specific_message
+4 passed, 12 deselected in 1.75s

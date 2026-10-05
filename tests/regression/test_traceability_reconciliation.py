@@ -112,10 +112,30 @@ def test_v116_identities_tasks_evidence_and_ledger_reconcile():
     assert len(trace["requirements"]) == 167 and sum(len(s["V"]) for s in specs.values()) == 167
 
 
+def history_problems(commits, root=ROOT) -> list[str]:
+    """Verified commits missing from history. A shallow clone cannot answer, and says so (CI run 37244850636)."""
+    shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"], cwd=root, capture_output=True, encoding="utf-8").stdout.strip() == "true"
+    missing = sorted(c for c in commits if subprocess.run(["git", "cat-file", "-e", f"{c}^{{commit}}"], cwd=root, capture_output=True).returncode != 0)
+    if missing and shallow:
+        return [f"shallow clone: verified commits {missing} cannot be checked; fetch full history (actions/checkout fetch-depth: 0, or `git fetch --unshallow`)"]
+    return [f"verified_commit {c} is not in the repository history" for c in missing]
+
+
 def test_v116_verified_commits_exist_in_history():
     trace, _, _ = load()
-    for commit in {r["verified_commit"] for r in trace["requirements"] if r.get("verified_commit")}:
-        assert subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=ROOT).returncode == 0, commit
+    problems = history_problems({r["verified_commit"] for r in trace["requirements"] if r.get("verified_commit")})
+    assert problems == [], "\n".join(problems)
+
+
+def test_v116_shallow_clone_gives_a_specific_message(tmp_path):
+    origin = tmp_path / "origin"; origin.mkdir()
+    git = lambda *a, cwd=origin: subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", *a], cwd=cwd, check=True, capture_output=True)
+    git("init", "-q"); (origin / "a.txt").write_text("1\n", encoding="utf-8"); git("add", "a.txt"); git("commit", "-q", "-m", "one")
+    first = subprocess.run(["git", "rev-parse", "HEAD"], cwd=origin, capture_output=True, encoding="utf-8").stdout.strip()
+    (origin / "a.txt").write_text("2\n", encoding="utf-8"); git("commit", "-q", "-am", "two")
+    git("clone", "-q", "--depth", "1", f"file://{origin.as_posix()}", str(tmp_path / "shallow"), cwd=tmp_path)
+    assert history_problems({first}, tmp_path / "shallow")[0].startswith("shallow clone:")
+    assert history_problems({first}, origin) == [] and history_problems({"0" * 40}, origin) == [f"verified_commit {'0' * 40} is not in the repository history"]
 
 
 @pytest.mark.parametrize("mutate, expected", [

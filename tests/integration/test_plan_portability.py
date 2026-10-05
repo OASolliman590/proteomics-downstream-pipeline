@@ -111,7 +111,14 @@ def test_verify_plan_detects_provenance_and_semantic_tampering(tmp_path):
         design_service.verify_plan(path)
 
 
-def test_content_hash_and_code_identity_are_line_ending_independent(tmp_path):
+def _crlf_checkout(paths):
+    """Simulate a Windows `core.autocrlf`/`text=auto` checkout of LF-committed text files (CI run 37244850636)."""
+    for path in paths:   # idempotent: an already-CRLF file stays CRLF (no CR CR LF)
+        path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+
+
+@pytest.mark.parametrize("checkout", ["lf", "crlf"])
+def test_content_hash_and_code_identity_are_line_ending_independent(tmp_path, checkout):
     from proteomics_pipeline.provenance import content_sha256
     lf, crlf, binary = tmp_path / "lf.tsv", tmp_path / "crlf.tsv", tmp_path / "b.png"
     lf.write_bytes(b"a\tb\n1\t2\n"); crlf.write_bytes(b"a\tb\r\n1\t2\r\n"); binary.write_bytes(b"\x89PNG\r\n\x1a\n\x00\r\n")
@@ -121,8 +128,13 @@ def test_content_hash_and_code_identity_are_line_ending_independent(tmp_path):
     repo = tmp_path / "repo"
     shutil.copytree(ROOT / "r" / "proteomicsCore", repo / "r" / "proteomicsCore", ignore=shutil.ignore_patterns("tests"))
     (repo / "scripts" / "maintained").mkdir(parents=True); shutil.copy(ROOT / "scripts" / "maintained" / "run_stage.R", repo / "scripts" / "maintained")
+    text_files = [*package.rglob("*.py"), *package.rglob("*.html"), *package.rglob("*.json"), *(repo / "r" / "proteomicsCore" / "R").glob("*.R"),
+                  repo / "r" / "proteomicsCore" / "DESCRIPTION", repo / "r" / "proteomicsCore" / "NAMESPACE"]
+    if checkout == "crlf":
+        _crlf_checkout(text_files)
     before = workflow.code_manifest(package, repo)
-    for path in [*package.rglob("*.html"), repo / "r" / "proteomicsCore" / "DESCRIPTION", repo / "r" / "proteomicsCore" / "NAMESPACE"]:
-        path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+    # CI run 37244850636 (Windows): the old line here converted "\n" to "\r\n" on a checkout that was already CRLF, producing
+    # CR CR LF, which is genuinely different content; the hash rule (CRLF -> LF) was right and the test conversion was wrong.
+    _crlf_checkout([*package.rglob("*.html"), repo / "r" / "proteomicsCore" / "DESCRIPTION", repo / "r" / "proteomicsCore" / "NAMESPACE"])
     assert workflow.code_manifest(package, repo)["sha256"] == before["sha256"]
     assert workflow.code_manifest()["sha256"] == before["sha256"]

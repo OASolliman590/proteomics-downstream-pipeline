@@ -720,6 +720,17 @@
         "tests/scientific/calibration_post_de.R"
       ],
       "change": "Fixes for the independent review of 106fb20..7bce0fd (2026-10-05, docs/validation/review-2026-10-05) inside the R14c, R14d, R14e, R14f and R12 allowlists after their receipts; the only path outside them is the R11 lint test, extended with an LF rule for release-artifact writers. Decisions D-54 to D-57."
+    },
+    {
+      "id": "A-2026-10-01-23",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        ".github/workflows/maintained.yml",
+        ".gitattributes",
+        "tests/integration/test_plan_portability.py",
+        "tests/regression/test_traceability_reconciliation.py"
+      ],
+      "change": "PR #2 CI run 37244850636: checkout with full history (fetch-depth: 0) so V116 can verify historical verified_commits, with a specific failure message on a shallow clone (never a skip); the line-ending test converted an already-CRLF Windows checkout to CR CR LF (the content-hash rule was correct), now idempotent and parametrised over LF and CRLF checkouts; .gitattributes checks text out as LF everywhere (eol=lf) with binary patterns, protected recovered paths unchanged (-text)."
     }
   ]
 }
