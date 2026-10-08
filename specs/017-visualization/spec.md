@@ -23,7 +23,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 ### R16a — Style system and figure registry
 
-- **FR-195 — `report.figures` configuration:** The system MUST accept an optional `report.figures` block with `formats` (default `["png", "pzfx", "html"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85 or 180; default 85), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.
+- **FR-195 — `report.figures` configuration:** The system MUST accept an optional `report.figures` block with `formats` (default `["png", "pzfx", "html"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85, 120 or 180; default 120, D-74), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.
 - **FR-196 — Colourblind-safe palette with stable group colours:** The system MUST colour groups from the Okabe–Ito palette in declared group order by default, or from an explicit `group_colours` mapping. The same group MUST have the same colour in every figure of a run, independent of figure order.
 - **FR-197 — Figure registry from source tables:** The system MUST register each catalogue figure ID with its source table path and SHA-256 and MUST generate a figure only from its registered source table. A figure request without its source table MUST be refused with no output.
 - **FR-198 — P-value annotation:** The system MUST annotate comparisons either as stars or as exact values, as declared. The annotation MUST be computed from the P value in the source table by the contract rule, and no annotation may appear without its P value in the source.
@@ -37,7 +37,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 ### R16c — Static Prism-style PNG
 
 - **FR-202 — Prism-style theme:** The system MUST render each catalogue figure as a PNG with ggplot2 and the ggprism package using the Prism-style theme: white background, thick black axes, outward ticks, no gridlines, Arial (or a recorded substitution), and mean ± SD drawn over the individual points.
-- **FR-203 — PNG dimensions and data fidelity:** The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi and rounded to the nearest integer, and its plotted data MUST equal the source table as reported by `ggplot_build`.
+- **FR-203 — PNG dimensions and data fidelity:** The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi, rounded down to an integer (the raster device truncates), and its plotted data MUST equal the source table as reported by `ggplot_build`.
 
 ### R16d — Interactive Plotly HTML
 
@@ -74,7 +74,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 **Oracle:** The default table in the contract, written in the test.
 
-**Exact assertion:** (a) and (b) resolve to formats png, pzfx and html, dpi 300, width 85 mm, palette Okabe–Ito, font Arial and exact P annotation, and the resolved values are written to the run settings.
+**Exact assertion:** (a) and (b) resolve to formats png, pzfx and html, dpi 300, width 120 mm, palette Okabe–Ito, font Arial and exact P annotation, and the resolved values are written to the run settings.
 
 **Negative case:** (c) fails E_FIGURE_DPI. (d) fails E_FIGURE_FORMAT. (e) fails with the unknown-key error. No figure is produced in any negative case.
 
@@ -182,9 +182,9 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 ### V203: PNG dimensions and data fidelity
 
-**Fixture:** One figure at 85 mm and at 180 mm.
+**Fixture:** One figure at 85 mm, 120 mm and 180 mm.
 
-**Oracle:** Pixel width = width in inches × 300, rounded to the nearest integer (1004 px at 85 mm and 2126 px at 180 mm), and `ggplot_build` layer data taken from the source table.
+**Oracle:** Pixel width = width in inches × 300, rounded down (1003 px at 85 mm, 1417 px at 120 mm and 2125 px at 180 mm), and `ggplot_build` layer data taken from the source table.
 
 **Exact assertion:** The PNG header dimensions equal the oracle, and each plotted layer equals its source rows.
 

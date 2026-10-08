@@ -8,7 +8,7 @@ This contract fixes the configuration grammar, the three outputs of every figure
 |---|---|---|---|
 | `formats` | subset of `png`, `pzfx`, `html`, non-empty | `["png", "pzfx", "html"]` | Outputs produced for each catalogue figure. |
 | `dpi` | `300` | `300` | PNG resolution. Any other value fails E_FIGURE_DPI. |
-| `journal_width_mm` | `85`, `180` | `85` | Figure width preset. |
+| `journal_width_mm` | `85`, `120`, `180` | `120` | Figure width preset (85 mm single column, 180 mm double column; 120 mm is the roomier default approved on 2026-10-08, D-74). |
 | `palette` | `okabe_ito`, or an explicit list of hex colours with one entry per group | `okabe_ito` | Group palette. |
 | `group_colours` | optional map from group identifier to hex colour | none | Overrides the palette. Stable across all figures of a run. |
 | `font` | `Arial` | `Arial` | If unavailable, the substitution is recorded in the registry. |
@@ -26,9 +26,13 @@ This contract fixes the configuration grammar, the three outputs of every figure
 | Gridlines | none (major and minor) |
 | Axis lines | black, thick: 1.5 pt |
 | Ticks | outward, length 4 pt |
-| Base font | Arial, 9 pt |
+| Base font | Arial, 12 pt (title 14 pt), bold axis titles and tick labels |
+| Spacing | 8 pt gap between axis titles and tick labels, 8 pt below the title, 4 mm legend spacing, plot margins 10–14 pt |
+| Points | 2–2.4 mm points, alpha 0.8–0.85; dot plots jitter 0.18 of a category width |
+| Labels | at most 10 labelled points per volcano, repelled with 0.6 line box padding; label text 3.6 mm |
 | Points in dot plots | individual values, mean as a horizontal bar, error bar ± SD |
-| Okabe–Ito palette | `#E69F00`, `#56B4E9`, `#009E73`, `#F0E442`, `#0072B2`, `#D55E00`, `#CC79A7`, `#000000` in that order |
+| Okabe–Ito palette | `#0072B2`, `#E69F00`, `#D55E00`, `#009E73`, `#CC79A7`, `#56B4E9`, `#F0E442`, `#000000` in that order (groups take colours in declared group order) |
+| Volcano directions | up `#D55E00`, down `#0072B2`, not significant `grey70` |
 
 Group order is the declared group order of the frozen plan. A `group_colours` map overrides it.
 
