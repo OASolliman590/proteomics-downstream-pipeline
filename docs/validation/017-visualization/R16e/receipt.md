@@ -238,3 +238,50 @@ The visual check was made by reading the final renders of the PCA, missingness, 
 6. Not run: opening any `.pzfx` in GraphPad Prism (manual Maintainer check); a browser check of the HTML files.
 7. The end-to-end figure sets are fixed to these two synthetic configurations; a real study will produce a different set, and skipped figures are recorded in `registry.json`.
 8. The commit trailers name Claude Opus 5.5, as the brief asks; the builder for this work is the Haiku route.
+
+## Part D: dot plot, Venn labels, post-DE figures from a run
+
+Commits on `claude/visualization`: `e79279a` (R renderers and R tests: dot plot, Venn, caption wrap), `9b02b84` (post-DE mapping, retrofit skip rules, builders, Python tests, study fixture), `95f2306` (contract post-DE table, maintainer amendment 43), `b9fbbda` (e2e skip assertion).
+
+### What changed
+
+- D1, dot plot (`catalogue_dotplot_brackets`): jittered points, one per sample; a mean bar and a ±SD bar per group; colours by declared group order; headroom through a blank layer, so the top bracket label sits inside the free y range. Tests: one point per sample, no missing colour, one SD bar per group and protein, and the label y inside each panel's range.
+- D2, Venn (`catalogue_venn`): each circle carries its contrast name and total, `<name> (n = <total>)`, wrapped and placed outside the circle; the letters A/B are not drawn. Test on the k = 3 fixture.
+- D3, post-DE figures of a run (`figures/run_sources.py`, `_postde_jobs`): drawn only when the module ran, from its own tables, with no statistic recomputed:
+  - `bio_roc_ci_band` from `roc_cv.tsv`, `roc_cv_band.tsv`, `cv_performance.tsv` (band draws = min(500, threshold_bootstrap_draws), as the producer's band rule);
+  - `bio_cv_auc_vs_permutation` from `cv_auc_repeats.tsv`, `permutation_null.tsv`, with the producer's `permutation_p`; the builder checks it against (k + 1) / (B + 1) and refuses `E_FIGURE_PERMUTATION_P` on a mismatch; skipped when the permutation test is disabled;
+  - `bio_panel_forest` from the top 10 single-feature AUCs (claim `in_sample`, captioned as in-sample and not a panel effect, no P);
+  - `path_enrichment_dotplot__<direction>` from `pathways/ora_up.tsv` and `ora_down.tsv`;
+  - `net_module_heatmap` from `modules.tsv` and `eigengenes.tsv` (declared modules, group means);
+  - `net_network_graph__<set>` from `ppi_subnetwork.tsv`, every edge checked against the run's PPI snapshot (`E_FIGURE_SOURCE_MISSING` otherwise).
+  A module that did not run is recorded in `retrofit.run_sources` with its reason.
+- Retrofit (`figures/retrofit.py`): `roc_cv`, `cv_auc_repeats`, `permutation_null`, `eigengenes` and `ppi_subnetwork` are skipped with a note naming their D3 figure, so each table is drawn once. Calibration, selection stability, UpSet regions, response axes and association heatmap are unchanged.
+- Renderers: run captions wrapped to the journal width (a long network caption was clipped at the canvas edge); the module heatmap title shortened; ROC annotation without a published interval.
+- D4, traceability: V197 is not changed. Its exact assertion needs contract IDs that the run IDs do not match, so its status stays as it was. The V215–V222 pins (`working_source_manifest_sha256`) are also not changed: the working-source manifest was not regenerated, because the R side had not been run with testthat until the last step below. The pins must be refreshed at the next review.
+
+### Figures per end-to-end configuration
+
+- `example-independent-figures.json` (phase 1): 13 figures. QC 4; differential for each of the two primary contrasts 8 (volcano, MA, DEP heatmap, dot plot); `diff_upset_venn__primary` 1 (Venn, contrast names). Skipped with reasons: `biomarker figures`, `path_enrichment_dotplot__ora_up`, `path_enrichment_dotplot__ora_down`, `net_module_heatmap` (modules not run).
+- `example-independent-permanova.json` (phase 2): 15 figures, the 13 above plus `perm_pcoa_centroids__all`, `perm_permdisp__all`. Same skipped post-DE entries.
+- `tests/fixtures/figures/run/postde_study.py` (new synthetic post-DE study with `report.figures`, not a committed config): 17 figures. QC 4; differential `B-A` 4; post-DE 6 (`bio_roc_ci_band`, `bio_cv_auc_vs_permutation`, `bio_panel_forest`, `path_enrichment_dotplot__ora_up`, `net_module_heatmap`, `net_network_graph__primary_any`); R14 retrofit 3 (`calibration`, `selection_stability`, `upset_all`). Skipped: `diff_upset_venn__primary` (one primary contrast), `path_enrichment_dotplot__ora_down` (no set with a foreground hit). Every figure has `.png`, `.pzfx`, `.html`; `proteomics verify` exits 0.
+
+### Environment finding and gates
+
+The first full Python run and the first R run in this session were made without the project R library. The README sets `R_LIBS_USER` to `<repo>/.r-lib`, which holds limma 3.68.5 (the locked version), testthat, ggprism and proteomicsCore. In this shell `R_LIBS_USER` was empty, so the workflow stages failed with `E_DEPENDENCY_UNAVAILABLE: limma is not installed`, and the R testthat command stopped because testthat was not visible. Those runs are superseded. Also, `R CMD INSTALL --library="$R_LIBS_USER"` with the variable empty installed proteomicsCore into the user library `/Users/megastore/Library/R/x86_64/4.6/library`; the project library was then reinstalled from the same tree (`evidence/partD-r-install.log`). The user-library copy is outside the project and was made from the same source.
+
+- Full R testthat, `LANG=en_US.UTF-8`, `R_LIBS_USER=<repo>/.r-lib`: **988 expectations, 0 failed, 0 errors, 0 skipped** (`evidence/partD-full-r-testthat.log`). The first attempt had 2 errors from a non-UTF-8 locale on the test file names (`test-foundation.R`); the rerun with the README locale is the one recorded.
+- Full Python suite, same environment (`evidence/partD-full-python-suite.log`): **559 passed, 2 failed, 0 skipped**. The two failures were `test_figure_run_e2e.py` (phase-1 and PERMANOVA catalogue), where the helper still required an empty skip list. Commit `b9fbbda` replaces it with a check that only the four post-DE skips above may appear. `test_figure_run_e2e.py` rerun after the fix: **6 passed**. The post-DE end-to-end test (`test_figure_postde_e2e.py`, 3 tests: exact 17-figure set, skipped-figure reasons, `verify` exit 0) ran in this environment and **passed**. The full suite was not rerun after `b9fbbda`; the expected total is 560 passed, 0 failed, since only that assertion changed.
+- Targeted before the environment fix (superseded, `evidence/partD-targeted-python.log`): catalogue 40, retrofit 8, post-DE mapping 10 passed; post-DE e2e skipped as NOT_RUN.
+- Ledger `docs/validation/acceptance.json`: unchanged (no status changed). Reason codes: unchanged (no new code).
+
+### Doubts for review
+
+1. The displayed permutation P is the producer's `permutation_p`. The builder compares it with (k + 1) / (B + 1), where k counts the null values at or above the mean of the nested-CV repeat AUCs. The null values are pooled out-of-fold AUCs. With one repeat, as in the synthetic study, the two coincide, so the check passes. With several repeats the statistics may differ, and the figure would then be refused. The producer should state which statistic its P uses.
+2. `bio_panel_forest` plots single-feature AUCs, which are in-sample and optimistic, not panel effects. It is captioned as such. A reviewer may prefer to drop it from the publication catalogue.
+3. The ROC band draw count is min(500, threshold_bootstrap_draws), a rule copied from the producer's R code (min(500, bootstrap)). It is not written in any table.
+4. The ROC carries no published interval in this study, so the annotation reads "no CI published".
+5. The module heatmap shows group means of the PC1 eigengene. It is descriptive, and in the two-group study it has one module row.
+6. The network layout is presentation only, computed in R. Nodes are coloured by set.
+7. The enrichment colour-bar labels show six decimals (for example 4.551773). This is cosmetic and not yet changed.
+8. Not run: Prism opening of any `.pzfx`; a browser check of the HTML files; visual checks of the ROC, CV-vs-null, forest, module heatmap, network and enrichment PNGs were made by reading the renders, not by a second reviewer.
+9. The commit trailers name Claude Haiku 5.5, as the harness instruction in this session requires. The coordinator brief named Claude Opus 5.5. The Part C commits name Opus 5.5.

@@ -1,0 +1,84 @@
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+.............F.F........................................................ [ 38%]
+........................................................................ [ 51%]
+........................................................................ [ 64%]
+........................................................................ [ 77%]
+........................................................................ [ 89%]
+.........................................................                [100%]
+=================================== FAILURES ===================================
+_ test_the_phase1_catalogue_holds_exactly_the_expected_thirteen_figures_with_their_outputs _
+
+phase1 = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-258/figure-run0/run')
+
+    def test_the_phase1_catalogue_holds_exactly_the_expected_thirteen_figures_with_their_outputs(phase1):
+>       _assert_catalogue(phase1, EXPECTED_PHASE1)
+
+tests/integration/test_figure_run_e2e.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-258/figure-run0/run')
+expected = frozenset({'diff_dep_heatmap_clustered__disease-control', 'diff_dep_heatmap_clustered__treated-disease', 'diff_ma_plot...ted-disease', 'diff_protein_dotplot_brackets__disease-control', 'diff_protein_dotplot_brackets__treated-disease', ...})
+
+    def _assert_catalogue(out: Path, expected: frozenset[str]) -> None:
+        registry = _registry(out)
+        catalogue = out / "report" / "figure_catalogue"
+        assert set(registry["figures"]) == expected, sorted(set(registry["figures"]) ^ expected)
+        for figure_id in sorted(expected):
+            record = registry["figures"][figure_id]
+            assert record["state"] == "REGISTERED", (figure_id, record.get("reason"))
+            assert not [k for k, v in record["outputs"].items() if "code" in v], (figure_id, record["outputs"])
+            for kind in ("png", "pzfx", "html"):
+                path = catalogue / f"{figure_id}.{kind}"
+                assert path.is_file() and path.stat().st_size > 0, path.name
+                assert _sha(path) == record["outputs"][kind]["sha256"], path.name
+            assert (catalogue / f"{figure_id}.png").read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
+            assert _sha(catalogue / record["source_path"]) == record["source_sha256"]
+>       assert registry["retrofit"]["run_sources"] == []                 # no differential figure was skipped
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [{'figure': '...dule tables'}] == []
+E         
+E         Left contains 4 more items, first extra item: {'figure': 'biomarker figures', 'reason': 'the biomarker module did not run (no CV tables)'}
+E         Use -v to get more diff
+
+tests/integration/test_figure_run_e2e.py:60: AssertionError
+___ test_the_permanova_run_completes_and_holds_the_expected_fifteen_figures ____
+
+permanova = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-258/figure-permanova0/run')
+
+    def test_the_permanova_run_completes_and_holds_the_expected_fifteen_figures(permanova):
+        status = json.loads((permanova / "run_status.json").read_text(encoding="utf-8"))
+        assert status["state"] == "COMPLETED"
+        assert {s["stage_id"]: s["state"] for s in status["stages"]}["permanova"] == "COMPLETED"
+>       _assert_catalogue(permanova, EXPECTED_PERMANOVA)
+
+tests/integration/test_figure_run_e2e.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-258/figure-permanova0/run')
+expected = frozenset({'diff_dep_heatmap_clustered__disease-control', 'diff_dep_heatmap_clustered__treated-disease', 'diff_ma_plot...ted-disease', 'diff_protein_dotplot_brackets__disease-control', 'diff_protein_dotplot_brackets__treated-disease', ...})
+
+    def _assert_catalogue(out: Path, expected: frozenset[str]) -> None:
+        registry = _registry(out)
+        catalogue = out / "report" / "figure_catalogue"
+        assert set(registry["figures"]) == expected, sorted(set(registry["figures"]) ^ expected)
+        for figure_id in sorted(expected):
+            record = registry["figures"][figure_id]
+            assert record["state"] == "REGISTERED", (figure_id, record.get("reason"))
+            assert not [k for k, v in record["outputs"].items() if "code" in v], (figure_id, record["outputs"])
+            for kind in ("png", "pzfx", "html"):
+                path = catalogue / f"{figure_id}.{kind}"
+                assert path.is_file() and path.stat().st_size > 0, path.name
+                assert _sha(path) == record["outputs"][kind]["sha256"], path.name
+            assert (catalogue / f"{figure_id}.png").read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
+            assert _sha(catalogue / record["source_path"]) == record["source_sha256"]
+>       assert registry["retrofit"]["run_sources"] == []                 # no differential figure was skipped
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert [{'figure': '...dule tables'}] == []
+E         
+E         Left contains 4 more items, first extra item: {'figure': 'biomarker figures', 'reason': 'the biomarker module did not run (no CV tables)'}
+E         Use -v to get more diff
+
+tests/integration/test_figure_run_e2e.py:60: AssertionError
+2 failed, 559 passed in 2038.44s (0:33:58)
+exit=1

@@ -1,0 +1,7 @@
+..........................................................sss            [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/integration/test_figure_postde_e2e.py:64: NOT_RUN: limma (renv lock, Bioconductor) is unavailable to Rscript
+SKIPPED [1] tests/integration/test_figure_postde_e2e.py:81: NOT_RUN: limma (renv lock, Bioconductor) is unavailable to Rscript
+SKIPPED [1] tests/integration/test_figure_postde_e2e.py:88: NOT_RUN: limma (renv lock, Bioconductor) is unavailable to Rscript
+58 passed, 3 skipped in 80.31s (0:01:20)
+exit=0
