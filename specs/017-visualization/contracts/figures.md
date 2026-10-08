@@ -135,7 +135,20 @@ When `report.figures` is declared, the run writes the publication catalogue from
 | `diff_upset_venn__primary` | DEP membership of each primary contrast | Venn when at most 3 contrasts, UpSet otherwise |
 | `perm_pcoa_centroids__<set>`, `perm_permdisp__<set>` | PERMANOVA tables of the run | per feature set; B and seed in the PERMDISP title |
 
-Only the primary family (the family whose role is `primary` in `families.tsv`) is used for the differential figures. Post-DE figures (ROC, forest, CV against the null, enrichment, module heatmap, network) are not yet produced from a run.
+Only the primary family (the family whose role is `primary` in `families.tsv`) is used for the differential figures.
+
+Post-DE figures are drawn from the result tables of the post-DE modules, and only when those modules ran (`run_sources.py`, D3). No statistic is recomputed from the data:
+
+| Figure ID (output ID) | Source tables of the run | Notes |
+|---|---|---|
+| `bio_roc_ci_band` | biomarker `figure_sources/roc_cv.tsv`, `roc_cv_band.tsv`; `cv_performance.tsv` (pooled AUC, seed, band draws = min(500, threshold_bootstrap_draws)) | claim label `cross_validated_nested`; out-of-fold scores |
+| `bio_cv_auc_vs_permutation` | `figure_sources/cv_auc_repeats.tsv`, `permutation_null.tsv`; `cv_performance.tsv` (`permutation_p`, `permutation_B`) | the displayed P is the producer's; a P that differs from (k + 1) / (B + 1) is refused `E_FIGURE_PERMUTATION_P`; skipped when the permutation test is disabled |
+| `bio_panel_forest` | `single_feature_auc.tsv`, top 10 by AUC with the bootstrap interval | claim label `in_sample`; captioned in-sample and not a panel effect; no P |
+| `path_enrichment_dotplot__<direction>` | `pathways/ora_up.tsv`, `ora_down.tsv` | one figure per direction; a set without a foreground hit is not plotted; skipped when no set has a hit |
+| `net_module_heatmap` | `networks/modules.tsv`, `eigengenes.tsv` and the primary observations | group means of the assigned modules only; skipped when no module was assigned |
+| `net_network_graph__<set>` | `networks/ppi_subnetwork.tsv`, checked against the edges of the run's PPI snapshot | an edge missing from the snapshot is refused `E_FIGURE_SOURCE_MISSING`; the layout is presentation only |
+
+The R14 rules of `roc_cv`, `cv_auc_repeats`, `permutation_null`, `eigengenes` and `ppi_subnetwork` are skipped with a note naming the post-DE figure above, so each table is drawn once. A module that did not run is recorded in `retrofit.run_sources` with its reason.
 
 A registered table with no rule is listed under `retrofit.not_retrofitted` in `registry.json`. A table whose rule needs a column that is absent, or a companion that is missing, is refused with `E_FIGURE_SOURCE_MISSING` and its outputs are NOT_RUN. Transformations are those named by a rule only: the absolute treatment effect of the response axes, group means of the eigengenes, equal-width bins of a histogram in the HTML, and the subnetwork edges from the companion table. The statistics table is omitted (the producer's inference is not recomputed), and the Info sheet records `Statistics: none` or `table` as the producer's table requires.
 
