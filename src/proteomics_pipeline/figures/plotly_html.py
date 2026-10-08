@@ -95,6 +95,11 @@ def check_hover(traces: Sequence[Mapping[str, Any]]) -> None:
     (customdata[2] or customdata[3]). Otherwise E_PLOTLY_HOVER."""
     for index, trace in enumerate(traces):
         template = str(trace.get("hovertemplate", ""))
+        if trace.get("type") == "heatmap":
+            # a heatmap names its feature and sample through the axis positions of the cell (R16e amendment A-2026-10-01-37)
+            if "%{x}" not in template or "%{y}" not in template:
+                raise ConfigurationError("E_PLOTLY_HOVER", f"trace {index} hover text lacks the row or column identifier", f"/data/{index}/hovertemplate")
+            continue
         if "customdata[0]" not in template or "customdata[1]" not in template or ("customdata[2]" not in template and "customdata[3]" not in template):
             raise ConfigurationError("E_PLOTLY_HOVER", f"trace {index} hover text lacks the feature, group or P/q field", f"/data/{index}/hovertemplate")
 
