@@ -84,6 +84,25 @@ vendor/plotly/
 
 The writer self-check compares every value it writes with the source table (E_PZFX_VALUE_MISMATCH). Values are written with round-trip numeric precision (D-12). Opening the file in GraphPad Prism is a Maintainer check, recorded as NOT_RUN in automated tests.
 
+## Statistics table and Info sheet (D-75)
+
+Every `.pzfx` written by the pipeline holds, besides the figure's data table(s):
+
+1. **Statistics table** (`<figure title> — pipeline statistics`). A Prism Column table whose row titles are the comparisons shown in the figure (for example `chronic − control`). Its columns are `effect` (the contrast estimate on the plotted scale), `P`, `q` and `n_<group>` for each group in the comparison. Values come from the same results table as the figure's P-value annotations, with round-trip precision. A figure without inferential statistics (for example a QC distribution) omits this table and records `statistics: none` in the Info sheet.
+2. **Info sheet.** Prism Info constants:
+   - `Test`: for example `limma moderated t (trend, robust)` or `Welch t`;
+   - `Multiplicity adjustment`: method and family ID, for example `BH within protein-primary`, or `none (paper-compatible raw P rule; not multiplicity-controlled)`;
+   - `Effect scale`: for example `log2 difference`;
+   - `Group sizes`;
+   - `Pipeline version and commit`;
+   - `Source table SHA-256`;
+   - `Run ID`;
+   - `Created (UTC)`.
+
+   The Info notes repeat the figure caption and warn that a test run inside Prism may give a different P value from the pipeline's test.
+
+The writer self-check covers the Statistics table values. The Info sheet uses the Prism `InfoSequence` and `Info` elements, with `Constant` name/value pairs and `Notes`. Readers that ignore the Info sheet (for example `pzfx::read_pzfx`) still read every data table.
+
 ## Figure IDs
 
 | Area | Figure ID | Packet | Source family or analysis | Claim or method label |

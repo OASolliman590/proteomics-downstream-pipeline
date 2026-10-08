@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 171,
-    "NOT_RUN": 51
+    "PASS": 170,
+    "NOT_RUN": 52
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -6381,7 +6381,7 @@
       "acceptance_id": "V199",
       "requirement": "FR-199",
       "task": "T199",
-      "status": "PASS",
+      "status": "NOT_RUN",
       "reviewed_tree": "bf41d8163410369931fa79f6ead19996c3545f9c60fce92636c64b2177ec62ef",
       "commands": [
         {
@@ -6432,10 +6432,11 @@
           "sha256": "b187411af87fcc7caf6828b80e2529cf20971c43ec3afa2dbdbb520d17b81834"
         }
       ],
-      "expected_oracle": "The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values.",
+      "expected_oracle": "The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values. Every `.pzfx` the system writes MUST also carry the figure's pipeline statistics table and an Info sheet describing the method (contracts/figures.md, Statistics table and Info sheet; D-75).",
       "observed": "see packet receipt and gate logs",
-      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
-      "verified_commit": null
+      "reviewer_conclusion": "NOT_RUN",
+      "verified_commit": null,
+      "reason": "Amended by D-75 (2026-10-08): the .pzfx must also carry the pipeline statistics table and an Info sheet. The R16b column-table writer passed the original assertion (receipt docs/validation/017-visualization/R16b); re-verification of the amended V199 is pending."
     },
     {
       "acceptance_id": "V200",

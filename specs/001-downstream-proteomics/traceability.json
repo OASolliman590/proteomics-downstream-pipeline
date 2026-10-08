@@ -6844,7 +6844,7 @@
       "packet": "R16b",
       "phase": 6,
       "capability": "Column tables for group comparisons",
-      "criterion": "The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values.",
+      "criterion": "The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values. Every `.pzfx` the system writes MUST also carry the figure's pipeline statistics table and an Info sheet describing the method (contracts/figures.md, Statistics table and Info sheet; D-75).",
       "scientific_rule": "SM25",
       "implementation_targets": [
         "src/proteomics_pipeline/figures/pzfx_writer.py"
@@ -6854,7 +6854,7 @@
         "case_id": "V199",
         "status": "PASS"
       },
-      "status": "PASS",
+      "status": "NOT_RUN",
       "evidence": [
         "tests/scientific/test_pzfx_writer.py",
         "r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
@@ -6868,7 +6868,8 @@
         "date": "2026-10-08",
         "working_source_manifest_sha256": "bf41d8163410369931fa79f6ead19996c3545f9c60fce92636c64b2177ec62ef",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
-        "committed": "R16b commit recorded in the R16b receipt; verified_commit null"
+        "committed": "R16b commit recorded in the R16b receipt; verified_commit null",
+        "reason": "Amended by D-75 (2026-10-08): the .pzfx must also carry the pipeline statistics table and an Info sheet. The R16b column-table writer passed the original assertion (receipt docs/validation/017-visualization/R16b); re-verification of the amended V199 is pending."
       }
     },
     {

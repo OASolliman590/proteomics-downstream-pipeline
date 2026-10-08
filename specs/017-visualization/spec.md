@@ -30,7 +30,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 ### R16b — Prism `.pzfx` writer
 
-- **FR-199 — Column tables for group comparisons:** The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values.
+- **FR-199 — Column tables for group comparisons:** The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values. Every `.pzfx` the system writes MUST also carry the figure's pipeline statistics table and an Info sheet describing the method (contracts/figures.md, Statistics table and Info sheet; D-75).
 - **FR-200 — XY tables:** The system MUST write the volcano (effect against −log10 P) and ROC (1 − specificity against sensitivity) data as Prism XY tables, one point per source row, with values exactly as in the source table.
 - **FR-201 — Grouped tables for multi-protein panels:** The system MUST write multi-protein panels as Prism grouped tables with one row per replicate and one data set per protein and group, with values exactly as in the source table.
 
@@ -130,7 +130,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 **Oracle:** The values read from the source table and parsed from the written `.pzfx` XML with the standard library XML parser, written in the test.
 
-**Exact assertion:** Each column holds the source values exactly, with round-trip numeric precision (D-12), and the table type is Column. When the CRAN pzfx package is installed, `pzfx::read_pzfx` reads the same values back; otherwise that read-back is NOT_RUN. Opening the file in GraphPad Prism is a manual Maintainer check, NOT_RUN in automated tests.
+**Exact assertion:** Each column holds the source values exactly, with round-trip numeric precision (D-12), and the table type is Column. The file also holds the Statistics table (comparison row titles; effect, P, q and n per group equal the source statistics exactly) and an Info sheet whose constants name the test, the multiplicity adjustment and family, the group sizes, the pipeline version and the source table SHA-256. When the CRAN pzfx package is installed, `pzfx::read_pzfx` reads the same values back; otherwise that read-back is NOT_RUN. Opening the file in GraphPad Prism is a manual Maintainer check, NOT_RUN in automated tests.
 
 **Negative case:** A single changed value, or rounding to three decimals, fails the comparison.
 
