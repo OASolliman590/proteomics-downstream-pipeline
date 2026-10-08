@@ -320,7 +320,7 @@ def bio_cv_auc() -> None:
 
 PATHWAY_UNIVERSE = 40
 PATHWAY_FOREGROUND = 12
-PATHWAY_SETS = [("SET_A", 10, 6), ("SET_B", 8, 4), ("SET_C", 9, 3), ("SET_D", 6, 2), ("SET_E", 7, 0), ("SET_F", 12, 5), ("SET_G", 5, 1)]
+PATHWAY_SETS = [("SET_A", 8, 8), ("SET_B", 9, 5), ("SET_C", 9, 3), ("SET_D", 6, 2), ("SET_E", 7, 0), ("SET_F", 12, 5), ("SET_G", 5, 1)]
 
 
 def path_enrichment() -> None:

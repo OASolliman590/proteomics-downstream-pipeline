@@ -892,3 +892,55 @@ def test_v222_negative_a_p_without_permutations_or_seed_fails_e_figure_source_mi
         _build(tmp_path, "perm_permdisp", "perm_permdisp_no_seed_source.tsv")
     assert caught.value.code == "E_FIGURE_SOURCE_MISSING"
     assert "seed" in caught.value.message
+
+
+# ---------------------------------------------------------------- fixes after review (V215, V218, V221)
+
+def _r_delong_ci(scores: Path) -> tuple[float, float]:
+    """The DeLong 95 per cent interval of the AUC, pROC::ci.auc, computed independently of the builder."""
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "suppressPackageStartupMessages(library(pROC))\n"
+        "d <- read.delim(args[1], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "r <- roc(response = d$class, predictor = d$score, levels = c('Control', 'Case'), direction = '<', quiet = TRUE)\n"
+        "cat(jsonlite::toJSON(as.numeric(ci.auc(r, method = 'delong')), auto_unbox = FALSE, digits = NA))\n"
+    )
+    result = run_r_code(code, [scores], cwd=scores.parent)
+    assert result.returncode == 0, result.stderr
+    values = json.loads(result.stdout.strip().splitlines()[-1])
+    return values[0], values[2]
+
+
+def test_v215_the_statistics_table_holds_the_auc_its_interval_and_the_group_sizes(tmp_path):
+    result = _build(tmp_path, "bio_roc_ci_band", "bio_roc_ci_band_source.tsv")
+    scores = _rows("bio_roc_scores.tsv")
+    cases = [float(r["score"]) for r in scores if r["class"] == "Case"]
+    controls = [float(r["score"]) for r in scores if r["class"] == "Control"]
+    stats = _pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=3)      # D-75 statistics table, after the three XY tables
+    assert abs(stats["AUC"][0] - _auc_mann_whitney(cases, controls)) <= 1e-10
+    low, high = _r_delong_ci(FIX / "bio_roc_scores.tsv")
+    assert abs(stats["CI95_low"][0] - low) <= 1e-10 and abs(stats["CI95_high"][0] - high) <= 1e-10
+    assert stats["n_Control"] == [float(len(controls))] and stats["n_Case"] == [float(len(cases))]
+    assert "claim: cross_validated_nested" in _pzfx_text(Path(result["outputs"]["pzfx"]))  # row title carries the claim label
+
+
+def test_v218_rows_are_ordered_by_q_with_the_most_significant_set_at_the_top_and_significant_sets_outlined(tmp_path):
+    result = _build(tmp_path, "path_enrichment_dotplot", "path_enrichment_source.tsv")
+    rows = _rows("path_enrichment_source.tsv")
+    by_id = {r["set_id"]: r for r in rows}
+    hit_sets = [r["set_id"] for r in rows if int(r["k"]) >= 1]
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    trace = _trace(figure, "enriched set (foreground hit)")
+    # categories run bottom to top: the last category is the most significant set (smallest q)
+    assert figure["layout"]["yaxis"]["categoryarray"][-1] == min(hit_sets, key=lambda s: float(by_id[s]["q_value"]))
+    assert figure["layout"]["yaxis"]["categoryarray"] == sorted(hit_sets, key=lambda s: (float(by_id[s]["q_value"]), s), reverse=True)
+    # black outline for q < 0.05 only
+    assert trace["marker"]["line"]["width"] == [1.5 if float(by_id[s]["q_value"]) < 0.05 else 0.4 for s in hit_sets]
+    assert [s for s, w in zip(hit_sets, trace["marker"]["line"]["width"]) if w == 1.5] == ["SET_A"]
+
+
+def test_v221_the_group_legend_is_present_in_the_html(tmp_path):
+    result = _build(tmp_path, "perm_pcoa_centroids", "perm_pcoa_source.tsv")
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    legend_names = {t["name"] for t in figure["data"] if t.get("showlegend", True)}
+    assert {"A", "B"} <= legend_names

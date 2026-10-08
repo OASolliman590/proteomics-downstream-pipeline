@@ -377,13 +377,20 @@ catalogue_enrichment <- function(source, show_sets = NULL) {
   if (length(empty)) catalogue_refuse("E_FIGURE_SET_MISMATCH", sprintf("set(s) %s have no foreground hit; they are not enriched and are not plotted", paste(empty, collapse = ", ")))
   plotted$gene_ratio <- plotted$k / plotted$n
   plotted$neglog10_q <- -log10(plotted$q_value)
-  plotted$set_id <- factor(plotted$set_id, levels = plotted$set_id[order(plotted$neglog10_q)])
-  ggplot2::ggplot(plotted, ggplot2::aes(gene_ratio, set_id, size = k, colour = neglog10_q)) +
-    ggplot2::geom_point() +
-    ggplot2::scale_colour_gradient(low = "#56B4E9", high = "#D55E00", name = "-log10 q") +
-    ggplot2::scale_size_continuous(range = c(2, 6), name = "hits (k)") +
-    ggplot2::labs(x = "gene ratio (k / n)", y = NULL, title = "Enrichment dot plot (family q)") +
-    prism_figure_theme()
+  plotted$significant <- plotted$q_value < 0.05
+  # most significant set first in the rows; factor levels run bottom to top, so the most significant set is drawn at the top
+  plotted <- plotted[order(plotted$q_value, plotted$set_id), ]
+  plotted$set_id <- factor(plotted$set_id, levels = rev(plotted$set_id))
+  ggplot2::ggplot(plotted, ggplot2::aes(gene_ratio, set_id, size = k, fill = neglog10_q)) +
+    ggplot2::geom_point(shape = 21, colour = "grey40", stroke = 0.3) +
+    ggplot2::geom_point(data = plotted[plotted$significant, ], ggplot2::aes(gene_ratio, set_id, size = k), shape = 21,
+                        fill = NA, colour = "black", stroke = 1, show.legend = FALSE, inherit.aes = FALSE) +
+    ggplot2::scale_fill_gradient(low = "grey85", high = "#D55E00", name = "-log10 q") +
+    ggplot2::scale_size_continuous(range = c(2, 6), name = "genes in set (k)") +
+    ggplot2::labs(x = "gene ratio (k / n)", y = NULL, title = "Enrichment dot plot (family q)",
+                  caption = "outline: q < 0.05; top: most significant") +
+    prism_figure_theme() +
+    ggplot2::theme(legend.position = "right", legend.box = "vertical", legend.title = ggplot2::element_text(size = 9, face = "plain", hjust = 0))
 }
 
 # Module eigengene heatmap (V219): group means of the declared modules only (E_FIGURE_SET_MISMATCH otherwise).
@@ -458,12 +465,12 @@ catalogue_pcoa <- function(source) {
                           linewidth = 0.3, inherit.aes = FALSE) +
     ggplot2::geom_point(size = 2.2, alpha = 0.85) +
     ggplot2::geom_point(data = centroids, ggplot2::aes(cx, cy, fill = group), shape = 23, size = 4, colour = "black", inherit.aes = FALSE) +
-    ggplot2::scale_colour_manual(values = palette) +
-    ggplot2::scale_fill_manual(values = palette) +
+    ggplot2::scale_colour_manual(values = palette, name = "group") +
+    ggplot2::scale_fill_manual(values = palette, name = "group") +
     ggplot2::labs(x = sprintf("PCoA 1 (%.1f%%)", source$percent_axis1[1]), y = sprintf("PCoA 2 (%.1f%%)", source$percent_axis2[1]),
-                  title = "PCoA with group centroids", caption = "diamonds: centroids (means of each group's members)") +
+                  title = "PCoA with group centroids", caption = "diamonds: group centroids (means of each group's members)") +
     prism_figure_theme() +
-    ggplot2::theme(legend.position = "none")
+    ggplot2::theme(legend.title = ggplot2::element_text(size = 9, face = "plain", hjust = 0))
 }
 
 # PERMDISP plot (V222): distances to the group centroids, with the PERMDISP P, B and seed. A P without B or seed is refused.

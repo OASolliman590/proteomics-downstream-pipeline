@@ -81,6 +81,8 @@ vendor/plotly/
 | Group comparisons (dot plots, per-protein values) | Column | One column per group. Each row is a replicate value, exactly as in the source. |
 | Volcano, ROC, XY scatter | XY | One point per source row. X and Y are exactly the source values. |
 | Multi-protein panels | Grouped | One row per replicate. One data set per protein and group. |
+| ROC with CI band (stage 2, FR-215) | XY, XY, XY, Column | Curve (1 - specificity, sensitivity) and the lower and upper bootstrap band are XY tables, one point per source row. The fourth table is the statistics table of D-75 (row title: the AUC with its claim label; columns `AUC`, `CI95_low`, `CI95_high`, `n_Control`, `n_Case`). |
+| Network graph (stage 2, FR-220) | Column, XY | Node degree in the declared subnetwork (Column table, row titles are node identifiers). The edge list is an XY table whose X and Y are the node indices of each edge. No statistics table: the Info sheet records `Statistics: none`. |
 
 The writer self-check compares every value it writes with the source table (E_PZFX_VALUE_MISMATCH). Values are written with round-trip numeric precision (D-12). Opening the file in GraphPad Prism is a Maintainer check, recorded as NOT_RUN in automated tests.
 
@@ -144,6 +146,7 @@ Seventeen figure IDs. Each has one V case (V206–V222) that checks all three ou
 | `E_PLOTLY_HOVER` | R16d | Hover text lacks an identifying field. |
 | `E_PLOTLY_NETWORK` | R16d | An external resource reference or network call in the HTML. |
 | `E_PLOTLY_HASH` | R16d | The vendored plotly.js hash differs from the pin. |
+| `E_FIGURE_PERMUTATION_P` | R16e (stage 2, FR-217) | The displayed permutation P differs from (k + 1) / (B + 1) computed from the source; no output is produced. |
 
 Existing codes are reused: `E_VENN_K` (R14a) and `E_BIOMARKER_CLAIM` (R14d).
 

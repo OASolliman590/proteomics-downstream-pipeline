@@ -412,14 +412,21 @@ def _content_roc(rows: list[dict], sha: str, **_: Any) -> dict:
          "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>1 - specificity %{x:.3f}"
                           "<br>sensitivity %{y:.3f}<br>%{customdata[2]}<extra></extra>"},
     ]
+    # D-75 statistics table: the AUC as the effect, its 95 per cent interval, and the group sizes; the claim label is in the row title
+    stats_table = ColumnTable("ROC with CI band - pipeline statistics",
+                              (("AUC", (auc,)), ("CI95_low", (lo,)), ("CI95_high", (hi,)),
+                               ("n_Control", (float(n_control),)), ("n_Case", (float(n_case),))),
+                              row_titles=(f"AUC out-of-fold (claim: {claim})",))
     tables = [xy_table("ROC curve (out-of-fold)", "1 - specificity", "sensitivity", cfpr, csens),
               xy_table("ROC CI band, lower", "1 - specificity", "sensitivity (lower)", bfpr, blo),
-              xy_table("ROC CI band, upper", "1 - specificity", "sensitivity (upper)", bfpr, bhi)]
+              xy_table("ROC CI band, upper", "1 - specificity", "sensitivity (upper)", bfpr, bhi),
+              stats_table]
     notes = [f"AUC {auc:.3f} (95% CI {lo:.3f}-{hi:.3f}, DeLong); band from the stratified bootstrap with seed {seed} and B = {boots}.",
              CLAIM_NOTE.format(claim=claim)]
-    return {"tables": tables, "statistics": None, "info": _info("ROC with CI band", "none", "pROC ROC; DeLong AUC CI; stratified bootstrap band",
-            sha, f"Control {n_control}; Case {n_case}", notes, multiplicity="none (performance estimate; no multiplicity family)",
-            effect_scale="not applicable", stage="R16e stage 2"),
+    return {"tables": tables, "statistics": {"AUC": auc, "CI95": (lo, hi)},
+            "info": _info("ROC with CI band", "table", "pROC ROC; DeLong AUC CI; stratified bootstrap band",
+                          sha, f"Control {n_control}; Case {n_case}", notes, multiplicity="none (performance estimate; no multiplicity family)",
+                          effect_scale="AUC (0 to 1)", stage="R16e stage 2"),
             "traces": traces, "layout": _layout(f"ROC with 95% CI band ({claim})", "1 - specificity", "sensitivity"), "png": {}}
 
 
@@ -521,9 +528,11 @@ def _content_enrichment(rows: list[dict], sha: str, show_sets: Sequence[str] | N
                         row_titles=tuple(shown))
     stats = [{"row": r["set_id"], "effect": g, "P": float(r["p_value"]), "q": float(r["q_value"]),
               "n": {"foreground": int(r["n"]), "set": int(r["K"])}} for r, g in zip(plotted, gene_ratio)]
+    significant = [float(r["q_value"]) < 0.05 for r in plotted]
     traces = [{"type": "scatter", "mode": "markers", "name": "enriched set (foreground hit)", "x": gene_ratio, "y": shown,
-               "marker": {"size": [4 + 2 * h for h in hits], "color": neglog_q, "colorscale": "Reds", "showscale": False,
-                          "line": {"color": "#000000", "width": 0.5}},
+               "marker": {"size": [4 + 2 * h for h in hits], "color": neglog_q, "cmin": 0, "colorscale": [[0.0, "#D9D9D9"], [1.0, "#D55E00"]],
+                          "showscale": True, "colorbar": {"title": {"text": "-log10 q"}},
+                          "line": {"color": ["#000000" if s else "#666666" for s in significant], "width": [1.5 if s else 0.4 for s in significant]}},
                "customdata": [[r["set_id"], f"{int(r['k'])} of {int(r['n'])} foreground genes", float(r["q_value"]), int(r["K"])] for r in plotted],
                "hovertemplate": "<b>%{customdata[0]}</b><br>%{customdata[1]}<br>gene ratio %{x:.3f}<br>q = %{customdata[2]:.3g}"
                                 "<br>set size %{customdata[3]}<extra></extra>"}]
@@ -533,8 +542,16 @@ def _content_enrichment(rows: list[dict], sha: str, show_sets: Sequence[str] | N
             "info": _info("enrichment dot plot", "table", "one-sided hypergeometric over-representation (ORA)", sha,
                           f"foreground {n_fg}; universe {universe}", notes, multiplicity="BH within the ORA family (q)",
                           effect_scale="gene ratio (k / n)", stage="R16e stage 2"),
-            "traces": traces, "layout": _layout("Enrichment dot plot (family q)", "gene ratio (k / n)", "gene set"),
+            "traces": traces, "layout": _enrichment_layout(plotted),
             "png": {"show_sets": shown}}
+
+
+def _enrichment_layout(plotted: Sequence[Mapping[str, str]]) -> dict:
+    """Rows ordered by q, most significant at the top: the category array lists the least significant set first (bottom)."""
+    layout = _layout("Enrichment dot plot (family q; black outline q < 0.05)", "gene ratio (k / n)", "gene set")
+    by_significance = sorted(plotted, key=lambda r: (float(r["q_value"]), r["set_id"]), reverse=True)
+    layout["yaxis"] = {**layout["yaxis"], "categoryorder": "array", "categoryarray": [r["set_id"] for r in by_significance]}
+    return layout
 
 
 def _content_module_heatmap(rows: list[dict], sha: str, modules: Sequence[str] = (), **_: Any) -> dict:

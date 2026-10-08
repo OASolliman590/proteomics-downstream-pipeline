@@ -7878,7 +7878,7 @@
       "requirement": "FR-215",
       "task": "T215",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8002,7 +8002,7 @@
       "requirement": "FR-216",
       "task": "T216",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8126,7 +8126,7 @@
       "requirement": "FR-217",
       "task": "T217",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8250,7 +8250,7 @@
       "requirement": "FR-218",
       "task": "T218",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8374,7 +8374,7 @@
       "requirement": "FR-219",
       "task": "T219",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8498,7 +8498,7 @@
       "requirement": "FR-220",
       "task": "T220",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8622,7 +8622,7 @@
       "requirement": "FR-221",
       "task": "T221",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8746,7 +8746,7 @@
       "requirement": "FR-222",
       "task": "T222",
       "status": "PASS",
-      "reviewed_tree": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+      "reviewed_tree": "7a7214af6cd023535d3a9d8f1e726e04f0625d2c89bca1768c31997016026fc0",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",

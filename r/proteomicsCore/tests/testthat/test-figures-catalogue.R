@@ -117,12 +117,39 @@ testthat::test_that("V217 the displayed permutation P equals (k + 1) / (B + 1); 
   testthat::expect_error(catalogue_cv_permutation(read_fixture("bio_cv_auc_vs_permutation_wrong_p_source.tsv")), "E_FIGURE_PERMUTATION_P")
 })
 
-testthat::test_that("V218 the gene ratio is k / n and a set without a foreground hit is refused as enriched", {
+testthat::test_that("V218 the gene ratio is k / n, a set without a foreground hit is refused as enriched", {
   src <- read_fixture("path_enrichment_source.tsv")
   hits <- src[src$k >= 1, ]
+  hits <- hits[order(hits$q_value, hits$set_id), ]          # the rows are drawn most significant first
   built <- ggplot2::ggplot_build(catalogue_enrichment(src))$data[[1]]
   testthat::expect_equal(built$x, hits$k / hits$n, tolerance = 1e-10)
   testthat::expect_error(catalogue_enrichment(src, c("SET_A", "SET_E")), "E_FIGURE_SET_MISMATCH")
+})
+
+testthat::test_that("V218 the colour follows -log10 q and the rows follow q, the most significant set at the top", {
+  src <- read_fixture("path_enrichment_source.tsv")
+  hits <- src[src$k >= 1, ]
+  hits <- hits[order(hits$q_value, hits$set_id), ]
+  p <- catalogue_enrichment(src)
+  built <- ggplot2::ggplot_build(p)$data[[1]]
+  # darker (lower summed RGB) as -log10 q rises: the colours are ordered by the statistic
+  rgb_sum <- colSums(grDevices::col2rgb(built$fill))
+  neglog <- -log10(hits$q_value)
+  testthat::expect_true(all(diff(rgb_sum[order(neglog)]) <= 0))
+  # the most significant set (first row) is drawn at the top: the largest factor position
+  testthat::expect_equal(which.max(built$y), 1L)
+  testthat::expect_equal(built$y[order(hits$q_value)], rev(sort(built$y)))
+  # black outline layer: exactly the sets with q < 0.05
+  outline <- ggplot2::ggplot_build(p)$data[[2]]
+  testthat::expect_equal(nrow(outline), sum(hits$q_value < 0.05))
+})
+
+testthat::test_that("V221 the PCoA plot keeps its group legend, titled group", {
+  src <- read_fixture("perm_pcoa_source.tsv")
+  p <- catalogue_pcoa(src)
+  testthat::expect_false(identical(as.character(ns$completed_theme(p)$legend.position), "none"))
+  built <- ggplot2::ggplot_build(p)
+  testthat::expect_equal(sort(built$plot$scales$get_scales("colour")$get_labels()), c("A", "B"))
 })
 
 testthat::test_that("V219 module cells equal the PC1 oracle; an undeclared module is refused", {
