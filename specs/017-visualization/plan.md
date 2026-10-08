@@ -22,8 +22,8 @@ Phase 6 has no dependency on Phase 5 ([ADR 0011](../../docs/adr/0011-methods-ext
 
 - Add the optional `report.figures` block to `analysis.schema.json` with the keys and defaults of the contract. The existing `report.figure_formats` is unchanged.
 - Add R Suggests entries: ggplot2 and ggprism (R16c), and pzfx (optional read-back, R16b).
-- Approve the vendored plotly.js version before R16d. The Maintainer records its pin (`vendor/plotly/PINNED.json`). R16d is NOT_RUN until then.
-- Decide, before R16e, whether the existing R10b, R13 and R14 figure producers are to be retrofitted to the three-output rule. This is not an allowlist exception: retrofitting needs a separate amendment (see ADR 0012).
+- Pin plotly.js at R16d: the implementer vendors the latest stable plotly.js release, records its version, source URL and SHA-256 in `vendor/plotly/PINNED.json` with the MIT notice, and the Maintainer reviews the pin in the pull request.
+- Retrofit the existing R10b, R13 and R14 figure producers to the three-output rule in R16e (D-72). Record a Maintainer amendment extending the R16e allowlist to those producers before editing them; their figure-source tables and existing acceptance cases are unchanged.
 
 ## Engineering notes
 

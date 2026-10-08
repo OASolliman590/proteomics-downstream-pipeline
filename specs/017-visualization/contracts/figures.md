@@ -16,7 +16,7 @@ This contract fixes the configuration grammar, the three outputs of every figure
 
 ### Relation to `report.figure_formats`
 
-`report.figure_formats` (R10b) keeps its meaning and drives the existing PDF, SVG and PNG figures exactly as before. `report.figures` drives only the catalogue in this contract. If both are declared, both run, with separate outputs and separate directories. The two keys are never merged silently. An invalid `report.figures` block makes only the catalogue INAPPLICABLE with its typed reason. The existing report is unaffected, in line with [ADR 0010](../../../docs/adr/0010-adaptive-post-de-policy.md).
+`report.figure_formats` (R10b) stays accepted for backward compatibility: a run that does not declare `report.figures` produces the existing PDF, SVG and PNG figures exactly as before. When `report.figures` is declared, the catalogue in this contract, which includes the retrofitted R10b, R13 and R14 figures (D-72), produces the three outputs. If both are declared, both run, with separate outputs and separate directories. The two keys are never merged silently. An invalid `report.figures` block makes only the catalogue INAPPLICABLE with its typed reason. The existing report is unaffected, in line with [ADR 0010](../../../docs/adr/0010-adaptive-post-de-policy.md).
 
 ## Style defaults
 
