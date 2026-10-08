@@ -6975,7 +6975,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+        "working_source_manifest_sha256": "67c41f35bafa50ac2e7624e385290834058f590a3318130cc73dcd3e5239401a",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16c commit recorded in the R16c receipt; verified_commit null"
       }
@@ -7011,7 +7011,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+        "working_source_manifest_sha256": "67c41f35bafa50ac2e7624e385290834058f590a3318130cc73dcd3e5239401a",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16c commit recorded in the R16c receipt; verified_commit null"
       }

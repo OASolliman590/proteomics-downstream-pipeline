@@ -18,6 +18,7 @@ testthat::test_that("V202 the Prism-style theme has white background, no gridlin
   testthat::expect_identical(t$tick_direction, "outside")
   status <- fn("figure_font_status")("Arial")
   testthat::expect_true(identical(t$font_family, status$used))
+  testthat::expect_true("prism_offset_minor" %in% t$y_guide)
 })
 
 testthat::test_that("V202 negative: a theme with gridlines fails E_FIGURE_STYLE", {
@@ -40,7 +41,9 @@ testthat::test_that("V203 PNG pixel width is floor(width_mm / 25.4 * 300) at 85,
   }
   layer <- fn("layer_data_strings")(p, 1L, c("x", "y"))
   testthat::expect_identical(as.numeric(layer$y), as.numeric(src$value))
-  testthat::expect_identical(as.numeric(layer$x), as.numeric(match(src$group, c("Control", "Acute", "Chronic"))))
+  position <- as.numeric(match(src$group, c("Control", "Acute", "Chronic")))
+  testthat::expect_true(all(abs(as.numeric(layer$x) - position) <= 0.18 + 1e-9))
+  testthat::expect_true(any(abs(as.numeric(layer$x) - position) > 1e-6))
 })
 
 testthat::test_that("V203 negative: a dpi of 72 fails E_FIGURE_DPI and writes nothing", {

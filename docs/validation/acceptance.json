@@ -6562,14 +6562,14 @@
       "requirement": "FR-202",
       "task": "T202",
       "status": "PASS",
-      "reviewed_tree": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+      "reviewed_tree": "67c41f35bafa50ac2e7624e385290834058f590a3318130cc73dcd3e5239401a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_prism_png.py -q -rs -p no:cacheprovider",
           "exit_code": 0
         },
         {
-          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', reporter='summary', stop_on_failure=TRUE)\"",
+          "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', ...)\" (run from a temporary directory)",
           "exit_code": 0
         },
         {
@@ -6589,15 +6589,15 @@
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16c/evidence/gate-results.json",
-          "sha256": "51e54596069aee75ba16586ba8f819299a3bf0d3a51f4d498d405a4facfa9821"
+          "sha256": "f183f803694702ceffd979f092361f02cf896f938b261e236232ae8340014d9c"
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/python-tests-prism-png.log",
-          "sha256": "e134de51f0e40ddca0daa6d8331cac5ec947ab7f98ccb2d1e05ec0176a2f164f"
+          "sha256": "30f1966b771eff6eff1bce68495de756656c3f1349c3905cb8d510d95561dc41"
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/r-test-figures-prism-png.log",
-          "sha256": "eec9b171dad789b5a7cc1bc51d64702ccd9146e6a866ffad2124b93f39e19844"
+          "sha256": "0310b39dcef491fe8b31134fcfc1aa8a863ea7786ba6ffab24e50b654a6efc5b"
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/spec-kit-check.log",
@@ -6609,7 +6609,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/regression-unit.log",
-          "sha256": "0a46f1d0d8f91d3c109d9e78943f3f3ad7b617b09da4e3709fab596bd4cca9f6"
+          "sha256": "fc4b7d68499f9382bc8273386b431cd2a9f88876cf613db98c3c358adb7c4380"
         }
       ],
       "expected_oracle": "The system MUST render each catalogue figure as a PNG with ggplot2 and the ggprism package using the Prism-style theme: white background, thick black axes, outward ticks, no gridlines, Arial (or a recorded substitution), and mean ± SD drawn over the individual points.",
@@ -6622,14 +6622,14 @@
       "requirement": "FR-203",
       "task": "T203",
       "status": "PASS",
-      "reviewed_tree": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+      "reviewed_tree": "67c41f35bafa50ac2e7624e385290834058f590a3318130cc73dcd3e5239401a",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_prism_png.py -q -rs -p no:cacheprovider",
           "exit_code": 0
         },
         {
-          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', reporter='summary', stop_on_failure=TRUE)\"",
+          "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', ...)\" (run from a temporary directory)",
           "exit_code": 0
         },
         {
@@ -6649,15 +6649,15 @@
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16c/evidence/gate-results.json",
-          "sha256": "51e54596069aee75ba16586ba8f819299a3bf0d3a51f4d498d405a4facfa9821"
+          "sha256": "f183f803694702ceffd979f092361f02cf896f938b261e236232ae8340014d9c"
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/python-tests-prism-png.log",
-          "sha256": "e134de51f0e40ddca0daa6d8331cac5ec947ab7f98ccb2d1e05ec0176a2f164f"
+          "sha256": "30f1966b771eff6eff1bce68495de756656c3f1349c3905cb8d510d95561dc41"
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/r-test-figures-prism-png.log",
-          "sha256": "eec9b171dad789b5a7cc1bc51d64702ccd9146e6a866ffad2124b93f39e19844"
+          "sha256": "0310b39dcef491fe8b31134fcfc1aa8a863ea7786ba6ffab24e50b654a6efc5b"
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/spec-kit-check.log",
@@ -6669,7 +6669,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16c/evidence/regression-unit.log",
-          "sha256": "0a46f1d0d8f91d3c109d9e78943f3f3ad7b617b09da4e3709fab596bd4cca9f6"
+          "sha256": "fc4b7d68499f9382bc8273386b431cd2a9f88876cf613db98c3c358adb7c4380"
         }
       ],
       "expected_oracle": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi, rounded down to an integer (the raster device truncates), and its plotted data MUST equal the source table as reported by `ggplot_build`.",

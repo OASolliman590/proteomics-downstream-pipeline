@@ -1060,6 +1060,28 @@
         "docs/validation/acceptance.json"
       ],
       "change": "R16d (ADR 0012, FR-204, FR-205, V204, V205): the reason-code catalogue gains the E_PLOTLY_HASH, E_PLOTLY_HOVER and E_PLOTLY_NETWORK codes (regenerated); traceability status for FR-204 and FR-205 is PASS with evidence, and the task checkboxes T204 and T205 are ticked. The vendored plotly.js (vendor/plotly/) is in the R16d allowlist. Its pin is recorded as pending Maintainer approval in PINNED.json, as contracts/figures.md requires. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-34",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/NAMESPACE",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16c review fix (commit after 2c55bbb): the public figure functions (prism_figure_theme, prism_dot_plot, render_prism_png, png_size, figure_font_status, check_prism_style, layer_data_strings, theme_report) are exported from proteomicsCore so the installed package and R16e can call them; the tests use the installed package. The NAMESPACE file is the only shared file changed. The traceability rows of FR-202 and FR-203 record the new working-source manifest. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-35",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "scripts/maintained/build_release.py",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16c review fix: the release secret scanner flagged the vendored plotly.js library (vendor/plotly/plotly.min.js, line 8) because the minified code contains the expression access_token=\"+(... matched by the hard-coded-secret rule (a false positive: JavaScript, not a credential). The scanner now exempts that one file from the secret rule only while its SHA-256 equals the pin in vendor/plotly/PINNED.json; every other file, and any change to the library, is scanned as before. This narrows a security control and needs Maintainer review."
     }
   ]
 }

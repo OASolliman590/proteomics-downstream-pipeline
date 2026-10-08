@@ -5,14 +5,14 @@
       "name": "pytest prism png",
       "command": ".venv/bin/python -m pytest tests/scientific/test_prism_png.py -q -rs -p no:cacheprovider",
       "exit_code": 0,
-      "summary": "5 passed in 12.07s",
+      "summary": "6 passed in 14.09s",
       "log": "docs/validation/017-visualization/R16c/evidence/python-tests-prism-png.log"
     },
     {
       "name": "testthat prism png",
-      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', reporter='summary', stop_on_failure=TRUE)\"",
+      "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', ...)\" (run from a temporary directory)",
       "exit_code": 0,
-      "summary": "expectations=17 failed=0 skipped=0 errors=0",
+      "summary": "expectations=19 failed=0 skipped=0 errors=0",
       "log": "docs/validation/017-visualization/R16c/evidence/r-test-figures-prism-png.log"
     },
     {
@@ -33,16 +33,17 @@
       "name": "regression and unit",
       "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
       "exit_code": 0,
-      "summary": "85 passed in 19.27s",
+      "summary": "85 passed in 19.37s",
       "log": "docs/validation/017-visualization/R16c/evidence/regression-unit.log"
     }
   ],
-  "working_source_manifest_sha256": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
-  "n_files": 7,
+  "working_source_manifest_sha256": "67c41f35bafa50ac2e7624e385290834058f590a3318130cc73dcd3e5239401a",
+  "n_files": 9,
   "environment": {
-    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
-    "python": "3.13.15",
+    "platform": "macOS-26.7-x86_64-i386-64bit",
+    "python": "3.12.14",
     "rscript": "4.6.1",
+    "ggplot2": "4.0.3",
     "ggprism": "1.0.7",
     "ragg": "1.5.2",
     "LANG": "en_US.UTF-8"

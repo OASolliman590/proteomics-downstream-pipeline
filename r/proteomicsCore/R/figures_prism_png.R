@@ -22,7 +22,7 @@ figure_font_status <- function(family = "Arial") {
 prism_figure_theme <- function(base_size = 12, family = "Arial") {
   v <- figure_style_values()
   family <- figure_font_status(family)$used
-  ggprism::theme_prism(base_size = base_size, base_family = family) +
+  ggprism::theme_prism(base_size = base_size, base_family = family, base_line_size = 0.8) +
     ggplot2::theme(
       panel.background = ggplot2::element_rect(fill = v$background, colour = NA),
       plot.background = ggplot2::element_rect(fill = v$background, colour = NA),
@@ -64,7 +64,10 @@ theme_report <- function(plot) {
        grid_minor_blank = inherits(el("panel.grid.minor"), "element_blank"),
        axis_line_linewidth_mm = el("axis.line")$linewidth,
        axis_line_pt = el("axis.line")$linewidth * ggplot2::.pt,
-       tick_length = as.numeric(grid::convertUnit(el("axis.ticks.length"), "pt", valueOnly = TRUE)),
+       # read the unit directly: grid::convertUnit() needs a graphics device and would create Rplots.pdf
+       tick_length = as.numeric(el("axis.ticks.length")),
+       tick_unit = as.character(grid::unitType(el("axis.ticks.length"))),
+       y_guide = class(plot$scales$get_scales("y")$guide),
        tick_direction = "outside",
        font_family = el("text")$family)
 }
@@ -74,10 +77,12 @@ theme_report <- function(plot) {
 prism_dot_plot <- function(source, group_colours, y_label = "value", title = NULL, family = "Arial") {
   source$group <- factor(source$group, levels = names(group_colours))
   ggplot2::ggplot(source, ggplot2::aes(x = group, y = value, colour = group)) +
-    ggplot2::geom_point(size = 2.4, alpha = 0.85, show.legend = FALSE) +
+    ggplot2::geom_point(size = 2.4, alpha = 0.85, show.legend = FALSE,
+                        position = ggplot2::position_jitter(width = 0.18, height = 0, seed = 2026)) +
     ggplot2::stat_summary(fun = mean, geom = "crossbar", width = 0.45, linewidth = 0.35, colour = "black") +
     ggplot2::stat_summary(fun.data = function(x) data.frame(y = mean(x), ymin = mean(x) - stats::sd(x), ymax = mean(x) + stats::sd(x)),
                           geom = "errorbar", width = 0.22, linewidth = 0.6, colour = "black") +
+    ggplot2::scale_y_continuous(guide = ggprism::guide_prism_offset_minor(), expand = ggplot2::expansion(c(0.05, 0.08))) +
     ggplot2::scale_colour_manual(values = group_colours) +
     ggplot2::labs(x = NULL, y = y_label, title = title) +
     prism_figure_theme(family = family)

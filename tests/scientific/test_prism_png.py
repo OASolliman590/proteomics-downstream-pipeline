@@ -37,9 +37,9 @@ pytestmark = pytest.mark.skipif(not _r_available(), reason="NOT_RUN: Rscript wit
 
 DRIVER_RENDER = """
 args <- commandArgs(trailingOnly = TRUE)
-source(args[1])
-out_dir <- args[2]
-src <- read.delim(args[3], stringsAsFactors = FALSE)
+suppressPackageStartupMessages(library(proteomicsCore))
+out_dir <- args[1]
+src <- read.delim(args[2], stringsAsFactors = FALSE)
 src$value <- as.numeric(src$value)
 cols <- c(Control = "#0072B2", Acute = "#E69F00", Chronic = "#D55E00")
 p <- prism_dot_plot(src, cols, y_label = "log2 abundance", title = "Synthetic dot plot")
@@ -54,8 +54,7 @@ cat(jsonlite::toJSON(list(sizes = sizes, layer_x = layer$x, layer_y = layer$y), 
 """
 
 DRIVER_THEME = """
-args <- commandArgs(trailingOnly = TRUE)
-source(args[1])
+suppressPackageStartupMessages(library(proteomicsCore))
 src <- data.frame(group = c("A", "B"), value = c(1, 2))
 p <- prism_dot_plot(src, c(A = "#0072B2", B = "#E69F00"))
 cat(jsonlite::toJSON(list(theme = theme_report(p), font = figure_font_status("Arial")), auto_unbox = TRUE, null = "null", digits = NA))
@@ -63,17 +62,17 @@ cat(jsonlite::toJSON(list(theme = theme_report(p), font = figure_font_status("Ar
 
 DRIVER_GRIDLINES = """
 args <- commandArgs(trailingOnly = TRUE)
-source(args[1])
+suppressPackageStartupMessages(library(proteomicsCore))
 p <- ggplot2::ggplot(data.frame(g = c("A", "B"), v = c(1, 2)), ggplot2::aes(g, v)) + ggplot2::geom_point() + ggplot2::theme_grey()
-render_prism_png(p, file.path(args[2], "grid.png"), width_mm = 120)
+render_prism_png(p, file.path(args[1], "grid.png"), width_mm = 120)
 """
 
 DRIVER_DPI = """
 args <- commandArgs(trailingOnly = TRUE)
-source(args[1])
+suppressPackageStartupMessages(library(proteomicsCore))
 src <- data.frame(group = c("A", "B"), value = c(1, 2))
 p <- prism_dot_plot(src, c(A = "#0072B2", B = "#E69F00"))
-render_prism_png(p, file.path(args[2], "dpi72.png"), width_mm = 120, dpi = 72)
+render_prism_png(p, file.path(args[1], "dpi72.png"), width_mm = 120, dpi = 72)
 """
 
 
@@ -86,7 +85,7 @@ def _png_size(path: Path) -> tuple[int, int]:
 
 
 def _render(tmp_path: Path) -> dict:
-    result = run_r_code(DRIVER_RENDER, [R_FILE, tmp_path / "png", SOURCE])
+    result = run_r_code(DRIVER_RENDER, [tmp_path / "png", SOURCE], cwd=tmp_path)
     assert result.returncode == 0, result.stderr
     return json.loads(result.stdout.strip().splitlines()[-1])
 
@@ -99,7 +98,7 @@ def _source_rows() -> list[dict]:
 # ---------------------------------------------------------------- V202: Prism-style theme
 
 def test_v202_theme_values_equal_the_style_contract(tmp_path):
-    result = run_r_code(DRIVER_THEME, [R_FILE])
+    result = run_r_code(DRIVER_THEME, [], cwd=tmp_path)
     assert result.returncode == 0, result.stderr
     report = json.loads(result.stdout.strip().splitlines()[-1])
     theme, font = report["theme"], report["font"]
@@ -109,6 +108,8 @@ def test_v202_theme_values_equal_the_style_contract(tmp_path):
     assert theme["axis_line_pt"] == pytest.approx(1.5, abs=1e-9)
     assert theme["axis_line_linewidth_mm"] == pytest.approx(1.5 / (72.27 / 25.4), abs=1e-9)
     assert theme["tick_length"] == pytest.approx(4.0, abs=1e-9)
+    assert theme["tick_unit"] == "points"          # grid names the pt unit "points"
+    assert "prism_offset_minor" in theme["y_guide"]   # ggprism offset axis with minor ticks
     assert theme["tick_direction"] == "outside"
     # Arial, or a recorded substitution when Arial is not installed (never a silent change).
     if font["available"]:
@@ -120,7 +121,7 @@ def test_v202_theme_values_equal_the_style_contract(tmp_path):
 
 
 def test_v202_negative_a_theme_with_gridlines_fails_e_figure_style(tmp_path):
-    result = run_r_code(DRIVER_GRIDLINES, [R_FILE, tmp_path])
+    result = run_r_code(DRIVER_GRIDLINES, [tmp_path], cwd=tmp_path)
     assert result.returncode != 0
     assert "E_FIGURE_STYLE" in result.stderr
 
@@ -146,17 +147,28 @@ def test_v203_png_header_dimensions_equal_the_oracle_at_three_widths(tmp_path):
 def test_v203_plotted_layer_equals_the_source_rows(tmp_path):
     rendered = _render(tmp_path)
     rows = _source_rows()
-    # Oracle: each source row is one point. x is the position of its group in declared order; y is the value.
-    expected_x = [float(GROUPS.index(r["group"]) + 1) for r in rows]
+    # Oracle: each source row is one point. y is the value, exactly. x is the group position plus a deterministic jitter
+    # of at most 0.18 of a category width (contracts/figures.md, dot-plot jitter).
+    positions = [float(GROUPS.index(r["group"]) + 1) for r in rows]
     expected_y = [float(r["value"]) for r in rows]
     got_x = [float(v) for v in rendered["layer_x"]]
     got_y = [float(v) for v in rendered["layer_y"]]
-    assert got_x == expected_x
     assert got_y == expected_y
+    assert len(got_x) == len(positions)
+    assert all(abs(x - p) <= 0.18 + 1e-9 for x, p in zip(got_x, positions))
+    assert any(abs(x - p) > 1e-6 for x, p in zip(got_x, positions)), "points must be jittered, not stacked"
+
+
+def test_v203_negative_unjittered_points_stack_on_the_group_line(tmp_path):
+    rendered = _render(tmp_path)
+    rows = _source_rows()
+    stacked = [float(GROUPS.index(r["group"]) + 1) for r in rows]
+    # the stacked layout is what the fidelity rule refuses: the rendered x values differ from the group positions
+    assert [float(v) for v in rendered["layer_x"]] != stacked
 
 
 def test_v203_negative_export_at_72_dpi_fails_e_figure_dpi(tmp_path):
-    result = run_r_code(DRIVER_DPI, [R_FILE, tmp_path])
+    result = run_r_code(DRIVER_DPI, [tmp_path], cwd=tmp_path)
     assert result.returncode != 0
     assert "E_FIGURE_DPI" in result.stderr
     assert not (tmp_path / "dpi72.png").exists()
