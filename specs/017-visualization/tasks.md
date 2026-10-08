@@ -6,7 +6,7 @@
 - [x] T196 — R16a: implement FR-196 (Colourblind-safe palette with stable group colours); establish and pass V196, including its negative case, with independent evidence.
 - [x] T197 — R16a: implement FR-197 (Figure registry from source tables); establish and pass V197, including its negative case, with independent evidence.
 - [x] T198 — R16a: implement FR-198 (P-value annotation); establish and pass V198, including its negative case, with independent evidence.
-- [x] T199 — R16b: implement FR-199 (Column tables for group comparisons); establish and pass V199, including its negative case, with independent evidence.
+- [ ] T199 — R16b: implement FR-199 (Column tables for group comparisons); establish and pass V199, including its negative case, with independent evidence.
 - [x] T200 — R16b: implement FR-200 (XY tables); establish and pass V200, including its negative case, with independent evidence.
 - [x] T201 — R16b: implement FR-201 (Grouped tables for multi-protein panels); establish and pass V201, including its negative case, with independent evidence.
 - [x] T202 — R16c: implement FR-202 (Prism-style theme); establish and pass V202, including its negative case, with independent evidence.
