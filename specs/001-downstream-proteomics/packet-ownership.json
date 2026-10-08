@@ -1048,6 +1048,18 @@
         "docs/validation/acceptance.json"
       ],
       "change": "R16c (ADR 0012, FR-202, FR-203, V202, V203): ggplot2, ggprism, ragg and systemfonts are added to the proteomicsCore R Suggests (ggplot2 and systemfonts are used by the renderer, ggprism and ragg by the Prism theme and the ragg device); ggprism 1.0.7, ragg 1.5.2 and digest 0.6.39 are added to renv.lock (installed in the project-local .r-lib; check_r_lock qualified); the reason-code catalogue gains E_FIGURE_STYLE (regenerated); traceability status for FR-202 and FR-203 is PASS with evidence and the task checkboxes T202 and T203 are ticked. Recorded by the implementing route at the operator's direction (2026-10-08) as the shared-interface amendment named in A-2026-10-01-28; open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-33",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16d (ADR 0012, FR-204, FR-205, V204, V205): the reason-code catalogue gains the E_PLOTLY_HASH, E_PLOTLY_HOVER and E_PLOTLY_NETWORK codes (regenerated); traceability status for FR-204 and FR-205 is PASS with evidence, and the task checkboxes T204 and T205 are ticked. The vendored plotly.js (vendor/plotly/) is in the R16d allowlist. Its pin is recorded as pending Maintainer approval in PINNED.json, as contracts/figures.md requires. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
     }
   ]
 }

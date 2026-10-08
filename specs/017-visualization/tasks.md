@@ -11,8 +11,8 @@
 - [x] T201 — R16b: implement FR-201 (Grouped tables for multi-protein panels); establish and pass V201, including its negative case, with independent evidence.
 - [x] T202 — R16c: implement FR-202 (Prism-style theme); establish and pass V202, including its negative case, with independent evidence.
 - [x] T203 — R16c: implement FR-203 (PNG dimensions and data fidelity); establish and pass V203, including its negative case, with independent evidence.
-- [ ] T204 — R16d: implement FR-204 (Standalone HTML with exact data and hover fields); establish and pass V204, including its negative case, with independent evidence.
-- [ ] T205 — R16d: implement FR-205 (Offline, pinned and licensed plotly.js); establish and pass V205, including its negative case, with independent evidence.
+- [x] T204 — R16d: implement FR-204 (Standalone HTML with exact data and hover fields); establish and pass V204, including its negative case, with independent evidence.
+- [x] T205 — R16d: implement FR-205 (Offline, pinned and licensed plotly.js); establish and pass V205, including its negative case, with independent evidence.
 - [ ] T206 — R16e: implement FR-206 (QC: intensity distributions); establish and pass V206, including its negative case, with independent evidence.
 - [ ] T207 — R16e: implement FR-207 (QC: missingness heatmap); establish and pass V207, including its negative case, with independent evidence.
 - [ ] T208 — R16e: implement FR-208 (QC: sample correlation heatmap); establish and pass V208, including its negative case, with independent evidence.

@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 169,
-    "NOT_RUN": 53
+    "PASS": 171,
+    "NOT_RUN": 51
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -6681,31 +6681,105 @@
       "acceptance_id": "V204",
       "requirement": "FR-204",
       "task": "T204",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "35662ccd930b63c8b1befb425e7a59ee53930d9d677c1fba8e2f3fb61e01eac0",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_plotly_html.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/gate-results.json",
+          "sha256": "7aea9c87ff72982f7aacb7b569e780e7dcec9ee604ffe8b55e6f0154c8d103bc"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/python-tests-plotly-html.log",
+          "sha256": "1064cca4f39348bad3bf85620bee4a8e8c8c494c4be05e4d0b94e07cd864e4ef"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/regression-unit.log",
+          "sha256": "087df774cbb3f2daf06ce9f5f7ad4b9e3d263ac4e6015e0674794e5a85a4f725"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/full-python-suite.log",
+          "sha256": "2e51483188f6499e97bb3eb5f132656f9eb723432625649c878d7f2affd34f7c"
+        }
+      ],
       "expected_oracle": "The system MUST write one standalone HTML file per figure whose embedded trace data equal the source table and whose hover text includes the identifying fields of the figure (group, feature or set identifier, and the P or q shown).",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V205",
       "requirement": "FR-205",
       "task": "T205",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "35662ccd930b63c8b1befb425e7a59ee53930d9d677c1fba8e2f3fb61e01eac0",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_plotly_html.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/gate-results.json",
+          "sha256": "7aea9c87ff72982f7aacb7b569e780e7dcec9ee604ffe8b55e6f0154c8d103bc"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/python-tests-plotly-html.log",
+          "sha256": "1064cca4f39348bad3bf85620bee4a8e8c8c494c4be05e4d0b94e07cd864e4ef"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/regression-unit.log",
+          "sha256": "087df774cbb3f2daf06ce9f5f7ad4b9e3d263ac4e6015e0674794e5a85a4f725"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16d/evidence/full-python-suite.log",
+          "sha256": "2e51483188f6499e97bb3eb5f132656f9eb723432625649c878d7f2affd34f7c"
+        }
+      ],
       "expected_oracle": "The system MUST embed plotly.js from the vendored copy only after checking its SHA-256 against the pinned value. The HTML MUST make no network request and contain no external resource reference. The MIT licence notice for plotly.js MUST be included with the vendored file and in the HTML.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V206",
