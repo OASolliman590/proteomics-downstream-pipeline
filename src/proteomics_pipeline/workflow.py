@@ -203,6 +203,34 @@ class Ledger:
                             "message": result.get("message", "")})
         return result
 
+    def run_direct(self, stage_id: str, capability: str, required: bool, produce: Callable[[Path], tuple[str, str | None, str]], destination: Path,
+                   plan_hash: str | None = None) -> str:
+        """A stage that writes a derived directory without a registered capability handler (the figure catalogue, R16e).
+
+        ``produce(temp)`` writes into a temporary directory and returns (state, reason_code, message). A COMPLETED result is moved
+        to ``destination``; a derived directory from an earlier run is replaced. Other states leave no output."""
+        temp = self.root / f".stage-{stage_id}-{secrets.token_hex(4)}"
+        temp.mkdir(parents=True)
+        try:
+            state, reason, message = produce(temp)
+        except Exception as error:                                # never leave a temporary tree behind
+            shutil.rmtree(temp, ignore_errors=True)
+            state, reason, message = "FAILED", "E_FIGURE_OUTPUT_MISSING", f"{type(error).__name__}: {error}"
+        result_path = None
+        if state == "COMPLETED":
+            result = stage_result(self.run_id, stage_id, capability, "COMPLETED", plan_hash=plan_hash, exit_code=0, message=message)
+            (temp / "stage-result.json").write_bytes(json.dumps(result, ensure_ascii=False, indent=2).encode("utf-8"))
+            if destination.exists():
+                shutil.rmtree(destination)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(temp, destination)
+            result_path = (destination / "stage-result.json").relative_to(self.root).as_posix()
+        else:
+            shutil.rmtree(temp, ignore_errors=True)
+        self.stages.append({"stage_id": stage_id, "capability": capability, "required": required, "state": state, "reason_code": reason,
+                            "result_path": result_path, "exit_code": 0 if state in ("COMPLETED", "INAPPLICABLE") else 4, "message": message})
+        return state
+
     def virtual(self, stage_id: str, capability: str, required: bool, state: str, reason_code: str | None, message: str, exit_code: int | None = None):
         self.stages.append({"stage_id": stage_id, "capability": capability, "required": required, "state": state, "reason_code": reason_code,
                             "result_path": None, "exit_code": exit_code, "message": message})
@@ -578,6 +606,13 @@ def _derive_state(stages: list[dict]) -> tuple[str, int, str | None]:
     return "COMPLETED", 0, None
 
 
+def _run_figure_catalogue(root: Path, figures_block: dict, ledger: Ledger, plan_hash: str | None) -> str:
+    """The figure catalogue of the run (R16e, D-72): report/figure_catalogue/ with the three outputs of each figure."""
+    from .figures import run_catalogue
+    return ledger.run_direct("figure_catalogue", "figure_catalogue", False,
+                             lambda temp: run_catalogue.stage(root, figures_block, temp), root / "report" / "figure_catalogue", plan_hash=plan_hash)
+
+
 def _finalize(root: Path, config: dict, ledger: Ledger, run_id: str, plan_hash: str | None, started: str, *, report: bool) -> dict:
     (root / "warnings.json").write_bytes(json.dumps(ledger.warnings, indent=2, ensure_ascii=False).encode("utf-8"))
     state, exit_code, reason = _derive_state(ledger.stages)
@@ -591,6 +626,9 @@ def _finalize(root: Path, config: dict, ledger: Ledger, run_id: str, plan_hash: 
         if any(c["id"] == "report_full" and c["implemented"] for c in discovered_capabilities()):
             ledger.run_stage("report_full", "report_full", False, lambda temp: _python_request(run_id, "report_full", "report_full", temp, config_path=None, inputs=[],
                              parameters={"run_root": str(root), "run_snapshot": snapshot, "figure_formats": list(config["report"].get("figure_formats", []))}, plan_hash=plan_hash), root / "report-full")
+        figures_block = (config.get("report") or {}).get("figures")
+        if figures_block is not None:
+            _run_figure_catalogue(root, figures_block, ledger, plan_hash)
         state, exit_code, reason = _derive_state(ledger.stages)
         if (root / "report" / "methods.md").is_file():
             shutil.copyfile(root / "report" / "methods.md", root / "methods.md")
@@ -600,6 +638,11 @@ def _finalize(root: Path, config: dict, ledger: Ledger, run_id: str, plan_hash: 
         path = root / relative
         if path.is_file():
             artifacts.append({"artifact_id": relative.replace("/", "_").replace(".", "_"), "relative_path": relative, "sha256": sha256_file(path), "result_type": kind})
+    catalogue = root / "report" / "figure_catalogue"
+    if catalogue.is_dir():
+        for index, path in enumerate(sorted(item for item in catalogue.rglob("*") if item.is_file())):
+            artifacts.append({"artifact_id": f"figure_catalogue_{index:04d}", "relative_path": path.relative_to(root).as_posix(),
+                              "sha256": sha256_file(path), "result_type": "FigureArtifact"})
     status = {"schema_version": "1.2.0", "run_id": run_id, "plan_hash": plan_hash, "requested_phase": config["runtime"]["phase"],
               "implemented_capabilities": implemented, "state": state, "reason_code": reason, "started_at": started, "finished_at": utc_now(),
               "exit_code": exit_code, "stages": [{k: s[k] for k in ("stage_id", "capability", "required", "state", "reason_code", "result_path")} for s in ledger.stages],
