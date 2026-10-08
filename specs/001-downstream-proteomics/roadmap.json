@@ -390,6 +390,95 @@
       ],
       "phase": 4,
       "amendment": "ADR 0009 (operator-authorized 2026-10-02); dispatched as R14a-R14f"
+    },
+    {
+      "id": "R15",
+      "slice": "016-methods-extension-validation",
+      "title": "Methods extension and multi-study validation",
+      "story": "US10, US11",
+      "depends_on": [
+        "R05",
+        "R08",
+        "R11",
+        "R14"
+      ],
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-168",
+        "FR-169",
+        "FR-170",
+        "FR-171",
+        "FR-172",
+        "FR-173",
+        "FR-174",
+        "FR-175",
+        "FR-176",
+        "FR-177",
+        "FR-178",
+        "FR-179",
+        "FR-180",
+        "FR-181",
+        "FR-182",
+        "FR-183",
+        "FR-184",
+        "FR-185",
+        "FR-186",
+        "FR-187",
+        "FR-188",
+        "FR-189",
+        "FR-190",
+        "FR-191",
+        "FR-192",
+        "FR-193",
+        "FR-194"
+      ],
+      "phase": 5,
+      "amendment": "ADR 0011 (Maintainer decision 2026-10-08); dispatched as R15a-R15d"
+    },
+    {
+      "id": "R16",
+      "slice": "017-visualization",
+      "title": "Visualization outputs",
+      "story": "US12",
+      "depends_on": [
+        "R05",
+        "R10",
+        "R13",
+        "R14"
+      ],
+      "status": "pending-after-freeze",
+      "requirements": [
+        "FR-195",
+        "FR-196",
+        "FR-197",
+        "FR-198",
+        "FR-199",
+        "FR-200",
+        "FR-201",
+        "FR-202",
+        "FR-203",
+        "FR-204",
+        "FR-205",
+        "FR-206",
+        "FR-207",
+        "FR-208",
+        "FR-209",
+        "FR-210",
+        "FR-211",
+        "FR-212",
+        "FR-213",
+        "FR-214",
+        "FR-215",
+        "FR-216",
+        "FR-217",
+        "FR-218",
+        "FR-219",
+        "FR-220",
+        "FR-221",
+        "FR-222"
+      ],
+      "phase": 6,
+      "amendment": "ADR 0012 (Maintainer decision 2026-10-08); dispatched as R16a-R16e"
     }
   ],
   "phases": [
@@ -417,6 +506,16 @@
       "phase": 4,
       "release": "v1.1-post-de",
       "meaning": "R14a-R14f: set logic and concordance, robustness, phenotype association, leakage-safe biomarker evaluation, co-abundance and networks, eligibility reporting."
+    },
+    {
+      "phase": 5,
+      "release": "v1.2-methods-validation",
+      "meaning": "R15a-R15d: optional Welch t-test engine with labelled paper-compatible rule, offline pathway libraries, calibration extension and multi-study validation framework."
+    },
+    {
+      "phase": 6,
+      "release": "v1.3-visualization",
+      "meaning": "R16a-R16e: per-figure Prism .pzfx, Prism-style 300 dpi PNG and standalone interactive HTML, with the figure catalogue. Independent of Phase 5 and may be built before it."
     }
   ]
 }

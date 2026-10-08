@@ -5958,8 +5958,1519 @@
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/post-de (not pushed); verified_commit null until CI on a pushed commit"
       }
+    },
+    {
+      "requirement": "FR-168",
+      "task": "T168",
+      "acceptance": "V168",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15a",
+      "phase": 5,
+      "capability": "Welch per-contrast test",
+      "criterion": "The system MUST compute, for each declared pairwise group contrast on log2 abundance, a two-sample Welch t statistic with unequal variances and Welch–Satterthwaite degrees of freedom. The effect MUST equal the difference of the two group means, and its confidence interval MUST be computed at the declared level.",
+      "scientific_rule": "SM42",
+      "implementation_targets": [
+        "src/proteomics_pipeline/welch_service.py",
+        "r/proteomicsCore/R/model_welch.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_welch_engine.py; r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "case_id": "V168",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V168",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-169",
+      "task": "T169",
+      "acceptance": "V169",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15a",
+      "phase": 5,
+      "capability": "Engine declaration and placement",
+      "criterion": "The system MUST run `welch` only when it is declared under `methods_extension.welch`, either as the single primary engine for a hypothesis or as a named secondary model with its own family. Without a declaration the default primary engine (limma, [ADR 0002](../../docs/adr/0002-primary-engine-limma.md)) and its outputs MUST be unchanged. A missing or failed Welch result MUST NOT be replaced by a limma result under the Welch name ([ADR 0005](../../docs/adr/0005-no-silent-method-fallback.md)).",
+      "scientific_rule": "SM42",
+      "implementation_targets": [
+        "src/proteomics_pipeline/welch_service.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_welch_engine.py; r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "case_id": "V169",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V169",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-170",
+      "task": "T170",
+      "acceptance": "V170",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15a",
+      "phase": 5,
+      "capability": "Multiplicity and paper-compatible rule labelling",
+      "criterion": "The system MUST apply BH within the declared family and MAY additionally export a paper-compatible DEP rule that selects features with raw P below a declared cutoff. Every paper-compatible selection MUST carry the label `not_multiplicity_controlled`, and BH MUST be reported alongside it in the same table.",
+      "scientific_rule": "SM43",
+      "implementation_targets": [
+        "src/proteomics_pipeline/reporting/welch_data.py",
+        "r/proteomicsCore/R/model_welch.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_welch_engine.py; r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "case_id": "V170",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V170",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-171",
+      "task": "T171",
+      "acceptance": "V171",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15a",
+      "phase": 5,
+      "capability": "Paired variant",
+      "criterion": "When the frozen design declares paired or subject-blocked observations for a contrast, the system MUST run the paired t-test on within-subject differences with n − 1 degrees of freedom, in place of the two-sample Welch test for that contrast.",
+      "scientific_rule": "SM42",
+      "implementation_targets": [
+        "r/proteomicsCore/R/model_welch.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_welch_engine.py; r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "case_id": "V171",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V171",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-172",
+      "task": "T172",
+      "acceptance": "V172",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15a",
+      "phase": 5,
+      "capability": "Adaptation for unhonourable declarations",
+      "criterion": "When a Welch request declares covariates or blocking that a Welch test cannot honour, the system MUST run only the valid unadjusted or within-subject form and record the adaptation (analysis, item, requested, used, reason) in the plan decision, the module's `eligibility.json` and a `W_WELCH_ADAPTED` warning. It MUST NOT drop the declaration silently.",
+      "scientific_rule": "SM42",
+      "implementation_targets": [
+        "src/proteomics_pipeline/welch_service.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_welch_engine.py; r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "case_id": "V172",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V172",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-173",
+      "task": "T173",
+      "acceptance": "V173",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15a",
+      "phase": 5,
+      "capability": "Welch and limma on the same fixture",
+      "criterion": "For the same contrast and features, the system MUST report identical effects from Welch and limma and MUST keep their P values distinct, because limma moderates variances. Each engine's P value MUST match its own independent oracle.",
+      "scientific_rule": "SM42",
+      "implementation_targets": [
+        "r/proteomicsCore/R/model_welch.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_welch_engine.py; r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "case_id": "V173",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V173",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-174",
+      "task": "T174",
+      "acceptance": "V174",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15b",
+      "phase": 5,
+      "capability": "Hashed offline GMT libraries",
+      "criterion": "The system MUST read user-supplied local GMT library files only. Each library MUST be recorded in a manifest with its file SHA-256, source, version, species, identifier type, licence identifier and a redistributable flag. Analysis MUST NOT open a network connection or download a library ([SM14](../001-downstream-proteomics/contracts/scientific-methods.md), [SM44](../001-downstream-proteomics/contracts/scientific-methods.md#methods-extension)).",
+      "scientific_rule": "SM44",
+      "implementation_targets": [
+        "src/proteomics_pipeline/gene_set_libraries.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_gene_set_libraries.py; r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "case_id": "V174",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V174",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-175",
+      "task": "T175",
+      "acceptance": "V175",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15b",
+      "phase": 5,
+      "capability": "Licensing and redistribution rule",
+      "criterion": "KEGG and MSigDB library files MUST NOT be redistributed. They MUST NOT be committed to the repository, copied into an artifact or published by the release tooling. Reactome, GO and WikiPathways libraries MAY be used under their recorded open licences. The public repository MUST contain only synthetic, marked GMT fixtures.",
+      "scientific_rule": "SM44",
+      "implementation_targets": [
+        "src/proteomics_pipeline/gene_set_libraries.py",
+        "r/proteomicsCore/R/gene_set_libraries.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_gene_set_libraries.py; r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "case_id": "V175",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V175",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-176",
+      "task": "T176",
+      "acceptance": "V176",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15b",
+      "phase": 5,
+      "capability": "Over-representation with the measured background",
+      "criterion": "The system MUST run hypergeometric over-representation for each declared library using as its universe the measured, mapped and eligible features of the analysed set (SM17). A whole-genome or library-wide background MUST NOT be used.",
+      "scientific_rule": "SM17",
+      "implementation_targets": [
+        "r/proteomicsCore/R/gene_set_libraries.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_gene_set_libraries.py; r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "case_id": "V176",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V176",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-177",
+      "task": "T177",
+      "acceptance": "V177",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15b",
+      "phase": 5,
+      "capability": "Pre-ranked enrichment on Welch statistics",
+      "criterion": "The system MUST support pre-ranked enrichment on a declared statistic, including the Welch t of FR-168. It MUST reuse the existing fgsea adapter with an exploratory label (FR-075) or document a named alternative, and its ranks MUST be tie-free under the SM15 tie-break rule.",
+      "scientific_rule": "SM44",
+      "implementation_targets": [
+        "r/proteomicsCore/R/pathway_prerank_welch.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_gene_set_libraries.py; r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "case_id": "V177",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V177",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-178",
+      "task": "T178",
+      "acceptance": "V178",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15b",
+      "phase": 5,
+      "capability": "Family discipline across libraries",
+      "criterion": "Each combination of library, method and contrast MUST be a separate family. BH MUST NOT be applied across libraries, and no pooled library family is created.",
+      "scientific_rule": "SM44",
+      "implementation_targets": [
+        "src/proteomics_pipeline/gene_set_libraries.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_gene_set_libraries.py; r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "case_id": "V178",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V178",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-179",
+      "task": "T179",
+      "acceptance": "V179",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15c",
+      "phase": 5,
+      "capability": "Penalised families under the null",
+      "criterion": "The system MUST calibrate lasso and elastic net classifiers, with the elastic-net penalty tuned by inner cross-validation, within the nested procedure of FR-153. Under the null, each family MUST meet the pre-registered null gates of FR-183.",
+      "scientific_rule": "SM45",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker_families.py",
+        "r/proteomicsCore/R/post_de_biomarker_families.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/methods_extension/test_methods_extension_calibration.py; tests/scientific/calibration_methods_extension.R",
+        "case_id": "V179",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V179",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-180",
+      "task": "T180",
+      "acceptance": "V180",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15c",
+      "phase": 5,
+      "capability": "SVM and random forest under the null and planted signal",
+      "criterion": "The system MUST calibrate linear and polynomial SVM classifiers, and the optional random forest classifier, under the null and under a planted signal. A missing random forest package MUST yield NOT_RUN for that family only.",
+      "scientific_rule": "SM45",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker_families.py",
+        "r/proteomicsCore/R/post_de_biomarker_families.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/methods_extension/test_methods_extension_calibration.py; tests/scientific/calibration_methods_extension.R",
+        "case_id": "V180",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V180",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-181",
+      "task": "T181",
+      "acceptance": "V181",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15c",
+      "phase": 5,
+      "capability": "LOOCV outer resampling",
+      "criterion": "The system MUST calibrate the nested procedure with leave-one-out outer resampling and inner 5-fold tuning, and report its pooled out-of-fold AUC under the same null gates as the repeated-stratified scheme.",
+      "scientific_rule": "SM45",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker_families.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/methods_extension/test_methods_extension_calibration.py; tests/scientific/calibration_methods_extension.R",
+        "case_id": "V181",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V181",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-182",
+      "task": "T182",
+      "acceptance": "V182",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15c",
+      "phase": 5,
+      "capability": "Subject-blocked units",
+      "criterion": "The system MUST calibrate repeated-measures designs with subject-blocked folds and block-restricted permutations. The ungrouped reference MUST be shown to inflate the AUC, which demonstrates that the blocked form is required.",
+      "scientific_rule": "SM45",
+      "implementation_targets": [
+        "src/proteomics_pipeline/post_de/biomarker_families.py",
+        "r/proteomicsCore/R/post_de_biomarker_families.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/methods_extension/test_methods_extension_calibration.py; tests/scientific/calibration_methods_extension.R",
+        "case_id": "V182",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V182",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-183",
+      "task": "T183",
+      "acceptance": "V183",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15c",
+      "phase": 5,
+      "capability": "Pre-registered gates",
+      "criterion": "Before the first calibration run, the system MUST record its gate values, the seeds and their SHA-256 in the R15c evidence. Any later change to the gates MUST be detected. The pre-registered gates are: (a) null nested AUC, |mean − 0.5| ≤ 0.03 and mean + 1.96 SE ≤ 0.53; (b) null permutation P, binomial P(K ≥ k | rate 0.05) ≥ 0.01 and chi-square goodness-of-fit P over the B + 1 values ≥ 0.01; (c) leaky reference, mean AUC > 0.75; (d) subject-blocked nulls and the ungrouped reference, as in R14f; (e) planted signal (proposed, pending Maintainer confirmation before the first run), mean nested AUC ≥ 0.70 and permutation P ≤ 0.05 in at least 90 % of replicates. Gates (a)–(d) are carried over unchanged from R14f. The full table and the seeds are in the [contract](contracts/methods-extension.md#calibration-gates).",
+      "scientific_rule": "SM45",
+      "implementation_targets": [
+        "scripts/maintained/run_methods_calibration.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/methods_extension/test_methods_extension_calibration.py; tests/scientific/calibration_methods_extension.R",
+        "case_id": "V183",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V183",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-184",
+      "task": "T184",
+      "acceptance": "V184",
+      "slice": "016-methods-extension-validation",
+      "story": "US10",
+      "packet": "R15c",
+      "phase": 5,
+      "capability": "Calibration evidence and reproducibility",
+      "criterion": "Every calibration run MUST record its seeds, replicate counts, package versions, classifier configurations and gate evaluation. Replicate counts MUST NOT be reduced silently. Calibration results apply only to the families and designs they tested ([SM45](../001-downstream-proteomics/contracts/scientific-methods.md#methods-extension)).",
+      "scientific_rule": "SM45",
+      "implementation_targets": [
+        "scripts/maintained/run_methods_calibration.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/methods_extension/test_methods_extension_calibration.py; tests/scientific/calibration_methods_extension.R",
+        "case_id": "V184",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V184",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-185",
+      "task": "T185",
+      "acceptance": "V185",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Study manifest",
+      "criterion": "The system MUST validate a versioned study manifest before any run. It records study identifier, origin (`private` or `public`), design type from the five slots or the reference slot, input format, organism, subject, batch and phenotype columns, the SHA-256 of every input file, the licence, and, for a public study, its approval reference.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/manifest.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V185",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V185",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-186",
+      "task": "T186",
+      "acceptance": "V186",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Validate, run and verify per study",
+      "criterion": "For every study the system MUST perform three steps: `validate` (manifest and inputs), `run` (the declared pipeline) and `verify` (artifact hashes and stage states), followed by a design-specific acceptance check. Each step MUST report its own state.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/runner.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V186",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V186",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-187",
+      "task": "T187",
+      "acceptance": "V187",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Public datasets only after approval",
+      "criterion": "The system MUST download a public dataset only when the Maintainer has approved an accession shortlist, and the approval record matches the accession, URL and expected SHA-256. The approval, the URL and the observed SHA-256 MUST be recorded, and the data MUST be stored outside the repository. Analysis MUST NOT trigger a download.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "scripts/maintained/fetch_public_study.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V187",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V187",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-188",
+      "task": "T188",
+      "acceptance": "V188",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Private studies stay local",
+      "criterion": "Private study inputs and outputs MUST remain on the local machine. The only private information that may be committed is a non-identifying status record containing the slot, design type, PASS or FAIL state and check counts. A committed status record that contains any sample, subject, file or group name MUST be refused.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "scripts/maintained/verify_private_status.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V188",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V188",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-189",
+      "task": "T189",
+      "acceptance": "V189",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Slot 1, label-free DDA",
+      "criterion": "A two-group label-free data-dependent-acquisition study in MaxQuant-style protein-group input MUST validate its required columns, apply the declared contamination and reverse-hit filters, and recover planted contrasts at the declared threshold.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/acceptance.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V189",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V189",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-190",
+      "task": "T190",
+      "acceptance": "V190",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Slot 2, paired or repeated measures",
+      "criterion": "A paired or repeated-measures study MUST preserve the subject structure throughout, run the paired variant (FR-171) or subject-blocked analysis, and refuse to treat repeated observations as independent.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/acceptance.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V190",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V190",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-191",
+      "task": "T191",
+      "acceptance": "V191",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Slot 3, TMT multiplex with batches",
+      "criterion": "A TMT study with plex or batch structure MUST check group-by-batch confounding before any batch adjustment. A confounded batch MUST be handled as an adaptation under ADR 0010 and recorded, and an aliased batch term MUST NOT be fitted.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/acceptance.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V191",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V191",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-192",
+      "task": "T192",
+      "acceptance": "V192",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Slot 4, DIA",
+      "criterion": "A DIA study in DIA-NN-style or Spectronaut-style report input MUST map every required column through a recorded mapping. An unmapped column MUST NOT be dropped silently, and the mapping hash MUST be recorded.",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/acceptance.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V192",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V192",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-193",
+      "task": "T193",
+      "acceptance": "V193",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Slot 5, multi-group with continuous phenotype in a non-human organism",
+      "criterion": "A study with three or more groups and a continuous phenotype in a declared non-human organism MUST run the R14c association with complete-case handling and MUST map identifiers only through the declared organism resource ([SM14](../001-downstream-proteomics/contracts/scientific-methods.md)).",
+      "scientific_rule": "SM46",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/acceptance.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V193",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V193",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-194",
+      "task": "T194",
+      "acceptance": "V194",
+      "slice": "016-methods-extension-validation",
+      "story": "US11",
+      "packet": "R15d",
+      "phase": 5,
+      "capability": "Reference re-run of a three-group serum study with Welch t",
+      "criterion": "The system MUST support an explicit reference slot that re-runs a three-group serum study with the Welch engine, the paper-compatible rule and BH reporting, and records only a non-identifying PASS/FAIL status when the Maintainer runs it locally. This slot is a sixth explicit slot, outside the five design slots, and its private run is Maintainer-only.",
+      "scientific_rule": "SM42",
+      "implementation_targets": [
+        "src/proteomics_pipeline/multistudy/acceptance.py",
+        "src/proteomics_pipeline/multistudy/runner.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_multistudy.py",
+        "case_id": "V194",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V194",
+      "verification": {
+        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-195",
+      "task": "T195",
+      "acceptance": "V195",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16a",
+      "phase": 6,
+      "capability": "`report.figures` configuration",
+      "criterion": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85 or 180; default 85), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/config.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
+        "case_id": "V195",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V195",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-196",
+      "task": "T196",
+      "acceptance": "V196",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16a",
+      "phase": 6,
+      "capability": "Colourblind-safe palette with stable group colours",
+      "criterion": "The system MUST colour groups from the Okabe–Ito palette in declared group order by default, or from an explicit `group_colours` mapping. The same group MUST have the same colour in every figure of a run, independent of figure order.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/style.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
+        "case_id": "V196",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V196",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-197",
+      "task": "T197",
+      "acceptance": "V197",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16a",
+      "phase": 6,
+      "capability": "Figure registry from source tables",
+      "criterion": "The system MUST register each catalogue figure ID with its source table path and SHA-256 and MUST generate a figure only from its registered source table. A figure request without its source table MUST be refused with no output.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/registry.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
+        "case_id": "V197",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V197",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-198",
+      "task": "T198",
+      "acceptance": "V198",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16a",
+      "phase": 6,
+      "capability": "P-value annotation",
+      "criterion": "The system MUST annotate comparisons either as stars or as exact values, as declared. The annotation MUST be computed from the P value in the source table by the contract rule, and no annotation may appear without its P value in the source.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/style.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
+        "case_id": "V198",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V198",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-199",
+      "task": "T199",
+      "acceptance": "V199",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16b",
+      "phase": 6,
+      "capability": "Column tables for group comparisons",
+      "criterion": "The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/pzfx_writer.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pzfx_writer.py; r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
+        "case_id": "V199",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V199",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-200",
+      "task": "T200",
+      "acceptance": "V200",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16b",
+      "phase": 6,
+      "capability": "XY tables",
+      "criterion": "The system MUST write the volcano (effect against −log10 P) and ROC (1 − specificity against sensitivity) data as Prism XY tables, one point per source row, with values exactly as in the source table.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/pzfx_writer.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pzfx_writer.py; r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
+        "case_id": "V200",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V200",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-201",
+      "task": "T201",
+      "acceptance": "V201",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16b",
+      "phase": 6,
+      "capability": "Grouped tables for multi-protein panels",
+      "criterion": "The system MUST write multi-protein panels as Prism grouped tables with one row per replicate and one data set per protein and group, with values exactly as in the source table.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/pzfx_writer.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_pzfx_writer.py; r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
+        "case_id": "V201",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V201",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-202",
+      "task": "T202",
+      "acceptance": "V202",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16c",
+      "phase": 6,
+      "capability": "Prism-style theme",
+      "criterion": "The system MUST render each catalogue figure as a PNG with ggplot2 and the ggprism package using the Prism-style theme: white background, thick black axes, outward ticks, no gridlines, Arial (or a recorded substitution), and mean ± SD drawn over the individual points.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "r/proteomicsCore/R/figures_prism_png.R",
+        "r/proteomicsCore/R/figure_style.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_prism_png.py; r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
+        "case_id": "V202",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V202",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-203",
+      "task": "T203",
+      "acceptance": "V203",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16c",
+      "phase": 6,
+      "capability": "PNG dimensions and data fidelity",
+      "criterion": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi and rounded to the nearest integer, and its plotted data MUST equal the source table as reported by `ggplot_build`.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "r/proteomicsCore/R/figures_prism_png.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_prism_png.py; r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
+        "case_id": "V203",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V203",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-204",
+      "task": "T204",
+      "acceptance": "V204",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16d",
+      "phase": 6,
+      "capability": "Standalone HTML with exact data and hover fields",
+      "criterion": "The system MUST write one standalone HTML file per figure whose embedded trace data equal the source table and whose hover text includes the identifying fields of the figure (group, feature or set identifier, and the P or q shown).",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/plotly_html.py"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_plotly_html.py",
+        "case_id": "V204",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V204",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-205",
+      "task": "T205",
+      "acceptance": "V205",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16d",
+      "phase": 6,
+      "capability": "Offline, pinned and licensed plotly.js",
+      "criterion": "The system MUST embed plotly.js from the vendored copy only after checking its SHA-256 against the pinned value. The HTML MUST make no network request and contain no external resource reference. The MIT licence notice for plotly.js MUST be included with the vendored file and in the HTML.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/plotly_html.py",
+        "vendor/plotly/PINNED.json"
+      ],
+      "proposed_test_target": {
+        "path": "tests/scientific/test_plotly_html.py",
+        "case_id": "V205",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V205",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-206",
+      "task": "T206",
+      "acceptance": "V206",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "QC: intensity distributions",
+      "criterion": "The system MUST plot per-sample log2 intensity distributions from observed cells only, with the observed mask in the source table.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V206",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V206",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-207",
+      "task": "T207",
+      "acceptance": "V207",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "QC: missingness heatmap",
+      "criterion": "The system MUST plot a missingness heatmap of observed fraction per feature and sample, with missing cells shown as missing and never as zero.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V207",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V207",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-208",
+      "task": "T208",
+      "acceptance": "V208",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "QC: sample correlation heatmap",
+      "criterion": "The system MUST plot pairwise sample correlations computed on genuinely observed cells with the coverage rule of SM06, and MUST NOT correlate an imputed matrix.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V208",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V208",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-209",
+      "task": "T209",
+      "acceptance": "V209",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "QC: PCA with ellipses",
+      "criterion": "The system MUST plot PCA scores with a 95 % ellipse per group. A group with fewer than three units MUST NOT receive an ellipse, and the omission MUST be labelled.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V209",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V209",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-210",
+      "task": "T210",
+      "acceptance": "V210",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Differential: labelled volcano",
+      "criterion": "The system MUST plot the zero-null family as a volcano with the declared q cutoff, label only features present in the source table, and classify each point by its family membership.",
+      "scientific_rule": "SM12",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V210",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V210",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-211",
+      "task": "T211",
+      "acceptance": "V211",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Differential: MA plot",
+      "criterion": "The system MUST plot average log2 abundance against log2 fold change for each contrast, with the sign of the change following the declared numerator group.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V211",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V211",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-212",
+      "task": "T212",
+      "acceptance": "V212",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Differential: per-protein dot plots with P brackets",
+      "criterion": "The system MUST plot individual values per group for declared proteins with mean ± SD, and MUST draw P brackets whose labels follow FR-198 from the family P values.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V212",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V212",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-213",
+      "task": "T213",
+      "acceptance": "V213",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Differential: clustered DEP heatmap",
+      "criterion": "The system MUST plot row-scaled values of the declared DEP set with hierarchical clustering by the declared distance, and MUST NOT include features outside that set.",
+      "scientific_rule": "SM25",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V213",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V213",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-214",
+      "task": "T214",
+      "acceptance": "V214",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Differential: UpSet and Venn",
+      "criterion": "The system MUST draw an UpSet plot for any number of sets and a Venn only for three or fewer sets, with region counts equal to the exclusive-region partition of [R14a](../015-post-de-analysis/spec.md).",
+      "scientific_rule": "SM31",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V214",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V214",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-215",
+      "task": "T215",
+      "acceptance": "V215",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Biomarker: ROC with CI band",
+      "criterion": "The system MUST plot the ROC curve of the declared claim label with its bootstrap confidence band. The claim label MUST appear in the figure and its source table.",
+      "scientific_rule": "SM34",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V215",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V215",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-216",
+      "task": "T216",
+      "acceptance": "V216",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Biomarker: panel forest plot",
+      "criterion": "The system MUST plot panel coefficients or effects with their confidence intervals, with the claim label of the panel evaluation.",
+      "scientific_rule": "SM34",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V216",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V216",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-217",
+      "task": "T217",
+      "acceptance": "V217",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Biomarker: CV AUC against permutation null",
+      "criterion": "The system MUST plot the observed cross-validated AUC against the permutation null distribution and show the permutation P as (k + 1) / (B + 1) with B shown.",
+      "scientific_rule": "SM36",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V217",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V217",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-218",
+      "task": "T218",
+      "acceptance": "V218",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Pathways: enrichment dot plot",
+      "criterion": "The system MUST plot enrichment sets with their gene ratio and −log10 q for eligible sets with at least one foreground hit, and MUST NOT show sets without foreground hits as enriched.",
+      "scientific_rule": "SM18",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V218",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V218",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-219",
+      "task": "T219",
+      "acceptance": "V219",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Networks: module heatmap",
+      "criterion": "The system MUST plot module eigengenes per group or phenotype level for the declared modules only.",
+      "scientific_rule": "SM39",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V219",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V219",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-220",
+      "task": "T220",
+      "acceptance": "V220",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "Networks: network graph",
+      "criterion": "The system MUST plot the declared subnetwork's nodes and edges exactly as in the interaction snapshot. Layout coordinates are presentation only and are excluded from data equality.",
+      "scientific_rule": "SM40",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V220",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V220",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-221",
+      "task": "T221",
+      "acceptance": "V221",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "PERMANOVA: PCoA with centroids",
+      "criterion": "The system MUST plot principal coordinates of the declared distance with group centroids computed from each group's members, and MUST NOT draw a centroid from the full sample.",
+      "scientific_rule": "SM26",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V221",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V221",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
+    },
+    {
+      "requirement": "FR-222",
+      "task": "T222",
+      "acceptance": "V222",
+      "slice": "017-visualization",
+      "story": "US12",
+      "packet": "R16e",
+      "phase": 6,
+      "capability": "PERMANOVA: PERMDISP plot",
+      "criterion": "The system MUST plot distances to group centroids per group with the PERMDISP permutation P, showing the number of permutations and the seed used.",
+      "scientific_rule": "SM29",
+      "implementation_targets": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R"
+      ],
+      "proposed_test_target": {
+        "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "case_id": "V222",
+        "status": "pending-after-freeze"
+      },
+      "status": "pending-after-freeze",
+      "evidence": [],
+      "verified_commit": null,
+      "acceptance_spec": "specs/017-visualization/spec.md#V222",
+      "verification": {
+        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      }
     }
   ],
   "redirects": [],
-  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for slice 015 (R14a-R14f); no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for R14a-R14f; no existing identity renumbered or retired."
+  "identity_note": "All 120 FR/T/V identities preserved. R10a/b are dispatch subdivisions, not requirement splits/retirements; see ADR 0001. Evidence arrays are empty until actual execution. 2026-10-01 amendment (ADR 0006): FR-121-FR-130/T121-T130/V121-V130 appended for R13; no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for slice 015 (R14a-R14f); no existing identity renumbered or retired. 2026-10-02 amendment (ADR 0009): FR-131-FR-167/T131-T167/V131-V167 appended for R14a-R14f; no existing identity renumbered or retired. 2026-10-08 amendment (ADR 0011): FR-168-FR-194/T168-T194/V168-V194 appended for slice 016 (R15a-R15d); 2026-10-08 amendment (ADR 0012): FR-195-FR-222/T195-T222/V195-V222 appended for slice 017 (R16a-R16e); no existing identity renumbered or retired."
 }

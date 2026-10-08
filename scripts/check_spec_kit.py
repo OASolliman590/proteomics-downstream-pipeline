@@ -13,11 +13,13 @@ def main():
     roadmap=json.loads((EPIC/'roadmap.json').read_text(encoding='utf-8'))['slices']
     # Amendment A-2026-10-01-04 (ADR 0006): FR/T/V-121..130 appended for R13; the original 120 identities are unchanged.
     # Amendment ADR 0009 (2026-10-02): FR/T/V-131..167 appended for slice 015 (R14a-R14f); 001-130 unchanged.
-    assert len(trace)==167 and len(roadmap)==14
-    assert [x['requirement'] for x in trace]==[f'FR-{i:03d}' for i in range(1,168)]
+    # Amendment ADR 0011 (2026-10-08): FR/T/V-168..194 appended for slice 016 (R15a-R15d).
+    # Amendment ADR 0012 (2026-10-08): FR/T/V-195..222 appended for slice 017 (R16a-R16e).
+    assert len(trace)==222 and len(roadmap)==16
+    assert [x['requirement'] for x in trace]==[f'FR-{i:03d}' for i in range(1,223)]
     for key in ['requirement','task','acceptance']:
-        assert len({x[key] for x in trace})==167,f'Duplicate {key}'
-    expected_per_slice={'015-post-de-analysis':37}
+        assert len({x[key] for x in trace})==222,f'Duplicate {key}'
+    expected_per_slice={'015-post-de-analysis':37,'016-methods-extension-validation':27,'017-visualization':28}
     packet_ids={r['id'] for r in roadmap};seen=set()
     for row in roadmap:
         assert set(row['depends_on'])<=packet_ids,f'Unknown dependency: {row}'

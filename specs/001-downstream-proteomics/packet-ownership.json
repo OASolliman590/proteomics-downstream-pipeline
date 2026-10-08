@@ -453,6 +453,168 @@
         "tests/scientific/calibration_post_de.R",
         "tests/scientific/reference/test_post_de_calibration_evidence.py"
       ]
+    },
+    "R15a": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R05"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/welch_service.py",
+        "src/proteomics_pipeline/reporting/welch_data.py",
+        "r/proteomicsCore/R/model_welch.R",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "tests/scientific/test_welch_engine.py",
+        "tests/fixtures/methods_extension/welch/**",
+        "docs/validation/016-methods-extension-validation/R15a/**"
+      ]
+    },
+    "R15b": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R08",
+        "R15a"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/gene_set_libraries.py",
+        "r/proteomicsCore/R/gene_set_libraries.R",
+        "r/proteomicsCore/R/pathway_prerank_welch.R",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "tests/scientific/test_gene_set_libraries.py",
+        "tests/fixtures/methods_extension/pathway_libraries/**",
+        "docs/validation/016-methods-extension-validation/R15b/**"
+      ]
+    },
+    "R15c": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R14d",
+        "R11"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/biomarker_families.py",
+        "r/proteomicsCore/R/post_de_biomarker_families.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker-families.R",
+        "scripts/maintained/run_methods_calibration.py",
+        "tests/scientific/calibration_methods_extension.R",
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "tests/fixtures/methods_extension/calibration/**",
+        "docs/validation/016-methods-extension-validation/R15c/**"
+      ]
+    },
+    "R15d": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R10b",
+        "R11",
+        "R15a"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/multistudy/__init__.py",
+        "src/proteomics_pipeline/multistudy/manifest.py",
+        "src/proteomics_pipeline/multistudy/runner.py",
+        "src/proteomics_pipeline/multistudy/acceptance.py",
+        "scripts/maintained/fetch_public_study.py",
+        "scripts/maintained/verify_private_status.py",
+        "tests/integration/test_multistudy.py",
+        "tests/fixtures/methods_extension/multistudy/**",
+        "docs/validation/016-methods-extension-validation/R15d/**"
+      ]
+    },
+    "R16a": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R10b"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/__init__.py",
+        "src/proteomics_pipeline/figures/config.py",
+        "src/proteomics_pipeline/figures/style.py",
+        "src/proteomics_pipeline/figures/registry.py",
+        "r/proteomicsCore/R/figure_style.R",
+        "tests/unit/test_figure_config.py",
+        "tests/scientific/test_figure_style.py",
+        "tests/fixtures/figures/style/**",
+        "docs/validation/017-visualization/R16a/**"
+      ]
+    },
+    "R16b": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16a"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/pzfx_writer.py",
+        "r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
+        "tests/scientific/test_pzfx_writer.py",
+        "tests/fixtures/figures/pzfx/**",
+        "docs/validation/017-visualization/R16b/**"
+      ]
+    },
+    "R16c": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16a"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "r/proteomicsCore/R/figures_prism_png.R",
+        "r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
+        "tests/scientific/test_prism_png.py",
+        "tests/fixtures/figures/png/**",
+        "docs/validation/017-visualization/R16c/**"
+      ]
+    },
+    "R16d": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16a"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/plotly_html.py",
+        "vendor/plotly/**",
+        "tests/scientific/test_plotly_html.py",
+        "tests/fixtures/figures/plotly/**",
+        "docs/validation/017-visualization/R16d/**"
+      ]
+    },
+    "R16e": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16b",
+        "R16c",
+        "R16d",
+        "R05",
+        "R08",
+        "R13",
+        "R14d",
+        "R14e"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "tests/integration/test_figure_catalogue.py",
+        "tests/fixtures/figures/catalogue/**",
+        "docs/validation/017-visualization/R16e/**"
+      ]
     }
   },
   "parallel_groups": [
@@ -462,7 +624,7 @@
       "R09"
     ]
   ],
-  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments. 2026-10-02 (ADR 0009): R14a–R14f added for slice 015 (Phase 4), serial; allowlists are disjoint and proposed before dispatch.",
+  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments. 2026-10-02 (ADR 0009): R14a–R14f added for slice 015 (Phase 4), serial; allowlists are disjoint and proposed before dispatch. 2026-10-08 (ADR 0011, ADR 0012): R15a-R15d (Phase 5, serial) and R16a-R16e (Phase 6, serial) added; allowlists are disjoint from each other and from every earlier packet. Phase 6 may be built before Phase 5.",
   "maintainer_amendments": [
     {
       "id": "A-2026-10-01-01",
@@ -808,6 +970,34 @@
         "tests/regression/test_release.py"
       ],
       "change": "D-63: the Maintainer selected the PolyForm Noncommercial License 1.0.0 with Omar A. Solliman as copyright holder and licensor (commercial use needs his separate written license). The operator decision record, license files and package metadata are added; V115 now asserts that every license claim matches the recorded decision and that no other license is claimed; V117 asserts the recorded license while public release stays refused (no disclosure review). pyproject.toml uses the PEP 639 SPDX expression `PolyForm-Noncommercial-1.0.0` with `license-files` (setuptools >= 77)."
+    },
+    {
+      "id": "A-2026-10-01-28",
+      "adr": "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+      "paths": [
+        "specs/016-methods-extension-validation/spec.md",
+        "specs/016-methods-extension-validation/plan.md",
+        "specs/016-methods-extension-validation/tasks.md",
+        "specs/016-methods-extension-validation/contracts/methods-extension.md",
+        "specs/017-visualization/spec.md",
+        "specs/017-visualization/plan.md",
+        "specs/017-visualization/tasks.md",
+        "specs/017-visualization/contracts/figures.md",
+        "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+        "docs/adr/0012-visualization-outputs.md",
+        "specs/001-downstream-proteomics/spec.md",
+        "specs/001-downstream-proteomics/PHASES.md",
+        "specs/001-downstream-proteomics/packet-index.md",
+        "specs/001-downstream-proteomics/decisions.md",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md",
+        "specs/001-downstream-proteomics/roadmap.json",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "scripts/check_spec_kit.py",
+        "tests/regression/test_traceability_reconciliation.py",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "ADR 0011 and ADR 0012 (Maintainer decisions 2026-10-08): slices 016 (Phase 5, v1.2-methods-validation, R15a-R15d, FR/T/V-168-194) and 017 (Phase 6, v1.3-visualization, R16a-R16e, FR/T/V-195-222) appended; scientific methods contract v1.4.0 adds SM42-SM46; spec 001 gains US10-US12; packet allowlists for the nine new packets are disjoint; the shared-interface amendments (welch engine declaration, methods_extension and report.figures schema blocks, R Suggests entries, plotly.js pin) are made by the Maintainer before dispatch, not by allowlist exception."
     }
   ]
 }
