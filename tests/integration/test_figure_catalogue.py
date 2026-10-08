@@ -698,3 +698,197 @@ def test_v217_negative_displayed_p_that_differs_from_the_oracle_fails_e_figure_p
         _build(tmp_path, "bio_cv_auc_vs_permutation", "bio_cv_auc_vs_permutation_wrong_p_source.tsv")
     assert caught.value.code == "E_FIGURE_PERMUTATION_P"
     assert not (tmp_path / "run" / "report" / "figure_catalogue" / "bio_cv_auc_vs_permutation.png").exists()
+
+
+def _mean(values: list[float]) -> float:
+    return sum(values) / len(values)
+
+
+# ---------------------------------------------------------------- V218: enrichment dot plot
+
+def test_v218_gene_ratio_and_neglog_q_equal_the_oracle_and_only_sets_with_a_hit_are_enriched(tmp_path):
+    result = _build(tmp_path, "path_enrichment_dotplot", "path_enrichment_source.tsv")
+    _assert_three_outputs(result)
+    rows = _rows("path_enrichment_source.tsv")
+    by_id = {r["set_id"]: r for r in rows}
+    hit_sets = [r["set_id"] for r in rows if int(r["k"]) >= 1]
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    trace = _trace(figure, "enriched set (foreground hit)")
+    assert [c[0] for c in trace["customdata"]] == hit_sets           # only eligible sets with at least one hit
+    assert "SET_E" not in trace["y"]                                  # SET_E has no foreground hit
+    for i, set_id in enumerate(hit_sets):
+        r = by_id[set_id]
+        assert abs(trace["x"][i] - int(r["k"]) / int(r["n"])) <= 1e-10                       # gene ratio = k / n
+        assert abs(trace["marker"]["color"][i] - (-math.log10(float(r["q_value"])))) <= 1e-10  # -log10 q
+    stats = _pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=1)
+    assert max(abs(a - float(by_id[s]["p_value"])) for a, s in zip(stats["P"], hit_sets)) <= 1e-12
+    assert max(abs(a - float(by_id[s]["q_value"])) for a, s in zip(stats["q"], hit_sets)) <= 1e-12
+
+
+def test_v218_negative_a_set_without_a_foreground_hit_requested_as_enriched_fails_e_figure_set_mismatch(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "path_enrichment_dotplot", "path_enrichment_source.tsv", show_sets=["SET_A", "SET_E"])
+    assert caught.value.code == "E_FIGURE_SET_MISMATCH"
+    assert "SET_E" in caught.value.message
+
+
+# ---------------------------------------------------------------- V219: module heatmap
+
+def _r_module_eigengene_cells() -> list[dict]:
+    """PC1 of each scaled module (features scaled across samples), sign-aligned to the mean profile, then group means."""
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "m <- read.delim(args[1], stringsAsFactors = FALSE, check.names = FALSE, fileEncoding = 'UTF-8')\n"
+        "s <- read.delim(args[2], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "out <- list()\n"
+        "for (mod in c('M1', 'M2', 'M3')) {\n"
+        "  X <- as.matrix(m[m$module == mod, s$sample])\n"
+        "  Z <- t(apply(X, 1, function(x) (x - mean(x)) / sd(x)))\n"
+        "  e <- prcomp(t(Z), center = FALSE, scale. = FALSE)$x[, 1]\n"
+        "  if (cor(e, colMeans(Z)) < 0) e <- -e\n"
+        "  for (g in unique(s$group)) out[[length(out) + 1]] <- list(module = mod, group = g, value = mean(e[s$group == g]))\n"
+        "}\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = run_r_code(code, [FIX / "net_module_matrix.tsv", FIX / "net_module_samples.tsv"], cwd=FIX)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def test_v219_every_cell_equals_the_pc1_oracle_within_1e_10_and_only_declared_modules_appear(tmp_path):
+    result = _build(tmp_path, "net_module_heatmap", "net_module_heatmap_source.tsv", modules=["M1", "M2", "M3"])
+    _assert_three_outputs(result)
+    oracle = {(c["module"], c["group"]): c["value"] for c in _r_module_eigengene_cells()}
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    trace = figure["data"][0]
+    assert trace["y"] == ["M1", "M2", "M3"]
+    assert trace["x"] == ["Control", "Chronic"]
+    for i, module in enumerate(trace["y"]):
+        for j, group in enumerate(trace["x"]):
+            assert abs(trace["z"][i][j] - oracle[(module, group)]) <= 1e-10
+    assert "M4" not in json.dumps(figure)                             # the undeclared module is not shown
+
+
+def test_v219_negative_an_undeclared_module_shown_fails_e_figure_set_mismatch(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "net_module_heatmap", "net_module_heatmap_undeclared_source.tsv", modules=["M1", "M2", "M3"])
+    assert caught.value.code == "E_FIGURE_SET_MISMATCH"
+    assert "M4" in caught.value.message
+
+
+# ---------------------------------------------------------------- V220: network graph
+
+def test_v220_nodes_and_edges_equal_the_induced_subnetwork_of_the_snapshot(tmp_path):
+    result = _build(tmp_path, "net_network_graph", "net_network_graph_source.tsv", snapshot=FIX / "net_interaction_snapshot.tsv")
+    _assert_three_outputs(result)
+    declared = {r["node"] for r in _rows("net_node_annotation.tsv") if r["declared"] == "TRUE"}
+    snapshot = [(r["node_a"], r["node_b"]) for r in _rows("net_interaction_snapshot.tsv")]
+    oracle = {frozenset(e) for e in snapshot if e[0] in declared and e[1] in declared}     # the induced subnetwork
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    names = _trace(figure, "edges")["customdata"][::3]                # one label per edge (three points per segment)
+    drawn = {frozenset(name[0].split("-")) for name in names}
+    assert len(names) == len(oracle) and drawn == oracle
+    nodes = {c[0] for t in figure["data"] if t["name"].startswith("module ") for c in t["customdata"]}
+    assert nodes == declared
+    # layout coordinates are presentation only and are not compared
+    assert len(_pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=1)["to (node index)"]) == len(oracle)
+
+
+def test_v220_negative_an_edge_absent_from_the_snapshot_fails_e_figure_source_missing(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "net_network_graph", "net_network_graph_bad_edge_source.tsv", snapshot=FIX / "net_interaction_snapshot.tsv")
+    assert caught.value.code == "E_FIGURE_SOURCE_MISSING"
+    assert "N01-N08" in caught.value.message
+
+
+# ---------------------------------------------------------------- V221: PCoA with centroids
+
+def _r_pcoa(matrix: Path) -> dict:
+    """stats::cmdscale of the Euclidean distance of the matrix, with the percent of positive eigenvalues per axis."""
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "m <- read.delim(args[1], row.names = 1, check.names = FALSE, fileEncoding = 'UTF-8')\n"
+        "X <- as.matrix(m[, setdiff(names(m), 'group'), drop = FALSE])\n"
+        "cm <- stats::cmdscale(stats::dist(X, method = 'euclidean'), k = 2, eig = TRUE)\n"
+        "out <- list(observation_id = rownames(cm$points), axis1 = unname(cm$points[, 1]), axis2 = unname(cm$points[, 2]),\n"
+        "  percent1 = unname(100 * cm$eig[1] / sum(cm$eig[cm$eig > 0])), percent2 = unname(100 * cm$eig[2] / sum(cm$eig[cm$eig > 0])))\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = run_r_code(code, [matrix], cwd=matrix.parent)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def test_v221_coordinates_equal_cmdscale_and_each_centroid_is_the_mean_of_its_own_group(tmp_path):
+    result = _build(tmp_path, "perm_pcoa_centroids", "perm_pcoa_source.tsv")
+    _assert_three_outputs(result)
+    oracle = _r_pcoa(FIX / "perm_pcoa_matrix.tsv")
+    source = {r["observation_id"]: r for r in _rows("perm_pcoa_source.tsv")}
+    ids = oracle["observation_id"]
+    sign1 = 1 if sum(oracle["axis1"][i] * float(source[o]["axis1"]) for i, o in enumerate(ids)) >= 0 else -1
+    sign2 = 1 if sum(oracle["axis2"][i] * float(source[o]["axis2"]) for i, o in enumerate(ids)) >= 0 else -1
+    for i, o in enumerate(ids):
+        assert abs(sign1 * oracle["axis1"][i] - float(source[o]["axis1"])) <= 1e-8
+        assert abs(sign2 * oracle["axis2"][i] - float(source[o]["axis2"])) <= 1e-8
+    assert abs(float(next(iter(source.values()))["percent_axis1"]) - oracle["percent1"]) <= 1e-8
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    for group in ("A", "B"):
+        members = [o for o in ids if source[o]["group"] == group]
+        cx = _mean([float(source[o]["axis1"]) for o in members])
+        cy = _mean([float(source[o]["axis2"]) for o in members])
+        centroid = _trace(figure, f"{group} centroid")
+        assert abs(centroid["x"][0] - cx) <= 1e-10 and abs(centroid["y"][0] - cy) <= 1e-10
+
+
+def test_v221_negative_a_centroid_taken_from_the_full_sample_is_not_the_drawn_centroid(tmp_path):
+    result = _build(tmp_path, "perm_pcoa_centroids", "perm_pcoa_source.tsv")
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    rows = _rows("perm_pcoa_source.tsv")
+    full_x = _mean([float(r["axis1"]) for r in rows])
+    for group in ("A", "B"):
+        assert abs(_trace(figure, f"{group} centroid")["x"][0] - full_x) > 1e-6   # a full-sample centroid would match and fail
+
+
+# ---------------------------------------------------------------- V222: PERMDISP plot
+
+def _r_permdisp(matrix: Path, seed: int, boots: int) -> dict:
+    """vegan::betadisper (Euclidean distances to the group centroids) and permutest with the recorded seed."""
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "m <- read.delim(args[1], row.names = 1, check.names = FALSE, fileEncoding = 'UTF-8')\n"
+        "X <- as.matrix(m[, setdiff(names(m), 'group'), drop = FALSE])\n"
+        "bd <- vegan::betadisper(stats::dist(X, method = 'euclidean'), factor(m$group))\n"
+        "set.seed(as.integer(args[2]))\n"
+        "pt <- vegan::permutest(bd, permutations = as.integer(args[3]))\n"
+        "out <- list(observation_id = rownames(X), distance = unname(bd$distances), p = pt$tab[1, 'Pr(>F)'])\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = run_r_code(code, [matrix, seed, boots], cwd=matrix.parent)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def test_v222_distances_and_permdisp_p_equal_the_oracle_and_the_permutations_and_seed_are_shown(tmp_path):
+    result = _build(tmp_path, "perm_permdisp", "perm_permdisp_source.tsv")
+    _assert_three_outputs(result)
+    rows = _rows("perm_permdisp_source.tsv")
+    seed, boots = int(rows[0]["seed"]), int(rows[0]["permutations"])
+    oracle = _r_permdisp(FIX / "perm_permdisp_matrix.tsv", seed, boots)
+    distance = dict(zip(oracle["observation_id"], oracle["distance"]))
+    for r in rows:
+        assert abs(float(r["distance_to_centroid"]) - distance[r["observation_id"]]) <= 1e-10
+    assert abs(float(rows[0]["permdisp_p"]) - oracle["p"]) <= 1e-12
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    for group in ("A", "B"):
+        assert sorted(_trace(figure, group)["y"]) == sorted(float(r["distance_to_centroid"]) for r in rows if r["group"] == group)
+    title = figure["layout"]["title"]["text"]
+    assert f"P = {oracle['p']:.3f}" in title and f"B = {boots}" in title and f"seed {seed}" in title
+    stats = _pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=1)
+    assert abs(stats["P"][0] - oracle["p"]) <= 1e-12
+
+
+def test_v222_negative_a_p_without_permutations_or_seed_fails_e_figure_source_missing(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "perm_permdisp", "perm_permdisp_no_seed_source.tsv")
+    assert caught.value.code == "E_FIGURE_SOURCE_MISSING"
+    assert "seed" in caught.value.message

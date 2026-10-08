@@ -217,6 +217,15 @@ def _r_json(code: str, args: list) -> dict:
     return json.loads(result.stdout.strip().splitlines()[-1])
 
 
+def _load_permanova_fixtures():
+    """The synthetic PERMANOVA matrices of R13 (tests/fixtures/permanova), loaded under another module name."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("permanova_fixtures", ROOT / "tests" / "fixtures" / "permanova" / "make_fixtures.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def bio_roc() -> None:
     """V215: 15 controls and 15 cases with planted separation; out-of-fold scores (the analysis input), then the ROC curve,
     the stratified bootstrap band (pROC ci.se, seed recorded) and the AUC (the figure source)."""
@@ -309,6 +318,154 @@ def bio_cv_auc() -> None:
     _tsv("bio_cv_auc_vs_permutation_wrong_p_source.tsv", header, [r[:4] + [0.1] + r[5:] for r in rows])
 
 
+PATHWAY_UNIVERSE = 40
+PATHWAY_FOREGROUND = 12
+PATHWAY_SETS = [("SET_A", 10, 6), ("SET_B", 8, 4), ("SET_C", 9, 3), ("SET_D", 6, 2), ("SET_E", 7, 0), ("SET_F", 12, 5), ("SET_G", 5, 1)]
+
+
+def path_enrichment() -> None:
+    """V218: over-representation rows (hypergeometric P by stats::phyper, BH q). SET_E has no foreground hit."""
+    foreground = [f"G{i:02d}" for i in range(1, PATHWAY_FOREGROUND + 1)]
+    counts = [[name, PATHWAY_UNIVERSE, big_k, PATHWAY_FOREGROUND, hits, ";".join(foreground[:hits])] for name, big_k, hits in PATHWAY_SETS]
+    _tsv("path_enrichment_counts.tsv", ["set_id", "N", "K", "n", "k", "overlap_genes"], counts)
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "d <- read.delim(args[1], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "p <- stats::phyper(d$k - 1, d$K, d$N - d$K, d$n, lower.tail = FALSE)\n"
+        "cat(jsonlite::toJSON(list(p = p, q = stats::p.adjust(p, 'BH')), auto_unbox = FALSE, digits = NA))\n"
+    )
+    result = _r_json(code, [HERE / "path_enrichment_counts.tsv"])
+    rows = [row + [result["p"][i], result["q"][i]] for i, row in enumerate(counts)]
+    _tsv("path_enrichment_source.tsv", ["set_id", "N", "K", "n", "k", "p_value", "q_value", "overlap_genes"],
+         [[r[0], r[1], r[2], r[3], r[4], r[6], r[7], r[5]] for r in rows])
+    (HERE / "path_enrichment_counts.tsv").unlink()
+
+
+MODULE_FEATURES = {"M1": range(1, 11), "M2": range(11, 21), "M3": range(21, 31), "M4": range(31, 41)}
+MODULE_EFFECT = {"M1": 1.5, "M2": -1.2, "M3": 0.0, "M4": 0.8}
+MODULE_SAMPLES = [(f"S{s:02d}", "Control" if s <= 6 else "Chronic") for s in range(1, 13)]
+
+
+def net_module_heatmap() -> None:
+    """V219: four planted modules over two groups (M4 is outside the declared set). The source holds, per module and
+    group, the group mean of the sample eigengenes (PC1 of each scaled module, sign-aligned to the mean profile)."""
+    matrix_rows = []
+    for module, features in MODULE_FEATURES.items():
+        for f in features:
+            row = []
+            for si, (sample, group) in enumerate(MODULE_SAMPLES, start=1):
+                shift = MODULE_EFFECT[module] if group == "Chronic" else 0.0
+                row.append(round(20.0 + 0.4 * math.sin(0.6 * f + 0.37 * si) + shift + 0.3 * math.cos(0.23 * f * si), 6))
+            matrix_rows.append([f"F{f:02d}", module] + row)
+    _tsv("net_module_matrix.tsv", ["feature", "module"] + [s for s, _ in MODULE_SAMPLES], matrix_rows)
+    _tsv("net_module_samples.tsv", ["sample", "group"], [[s, g] for s, g in MODULE_SAMPLES])
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "m <- read.delim(args[1], stringsAsFactors = FALSE, check.names = FALSE, fileEncoding = 'UTF-8')\n"
+        "s <- read.delim(args[2], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "out <- list()\n"
+        "for (mod in unique(m$module)) {\n"
+        "  X <- as.matrix(m[m$module == mod, s$sample])\n"
+        "  Z <- t(scale(t(X)))\n"
+        "  e <- stats::prcomp(t(Z), center = FALSE, scale. = FALSE)$x[, 1]\n"
+        "  if (stats::cor(e, colMeans(Z)) < 0) e <- -e\n"
+        "  for (g in unique(s$group)) out[[length(out) + 1]] <- list(module = mod, group = g, eigengene = mean(e[s$group == g]), n = sum(s$group == g))\n"
+        "}\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = _r_json(code, [HERE / "net_module_matrix.tsv", HERE / "net_module_samples.tsv"])
+    header = ["module", "group", "eigengene", "n", "declared"]
+    rows = [[r["module"], r["group"], r["eigengene"], r["n"], "TRUE" if r["module"] != "M4" else "FALSE"] for r in result]
+    _tsv("net_module_heatmap_source.tsv", header, [r for r in rows if r[4] == "TRUE"])
+    _tsv("net_module_heatmap_undeclared_source.tsv", header, rows)
+
+
+NETWORK_NODES = [f"N{i:02d}" for i in range(1, 31)]
+NETWORK_DECLARED = NETWORK_NODES[:12]
+
+
+def _network_module(node: str) -> str:
+    i = int(node[1:])
+    return "C1" if i <= 6 else "C2" if i <= 12 else "C3" if i <= 18 else "C4"
+
+
+def net_network_graph() -> None:
+    """V220: a 30-node interaction snapshot with a planted dense cluster (C1), a declared 12-node subnetwork, and the
+    induced subnetwork edges as the figure source. The layout is not part of the source."""
+    edges = {}
+    for i in range(1, 31):
+        for j in range(i + 1, 31):
+            a, b = NETWORK_NODES[i - 1], NETWORK_NODES[j - 1]
+            same = _network_module(a) == _network_module(b)
+            keep = (same and (_network_module(a) == "C1" or (i + j) % 3 != 0)) or (not same and (i * j) % 7 == 0)
+            if keep:
+                edges[(a, b)] = round(0.5 + 0.1 * ((i + j) % 5), 2)
+    snapshot = [[a, b, w] for (a, b), w in sorted(edges.items())]
+    _tsv("net_interaction_snapshot.tsv", ["node_a", "node_b", "weight"], snapshot)
+    _tsv("net_node_annotation.tsv", ["node", "module", "declared"],
+         [[n, _network_module(n), "TRUE" if n in NETWORK_DECLARED else "FALSE"] for n in NETWORK_NODES])
+    induced = sorted((a, b) for (a, b) in edges if a in NETWORK_DECLARED and b in NETWORK_DECLARED)
+    source = [["node", n, "", "", _network_module(n)] for n in NETWORK_DECLARED]
+    source += [["edge", f"{a}-{b}", a, b, ""] for a, b in induced]
+    _tsv("net_network_graph_source.tsv", ["kind", "id", "from", "to", "module"], source)
+    absent = next((a, b) for a in NETWORK_DECLARED for b in NETWORK_DECLARED if a < b and (a, b) not in edges)
+    bad = source + [["edge", f"{absent[0]}-{absent[1]}", absent[0], absent[1], ""]]
+    _tsv("net_network_graph_bad_edge_source.tsv", ["kind", "id", "from", "to", "module"], bad)
+
+
+def _matrix_table(name: str, observations: list[dict], values: dict[str, list[float]]) -> None:
+    features = list(values)
+    rows = [[o["observation_id"], o["group"]] + [values[f][i] for f in features] for i, o in enumerate(observations)]
+    _tsv(name, ["observation_id", "group"] + features, rows)
+
+
+def perm_pcoa() -> None:
+    """V221: the R13 location fixture (group B shifted on the first half of the features). Principal coordinates by
+    stats::cmdscale on the Euclidean distance; the centroids are computed by the figure from each group's members."""
+    pm = _load_permanova_fixtures()
+    values, observations = pm.matrix("location")
+    _matrix_table("perm_pcoa_matrix.tsv", observations, values)
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "m <- read.delim(args[1], row.names = 1, check.names = FALSE, fileEncoding = 'UTF-8')\n"
+        "X <- as.matrix(m[, setdiff(names(m), 'group'), drop = FALSE])\n"
+        "cm <- stats::cmdscale(stats::dist(X, method = 'euclidean'), k = 2, eig = TRUE)\n"
+        "pct <- 100 * cm$eig[1:2] / sum(cm$eig[cm$eig > 0])\n"
+        "out <- list(observation_id = rownames(cm$points), axis1 = unname(cm$points[, 1]), axis2 = unname(cm$points[, 2]),\n"
+        "  percent_axis1 = unname(pct[1]), percent_axis2 = unname(pct[2]))\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = _r_json(code, [HERE / "perm_pcoa_matrix.tsv"])
+    group_of = {o["observation_id"]: o["group"] for o in observations}
+    rows = [[oid, group_of[oid], a1, a2, result["percent_axis1"], result["percent_axis2"]]
+            for oid, a1, a2 in zip(result["observation_id"], result["axis1"], result["axis2"])]
+    _tsv("perm_pcoa_source.tsv", ["observation_id", "group", "axis1", "axis2", "percent_axis1", "percent_axis2"], rows)
+
+
+def perm_permdisp() -> None:
+    """V222: the R13 dispersion fixture (identical centroids, group B spread four-fold). Distances to group centroids by
+    vegan::betadisper (Euclidean) and the PERMDISP P by vegan::permutest with the recorded seed and B permutations."""
+    pm = _load_permanova_fixtures()
+    values, observations = pm.matrix("dispersion")
+    _matrix_table("perm_permdisp_matrix.tsv", observations, values)
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "m <- read.delim(args[1], row.names = 1, check.names = FALSE, fileEncoding = 'UTF-8')\n"
+        "X <- as.matrix(m[, setdiff(names(m), 'group'), drop = FALSE])\n"
+        "bd <- vegan::betadisper(stats::dist(X, method = 'euclidean'), factor(m$group))\n"
+        "set.seed(as.integer(args[2]))\n"
+        "pt <- vegan::permutest(bd, permutations = as.integer(args[3]))\n"
+        "out <- list(observation_id = rownames(X), distance = unname(bd$distances), permdisp_p = pt$tab[1, 'Pr(>F)'])\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = _r_json(code, [HERE / "perm_permdisp_matrix.tsv", PERMDISP_SEED, PERMDISP_B])
+    group_of = {o["observation_id"]: o["group"] for o in observations}
+    header = ["observation_id", "group", "distance_to_centroid", "permdisp_p", "permutations", "seed"]
+    rows = [[oid, group_of[oid], d, result["permdisp_p"], PERMDISP_B, PERMDISP_SEED] for oid, d in zip(result["observation_id"], result["distance"])]
+    _tsv("perm_permdisp_source.tsv", header, rows)
+    _tsv("perm_permdisp_no_seed_source.tsv", header, [r[:5] + [""] for r in rows])
+
+
 def main() -> None:
     qc_intensity()
     qc_missingness()
@@ -322,6 +479,11 @@ def main() -> None:
     bio_roc()
     bio_panel_forest()
     bio_cv_auc()
+    path_enrichment()
+    net_module_heatmap()
+    net_network_graph()
+    perm_pcoa()
+    perm_permdisp()
 
 
 if __name__ == "__main__":

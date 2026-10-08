@@ -40,7 +40,10 @@ STAGE1 = (
     "qc_intensity_distributions", "qc_missingness_heatmap", "qc_sample_correlation_heatmap", "qc_pca_ellipses",
     "diff_volcano_labelled", "diff_ma_plot", "diff_protein_dotplot_brackets", "diff_dep_heatmap_clustered", "diff_upset_venn",
 )
-STAGE2 = ("bio_roc_ci_band", "bio_panel_forest", "bio_cv_auc_vs_permutation")
+STAGE2 = (
+    "bio_roc_ci_band", "bio_panel_forest", "bio_cv_auc_vs_permutation", "path_enrichment_dotplot",
+    "net_module_heatmap", "net_network_graph", "perm_pcoa_centroids", "perm_permdisp",
+)
 # Claim labels of the biomarker results (post_de_biomarker.R). The cross-validated label is the only one a ROC or a
 # cross-validated AUC may carry; a panel plot may carry any frozen label (E_BIOMARKER_CLAIM otherwise).
 CV_CLAIM = "cross_validated_nested"
@@ -495,6 +498,217 @@ def _content_cv_permutation(rows: list[dict], sha: str, **_: Any) -> dict:
             "png": {}}
 
 
+def _content_enrichment(rows: list[dict], sha: str, show_sets: Sequence[str] | None = None, **_: Any) -> dict:
+    """V218: enrichment dot plot. Gene ratio k / n and -log10 q of the sets with at least one foreground hit. A set with no
+    foreground hit is never plotted as enriched (E_FIGURE_SET_MISMATCH when it is requested)."""
+    by_id = {r["set_id"]: r for r in rows}
+    if show_sets is None:
+        shown = [r["set_id"] for r in rows if int(r["k"]) >= 1]
+    else:
+        unknown = [s for s in show_sets if s not in by_id]
+        if unknown:
+            _refuse("E_FIGURE_SOURCE_MISSING", f"set(s) {unknown} are not in the ORA source")
+        empty = [s for s in show_sets if int(by_id[s]["k"]) < 1]
+        if empty:
+            _refuse("E_FIGURE_SET_MISMATCH", f"set(s) {empty} have no foreground hit; they are not enriched and are not plotted")
+        shown = list(show_sets)
+    plotted = [by_id[s] for s in shown]
+    gene_ratio = [int(r["k"]) / int(r["n"]) for r in plotted]
+    neglog_q = [-math.log10(float(r["q_value"])) for r in plotted]
+    hits = [int(r["k"]) for r in plotted]
+    n_fg, universe = int(rows[0]["n"]), int(rows[0]["N"])
+    table = ColumnTable("enrichment (gene ratio and -log10 q)", (("gene_ratio", tuple(gene_ratio)), ("neglog10_q", tuple(neglog_q))),
+                        row_titles=tuple(shown))
+    stats = [{"row": r["set_id"], "effect": g, "P": float(r["p_value"]), "q": float(r["q_value"]),
+              "n": {"foreground": int(r["n"]), "set": int(r["K"])}} for r, g in zip(plotted, gene_ratio)]
+    traces = [{"type": "scatter", "mode": "markers", "name": "enriched set (foreground hit)", "x": gene_ratio, "y": shown,
+               "marker": {"size": [4 + 2 * h for h in hits], "color": neglog_q, "colorscale": "Reds", "showscale": False,
+                          "line": {"color": "#000000", "width": 0.5}},
+               "customdata": [[r["set_id"], f"{int(r['k'])} of {int(r['n'])} foreground genes", float(r["q_value"]), int(r["K"])] for r in plotted],
+               "hovertemplate": "<b>%{customdata[0]}</b><br>%{customdata[1]}<br>gene ratio %{x:.3f}<br>q = %{customdata[2]:.3g}"
+                                "<br>set size %{customdata[3]}<extra></extra>"}]
+    notes = [f"Gene ratio = k / n (foreground hits over foreground size {n_fg}); universe N = {universe}; q is BH across the ORA family.",
+             "Sets without a foreground hit are not plotted as enriched."]
+    return {"tables": [table, statistics_table("enrichment - pipeline statistics", stats, ["foreground", "set"])], "statistics": stats,
+            "info": _info("enrichment dot plot", "table", "one-sided hypergeometric over-representation (ORA)", sha,
+                          f"foreground {n_fg}; universe {universe}", notes, multiplicity="BH within the ORA family (q)",
+                          effect_scale="gene ratio (k / n)", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout("Enrichment dot plot (family q)", "gene ratio (k / n)", "gene set"),
+            "png": {"show_sets": shown}}
+
+
+def _content_module_heatmap(rows: list[dict], sha: str, modules: Sequence[str] = (), **_: Any) -> dict:
+    """V219: module eigengene group means for the declared modules only (E_FIGURE_SET_MISMATCH otherwise)."""
+    declared = list(modules)
+    if not declared:
+        _refuse("E_FIGURE_SET_MISMATCH", "no declared module set was given; no module is plotted")
+    for r in rows:
+        if r["declared"] != "TRUE" or r["module"] not in declared:
+            _refuse("E_FIGURE_SET_MISMATCH", f"module {r['module']} is outside the declared set {declared}")
+    missing = [m for m in declared if not any(r["module"] == m for r in rows)]
+    if missing:
+        _refuse("E_FIGURE_SOURCE_MISSING", f"declared module(s) {missing} are not in the source")
+    groups = list(dict.fromkeys(r["group"] for r in rows))
+    cell = {(r["module"], r["group"]): float(r["eigengene"]) for r in rows}
+    table = column_table("module eigengenes (group means)", {g: [cell[(m, g)] for m in declared] for g in groups})
+    table = ColumnTable(table.title, table.columns, row_titles=tuple(declared))
+    z = [[cell[(m, g)] for g in groups] for m in declared]
+    n_per_group = {r["group"]: int(r["n"]) for r in rows}
+    trace = {"type": "heatmap", "x": groups, "y": declared, "z": z, "zmid": 0, "colorscale": "RdBu", "reversescale": True,
+             "colorbar": {"title": {"text": "eigengene"}}, "hovertemplate": _heatmap_hover("group", "module", "eigengene"), "hoverongaps": False}
+    notes = ["Cell = mean over the samples of the group of the module eigengene (PC1 of the scaled module, sign-aligned).",
+             f"Declared modules only: {', '.join(declared)}."]
+    return {"tables": [table], "statistics": None, "info": _info("module heatmap", "none", "PC1 of each scaled module, group means", sha,
+            "; ".join(f"{g} {n_per_group[g]}" for g in groups), notes, multiplicity="none (descriptive)", effect_scale="eigengene units",
+            stage="R16e stage 2"), "traces": [trace], "layout": _layout("Module eigengenes", "group", "module"), "png": {"modules": declared}}
+
+
+def _snapshot_pairs(path: str | Path) -> set[frozenset[str]]:
+    """The undirected edges of the interaction snapshot (node_a, node_b columns)."""
+    return {frozenset((r["node_a"], r["node_b"])) for r in read_source(path)}
+
+
+def _network_layout(nodes: Sequence[Mapping[str, str]]) -> dict[str, tuple[float, float]]:
+    """Deterministic layout coordinates computed in R (proteomicsCore:::catalogue_network_layout). Presentation only."""
+    payload = [{"id": n["id"], "module": n["module"]} for n in nodes]
+    with tempfile.TemporaryDirectory(prefix="catalogue-layout-") as tmp:
+        nodes_file = Path(tmp) / "nodes.json"
+        nodes_file.write_text(json.dumps(payload), encoding="utf-8", newline="\n")
+        code = (
+            "args <- commandArgs(trailingOnly = TRUE)\n"
+            "suppressPackageStartupMessages(library(proteomicsCore))\n"
+            "nodes <- jsonlite::fromJSON(args[1], simplifyVector = TRUE)\n"
+            "xy <- proteomicsCore:::catalogue_network_layout(nodes)\n"
+            "cat(jsonlite::toJSON(xy, digits = NA))\n"
+        )
+        result = run_r_code(code, [nodes_file], cwd=Path(tmp))
+    if result.returncode != 0:
+        _refuse("E_FIGURE_OUTPUT_MISSING", f"network layout failed: {result.stderr[-200:]}")
+    coords = json.loads(result.stdout.strip().splitlines()[-1])
+    return {c["id"]: (float(c["x"]), float(c["y"])) for c in coords}
+
+
+def _content_network(rows: list[dict], sha: str, snapshot: set[frozenset[str]] | None = None, **_: Any) -> dict:
+    """V220: nodes and edges of the declared subnetwork, exactly as in the interaction snapshot. An edge that is not in the
+    snapshot is refused (E_FIGURE_SOURCE_MISSING). Layout coordinates are not data and are not compared."""
+    if snapshot is None:
+        _refuse("E_FIGURE_SOURCE_MISSING", "no interaction snapshot was given; the edges cannot be checked against it")
+    nodes = [r for r in rows if r["kind"] == "node"]
+    edges = [r for r in rows if r["kind"] == "edge"]
+    node_ids = [n["id"] for n in nodes]
+    for e in edges:
+        if e["from"] not in node_ids or e["to"] not in node_ids:
+            _refuse("E_FIGURE_SOURCE_MISSING", f"edge {e['from']}-{e['to']} has an endpoint that is not a node of the figure")
+        if frozenset((e["from"], e["to"])) not in snapshot:
+            _refuse("E_FIGURE_SOURCE_MISSING", f"edge {e['from']}-{e['to']} is not in the interaction snapshot")
+    coords = _network_layout(nodes)
+    degree = {n: 0 for n in node_ids}
+    for e in edges:
+        degree[e["from"]] += 1
+        degree[e["to"]] += 1
+    edge_x, edge_y, edge_custom = [], [], []
+    for e in edges:
+        (x1, y1), (x2, y2) = coords[e["from"]], coords[e["to"]]
+        label = [f"{e['from']}-{e['to']}", "interaction (snapshot edge)", "present in the interaction snapshot"]
+        edge_x += [x1, x2, None]
+        edge_y += [y1, y2, None]
+        edge_custom += [label, label, label]
+    traces = [{"type": "scatter", "mode": "lines", "name": "edges", "x": edge_x, "y": edge_y, "line": {"color": "#9E9E9E", "width": 1.2},
+               "customdata": edge_custom, "hoverinfo": "text",
+               "hovertemplate": "<b>%{customdata[0]}</b><br>%{customdata[1]}<br>%{customdata[2]}<extra></extra>"}]
+    for module in dict.fromkeys(n["module"] for n in nodes):
+        members = [n for n in nodes if n["module"] == module]
+        traces.append({"type": "scatter", "mode": "markers+text", "name": f"module {module}", "x": [coords[m["id"]][0] for m in members],
+                       "y": [coords[m["id"]][1] for m in members], "text": [m["id"] for m in members], "textposition": "top center",
+                       "textfont": {"size": 9}, "marker": {"size": 9},
+                       "customdata": [[m["id"], module, degree[m["id"]]] for m in members],
+                       "hovertemplate": "<b>%{customdata[0]}</b><br>module: %{customdata[1]}<br>degree: %{customdata[2]}<extra></extra>"})
+    position = {n: i + 1 for i, n in enumerate(node_ids)}
+    tables = [ColumnTable("node degree in the declared subnetwork", (("degree", tuple(float(degree[n]) for n in node_ids)),), row_titles=tuple(node_ids)),
+              xy_table("edge list (node indices)", "from (node index)", "to (node index)", [position[e["from"]] for e in edges],
+                       [position[e["to"]] for e in edges])]
+    layout = {"title": {"text": "Declared subnetwork (interaction snapshot)"}, "xaxis": {"visible": False},
+              "yaxis": {"visible": False, "scaleanchor": "x"}, "plot_bgcolor": "#FFFFFF", "paper_bgcolor": "#FFFFFF", "showlegend": False}
+    notes = [f"{len(node_ids)} nodes and {len(edges)} edges, exactly as in the interaction snapshot (induced on the declared subnetwork).",
+             "Layout coordinates are presentation only (deterministic, computed in R) and are not part of the data."]
+    return {"tables": tables, "statistics": None, "info": _info("network graph", "none", "none (descriptive; interaction snapshot)", sha,
+            f"nodes {len(node_ids)}; edges {len(edges)}", notes, multiplicity="none (descriptive)", effect_scale="not applicable",
+            stage="R16e stage 2"), "traces": traces, "layout": layout, "png": {}}
+
+
+def _content_pcoa(rows: list[dict], sha: str, **_: Any) -> dict:
+    """V221: principal coordinates with the group centroids (means of each group's members; never the full sample)."""
+    groups = list(dict.fromkeys(r["group"] for r in rows))
+    pct1, pct2 = float(rows[0]["percent_axis1"]), float(rows[0]["percent_axis2"])
+    x_title, y_title = f"PCoA 1 ({pct1:.1f}%)", f"PCoA 2 ({pct2:.1f}%)"
+    axis1 = [float(r["axis1"]) for r in rows]
+    axis2 = [float(r["axis2"]) for r in rows]
+    centroid = {g: (_mean([float(r["axis1"]) for r in rows if r["group"] == g]), _mean([float(r["axis2"]) for r in rows if r["group"] == g]))
+                for g in groups}
+    tables = [xy_table("PCoA scores", x_title, y_title, axis1, axis2),
+              xy_table("PCoA group centroids (means of members)", x_title, y_title, [centroid[g][0] for g in groups], [centroid[g][1] for g in groups])]
+    traces = []
+    for g in groups:
+        members = [r for r in rows if r["group"] == g]
+        cx, cy = centroid[g]
+        seg_x, seg_y, seg_custom = [], [], []
+        for r in members:
+            seg_x += [float(r["axis1"]), cx, None]
+            seg_y += [float(r["axis2"]), cy, None]
+            seg_custom += [[r["observation_id"], g, "segment to the group centroid"]] * 3
+        traces.append({"type": "scatter", "mode": "lines", "name": f"{g} to centroid", "x": seg_x, "y": seg_y,
+                       "line": {"width": 0.8, "color": "#BDBDBD"}, "showlegend": False, "customdata": seg_custom,
+                       "hovertemplate": "<b>%{customdata[0]}</b><br>group: %{customdata[1]}<br>%{customdata[2]}<extra></extra>"})
+        traces.append({"type": "scatter", "mode": "markers", "name": g, "x": [float(r["axis1"]) for r in members],
+                       "y": [float(r["axis2"]) for r in members], "marker": {"size": 7, "opacity": 0.85},
+                       "customdata": [[r["observation_id"], g, float(r["axis1"]), float(r["axis2"])] for r in members],
+                       "hovertemplate": "<b>%{customdata[0]}</b><br>group: %{customdata[1]}<br>PCoA 1 %{customdata[2]:.3f}"
+                                        "<br>PCoA 2 %{customdata[3]:.3f}<extra></extra>"})
+        traces.append({"type": "scatter", "mode": "markers", "name": f"{g} centroid", "x": [cx], "y": [cy],
+                       "marker": {"size": 13, "symbol": "diamond", "line": {"color": "#000000", "width": 1}},
+                       "customdata": [[f"centroid {g}", g, f"mean of {len(members)} members"]],
+                       "hovertemplate": "<b>%{customdata[0]}</b><br>group: %{customdata[1]}<br>%{customdata[2]}<extra></extra>"})
+    sizes = "; ".join(f"{g} {sum(1 for r in rows if r['group'] == g)}" for g in groups)
+    notes = ["Principal coordinates of the Euclidean distance (cmdscale); axis labels give the percent of positive eigenvalues.",
+             "Each centroid is the mean of its own group's members; the full-sample mean is not drawn."]
+    return {"tables": tables, "statistics": None, "info": _info("PCoA with group centroids", "none", "principal coordinates (cmdscale) of the Euclidean distance",
+            sha, sizes, notes, multiplicity="none (descriptive)", effect_scale="not applicable", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout("PCoA with group centroids", x_title, y_title), "png": {}}
+
+
+def _content_permdisp(rows: list[dict], sha: str, **_: Any) -> dict:
+    """V222: distances to group centroids with the PERMDISP P, the number of permutations and the seed. A P without B or
+    seed is refused (E_FIGURE_SOURCE_MISSING)."""
+    if any(not r["permutations"] or not r["seed"] for r in rows):
+        _refuse("E_FIGURE_SOURCE_MISSING", "the PERMDISP P is shown without its number of permutations B and its seed")
+    head = rows[0]
+    boots, seed = int(head["permutations"]), int(head["seed"])
+    p_value = float(head["permdisp_p"])
+    groups = list(dict.fromkeys(r["group"] for r in rows))
+    distances = {g: [float(r["distance_to_centroid"]) for r in rows if r["group"] == g] for g in groups}
+    tables = [column_table("PERMDISP distances to group centroid", distances)]
+    stats = [{"row": f"{g} - {groups[0]}", "effect": _mean(distances[g]) - _mean(distances[groups[0]]), "P": p_value, "q": None,
+              "n": {gg: len(distances[gg]) for gg in groups}} for g in groups[1:]]
+    if stats:
+        tables.append(statistics_table("PERMDISP - pipeline statistics", stats, groups))
+    traces = []
+    for g in groups:
+        members = [r for r in rows if r["group"] == g]
+        traces.append({"type": "box", "name": g, "x": [g] * len(members), "y": [float(r["distance_to_centroid"]) for r in members],
+                       "boxpoints": "all", "jitter": 0.3, "pointpos": 0, "marker": {"color": "#0072B2", "size": 6}, "line": {"color": "#000000"},
+                       "customdata": [[r["observation_id"], g, f"PERMDISP P = {p_value:.3f}; B = {boots}; seed {seed}"] for r in members],
+                       "hovertemplate": "<b>%{customdata[0]}</b><br>group: %{customdata[1]}<br>distance %{y:.3f}"
+                                        "<br>%{customdata[2]}<extra></extra>"})
+    sizes = "; ".join(f"{g} {len(distances[g])}" for g in groups)
+    notes = [f"PERMDISP P = {p_value:.4g} from permutest with B = {boots} permutations and seed {seed}; Euclidean distance to the group centroid.",
+             "Statistics table: the dispersion difference of each group from the first group; P is the PERMDISP family P."]
+    return {"tables": tables, "statistics": stats or None, "info": _info("PERMDISP distances to centroid", "table" if stats else "none",
+            f"PERMDISP (vegan betadisper and permutest), B = {boots}, seed {seed}", sha, sizes, notes,
+            multiplicity="none (one PERMDISP family per figure)", effect_scale="distance to centroid difference", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout(f"PERMDISP: distances to group centroids (P = {p_value:.3f}, B = {boots}, seed {seed})",
+                                                "group", "distance to group centroid"), "png": {}}
+
+
 _BUILDERS: dict[str, Callable[..., dict]] = {
     "qc_intensity_distributions": _content_intensity,
     "qc_missingness_heatmap": _content_missingness,
@@ -508,6 +722,11 @@ _BUILDERS: dict[str, Callable[..., dict]] = {
     "bio_roc_ci_band": _content_roc,
     "bio_panel_forest": _content_forest,
     "bio_cv_auc_vs_permutation": _content_cv_permutation,
+    "path_enrichment_dotplot": _content_enrichment,
+    "net_module_heatmap": _content_module_heatmap,
+    "net_network_graph": _content_network,
+    "perm_pcoa_centroids": _content_pcoa,
+    "perm_permdisp": _content_permdisp,
 }
 
 
@@ -576,6 +795,14 @@ def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, reg
     if figure_id == "diff_protein_dotplot_brackets":
         family_rows = [dict(f) for f in options.get("family", [])]
         builder_options["family"] = family_rows
+    if figure_id == "net_network_graph":
+        if not options.get("snapshot"):
+            _refuse("E_FIGURE_SOURCE_MISSING", "net_network_graph needs its interaction snapshot (option snapshot)")
+        builder_options["snapshot"] = _snapshot_pairs(options["snapshot"])
+    if figure_id == "net_module_heatmap":
+        builder_options["modules"] = list(options.get("modules") or ())
+    if figure_id == "path_enrichment_dotplot" and options.get("show_sets") is not None:
+        builder_options["show_sets"] = list(options["show_sets"])
     content = _BUILDERS[figure_id](rows, sha, **builder_options)
     png_options: dict[str, Any] = {}
     if figure_id == "diff_volcano_labelled":
@@ -586,6 +813,10 @@ def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, reg
         png_options = {"brackets": _dotplot_brackets(content["png"]["family"], rows, options.get("brackets"))}
     elif figure_id == "diff_upset_venn":
         png_options = {"set_names": list(options.get("sets", ())), "venn": bool(options.get("venn"))}
+    elif figure_id == "path_enrichment_dotplot":
+        png_options = {"show_sets": content["png"]["show_sets"]}
+    elif figure_id == "net_module_heatmap":
+        png_options = {"modules": content["png"]["modules"]}
     html_title = figure_id.replace("_", " ")
 
     def render_png(source_path: Path, out_path: Path) -> None:

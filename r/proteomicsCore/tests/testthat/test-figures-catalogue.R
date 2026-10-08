@@ -116,3 +116,67 @@ testthat::test_that("V217 the displayed permutation P equals (k + 1) / (B + 1); 
   testthat::expect_s3_class(catalogue_cv_permutation(src), "ggplot")
   testthat::expect_error(catalogue_cv_permutation(read_fixture("bio_cv_auc_vs_permutation_wrong_p_source.tsv")), "E_FIGURE_PERMUTATION_P")
 })
+
+testthat::test_that("V218 the gene ratio is k / n and a set without a foreground hit is refused as enriched", {
+  src <- read_fixture("path_enrichment_source.tsv")
+  hits <- src[src$k >= 1, ]
+  built <- ggplot2::ggplot_build(catalogue_enrichment(src))$data[[1]]
+  testthat::expect_equal(built$x, hits$k / hits$n, tolerance = 1e-10)
+  testthat::expect_error(catalogue_enrichment(src, c("SET_A", "SET_E")), "E_FIGURE_SET_MISMATCH")
+})
+
+testthat::test_that("V219 module cells equal the PC1 oracle; an undeclared module is refused", {
+  src <- read_fixture("net_module_heatmap_source.tsv")
+  m <- utils::read.delim(file.path(fixtures, "net_module_matrix.tsv"), stringsAsFactors = FALSE, check.names = FALSE, fileEncoding = "UTF-8")
+  s <- utils::read.delim(file.path(fixtures, "net_module_samples.tsv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  for (i in seq_len(nrow(src))) {
+    X <- as.matrix(m[m$module == src$module[i], s$sample])
+    Z <- t(apply(X, 1, function(x) (x - mean(x)) / stats::sd(x)))
+    e <- stats::prcomp(t(Z), center = FALSE, scale. = FALSE)$x[, 1]
+    if (stats::cor(e, colMeans(Z)) < 0) e <- -e
+    testthat::expect_equal(src$eigengene[i], mean(e[s$group == src$group[i]]), tolerance = 1e-10)
+  }
+  testthat::expect_s3_class(catalogue_module_heatmap(src, c("M1", "M2", "M3")), "ggplot")
+  testthat::expect_error(catalogue_module_heatmap(read_fixture("net_module_heatmap_undeclared_source.tsv"), c("M1", "M2", "M3")),
+                         "E_FIGURE_SET_MISMATCH")
+})
+
+testthat::test_that("V220 the layout is deterministic and an edge with an unknown endpoint is refused", {
+  nodes <- data.frame(id = c("N01", "N02", "N03", "N04"), module = c("C1", "C1", "C2", "C2"), stringsAsFactors = FALSE)
+  testthat::expect_identical(catalogue_network_layout(nodes), catalogue_network_layout(nodes))
+  testthat::expect_equal(nrow(catalogue_network_layout(nodes)), 4L)
+  src <- read_fixture("net_network_graph_source.tsv")
+  testthat::expect_s3_class(catalogue_network_graph(src), "ggplot")
+  bad <- src
+  bad$to[bad$kind == "edge"][1] <- "N99"
+  testthat::expect_error(catalogue_network_graph(bad), "E_FIGURE_SOURCE_MISSING")
+})
+
+testthat::test_that("V221 the coordinates equal cmdscale and each drawn centroid is the mean of its own group", {
+  src <- read_fixture("perm_pcoa_source.tsv")
+  m <- utils::read.delim(file.path(fixtures, "perm_pcoa_matrix.tsv"), row.names = 1, check.names = FALSE, fileEncoding = "UTF-8")
+  X <- as.matrix(m[, setdiff(names(m), "group"), drop = FALSE])
+  cm <- stats::cmdscale(stats::dist(X), k = 2, eig = TRUE)
+  for (k in 1:2) {
+    col <- paste0("axis", k)
+    s <- sign(sum(cm$points[src$observation_id, k] * src[[col]]))
+    testthat::expect_equal(as.numeric(s * cm$points[src$observation_id, k]), src[[col]], tolerance = 1e-8)
+  }
+  built <- ggplot2::ggplot_build(catalogue_pcoa(src))$data
+  centroid <- built[[which(vapply(built, function(d) "shape" %in% names(d) && all(d$shape == 23), logical(1)))[1]]]
+  means_x <- tapply(src$axis1, src$group, mean)
+  means_y <- tapply(src$axis2, src$group, mean)
+  testthat::expect_equal(as.numeric(centroid$x), as.numeric(means_x[c("A", "B")]), tolerance = 1e-10)
+  testthat::expect_equal(as.numeric(centroid$y), as.numeric(means_y[c("A", "B")]), tolerance = 1e-10)
+  testthat::expect_gt(max(abs(centroid$x - mean(src$axis1))), 1e-6)   # a full-sample centroid would not match
+})
+
+testthat::test_that("V222 distances equal betadisper; a P without its seed is refused", {
+  src <- read_fixture("perm_permdisp_source.tsv")
+  m <- utils::read.delim(file.path(fixtures, "perm_permdisp_matrix.tsv"), row.names = 1, check.names = FALSE, fileEncoding = "UTF-8")
+  X <- as.matrix(m[, setdiff(names(m), "group"), drop = FALSE])
+  bd <- vegan::betadisper(stats::dist(X), factor(m$group))
+  testthat::expect_equal(src$distance_to_centroid, unname(bd$distances), tolerance = 1e-10)
+  testthat::expect_s3_class(catalogue_permdisp(src), "ggplot")
+  testthat::expect_error(catalogue_permdisp(read_fixture("perm_permdisp_no_seed_source.tsv")), "E_FIGURE_SOURCE_MISSING")
+})

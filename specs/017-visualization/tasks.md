@@ -25,8 +25,8 @@
 - [x] T215 — R16e: implement FR-215 (Biomarker: ROC with CI band); establish and pass V215, including its negative case, with independent evidence.
 - [x] T216 — R16e: implement FR-216 (Biomarker: panel forest plot); establish and pass V216, including its negative case, with independent evidence.
 - [x] T217 — R16e: implement FR-217 (Biomarker: CV AUC against permutation null); establish and pass V217, including its negative case, with independent evidence.
-- [ ] T218 — R16e: implement FR-218 (Pathways: enrichment dot plot); establish and pass V218, including its negative case, with independent evidence.
-- [ ] T219 — R16e: implement FR-219 (Networks: module heatmap); establish and pass V219, including its negative case, with independent evidence.
-- [ ] T220 — R16e: implement FR-220 (Networks: network graph); establish and pass V220, including its negative case, with independent evidence.
-- [ ] T221 — R16e: implement FR-221 (PERMANOVA: PCoA with centroids); establish and pass V221, including its negative case, with independent evidence.
-- [ ] T222 — R16e: implement FR-222 (PERMANOVA: PERMDISP plot); establish and pass V222, including its negative case, with independent evidence.
+- [x] T218 — R16e: implement FR-218 (Pathways: enrichment dot plot); establish and pass V218, including its negative case, with independent evidence.
+- [x] T219 — R16e: implement FR-219 (Networks: module heatmap); establish and pass V219, including its negative case, with independent evidence.
+- [x] T220 — R16e: implement FR-220 (Networks: network graph); establish and pass V220, including its negative case, with independent evidence.
+- [x] T221 — R16e: implement FR-221 (PERMANOVA: PCoA with centroids); establish and pass V221, including its negative case, with independent evidence.
+- [x] T222 — R16e: implement FR-222 (PERMANOVA: PERMDISP plot); establish and pass V222, including its negative case, with independent evidence.

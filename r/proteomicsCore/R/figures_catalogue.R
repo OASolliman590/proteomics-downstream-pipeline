@@ -367,6 +367,125 @@ catalogue_cv_permutation <- function(source) {
     prism_figure_theme()
 }
 
+# Enrichment dot plot (V218): gene ratio k / n against -log10 q. Sets without a foreground hit are never plotted as enriched.
+catalogue_enrichment <- function(source, show_sets = NULL) {
+  shown <- if (is.null(show_sets)) source$set_id[source$k >= 1] else as.character(show_sets)
+  unknown <- setdiff(shown, source$set_id)
+  if (length(unknown)) catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("set(s) %s are not in the ORA source", paste(unknown, collapse = ", ")))
+  plotted <- source[match(shown, source$set_id), ]
+  empty <- plotted$set_id[plotted$k < 1]
+  if (length(empty)) catalogue_refuse("E_FIGURE_SET_MISMATCH", sprintf("set(s) %s have no foreground hit; they are not enriched and are not plotted", paste(empty, collapse = ", ")))
+  plotted$gene_ratio <- plotted$k / plotted$n
+  plotted$neglog10_q <- -log10(plotted$q_value)
+  plotted$set_id <- factor(plotted$set_id, levels = plotted$set_id[order(plotted$neglog10_q)])
+  ggplot2::ggplot(plotted, ggplot2::aes(gene_ratio, set_id, size = k, colour = neglog10_q)) +
+    ggplot2::geom_point() +
+    ggplot2::scale_colour_gradient(low = "#56B4E9", high = "#D55E00", name = "-log10 q") +
+    ggplot2::scale_size_continuous(range = c(2, 6), name = "hits (k)") +
+    ggplot2::labs(x = "gene ratio (k / n)", y = NULL, title = "Enrichment dot plot (family q)") +
+    prism_figure_theme()
+}
+
+# Module eigengene heatmap (V219): group means of the declared modules only (E_FIGURE_SET_MISMATCH otherwise).
+catalogue_module_heatmap <- function(source, modules) {
+  if (!length(modules)) catalogue_refuse("E_FIGURE_SET_MISMATCH", "no declared module set was given; no module is plotted")
+  outside <- unique(source$module[!source$declared | !source$module %in% modules])
+  if (length(outside)) catalogue_refuse("E_FIGURE_SET_MISMATCH", sprintf("module(s) %s are outside the declared set", paste(outside, collapse = ", ")))
+  groups <- unique(source$group)
+  source$module <- factor(source$module, levels = rev(modules))
+  source$group <- factor(source$group, levels = groups)
+  limit <- max(abs(source$eigengene))
+  ggplot2::ggplot(source, ggplot2::aes(group, module, fill = eigengene)) +
+    ggplot2::geom_tile(colour = "white") +
+    ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", eigengene)), size = 3.2, family = "Arial") +
+    ggplot2::scale_fill_gradient2(low = "#0072B2", mid = "white", high = "#D55E00", midpoint = 0, limits = c(-limit, limit),
+                                  name = "eigengene") +
+    ggplot2::labs(x = NULL, y = NULL, title = "Module eigengenes (group means)") +
+    prism_figure_theme()
+}
+
+# Deterministic layout of the network (presentation only): each module on a circle of radius 0.6 around the centre, its
+# members on a circle of radius 0.25; modules in sorted order and members in source order. No random seed is used.
+catalogue_network_layout <- function(nodes) {
+  nodes <- as.data.frame(nodes, stringsAsFactors = FALSE)
+  modules <- sort(unique(nodes$module))
+  m <- length(modules)
+  coords <- do.call(rbind, lapply(seq_along(modules), function(i) {
+    members <- nodes[nodes$module == modules[i], , drop = FALSE]
+    n <- nrow(members)
+    cx <- if (m == 1L) 0 else 0.6 * cos(2 * pi * (i - 1) / m)
+    cy <- if (m == 1L) 0 else 0.6 * sin(2 * pi * (i - 1) / m)
+    r <- if (n == 1L) 0 else 0.25
+    angle <- 2 * pi * (seq_len(n) - 1) / n + pi / 2
+    data.frame(id = members$id, x = cx + r * cos(angle), y = cy + r * sin(angle), stringsAsFactors = FALSE)
+  }))
+  coords[match(nodes$id, coords$id), c("id", "x", "y")]
+}
+
+# Network graph (V220): the declared subnetwork's edges and nodes as in the snapshot; edges and nodes drawn in ggplot2.
+catalogue_network_graph <- function(source) {
+  nodes <- source[source$kind == "node", c("id", "module"), drop = FALSE]
+  edges <- source[source$kind == "edge", , drop = FALSE]
+  xy <- catalogue_network_layout(nodes)
+  edges$x <- xy$x[match(edges$from, xy$id)]
+  edges$y <- xy$y[match(edges$from, xy$id)]
+  edges$xend <- xy$x[match(edges$to, xy$id)]
+  edges$yend <- xy$y[match(edges$to, xy$id)]
+  if (anyNA(c(edges$x, edges$xend))) catalogue_refuse("E_FIGURE_SOURCE_MISSING", "an edge has an endpoint that is not a node of the figure")
+  xy$module <- nodes$module[match(xy$id, nodes$id)]
+  modules <- sort(unique(xy$module))
+  ggplot2::ggplot() +
+    ggplot2::geom_segment(data = edges, ggplot2::aes(x = x, y = y, xend = xend, yend = yend), colour = "grey60", linewidth = 0.4) +
+    ggplot2::geom_point(data = xy, ggplot2::aes(x, y, colour = module), size = 3) +
+    ggplot2::geom_text(data = xy, ggplot2::aes(x, y, label = id), size = 2.4, vjust = -1.1, family = "Arial") +
+    ggplot2::scale_colour_manual(values = stats::setNames(catalogue_palette[seq_along(modules)], modules)) +
+    ggplot2::coord_equal(clip = "off") +
+    ggplot2::labs(x = NULL, y = NULL, title = "Declared subnetwork",
+                  caption = "edges as in the interaction snapshot") +
+    prism_figure_theme() +
+    ggplot2::theme(axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), axis.line = ggplot2::element_blank())
+}
+
+# PCoA with group centroids (V221): centroids are the means of each group's own members.
+catalogue_pcoa <- function(source) {
+  groups <- unique(source$group)
+  centroids <- stats::aggregate(cbind(axis1, axis2) ~ group, data = source, FUN = mean)
+  names(centroids) <- c("group", "cx", "cy")
+  linked <- merge(source, centroids, by = "group")
+  palette <- stats::setNames(catalogue_palette[seq_along(groups)], groups)
+  ggplot2::ggplot(source, ggplot2::aes(axis1, axis2, colour = group)) +
+    ggplot2::geom_segment(data = linked, ggplot2::aes(x = axis1, y = axis2, xend = cx, yend = cy), colour = "grey75",
+                          linewidth = 0.3, inherit.aes = FALSE) +
+    ggplot2::geom_point(size = 2.2, alpha = 0.85) +
+    ggplot2::geom_point(data = centroids, ggplot2::aes(cx, cy, fill = group), shape = 23, size = 4, colour = "black", inherit.aes = FALSE) +
+    ggplot2::scale_colour_manual(values = palette) +
+    ggplot2::scale_fill_manual(values = palette) +
+    ggplot2::labs(x = sprintf("PCoA 1 (%.1f%%)", source$percent_axis1[1]), y = sprintf("PCoA 2 (%.1f%%)", source$percent_axis2[1]),
+                  title = "PCoA with group centroids", caption = "diamonds: centroids (means of each group's members)") +
+    prism_figure_theme() +
+    ggplot2::theme(legend.position = "none")
+}
+
+# PERMDISP plot (V222): distances to the group centroids, with the PERMDISP P, B and seed. A P without B or seed is refused.
+catalogue_permdisp <- function(source) {
+  if (anyNA(source$permutations) || anyNA(source$seed)) {
+    catalogue_refuse("E_FIGURE_SOURCE_MISSING", "the PERMDISP P is shown without its number of permutations B and its seed")
+  }
+  B <- as.integer(source$permutations[1])
+  seed <- as.integer(source$seed[1])
+  groups <- unique(source$group)
+  source$group <- factor(source$group, levels = groups)
+  palette <- stats::setNames(catalogue_palette[seq_along(groups)], groups)
+  ggplot2::ggplot(source, ggplot2::aes(group, distance_to_centroid, colour = group)) +
+    ggplot2::geom_boxplot(colour = "black", fill = NA, outlier.shape = NA, linewidth = 0.4) +
+    ggplot2::geom_point(size = 1.8, alpha = 0.85, position = ggplot2::position_jitter(width = 0.15, height = 0, seed = 2026)) +
+    ggplot2::scale_colour_manual(values = palette) +
+    ggplot2::labs(x = NULL, y = "distance to group centroid", title = "PERMDISP: distances to group centroids",
+                  caption = sprintf("PERMDISP P = %.3f; B = %d permutations; seed %d", source$permdisp_p[1], B, seed)) +
+    prism_figure_theme() +
+    ggplot2::theme(legend.position = "none")
+}
+
 # Renders one catalogue figure to PNG (300 dpi, Prism style). `options` is a named list (labels, brackets, q_cutoff,
 # set_names, venn, variant; stage 2: show_sets, modules).
 render_catalogue_png <- function(figure_id, source_path, out_path, options = list(), width_mm = 120, height_mm = 100) {
@@ -384,6 +503,11 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     bio_roc_ci_band = catalogue_roc_ci_band(source),
     bio_panel_forest = catalogue_forest(source),
     bio_cv_auc_vs_permutation = catalogue_cv_permutation(source),
+    path_enrichment_dotplot = catalogue_enrichment(source, options$show_sets),
+    net_module_heatmap = catalogue_module_heatmap(source, options$modules),
+    net_network_graph = catalogue_network_graph(source),
+    perm_pcoa_centroids = catalogue_pcoa(source),
+    perm_permdisp = catalogue_permdisp(source),
     catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("no renderer for figure %s", figure_id)))
   render_prism_png(plot, out_path, width_mm = width_mm, height_mm = height_mm)
 }
