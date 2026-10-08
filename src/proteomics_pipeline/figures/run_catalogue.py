@@ -16,7 +16,9 @@ from typing import Any, Mapping
 from ..errors import ConfigurationError
 from ..runtime import run_r_code
 from .config import resolve_figure_config
+from .catalogue import build_figure
 from .registry import FigureRegistry
+from . import run_sources
 from .retrofit import build_retrofit, rule_for
 
 ASSOCIATION_STEM = "association_heatmap"
@@ -55,7 +57,8 @@ def discover(run_root: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]
             skipped.append({"path": relative, "reason": "no retrofit rule for this table"})
             continue
         if rule.skip:
-            continue        # a companion table, drawn with its figure
+            skipped.append({"path": relative, "reason": rule.note or "companion table, drawn with its figure"})
+            continue
         companion = None
         if rule.companion is not None:
             name = rule.companion.removeprefix("parent:")
@@ -95,6 +98,22 @@ def build(run_root: Path, figures_block: Mapping[str, Any] | None, catalogue_dir
                       "refusals": [{"code": error.code, "reason": error.message}]}
         result["source"] = item["relative"]
         results.append(result)
+    with tempfile.TemporaryDirectory(prefix="catalogue-sources-") as work:
+        jobs, run_skipped = run_sources.build_jobs(run_root, Path(work))
+        registry.retrofit["run_sources"] = run_skipped
+        for job in jobs:
+            try:
+                result = build_figure(run_root, job["figure_id"], job["source"], registry=registry, output_id=job["output_id"],
+                                      formats=style["formats"], width_mm=style["journal_width_mm"], **job["options"])
+            except ConfigurationError as error:
+                registry.figures.setdefault(job["output_id"], {"state": "NOT_RUN", "reason": error.message, "source_path": None,
+                                                              "source_sha256": None, "outputs": {}, "kind": job["figure_id"], "companions": {}})
+                registry.figures[job["output_id"]]["state"] = "NOT_RUN"
+                registry.figures[job["output_id"]]["reason"] = error.message
+                result = {"figure_id": job["output_id"], "kind": job["figure_id"], "outputs": {},
+                          "refusals": [{"code": error.code, "reason": error.message}]}
+            result["source"] = job["output_id"]
+            results.append(result)
     registry.write()
     return {"figures": results, "not_retrofitted": skipped, "formats": style["formats"]}
 

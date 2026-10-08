@@ -104,7 +104,7 @@ catalogue_qc_pca <- function(source, variant = FALSE) {
   p
 }
 
-catalogue_volcano <- function(source, labels, q_cutoff = 0.05) {
+catalogue_volcano <- function(source, labels, q_cutoff = 0.05, p_threshold = NULL) {
   if (!is.null(labels)) {
     absent <- setdiff(labels, source$feature)
     if (length(absent)) catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("label(s) %s are not in the source table", paste(absent, collapse = ", ")))
@@ -114,8 +114,10 @@ catalogue_volcano <- function(source, labels, q_cutoff = 0.05) {
   source$neglog10P <- -log10(source$P)
   p <- ggplot2::ggplot(source, ggplot2::aes(effect, neglog10P, colour = class)) +
     ggplot2::geom_point(size = 2, alpha = 0.85) +
-    ggplot2::scale_colour_manual(values = catalogue_colours()[c("up", "down", "ns")], breaks = c("up", "down", "ns")) +
+    ggplot2::scale_colour_manual(values = catalogue_colours()[c("up", "down", "ns")], breaks = c("up", "down", "ns"),
+                                 labels = c(up = "up", down = "down", ns = "not significant"), name = NULL) +
     ggplot2::labs(x = "log2 fold change", y = "-log10 P", title = "Volcano (family q below cutoff)") + prism_figure_theme()
+  if (!is.null(p_threshold)) p <- p + ggplot2::geom_hline(yintercept = -log10(p_threshold), linetype = "dashed", linewidth = 0.4, colour = "grey40")
   if (!is.null(labels)) {
     lab <- source[source$feature %in% labels, ]
     p <- p + ggrepel::geom_text_repel(data = lab, ggplot2::aes(label = feature), colour = "black", size = 3.6, box.padding = 0.6,
@@ -157,7 +159,9 @@ catalogue_dotplot_brackets <- function(values, brackets) {
       data.frame(protein = br$protein, x = br$x2, xend = br$x2, y = br$y.position - tip, yend = br$y.position))
     labels <- data.frame(protein = br$protein, x = (br$x1 + br$x2) / 2, y = br$y.position + tip, label = br$label)
     p <- p + ggplot2::geom_segment(data = segments, ggplot2::aes(x = x, xend = xend, y = y, yend = yend), inherit.aes = FALSE, linewidth = 0.5) +
-      ggplot2::geom_text(data = labels, ggplot2::aes(x = x, y = y, label = label), inherit.aes = FALSE, size = 3.2, family = "Arial", vjust = 0)
+      ggplot2::geom_text(data = labels, ggplot2::aes(x = x, y = y, label = label), inherit.aes = FALSE, size = 3.2, family = "Arial", vjust = 0) +
+      # the free y scale of each protein must include the bracket labels, not only the points
+      ggplot2::geom_blank(data = labels, ggplot2::aes(x = x, y = y), inherit.aes = FALSE)
   }
   p + ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 30, hjust = 1))
 }
@@ -180,8 +184,11 @@ catalogue_dep_heatmap <- function(source) {
   heat <- data.frame(panel = "row z-scores", feature = rep(rownames(scaled), ncol(scaled)),
                      sample = rep(samples, each = nrow(scaled)), fill = cell_col, stringsAsFactors = FALSE)
   heat$feature <- factor(heat$feature, levels = rev(order))
+  # the group colours follow the declared group order (the stable palette), whatever the group names are
+  group_levels <- unique(group_of[samples])
+  group_pal <- stats::setNames(catalogue_palette[seq_along(group_levels)], group_levels)
   bar <- data.frame(panel = "group", feature = "group", sample = samples,
-                    fill = unname(catalogue_colours()[group_of[samples]]), stringsAsFactors = FALSE)
+                    fill = unname(group_pal[group_of[samples]]), stringsAsFactors = FALSE)
   all <- rbind(heat, bar[, names(heat)])
   all$sample <- factor(all$sample, levels = samples)
   all$panel <- factor(all$panel, levels = c("group", "row z-scores"))
@@ -502,7 +509,8 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     qc_missingness_heatmap = catalogue_missingness(source),
     qc_sample_correlation_heatmap = catalogue_qc_correlation(source),
     qc_pca_ellipses = catalogue_qc_pca(source, isTRUE(options$variant)),
-    diff_volcano_labelled = catalogue_volcano(source, options$labels, if (is.null(options$q_cutoff)) 0.05 else options$q_cutoff),
+    diff_volcano_labelled = catalogue_volcano(source, options$labels, if (is.null(options$q_cutoff)) 0.05 else options$q_cutoff,
+                                              if (is.null(options$p_threshold)) NULL else as.numeric(options$p_threshold)),
     diff_ma_plot = catalogue_ma(source),
     diff_protein_dotplot_brackets = catalogue_dotplot_brackets(source, if (is.null(options$brackets)) NULL else as.data.frame(options$brackets, stringsAsFactors = FALSE)),
     diff_dep_heatmap_clustered = catalogue_dep_heatmap(source),
@@ -516,6 +524,9 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     perm_pcoa_centroids = catalogue_pcoa(source),
     perm_permdisp = catalogue_permdisp(source),
     catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("no renderer for figure %s", figure_id)))
+  # the title and the caption come from the run (contrast label, family and cutoff); every renderer accepts them
+  if (!is.null(options$title)) plot <- plot + ggplot2::labs(title = options$title)
+  if (!is.null(options$caption)) plot <- plot + ggplot2::labs(caption = options$caption)
   render_prism_png(plot, out_path, width_mm = width_mm, height_mm = height_mm)
 }
 

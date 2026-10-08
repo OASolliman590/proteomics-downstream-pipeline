@@ -102,7 +102,6 @@ def built(tmp_path_factory):
 
 
 EXPECTED = {
-    "volcano_zero_null_limma-main_disease-control": "scatter",
     "response_axes": "scatter",
     "roc_cv": "curve_band",
     "cv_auc_repeats": "strip",
@@ -120,7 +119,11 @@ def test_every_known_producer_table_is_retrofitted_with_its_kind_and_the_unknown
     assert set(registry["figures"]) == set(EXPECTED)
     for figure_id, kind in EXPECTED.items():
         assert registry["figures"][figure_id]["kind"] == kind
-    assert [item["path"] for item in registry["retrofit"]["not_retrofitted"]] == ["post_de/other/figure_sources/not_a_known_figure.tsv"]
+    skipped = {item["path"]: item["reason"] for item in registry["retrofit"]["not_retrofitted"]}
+    assert set(skipped) == {"report-full/figure_sources/volcano_zero_null_limma-main_disease-control.tsv",
+                            "post_de/other/figure_sources/not_a_known_figure.tsv", "post_de/biomarker/figure_sources/roc_cv_band.tsv"}
+    # the R10b volcano is drawn by the run's own differential figure with the catalogue renderer (test_figure_run_e2e)
+    assert "diff_volcano_labelled" in skipped["report-full/figure_sources/volcano_zero_null_limma-main_disease-control.tsv"]
     assert "R13" in registry["retrofit"]["producers"]
 
 
@@ -189,15 +192,6 @@ def test_the_subnetwork_nodes_and_edges_equal_the_producer_tables(built):
         counts[e["gene_b"]] += 1
     assert list(degree["columns"].values())[0] == [float(counts[n]) for n in nodes]
     assert len(list(edges["columns"].values())[0]) == len(source_edges)
-
-
-def test_the_volcano_points_equal_the_producer_effects_and_p_values(built):
-    figure = built["catalogue"] / "volcano_zero_null_limma-main_disease-control.pzfx"
-    table = _pzfx(figure, 0)
-    source = _rows(built["tables"]["volcano"])
-    assert list(table["columns"].values())[0] == [float(r["effect_log2"]) for r in source]
-    assert list(table["columns"].values())[1] == [float(r["neg_log10_p"]) for r in source]
-    assert all(abs(-math.log10(float(r["p_value"])) - float(r["neg_log10_p"])) <= 1e-9 for r in source)
 
 
 def test_a_source_without_the_columns_its_rule_needs_is_refused_and_writes_no_output(tmp_path):

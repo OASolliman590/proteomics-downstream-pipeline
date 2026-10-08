@@ -264,7 +264,12 @@ def _content_pca(rows: list[dict], sha: str, variant: bool = False, **_: Any) ->
             "variance": (pct1, pct2)}
 
 
-def _content_volcano(rows: list[dict], sha: str, labels: Sequence[str] | None = None, q_cutoff: float = 0.05, **_: Any) -> dict:
+def _content_volcano(rows: list[dict], sha: str, labels: Sequence[str] | None = None, q_cutoff: float = 0.05,
+                     groups: Sequence[str] = ("Control", "Acute"), title: str | None = None, p_threshold: float | None = None,
+                     test: str = "Welch t (synthetic fixture)", **_: Any) -> dict:
+    """Labelled volcano. The columns are feature, effect, P, q and n_<group> for the two groups of the contrast; ``p_threshold``
+    (the largest P among the family's rejections) draws the family cutoff line."""
+    g1, g2 = groups
     if labels is not None:
         present = {r["feature"] for r in rows}
         absent = [x for x in labels if x not in present]
@@ -284,12 +289,17 @@ def _content_volcano(rows: list[dict], sha: str, labels: Sequence[str] | None = 
                        "customdata": [[r["feature"], cls, r["P"], r["q"]] for r in members],
                        "hovertemplate": "<b>%{customdata[0]}</b><br>class: %{customdata[1]}<br>P = %{customdata[2]}<br>q = %{customdata[3]}<extra></extra>"})
     stats = [{"row": r["feature"], "effect": float(r["effect"]), "P": float(r["P"]), "q": float(r["q"]),
-              "n": {"Control": float(r["n_Control"]), "Acute": float(r["n_Acute"])}} for r in rows]
+              "n": {g1: float(r[f"n_{g1}"]), g2: float(r[f"n_{g2}"])}} for r in rows]
+    layout_title = title or "Volcano (labelled)"
     tables = [xy_table("volcano", "log2 fold change", "-log10 P", [float(r["effect"]) for r in rows], [-math.log10(float(r["P"])) for r in rows]),
-              statistics_table("volcano - pipeline statistics", stats, ["Control", "Acute"])]
-    return {"tables": tables, "statistics": stats, "info": _info("volcano (labelled)", "table", "Welch t (synthetic fixture)", sha, "Control 6; Acute 6",
-            [f"Family q cutoff {q_cutoff}; classes up/down/ns by q and the sign of the effect."]),
-            "traces": traces, "layout": _layout("Volcano (labelled)", "log2 fold change", "-log10 P"), "png": {"labels": list(labels) if labels is not None else None, "q_cutoff": q_cutoff},
+              statistics_table(f"{layout_title} - pipeline statistics", stats, [g1, g2])]
+    sizes = f"{g1} {int(float(rows[0][f'n_{g1}']))}; {g2} {int(float(rows[0][f'n_{g2}']))}"
+    notes = [f"Family q cutoff {q_cutoff}; classes up/down/ns by q and the sign of the effect."]
+    if p_threshold is not None:
+        notes.append(f"Dashed line: the largest P among the family rejections ({p_threshold:.3g}).")
+    return {"tables": tables, "statistics": stats, "info": _info(title or "volcano (labelled)", "table", test, sha, sizes, notes),
+            "traces": traces, "layout": _layout(layout_title, "log2 fold change", "-log10 P"),
+            "png": {"labels": list(labels) if labels is not None else None, "q_cutoff": q_cutoff, "p_threshold": p_threshold},
             "classes": classes}
 
 
@@ -789,29 +799,38 @@ def _dotplot_brackets(family: Sequence[Mapping[str, Any]], rows: Sequence[Mappin
     return out
 
 
-def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, registry_dir: str | Path | None = None, **options: Any) -> dict:
-    """Produce the three outputs of a stage-1 figure from its registered source copy. Returns the outputs and the refusals.
+def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, registry_dir: str | Path | None = None,
+                 registry: FigureRegistry | None = None, output_id: str | None = None, formats: Sequence[str] | None = None,
+                 width_mm: int = 120, **options: Any) -> dict:
+    """Produce the outputs of a catalogue figure from its registered source copy. Returns the outputs and the refusals.
 
-    Options: ``labels`` and ``q_cutoff`` (volcano), ``variant`` (PCA), ``family`` (dot plot brackets), ``sets`` and ``venn``
-    (UpSet and Venn; ``venn=True`` with more than three sets raises E_VENN_K before any Venn output is written).
+    ``figure_id`` names the figure kind (a catalogue ID); ``output_id`` names the outputs and the registry key (default: the
+    figure ID; a run uses one output per contrast). A shared ``registry`` is written by its caller; otherwise one is written here.
+    Options: ``labels`` and ``q_cutoff`` (volcano), ``p_threshold``, ``groups`` (volcano groups), ``title`` and ``caption`` (any
+    kind), ``variant`` (PCA), ``family`` (dot plot brackets), ``sets`` and ``venn`` (UpSet and Venn; ``venn=True`` with more than
+    three sets raises E_VENN_K before any output is written).
     """
     if figure_id not in _BUILDERS:
-        _refuse("E_FIGURE_SOURCE_MISSING", f"{figure_id} is not a stage-1 catalogue figure")
+        _refuse("E_FIGURE_SOURCE_MISSING", f"{figure_id} is not a catalogue figure")
     if figure_id == "diff_upset_venn" and options.get("venn") and len(options.get("sets", ())) > 3:
         _refuse("E_VENN_K", f"a circle Venn needs k <= 3 sets; {len(options['sets'])} were given (UpSet is still produced)")
-    style = resolve_figure_config(None)
-    catalogue_dir = Path(registry_dir) if registry_dir is not None else Path(run_dir) / "report" / "figure_catalogue"
-    registry = FigureRegistry(catalogue_dir, style)
-    registry.register(figure_id, source)
-    copy = catalogue_dir / "sources" / f"{figure_id}.tsv"
+    output = output_id or figure_id
+    if registry is None:
+        catalogue_dir = Path(registry_dir) if registry_dir is not None else Path(run_dir) / "report" / "figure_catalogue"
+        registry = FigureRegistry(catalogue_dir, resolve_figure_config(None))
+        own_registry = True
+    else:
+        catalogue_dir = registry.directory
+        own_registry = False
+    registry.register(output, source, retrofit_kind="catalogue" if output == figure_id else f"catalogue:{figure_id}")
+    copy = catalogue_dir / "sources" / f"{output}.tsv"
     rows = read_source(copy)
-    sha = hashlib.sha256(copy.read_bytes()).hexdigest()
-    builder_options = {k: v for k, v in options.items() if k not in ("sets", "venn")}
+    sha = registry.figures[output]["source_sha256"]
+    builder_options = {k: v for k, v in options.items() if k not in ("sets", "venn", "title", "caption", "formats")}
     if figure_id == "diff_upset_venn":
         builder_options["sets"] = list(options.get("sets", ()))
     if figure_id == "diff_protein_dotplot_brackets":
-        family_rows = [dict(f) for f in options.get("family", [])]
-        builder_options["family"] = family_rows
+        builder_options["family"] = [dict(f) for f in options.get("family", [])]
     if figure_id == "net_network_graph":
         if not options.get("snapshot"):
             _refuse("E_FIGURE_SOURCE_MISSING", "net_network_graph needs its interaction snapshot (option snapshot)")
@@ -823,7 +842,7 @@ def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, reg
     content = _BUILDERS[figure_id](rows, sha, **builder_options)
     png_options: dict[str, Any] = {}
     if figure_id == "diff_volcano_labelled":
-        png_options = {"labels": content["png"]["labels"], "q_cutoff": content["png"]["q_cutoff"]}
+        png_options = {k: v for k, v in content["png"].items() if v is not None}
     elif figure_id == "qc_pca_ellipses":
         png_options = {"variant": bool(options.get("variant"))}
     elif figure_id == "diff_protein_dotplot_brackets":
@@ -834,10 +853,15 @@ def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, reg
         png_options = {"show_sets": content["png"]["show_sets"]}
     elif figure_id == "net_module_heatmap":
         png_options = {"modules": content["png"]["modules"]}
-    html_title = figure_id.replace("_", " ")
+    if options.get("title"):
+        png_options["title"] = str(options["title"])
+        content["layout"]["title"] = {"text": str(options["title"])}
+    if options.get("caption"):
+        png_options["caption"] = str(options["caption"])
+    html_title = output.replace("_", " ")
 
     def render_png(source_path: Path, out_path: Path) -> None:
-        _render_png(figure_id, source_path, out_path, png_options)
+        _render_png(figure_id, source_path, out_path, png_options, width_mm)
 
     def render_pzfx(source_path: Path, out_path: Path) -> None:
         write_pzfx(out_path, content["tables"], content["info"])
@@ -848,11 +872,14 @@ def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, reg
     outputs: dict[str, str] = {}
     refusals: list[dict[str, str]] = []
     for kind, render in (("png", render_png), ("pzfx", render_pzfx), ("html", render_html)):
+        if formats is not None and kind not in formats:
+            continue
         try:
-            registry.produce(figure_id, kind, render)
-            outputs[kind] = str(catalogue_dir / f"{figure_id}.{kind}")
+            registry.produce(output, kind, render)
+            outputs[kind] = str(catalogue_dir / f"{output}.{kind}")
         except ConfigurationError as error:
-            registry.record_missing_output(figure_id, kind, error.message)
+            registry.record_missing_output(output, kind, error.message)
             refusals.append({"kind": kind, "code": error.code, "reason": error.message})
-    registry.write()
-    return {"figure_id": figure_id, "outputs": outputs, "refusals": refusals, "content": content, "registry": registry}
+    if own_registry:
+        registry.write()
+    return {"figure_id": output, "kind": figure_id, "outputs": outputs, "refusals": refusals, "content": content, "registry": registry}

@@ -37,20 +37,20 @@ class Rule:
     pattern: str                      # full match against the stem of the registered table
     kind: str                         # figure kind (the R renderer and the Python content builder)
     options: Mapping[str, Any]        # column names and labels; the R renderer reads them
-    skip: bool = False                # the table is a companion of another figure and is not drawn on its own
+    skip: bool = False                # the table is a companion of another figure, or covered by a run-level figure
     companion: str | None = None      # stem of the companion table; "parent:<stem>" looks in the parent directory
+    note: str = ""                    # why a skipped table is not drawn on its own
 
 
 RULES: tuple[Rule, ...] = (
-    Rule(r"volcano_(?:zero_null|treat)_.+", "scatter", {"x": "effect_log2", "y": "neg_log10_p", "flag_col": "q_at_or_below_cutoff",
-         "flag_values": ["true"], "label": "feature_id", "xlab": "Effect (log2 difference)", "ylab": "-log10 P",
-         "title": "Effect versus -log10 P", "caption": "red: family q at or below cutoff"}),
+    Rule(r"volcano_(?:zero_null|treat)_.+", "diff_volcano_labelled", {}, skip=True,
+         note="drawn by the run's differential figure diff_volcano_labelled__<contrast> from the same table (catalogue renderer)"),
     Rule(r"response_axes", "scatter", {"x": "d", "y": "t", "abs_y": True, "flag_col": "descriptive_class",
          "flag_values": ["near_restoration", "partial_return"], "label": "feature_id", "xlab": "Disease effect d (log2)",
          "ylab": "|treatment effect t| (log2)", "title": "Descriptive response axes", "caption": "red: near restoration or partial return; no P values"}),
     Rule(r"roc_cv", "curve_band", {"x": "fpr", "y": "tpr", "band_x": "fpr", "band_lo": "tpr_lower", "band_hi": "tpr_upper",
          "xlab": "1 - specificity", "ylab": "sensitivity", "title": "ROC with bootstrap band"}, companion="roc_cv_band"),
-    Rule(r"roc_cv_band", "curve_band", {}, skip=True),
+    Rule(r"roc_cv_band", "curve_band", {}, skip=True, note="the band of roc_cv, drawn with it"),
     Rule(r"cv_auc_repeats", "strip", {"x": "auc", "xlab": "nested cross-validation repeat AUC", "title": "Nested cross-validation: repeat AUCs"}),
     Rule(r"permutation_null", "histogram", {"x": "pooled_oof_auc", "xlab": "pooled out-of-fold AUC under permutation",
          "title": "Permutation null of pooled AUC"}),
