@@ -53,6 +53,26 @@ The coordinator's review of R16a (16bb03e) found that the exact P label rounded 
 - The `renv.lock` entries were generated from the installed DESCRIPTION files with R's `read.dcf`, and they follow the fields of the existing entries.
 - No private data and no study output was used. All fixtures are synthetic.
 
+## D-75 extension: statistics table and Info sheet (V199 re-verified)
+
+The Maintainer's decision D-75 (2026-10-08) requires every `.pzfx` to carry the figure's pipeline statistics and an Info sheet. The amended FR-199 and V199 were re-verified in this stage:
+
+- **Statistics table.** `statistics_table()` writes a Column table whose row titles are the comparisons (for example `P1 - Control`, or one row per feature for the volcano). Its columns are `effect`, `P`, `q` and `n_<group>`, written with round-trip precision. The self-check compares every value and row title with the source.
+- **Info sheet.** The `InfoSequence` and `Info` elements carry the Title, the Notes (the caption and the warning that a test run inside Prism may give a different P value) and the `Constant` name/value pairs. The writer refuses a missing required constant (`E_PZFX_INFO_MISSING`) and writes nothing. The `Statistics` constant is `table` or `none`.
+- **Fixtures.** The R16b fixtures are regenerated with both tables. `xy_volcano_roc.pzfx` is split into `xy_volcano.pzfx` (statistics table with 200 feature rows) and `xy_roc.pzfx` (statistics `none`).
+- **Read-back.** `pzfx::read_pzfx` still reads every data table, and it reads the statistics table with the comparison row titles and the same values (`test-pzfx-readback.R`, 35 expectations).
+
+Gates for the extension (logs in `evidence/`, manifest `ee96c8ee…` with 17 files, amendment A-2026-10-01-36):
+
+| Command | Exit | Result |
+|---|---|---|
+| `.venv/bin/python -m pytest tests/scientific/test_pzfx_writer.py -q -rs -p no:cacheprovider` | 0 | 15 passed (V199 amended assertion, its negatives, and the Info-sheet refusal) |
+| `Rscript` testthat `test-pzfx-readback.R` (from a temporary directory) | 0 | 35 expectations, 0 failed |
+| `scripts/check_spec_kit.py` | 0 | PASS |
+| `pytest tests/regression tests/unit` | 0 | 85 passed |
+
+The earlier full-suite entry in this receipt refers to the tree before D-75. The full Python suite is run once more at the end of the R16e stage, and that run covers this extension.
+
 ## Acceptance
 
 Every packet gate above exited 0, and every case, including its negative case, passed. R16b is recorded as ready for review (PASS by the Claude route; independent audit NOT_RUN). The Prism-openability checks are NOT_RUN as recorded.

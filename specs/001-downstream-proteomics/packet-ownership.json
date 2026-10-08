@@ -1082,6 +1082,19 @@
         "docs/validation/acceptance.json"
       ],
       "change": "R16c review fix: the release secret scanner flagged the vendored plotly.js library (vendor/plotly/plotly.min.js, line 8) because the minified code contains the expression access_token=\"+(... matched by the hard-coded-secret rule (a false positive: JavaScript, not a credential). The scanner now exempts that one file from the secret rule only while its SHA-256 equals the pin in vendor/plotly/PINNED.json; every other file, and any change to the library, is scanned as before. This narrows a security control and needs Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-36",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json",
+        "r/proteomicsCore/tests/testthat/test-pzfx-readback.R"
+      ],
+      "change": "D-75 (Maintainer, 2026-10-08): every .pzfx carries the pipeline statistics table and the Info sheet. The R16b writer gains the statistics table (Column table with comparison row titles; effect, P, q, n_<group>), the Info sheet (InfoSequence/Info, Constant name/value pairs, Notes) and the refusal E_PZFX_INFO_MISSING for a missing required constant (reason-code catalogue regenerated). The R16b fixtures are regenerated with both tables; xy_volcano_roc.pzfx is split into xy_volcano.pzfx (statistics table) and xy_roc.pzfx (statistics none). The pzfx read-back test reads the statistics table. FR-199 / V199 are re-verified: PASS with evidence, and T199 is re-ticked. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
     }
   ]
 }

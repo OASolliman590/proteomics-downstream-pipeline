@@ -1,12 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GraphPadPrismFile PrismXMLVersion="5.00">
   <Created>
-    <OriginalVersion CreatedByProgram="proteomics_pipeline" CreatedByVersion="R16b" />
+    <OriginalVersion CreatedByProgram="proteomics_pipeline" CreatedByVersion="R16e" />
   </Created>
+  <InfoSequence>
+    <Ref ID="Info0" Selected="1" />
+  </InfoSequence>
+  <Info ID="Info0">
+    <Title>fixture figure</Title>
+    <Notes>
+      <Font Color="#000000" Face="Helvetica">Synthetic fixture for the pzfx writer.</Font>
+      <Font Color="#000000" Face="Helvetica">A test run inside Prism may give a different P value from the pipeline's test.</Font>
+    </Notes>
+    <Constant>
+      <Name>Test</Name>
+      <Value>Welch t (fixture)</Value>
+    </Constant>
+    <Constant>
+      <Name>Multiplicity adjustment</Name>
+      <Value>BH within fixture-family (synthetic)</Value>
+    </Constant>
+    <Constant>
+      <Name>Effect scale</Name>
+      <Value>log2 difference</Value>
+    </Constant>
+    <Constant>
+      <Name>Group sizes</Name>
+      <Value>Control 6; Acute 6</Value>
+    </Constant>
+    <Constant>
+      <Name>Pipeline version and commit</Name>
+      <Value>0.1.0.dev0 (fixture)</Value>
+    </Constant>
+    <Constant>
+      <Name>Source table SHA-256</Name>
+      <Value>79fa1ac5b82e3222efd8b7191cab473c044187714881098f2ef226201a4fde9b</Value>
+    </Constant>
+    <Constant>
+      <Name>Run ID</Name>
+      <Value>fixture-run</Value>
+    </Constant>
+    <Constant>
+      <Name>Created (UTC)</Name>
+      <Value>2026-10-08T00:00:00Z</Value>
+    </Constant>
+    <Constant>
+      <Name>Statistics</Name>
+      <Value>table</Value>
+    </Constant>
+  </Info>
   <TableSequence>
     <Ref ID="Table0" Selected="1" />
     <Ref ID="Table1" />
     <Ref ID="Table2" />
+    <Ref ID="Table3" />
   </TableSequence>
   <Table ID="Table0" XFormat="none" YFormat="replicates" Replicates="1" TableType="OneWay" EVFormat="AsteriskAfterNumber">
     <Title>P1</Title>
@@ -80,6 +127,56 @@
         <d>27.121669169679482</d>
         <d>26.801258612711724</d>
         <d>25.800699803106493</d>
+      </Subcolumn>
+    </YColumn>
+  </Table>
+  <Table ID="Table3" XFormat="none" YFormat="replicates" Replicates="1" TableType="OneWay" EVFormat="AsteriskAfterNumber">
+    <Title>fixture figure - pipeline statistics</Title>
+    <RowTitlesColumn>
+      <Subcolumn>
+        <d>P1 - Control</d>
+        <d>P2 - Control</d>
+        <d>P3 - Control</d>
+      </Subcolumn>
+    </RowTitlesColumn>
+    <YColumn Subcolumns="1">
+      <Title>effect</Title>
+      <Subcolumn>
+        <d>1.5</d>
+        <d>1.7</d>
+        <d>1.9</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>P</Title>
+      <Subcolumn>
+        <d>0.1</d>
+        <d>0.0031622776601683794</d>
+        <d>0.0001</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>q</Title>
+      <Subcolumn>
+        <d>0.30000000000000004</d>
+        <d>0.009486832980505138</d>
+        <d>0.00030000000000000003</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>n_Control</Title>
+      <Subcolumn>
+        <d>6.0</d>
+        <d>6.0</d>
+        <d>6.0</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>n_Acute</Title>
+      <Subcolumn>
+        <d>6.0</d>
+        <d>6.0</d>
+        <d>6.0</d>
       </Subcolumn>
     </YColumn>
   </Table>

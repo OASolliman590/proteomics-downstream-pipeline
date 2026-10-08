@@ -21,16 +21,27 @@ testthat::test_that("V199 column tables read back equal to the source values, on
   }
 })
 
+testthat::test_that("V199 the statistics table (D-75) reads back with its comparison rows", {
+  testthat::skip_if_not_installed("pzfx")
+  st <- pzfx::read_pzfx(file.path(fixtures, "column_groups.pzfx"), table = 4)
+  stats <- utils::read.delim(file.path(fixtures, "stats_proteins.tsv"), stringsAsFactors = FALSE)
+  testthat::expect_identical(as.character(st$ROWTITLE), stats$comparison)
+  testthat::expect_identical(as.numeric(st$effect), as.numeric(stats$effect))
+  testthat::expect_identical(as.numeric(st$P), as.numeric(stats$P))
+  testthat::expect_identical(as.numeric(st$q), as.numeric(stats$q))
+  testthat::expect_identical(as.numeric(st$n_Control), as.numeric(stats$n_Control))
+})
+
 testthat::test_that("V200 XY tables read back with one point per source row", {
   testthat::skip_if_not_installed("pzfx")
   volcano <- read_source("volcano_source.tsv")
   roc <- read_source("roc_source.tsv")
-  vt <- pzfx::read_pzfx(file.path(fixtures, "xy_volcano_roc.pzfx"), table = 1)
+  vt <- pzfx::read_pzfx(file.path(fixtures, "xy_volcano.pzfx"), table = 1)
   testthat::expect_identical(names(vt), c("log2FC", "neg_log10P"))
   testthat::expect_identical(nrow(vt), 200L)
   testthat::expect_identical(as.numeric(vt$log2FC), as.numeric(volcano$log2FC))
   testthat::expect_identical(as.numeric(vt$neg_log10P), as.numeric(volcano$neg_log10P))
-  rt <- pzfx::read_pzfx(file.path(fixtures, "xy_volcano_roc.pzfx"), table = 2)
+  rt <- pzfx::read_pzfx(file.path(fixtures, "xy_roc.pzfx"), table = 1)
   testthat::expect_identical(names(rt), c("one_minus_specificity", "sensitivity"))
   testthat::expect_identical(nrow(rt), 30L)
   testthat::expect_identical(as.numeric(rt$sensitivity), as.numeric(roc$sensitivity))

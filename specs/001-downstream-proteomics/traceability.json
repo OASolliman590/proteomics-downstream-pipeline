@@ -6854,7 +6854,7 @@
         "case_id": "V199",
         "status": "PASS"
       },
-      "status": "NOT_RUN",
+      "status": "PASS",
       "evidence": [
         "tests/scientific/test_pzfx_writer.py",
         "r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
@@ -6866,10 +6866,9 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "bf41d8163410369931fa79f6ead19996c3545f9c60fce92636c64b2177ec62ef",
+        "working_source_manifest_sha256": "ee96c8eef2c66d56c92960166a62487677aee0139c37622afa16e6f2c191cedb",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
-        "committed": "R16b commit recorded in the R16b receipt; verified_commit null",
-        "reason": "Amended by D-75 (2026-10-08): the .pzfx must also carry the pipeline statistics table and an Info sheet. The R16b column-table writer passed the original assertion (receipt docs/validation/017-visualization/R16b); re-verification of the amended V199 is pending."
+        "committed": "D-75 extension commit recorded in the R16b receipt; verified_commit null"
       }
     },
     {

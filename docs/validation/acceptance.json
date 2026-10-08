@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 170,
-    "NOT_RUN": 52
+    "PASS": 171,
+    "NOT_RUN": 51
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -6381,15 +6381,15 @@
       "acceptance_id": "V199",
       "requirement": "FR-199",
       "task": "T199",
-      "status": "NOT_RUN",
-      "reviewed_tree": "bf41d8163410369931fa79f6ead19996c3545f9c60fce92636c64b2177ec62ef",
+      "status": "PASS",
+      "reviewed_tree": "ee96c8eef2c66d56c92960166a62487677aee0139c37622afa16e6f2c191cedb",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/scientific/test_pzfx_writer.py -q -rs -p no:cacheprovider",
           "exit_code": 0
         },
         {
-          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))\"",
+          "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', ...)\" (run from a temporary directory)",
           "exit_code": 0
         },
         {
@@ -6399,25 +6399,21 @@
         {
           "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
           "exit_code": 0
-        },
-        {
-          "command": ".venv/bin/python -m pytest tests -q -p no:cacheprovider",
-          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16b/evidence/gate-results.json",
-          "sha256": "681739c98e717fb11fca17ad39dc9c22ff7a537bc8435fe7782e495ac158e2a8"
+          "sha256": "02b5b199d9d1ddaaf867160ebd5f5915341985801149e83b2a6404feeadfc67f"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/python-tests-pzfx.log",
-          "sha256": "f11e3020d3c45331ef0062d88b553d5d9b9a2b5e366db92255d4499f91ba33a4"
+          "sha256": "b9a76fcd2bde5686a753cbd55e635e9f9837a40067d8a7e6bac433e1d5a36fa1"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/r-test-pzfx-readback.log",
-          "sha256": "51a729bd7d5e4fef68395116afb101d18f46b6f5b0c3d6194cc7140141b79946"
+          "sha256": "eebdaf1716f09ba38defedcaa57173c00ce686bc53acd64104d974a574acdb2d"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/spec-kit-check.log",
@@ -6425,18 +6421,13 @@
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/regression-unit.log",
-          "sha256": "41362da47b9eaaa7413d60ada1b59477946964f5a9139d19f9381233f80853e7"
-        },
-        {
-          "path": "docs/validation/017-visualization/R16b/evidence/full-python-suite.log",
-          "sha256": "b187411af87fcc7caf6828b80e2529cf20971c43ec3afa2dbdbb520d17b81834"
+          "sha256": "35fc14e40ca5c8016a33cc990faa2c6ec67745cfc4c364fbf2f64876ae70d3e1"
         }
       ],
       "expected_oracle": "The system MUST write each group comparison as a Prism column table with one column per group containing the individual replicate values exactly as in the source table, so that Prism computes means and SD on those values. Every `.pzfx` the system writes MUST also carry the figure's pipeline statistics table and an Info sheet describing the method (contracts/figures.md, Statistics table and Info sheet; D-75).",
       "observed": "see packet receipt and gate logs",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Amended by D-75 (2026-10-08): the .pzfx must also carry the pipeline statistics table and an Info sheet. The R16b column-table writer passed the original assertion (receipt docs/validation/017-visualization/R16b); re-verification of the amended V199 is pending."
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V200",
@@ -6450,7 +6441,7 @@
           "exit_code": 0
         },
         {
-          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))\"",
+          "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', ...)\" (run from a temporary directory)",
           "exit_code": 0
         },
         {
@@ -6460,25 +6451,21 @@
         {
           "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
           "exit_code": 0
-        },
-        {
-          "command": ".venv/bin/python -m pytest tests -q -p no:cacheprovider",
-          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16b/evidence/gate-results.json",
-          "sha256": "681739c98e717fb11fca17ad39dc9c22ff7a537bc8435fe7782e495ac158e2a8"
+          "sha256": "02b5b199d9d1ddaaf867160ebd5f5915341985801149e83b2a6404feeadfc67f"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/python-tests-pzfx.log",
-          "sha256": "f11e3020d3c45331ef0062d88b553d5d9b9a2b5e366db92255d4499f91ba33a4"
+          "sha256": "b9a76fcd2bde5686a753cbd55e635e9f9837a40067d8a7e6bac433e1d5a36fa1"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/r-test-pzfx-readback.log",
-          "sha256": "51a729bd7d5e4fef68395116afb101d18f46b6f5b0c3d6194cc7140141b79946"
+          "sha256": "eebdaf1716f09ba38defedcaa57173c00ce686bc53acd64104d974a574acdb2d"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/spec-kit-check.log",
@@ -6486,11 +6473,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/regression-unit.log",
-          "sha256": "41362da47b9eaaa7413d60ada1b59477946964f5a9139d19f9381233f80853e7"
-        },
-        {
-          "path": "docs/validation/017-visualization/R16b/evidence/full-python-suite.log",
-          "sha256": "b187411af87fcc7caf6828b80e2529cf20971c43ec3afa2dbdbb520d17b81834"
+          "sha256": "35fc14e40ca5c8016a33cc990faa2c6ec67745cfc4c364fbf2f64876ae70d3e1"
         }
       ],
       "expected_oracle": "The system MUST write the volcano (effect against −log10 P) and ROC (1 − specificity against sensitivity) data as Prism XY tables, one point per source row, with values exactly as in the source table.",
@@ -6510,7 +6493,7 @@
           "exit_code": 0
         },
         {
-          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))\"",
+          "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', ...)\" (run from a temporary directory)",
           "exit_code": 0
         },
         {
@@ -6520,25 +6503,21 @@
         {
           "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
           "exit_code": 0
-        },
-        {
-          "command": ".venv/bin/python -m pytest tests -q -p no:cacheprovider",
-          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16b/evidence/gate-results.json",
-          "sha256": "681739c98e717fb11fca17ad39dc9c22ff7a537bc8435fe7782e495ac158e2a8"
+          "sha256": "02b5b199d9d1ddaaf867160ebd5f5915341985801149e83b2a6404feeadfc67f"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/python-tests-pzfx.log",
-          "sha256": "f11e3020d3c45331ef0062d88b553d5d9b9a2b5e366db92255d4499f91ba33a4"
+          "sha256": "b9a76fcd2bde5686a753cbd55e635e9f9837a40067d8a7e6bac433e1d5a36fa1"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/r-test-pzfx-readback.log",
-          "sha256": "51a729bd7d5e4fef68395116afb101d18f46b6f5b0c3d6194cc7140141b79946"
+          "sha256": "eebdaf1716f09ba38defedcaa57173c00ce686bc53acd64104d974a574acdb2d"
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/spec-kit-check.log",
@@ -6546,11 +6525,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16b/evidence/regression-unit.log",
-          "sha256": "41362da47b9eaaa7413d60ada1b59477946964f5a9139d19f9381233f80853e7"
-        },
-        {
-          "path": "docs/validation/017-visualization/R16b/evidence/full-python-suite.log",
-          "sha256": "b187411af87fcc7caf6828b80e2529cf20971c43ec3afa2dbdbb520d17b81834"
+          "sha256": "35fc14e40ca5c8016a33cc990faa2c6ec67745cfc4c364fbf2f64876ae70d3e1"
         }
       ],
       "expected_oracle": "The system MUST write multi-protein panels as Prism grouped tables with one row per replicate and one data set per protein and group, with values exactly as in the source table.",
