@@ -1012,6 +1012,28 @@
         "docs/methods/reason-codes.md"
       ],
       "change": "R16a (ADR 0012, FR-195-FR-198, V195-V198): the optional report.figures block is added to both analysis.schema.json copies (shape and keys only; values are checked by figures/config.py with the typed codes E_FIGURE_FORMAT, E_FIGURE_DPI, E_FIGURE_PALETTE and E_CONFIG_SCHEMA); the reason-code catalogue gains the R16a E_FIGURE_* codes (regenerated, not hand-edited); traceability status for FR-195-FR-198 is PASS with evidence, the R16a task checkboxes T195-T198 are ticked in specs/017-visualization/tasks.md (as R14a did for its tasks), and the acceptance ledger is regenerated. This is the Maintainer shared-interface amendment named in A-2026-10-01-28, recorded by the implementing route at the operator's direction (2026-10-08) and open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-30",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16b (ADR 0012, FR-199-FR-201, V199-V201): pzfx is added to the proteomicsCore R Suggests (optional read-back oracle) and to renv.lock with its dependency xml2, both as installed in the project-local .r-lib (pzfx 0.3.1, xml2 1.6.0; check_r_lock qualified); the reason-code catalogue gains E_PZFX_VALUE_MISMATCH (regenerated); traceability status for FR-199-FR-201 is PASS with evidence, the R16a commit note is corrected to its commit hash, and the task checkboxes T199-T201 are ticked. Recorded by the implementing route at the operator's direction (2026-10-08) as the shared-interface amendment named in A-2026-10-01-28 (R Suggests entries); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-31",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "specs/017-visualization/contracts/figures.md"
+      ],
+      "change": "Review fix of R16a (commit d2b8414, coordinator review of 16bb03e): the exact P-value rule keeps two significant digits with trailing zeros and adds digits so a value below a threshold (0.05, 0.01, 0.001, 0.0001) is never shown as reaching it; the contract table gains a note with the rule and the examples (p = 0.040, p = 0.010, p = 0.0010, p = 0.050, p = 0.04999). The spec.md V198 example values (p = 0.04, p = 0.0004) are not changed here; the Maintainer must confirm them. Recorded by the implementing route at the operator's direction (2026-10-08)."
     }
   ]
 }

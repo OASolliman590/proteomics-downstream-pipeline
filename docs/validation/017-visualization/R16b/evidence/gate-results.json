@@ -1,0 +1,67 @@
+{
+  "packet": "R16b",
+  "commands": [
+    {
+      "name": "pytest pzfx writer",
+      "command": ".venv/bin/python -m pytest tests/scientific/test_pzfx_writer.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "11 passed in 0.29s",
+      "log": "docs/validation/017-visualization/R16b/evidence/python-tests-pzfx.log"
+    },
+    {
+      "name": "testthat pzfx read-back",
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-pzfx-readback.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped), sum(df$error)))\"",
+      "exit_code": 0,
+      "summary": "expectations=30 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/017-visualization/R16b/evidence/r-test-pzfx-readback.log"
+    },
+    {
+      "name": "spec kit",
+      "command": ".venv/bin/python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16b/evidence/spec-kit-check.log"
+    },
+    {
+      "name": "regression and unit",
+      "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "85 passed in 19.70s",
+      "log": "docs/validation/017-visualization/R16b/evidence/regression-unit.log"
+    },
+    {
+      "name": "full Python suite",
+      "command": ".venv/bin/python -m pytest tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "475 passed in 1535.88s (0:25:35)",
+      "log": "docs/validation/017-visualization/R16b/evidence/full-python-suite.log"
+    }
+  ],
+  "manual_checks": [
+    {
+      "case": "V199",
+      "status": "NOT_RUN",
+      "reason": "manual Maintainer check in GraphPad Prism"
+    },
+    {
+      "case": "V200",
+      "status": "NOT_RUN",
+      "reason": "manual Maintainer check in GraphPad Prism"
+    },
+    {
+      "case": "V201",
+      "status": "NOT_RUN",
+      "reason": "manual Maintainer check in GraphPad Prism"
+    }
+  ],
+  "working_source_manifest_sha256": "bf41d8163410369931fa79f6ead19996c3545f9c60fce92636c64b2177ec62ef",
+  "n_files": 14,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15",
+    "rscript": "4.6.1",
+    "LANG": "en_US.UTF-8",
+    "pzfx": "0.3.1",
+    "xml2": "1.6.0"
+  }
+}

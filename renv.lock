@@ -2988,6 +2988,27 @@
       "Maintainer": "Gábor Csárdi <csardi.gabor@gmail.com>",
       "Repository": "CRAN"
     },
+    "pzfx": {
+      "Package": "pzfx",
+      "Version": "0.3.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Read and Write 'GraphPad Prism' Files",
+      "Authors@R": "c(\nperson(\"Yue\", \"Jiang\", role = c(\"aut\", \"cre\"), email = \"rivehill@gmail.com\", comment = c(ORCID = \"0000-0002-9798-5517\")),\nperson(\"David\", \"Micklem\", role = \"ctb\", email = \"dmicklem@gmail.com\")\n)",
+      "Description": "Read and write 'GraphPad Prism' '.pzfx' files in R.",
+      "URL": "https://github.com/Yue-Jiang/pzfx",
+      "BugReports": "https://github.com/Yue-Jiang/pzfx/issues",
+      "Imports": "xml2 (>= 1.2.0)",
+      "License": "MIT + file LICENSE",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "Suggests": "testthat, knitr, rmarkdown",
+      "VignetteBuilder": "knitr",
+      "NeedsCompilation": "no",
+      "Author": "Yue Jiang [aut, cre] (ORCID: <https://orcid.org/0000-0002-9798-5517>),\nDavid Micklem [ctb]",
+      "Maintainer": "Yue Jiang <rivehill@gmail.com>",
+      "Repository": "CRAN"
+    },
     "randomForest": {
       "Package": "randomForest",
       "Version": "4.7-1.2",
@@ -3773,6 +3794,33 @@
       "Author": "Jim Hester [aut], Lionel Henry [aut, cre], Kirill Müller [aut], Kevin Ushey [aut], Hadley Wickham [aut], Winston Chang [aut], Jennifer Bryan [ctb], Richard Cotton [ctb], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Lionel Henry <lionel@posit.co>",
       "Repository": "CRAN"
+    },
+    "xml2": {
+      "Package": "xml2",
+      "Version": "1.6.0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Parse XML",
+      "Authors@R": "c(\nperson(\"Hadley\", \"Wickham\", role = \"aut\"),\nperson(\"Jim\", \"Hester\", role = \"aut\"),\nperson(\"Jeroen\", \"Ooms\", email = \"jeroenooms@gmail.com\", role = c(\"aut\", \"cre\")),\nperson(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")),\nperson(\"R Foundation\", role = \"ctb\",\ncomment = \"Copy of R-project homepage cached as example\")\n)",
+      "Description": "Bindings to 'libxml2' for working with XML data using a simple,\nconsistent interface based on 'XPath' expressions. Also supports XML schema\nvalidation; for 'XSLT' transformations see the 'xslt' package.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://xml2.r-lib.org, https://r-lib.r-universe.dev/xml2",
+      "BugReports": "https://github.com/r-lib/xml2/issues",
+      "Depends": "R (>= 3.6.0)",
+      "Imports": "cli, methods, rlang (>= 1.1.0)",
+      "Suggests": "covr, curl, httr, knitr, mockery, rmarkdown, testthat (>=\n3.2.0), xslt",
+      "VignetteBuilder": "knitr",
+      "Config/Needs/website": "tidyverse/tidytemplate",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "SystemRequirements": "libxml2: libxml2-dev (deb), libxml2-devel (rpm)",
+      "Collate": "'S4.R' 'as_list.R' 'xml_parse.R' 'as_xml_document.R'\n'classes.R' 'format.R' 'import-standalone-obj-type.R'\n'import-standalone-purrr.R' 'import-standalone-types-check.R'\n'init.R' 'nodeset_apply.R' 'paths.R' 'utils.R' 'xml2-package.R'\n'xml_attr.R' 'xml_children.R' 'xml_document.R' 'xml_find.R'\n'xml_missing.R' 'xml_modify.R' 'xml_name.R' 'xml_namespaces.R'\n'xml_node.R' 'xml_nodeset.R' 'xml_path.R' 'xml_schema.R'\n'xml_serialize.R' 'xml_structure.R' 'xml_text.R' 'xml_type.R'\n'xml_url.R' 'xml_write.R'",
+      "Config/testthat/edition": "3",
+      "NeedsCompilation": "yes",
+      "Author": "Hadley Wickham [aut],\nJim Hester [aut],\nJeroen Ooms [aut, cre],\nPosit Software, PBC [cph, fnd],\nR Foundation [ctb] (Copy of R-project homepage cached as example)",
+      "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
+      "Repository": "CRAN",
+      "Archs": "xml2.so.dSYM"
     }
   }
 }

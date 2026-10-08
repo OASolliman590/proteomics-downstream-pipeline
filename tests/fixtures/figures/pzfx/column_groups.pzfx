@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraphPadPrismFile PrismXMLVersion="5.00">
+  <Created>
+    <OriginalVersion CreatedByProgram="proteomics_pipeline" CreatedByVersion="R16b" />
+  </Created>
+  <TableSequence>
+    <Ref ID="Table0" Selected="1" />
+    <Ref ID="Table1" />
+    <Ref ID="Table2" />
+  </TableSequence>
+  <Table ID="Table0" XFormat="none" YFormat="replicates" Replicates="1" TableType="OneWay" EVFormat="AsteriskAfterNumber">
+    <Title>P1</Title>
+    <YColumn Subcolumns="1">
+      <Title>Control</Title>
+      <Subcolumn>
+        <d>20.0</d>
+        <d>20.724906976440753</d>
+        <d>19.813199454418385</d>
+        <d>19.32322946721843</d>
+        <d>20.361196859682323</d>
+        <d>20.58369407932777</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>Acute</Title>
+      <Subcolumn>
+        <d>21.784664808227625</d>
+        <d>22.13100604702033</d>
+        <d>21.052731881720874</d>
+        <d>20.984250022008045</d>
+        <d>22.080171208473732</d>
+        <d>21.866246246070713</d>
+      </Subcolumn>
+    </YColumn>
+  </Table>
+  <Table ID="Table1" XFormat="none" YFormat="replicates" Replicates="1" TableType="OneWay" EVFormat="AsteriskAfterNumber">
+    <Title>P2</Title>
+    <YColumn Subcolumns="1">
+      <Title>Control</Title>
+      <Subcolumn>
+        <d>23.07261197093769</d>
+        <d>22.87683150280149</d>
+        <d>21.830282700236147</d>
+        <d>22.295747270816584</d>
+        <d>23.222350978964087</d>
+        <d>22.518110836006404</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>Acute</Title>
+      <Subcolumn>
+        <d>24.704361033539968</d>
+        <d>24.103158725891763</d>
+        <d>23.269056098720643</d>
+        <d>24.08519746874571</d>
+        <d>24.708989451727756</d>
+        <d>23.73210375651684</d>
+      </Subcolumn>
+    </YColumn>
+  </Table>
+  <Table ID="Table2" XFormat="none" YFormat="replicates" Replicates="1" TableType="OneWay" EVFormat="AsteriskAfterNumber">
+    <Title>P3</Title>
+    <YColumn Subcolumns="1">
+      <Title>Control</Title>
+      <Subcolumn>
+        <d>25.71188261817196</d>
+        <d>24.74357746055889</d>
+        <d>24.354194646668567</d>
+        <d>25.422839467767773</d>
+        <d>25.536844278545978</d>
+        <d>24.438821673062822</d>
+      </Subcolumn>
+    </YColumn>
+    <YColumn Subcolumns="1">
+      <Title>Acute</Title>
+      <Subcolumn>
+        <d>27.091010871192122</d>
+        <d>25.997242937636514</d>
+        <d>26.038544087715334</d>
+        <d>27.121669169679482</d>
+        <d>26.801258612711724</d>
+        <d>25.800699803106493</d>
+      </Subcolumn>
+    </YColumn>
+  </Table>
+</GraphPadPrismFile>

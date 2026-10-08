@@ -21,4 +21,5 @@ Suggests:
     pROC,
     e1071,
     randomForest,
-    dynamicTreeCut
+    dynamicTreeCut,
+    pzfx
