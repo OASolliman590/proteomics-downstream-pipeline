@@ -1034,6 +1034,20 @@
         "specs/017-visualization/contracts/figures.md"
       ],
       "change": "Review fix of R16a (commit d2b8414, coordinator review of 16bb03e): the exact P-value rule keeps two significant digits with trailing zeros and adds digits so a value below a threshold (0.05, 0.01, 0.001, 0.0001) is never shown as reaching it; the contract table gains a note with the rule and the examples (p = 0.040, p = 0.010, p = 0.0010, p = 0.050, p = 0.04999). The spec.md V198 example values (p = 0.04, p = 0.0004) are not changed here; the Maintainer must confirm them. Recorded by the implementing route at the operator's direction (2026-10-08)."
+    },
+    {
+      "id": "A-2026-10-01-32",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16c (ADR 0012, FR-202, FR-203, V202, V203): ggplot2, ggprism, ragg and systemfonts are added to the proteomicsCore R Suggests (ggplot2 and systemfonts are used by the renderer, ggprism and ragg by the Prism theme and the ragg device); ggprism 1.0.7, ragg 1.5.2 and digest 0.6.39 are added to renv.lock (installed in the project-local .r-lib; check_r_lock qualified); the reason-code catalogue gains E_FIGURE_STYLE (regenerated); traceability status for FR-202 and FR-203 is PASS with evidence and the task checkboxes T202 and T203 are ticked. Recorded by the implementing route at the operator's direction (2026-10-08) as the shared-interface amendment named in A-2026-10-01-28; open to Maintainer review."
     }
   ]
 }

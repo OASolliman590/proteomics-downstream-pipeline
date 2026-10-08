@@ -6961,14 +6961,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_prism_png.py; r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
         "case_id": "V202",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
+        "tests/scientific/test_prism_png.py",
+        "docs/validation/017-visualization/R16c/receipt.md",
+        "docs/validation/017-visualization/R16c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V202",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16c commit recorded in the R16c receipt; verified_commit null"
       }
     },
     {
@@ -6988,14 +6997,23 @@
       "proposed_test_target": {
         "path": "tests/scientific/test_prism_png.py; r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
         "case_id": "V203",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
+        "tests/scientific/test_prism_png.py",
+        "docs/validation/017-visualization/R16c/receipt.md",
+        "docs/validation/017-visualization/R16c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V203",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16c commit recorded in the R16c receipt; verified_commit null"
       }
     },
     {

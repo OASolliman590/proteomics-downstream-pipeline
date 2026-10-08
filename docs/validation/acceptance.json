@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 167,
-    "NOT_RUN": 55
+    "PASS": 169,
+    "NOT_RUN": 53
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -6561,31 +6561,121 @@
       "acceptance_id": "V202",
       "requirement": "FR-202",
       "task": "T202",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_prism_png.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', reporter='summary', stop_on_failure=TRUE)\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/gate-results.json",
+          "sha256": "51e54596069aee75ba16586ba8f819299a3bf0d3a51f4d498d405a4facfa9821"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/python-tests-prism-png.log",
+          "sha256": "e134de51f0e40ddca0daa6d8331cac5ec947ab7f98ccb2d1e05ec0176a2f164f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/r-test-figures-prism-png.log",
+          "sha256": "eec9b171dad789b5a7cc1bc51d64702ccd9146e6a866ffad2124b93f39e19844"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/regression-unit.log",
+          "sha256": "0a46f1d0d8f91d3c109d9e78943f3f3ad7b617b09da4e3709fab596bd4cca9f6"
+        }
+      ],
       "expected_oracle": "The system MUST render each catalogue figure as a PNG with ggplot2 and the ggprism package using the Prism-style theme: white background, thick black axes, outward ticks, no gridlines, Arial (or a recorded substitution), and mean ± SD drawn over the individual points.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V203",
       "requirement": "FR-203",
       "task": "T203",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_prism_png.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', reporter='summary', stop_on_failure=TRUE)\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/gate-results.json",
+          "sha256": "51e54596069aee75ba16586ba8f819299a3bf0d3a51f4d498d405a4facfa9821"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/python-tests-prism-png.log",
+          "sha256": "e134de51f0e40ddca0daa6d8331cac5ec947ab7f98ccb2d1e05ec0176a2f164f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/r-test-figures-prism-png.log",
+          "sha256": "eec9b171dad789b5a7cc1bc51d64702ccd9146e6a866ffad2124b93f39e19844"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16c/evidence/regression-unit.log",
+          "sha256": "0a46f1d0d8f91d3c109d9e78943f3f3ad7b617b09da4e3709fab596bd4cca9f6"
+        }
+      ],
       "expected_oracle": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi, rounded down to an integer (the raster device truncates), and its plotted data MUST equal the source table as reported by `ggplot_build`.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V204",

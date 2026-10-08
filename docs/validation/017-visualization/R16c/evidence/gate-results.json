@@ -1,0 +1,50 @@
+{
+  "packet": "R16c",
+  "commands": [
+    {
+      "name": "pytest prism png",
+      "command": ".venv/bin/python -m pytest tests/scientific/test_prism_png.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "5 passed in 12.07s",
+      "log": "docs/validation/017-visualization/R16c/evidence/python-tests-prism-png.log"
+    },
+    {
+      "name": "testthat prism png",
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-prism-png.R', reporter='summary', stop_on_failure=TRUE)\"",
+      "exit_code": 0,
+      "summary": "expectations=17 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/017-visualization/R16c/evidence/r-test-figures-prism-png.log"
+    },
+    {
+      "name": "spec kit",
+      "command": ".venv/bin/python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16c/evidence/spec-kit-check.log"
+    },
+    {
+      "name": "renv lock check",
+      "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16c/evidence/renv-lock-check.log"
+    },
+    {
+      "name": "regression and unit",
+      "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "85 passed in 19.27s",
+      "log": "docs/validation/017-visualization/R16c/evidence/regression-unit.log"
+    }
+  ],
+  "working_source_manifest_sha256": "50d1992e559ba40edbcd7804d432f6dec4f5c2d9faf6fd4929fc0dafdcbfedc5",
+  "n_files": 7,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15",
+    "rscript": "4.6.1",
+    "ggprism": "1.0.7",
+    "ragg": "1.5.2",
+    "LANG": "en_US.UTF-8"
+  }
+}

@@ -22,4 +22,8 @@ Suggests:
     e1071,
     randomForest,
     dynamicTreeCut,
-    pzfx
+    pzfx,
+    ggplot2,
+    ggprism,
+    ragg,
+    systemfonts
