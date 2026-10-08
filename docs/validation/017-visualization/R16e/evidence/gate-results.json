@@ -1,59 +1,124 @@
 {
- "packet": "R16e (stage 1)",
- "commands": [
-  {
-   "name": "pytest figure catalogue",
-   "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
-   "exit_code": 0,
-   "summary": "21 passed in 42.06s",
-   "log": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log"
-  },
-  {
-   "name": "testthat figure catalogue",
-   "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-catalogue.R', ...)\" (from a temporary directory)",
-   "exit_code": 0,
-   "summary": "expectations=142 failed=0 skipped=0 errors=0",
-   "log": "docs/validation/017-visualization/R16e/evidence/r-test-figures-catalogue.log"
-  },
-  {
-   "name": "spec kit",
-   "command": ".venv/bin/python scripts/check_spec_kit.py",
-   "exit_code": 0,
-   "summary": "PASS",
-   "log": "docs/validation/017-visualization/R16e/evidence/spec-kit-check.log"
-  },
-  {
-   "name": "renv lock check",
-   "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
-   "exit_code": 0,
-   "summary": "PASS",
-   "log": "docs/validation/017-visualization/R16e/evidence/renv-lock-check.log"
-  },
-  {
-   "name": "regression and unit",
-   "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
-   "exit_code": 0,
-   "summary": "85 passed in 20.98s",
-   "log": "docs/validation/017-visualization/R16e/evidence/regression-unit.log"
-  },
-  {
-   "name": "full Python suite",
-   "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
-   "exit_code": 0,
-   "summary": "515 passed, 0 failed, 0 skipped in 2880.22s (run on the final stage-1 tree, 2026-10-08 16:01 EEST; reviewer-verified)",
-   "log": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log"
+  "packet": "R16e (stages 1 and 2)",
+  "commands": [
+    {
+      "name": "pytest figure catalogue",
+      "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "21 passed in 42.06s",
+      "log": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
+      "stage": 1
+    },
+    {
+      "name": "testthat figure catalogue",
+      "command": "Rscript --vanilla -e \"testthat::test_file('r/proteomicsCore/tests/testthat/test-figures-catalogue.R', ...)\" (from a temporary directory)",
+      "exit_code": 0,
+      "summary": "expectations=142 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/017-visualization/R16e/evidence/r-test-figures-catalogue.log",
+      "stage": 1
+    },
+    {
+      "name": "spec kit",
+      "command": ".venv/bin/python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16e/evidence/spec-kit-check.log",
+      "stage": 1
+    },
+    {
+      "name": "renv lock check",
+      "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16e/evidence/renv-lock-check.log",
+      "stage": 1
+    },
+    {
+      "name": "regression and unit",
+      "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "85 passed in 20.98s",
+      "log": "docs/validation/017-visualization/R16e/evidence/regression-unit.log",
+      "stage": 1
+    },
+    {
+      "name": "full Python suite",
+      "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "515 passed, 0 failed, 0 skipped in 2880.22s (run on the final stage-1 tree, 2026-10-08 16:01 EEST; reviewer-verified)",
+      "log": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
+      "stage": 1
+    },
+    {
+      "name": "pytest figure catalogue (stage 2 tree)",
+      "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "37 passed in 154.91s",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+      "stage": 2
+    },
+    {
+      "name": "testthat figure catalogue (stage 2 tree)",
+      "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+      "exit_code": 0,
+      "summary": "expectations=188 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+      "stage": 2
+    },
+    {
+      "name": "regression, unit and text encoding",
+      "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "91 passed in 46.35s",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+      "stage": 2
+    },
+    {
+      "name": "spec kit (stage 2 tree)",
+      "command": ".venv/bin/python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+      "stage": 2
+    },
+    {
+      "name": "renv lock check (stage 2 tree)",
+      "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+      "exit_code": 0,
+      "summary": "qualified True",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+      "stage": 2
+    },
+    {
+      "name": "full Python suite (final tree, stages 1 and 2)",
+      "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "531 passed, 0 failed, 0 skipped in 3714.55s (1:01:54)",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+      "stage": 2
+    },
+    {
+      "name": "full R testthat suite (final tree, stages 1 and 2)",
+      "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+      "exit_code": 0,
+      "summary": "expectations=966 failed=0 skipped=0",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+      "stage": 2
+    }
+  ],
+  "working_source_manifest_sha256": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
+  "n_files": 50,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15",
+    "rscript": "4.6.1",
+    "ggplot2": "4.0.3",
+    "ggprism": "1.0.7",
+    "ragg": "1.5.2",
+    "ggrepel": "0.9.8",
+    "LANG": "en_US.UTF-8",
+    "pROC": "1.19.1",
+    "vegan": "2.7.6",
+    "proteomicsCore": "0.1.0"
   }
- ],
- "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
- "n_files": 28,
- "environment": {
-  "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
-  "python": "3.13.15",
-  "rscript": "4.6.1",
-  "ggplot2": "4.0.3",
-  "ggprism": "1.0.7",
-  "ragg": "1.5.2",
-  "ggrepel": "0.9.8",
-  "LANG": "en_US.UTF-8"
- }
 }

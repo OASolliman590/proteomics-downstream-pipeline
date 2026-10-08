@@ -6787,13 +6787,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -6818,6 +6846,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot per-sample log2 intensity distributions from observed cells only, with the observed mask in the source table.",
@@ -6855,13 +6911,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -6886,6 +6970,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot a missingness heatmap of observed fraction per feature and sample, with missing cells shown as missing and never as zero.",
@@ -6923,13 +7035,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -6954,6 +7094,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot pairwise sample correlations computed on genuinely observed cells with the coverage rule of SM06, and MUST NOT correlate an imputed matrix.",
@@ -6991,13 +7159,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7022,6 +7218,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot PCA scores with a 95 % ellipse per group. A group with fewer than three units MUST NOT receive an ellipse, and the omission MUST be labelled.",
@@ -7059,13 +7283,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7090,6 +7342,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot the zero-null family as a volcano with the declared q cutoff, label only features present in the source table, and classify each point by its family membership.",
@@ -7127,13 +7407,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7158,6 +7466,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot average log2 abundance against log2 fold change for each contrast, with the sign of the change following the declared numerator group.",
@@ -7195,13 +7531,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7226,6 +7590,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot individual values per group for declared proteins with mean ± SD, and MUST draw P brackets whose labels follow FR-198 from the family P values.",
@@ -7263,13 +7655,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7294,6 +7714,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot row-scaled values of the declared DEP set with hierarchical clustering by the declared distance, and MUST NOT include features outside that set.",
@@ -7331,13 +7779,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7362,6 +7838,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST draw an UpSet plot for any number of sets and a Venn only for three or fewer sets, with region counts equal to the exclusive-region partition of [R14a](../015-post-de-analysis/spec.md).",
@@ -7399,13 +7903,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7430,6 +7962,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot the ROC curve of the declared claim label with its bootstrap confidence band. The claim label MUST appear in the figure and its source table.",
@@ -7467,13 +8027,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7498,6 +8086,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot panel coefficients or effects with their confidence intervals, with the claim label of the panel evaluation.",
@@ -7535,13 +8151,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7566,6 +8210,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot the observed cross-validated AUC against the permutation null distribution and show the permutation P as (k + 1) / (B + 1) with B shown.",
@@ -7603,13 +8275,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7634,6 +8334,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot enrichment sets with their gene ratio and −log10 q for eligible sets with at least one foreground hit, and MUST NOT show sets without foreground hits as enriched.",
@@ -7671,13 +8399,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7702,6 +8458,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot module eigengenes per group or phenotype level for the declared modules only.",
@@ -7739,13 +8523,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7770,6 +8582,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot the declared subnetwork's nodes and edges exactly as in the interaction snapshot. Layout coordinates are presentation only and are excluded from data equality.",
@@ -7807,13 +8647,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7838,6 +8706,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot principal coordinates of the declared distance with group centroids computed from each group's members, and MUST NOT draw a centroid from the full sample.",
@@ -7875,13 +8771,41 @@
         {
           "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla run_testfile.R r/proteomicsCore/tests/testthat/test-figures-catalogue.R (from a temporary directory; reporter summary, load_package installed)",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -c \"import proteomics_pipeline.reproduction as r; q=r.check_r_lock('renv.lock'); print('qualified', q['qualified'])\"",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d\\n', sum(df$nb), sum(df$failed), sum(df$skipped)))\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "1f1635071a9f47b8f7741dbacc2d8b27fa02f149d1d523b8760db4228f70d4d8"
+          "sha256": "a32ead581dca0e4d23beeaa69fd1328db0503edf8374dee31ffb9214168f64a2"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7906,6 +8830,34 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/full-python-suite.log",
           "sha256": "90ae7b2aaa1910b5f9dbbbb4701feaff0ff9fded2217ab02a484643c162d4bee"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-python-catalogue.log",
+          "sha256": "7aee567e236fe45014293eb9c2ce40ea7b8ec01626dbe7c1e9a39bd01020e14c"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-testthat-catalogue.log",
+          "sha256": "97a34e43fcbf3773937289d8c30ac7eb377858bfc4fa891cb6179b33b5601954"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-regression-unit.log",
+          "sha256": "43ddc64ef4de4b0dd92206fbe7143c8d704955df7dba2c8f87e737fa8b86ab58"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-renv-lock-check.log",
+          "sha256": "ca9e1af1813f028ebe0e6cce78bccb857e1d1f1319c60a3124936ae150762e7f"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-python-suite.log",
+          "sha256": "5435a96c89fd31cfed6696f6d7c96d158971dc6cd1c810f7f2a22bd7b029d910"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
+          "sha256": "e9feb3f3755ed87b6d1a5023f346fc52207253b82f3f7bac1f0be1c049239158"
         }
       ],
       "expected_oracle": "The system MUST plot distances to group centroids per group with the PERMDISP permutation P, showing the number of permutations and the seed used.",

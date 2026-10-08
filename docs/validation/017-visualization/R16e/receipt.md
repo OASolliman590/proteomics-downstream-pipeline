@@ -1,11 +1,11 @@
-# R16e Claude-route receipt, stage 1 of 2: QC and differential figures (ADR 0012)
+# R16e Claude-route receipt, stages 1 and 2 of 2: QC, differential, biomarker, pathway, network and PERMANOVA figures (ADR 0012)
 
-Stage 1 of packet R16e implements the figures FR-206 to FR-214 (V206 to V214): the four QC figures and the five differential figures. The biomarker, pathway, network and PERMANOVA figures (FR-215 to FR-222), the retrofit of the existing R10b, R13 and R14 figures and the workflow wiring are stage 2 and are not in this receipt. Implemented 2026-10-08 by the Claude route (Haiku builder, Opus review), at the operator's direction. This is not work by the routes named in AGENTS.md. The receipt means ready for review, not accepted. Independent audit: **NOT_RUN** (the Opus review follows this receipt).
+Stage 1 of packet R16e implements the figures FR-206 to FR-214 (V206 to V214): the four QC figures and the five differential figures. Stage 2 implements FR-215 to FR-222 (V215 to V222): the biomarker, pathway, network and PERMANOVA figures, see the stage-2 section at the end. The retrofit of the existing R10b, R13 and R14 figures (part B) and the `proteomics run` wiring are not in this receipt. Implemented 2026-10-08 by the Claude route (Haiku builder, Opus review), at the operator's direction. This is not work by the routes named in AGENTS.md. The receipt means ready for review, not accepted. Independent audit: **NOT_RUN** (the Opus review follows this receipt).
 
 ## Identities
 
 - Contract: `specs/017-visualization/contracts/figures.md` (figure IDs, the three outputs, the Info sheet and the statistics table of D-75, the P-value rule of FR-198 with the D-74 threshold note, the error codes). Decisions D-68, D-74, D-75.
-- Working-source manifest: `evidence/working-source-manifest.txt`, 28 files, SHA-256 `96a62553424fcfa224e806088c61551a8e55bcf43b72dca69dce3c96dfc74dcd`. It covers the catalogue, the shared HTML writer, the R renderers, the NAMESPACE and DESCRIPTION, the lock, the reason-code catalogue, the R and Python tests and the synthetic fixtures.
+- Working-source manifest (stage 1 tree): 28 files, SHA-256 `96a62553424fcfa224e806088c61551a8e55bcf43b72dca69dce3c96dfc74dcd`. Current manifest of the final stage-2 tree: `evidence/working-source-manifest.txt`, 50 files, SHA-256 `87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b` (the value in the V215 to V222 traceability rows). It covers the catalogue, the shared HTML writer, the R renderers, the NAMESPACE and DESCRIPTION, the lock, the reason-code catalogue, the R and Python tests and the synthetic fixtures.
 - Amendments of this stage: **A-2026-10-01-37** (NAMESPACE export of `render_catalogue_png`; the R16d heatmap hover rule for the row and column identifiers; ggrepel in R Suggests and the lock; reason codes; traceability; tasks), **A-2026-10-01-38** (the R01 export invariant in `test-foundation.R` is updated to the figure functions). The R16e allowlist itself is unchanged.
 - `verified_commit`: **null**. Local commits on `claude/visualization`, not pushed.
 - Environment: macOS, Python 3.13.15 (`.venv`), R 4.6.1, ggplot2 4.0.3, ggprism 1.0.7, ragg 1.5.2, ggrepel 0.9.8, `LANG=en_US.UTF-8`.
@@ -70,9 +70,66 @@ Stage 1 of packet R16e implements the figures FR-206 to FR-214 (V206 to V214): t
 
 ## Acceptance
 
-All gates of stage 1 exited 0, and every case, including its negative case, passed. The R16e stage-1 figures are recorded as ready for review (PASS by the Claude route; independent audit NOT_RUN). Stage 2 (the biomarker, pathway, network and PERMANOVA figures, the retrofit and the workflow wiring) is not started.
+All gates of stage 1 exited 0, and every case, including its negative case, passed. The R16e stage-1 figures are recorded as ready for review (PASS by the Claude route; independent audit NOT_RUN). Stage 2 (the biomarker, pathway, network and PERMANOVA figures) is recorded in the stage-2 section below; the retrofit and the workflow wiring are not started.
 
 ## Full-suite results
 
 - Full R testthat suite on the final tree: 919 expectations, 0 failed, 0 skipped (`evidence/full-r-testthat.log`).
 - Full Python suite on the final stage-1 tree: **515 passed, 0 failed, 0 skipped** (run with `-rs`, so any skip would be named; none). An earlier run showed 3 failures: two were caused by the reviewer reinstalling proteomicsCore during the run (they pass in isolation), one was a real missing `fileEncoding = "UTF-8"` in `figures_catalogue.R`, fixed before this run.
+
+## Stage 2 (V215 to V222): biomarker, pathway, network and PERMANOVA figures
+
+Two commits on `claude/visualization`, not pushed: `ab4f5aa` (group 1: biomarker figures V215 to V217) and `8780e13` (group 2: pathway, network and PERMANOVA figures V218 to V222). Claude route (Haiku builder, Opus review), at the operator's direction. The receipt means ready for review, not accepted. Independent audit: **NOT_RUN**.
+
+### What is implemented
+
+- `src/proteomics_pipeline/figures/catalogue.py`: one builder per stage-2 figure, each registered from its synthetic source table and producing the three outputs from the registered copy only (PNG via the R renderer, `.pzfx` with the data tables, the D-75 statistics table where the figure carries inferential statistics, and the Info sheet, HTML via the R16d writer).
+- `r/proteomicsCore/R/figures_catalogue.R`: one renderer per stage-2 figure in `render_catalogue_png`. The network layout is `catalogue_network_layout`, internal (not exported), deterministic (modules on a circle of radius 0.6, members on a circle of radius 0.25, modules sorted, no random seed), computed in R and called from the builder for the HTML. The NAMESPACE is unchanged.
+- Claim labels are the frozen labels of `post_de_biomarker.R`. The ROC and the CV AUC require `cross_validated_nested`; the panel plot accepts a frozen label; a training-fold ROC (`in_sample`) is refused.
+- New code: `E_FIGURE_PERMUTATION_P` (V217). Reused: `E_BIOMARKER_CLAIM`, `E_FIGURE_SOURCE_MISSING`, `E_FIGURE_SET_MISMATCH`. The reason-code catalogue was regenerated with `scripts/maintained/build_release.py codes`.
+- Fixtures (synthetic, no study data), generated by `tests/fixtures/figures/catalogue/make_fixtures.py`: pROC `roc` and `ci.se` (seed 20261008, B = 2000), `stats::t.test` (Welch), `stats::phyper` with BH, `stats::cmdscale`, `vegan::betadisper` and `vegan::permutest` (seed 20261003, B = 199), and the R13 PERMANOVA fixture factory (`tests/fixtures/permanova/make_fixtures.py`, loaded by file path). The generator is deterministic; re-running it reproduces every source byte for byte.
+
+### Acceptance cases
+
+| Case | Status | Positive oracle (computed independently of the builder) | Negative case |
+|---|---|---|---|
+| V215 | PASS | curve points (the set of thresholds) and AUC (pairwise Mann-Whitney) within 1e-10; the drawn band equals `pROC::ci.se` with the recorded seed within 1e-10; the claim label is in the title, the source and the Info sheet | a ROC from training-fold scores (`in_sample`) fails `E_BIOMARKER_CLAIM` |
+| V216 | PASS | estimates and intervals equal `stats::t.test` (Welch) within 1e-10; the statistics table P equals the oracle | a panel plot without a claim label fails `E_BIOMARKER_CLAIM` |
+| V217 | PASS | observed = mean of the nested-CV repeats; every null value and every repeat drawn; the displayed P equals (k + 1) / (B + 1) = 0.050 with B = 19 shown | a displayed P of 0.10 fails `E_FIGURE_PERMUTATION_P` |
+| V218 | PASS | gene ratio = k / n and -log10 q equal within 1e-10; only sets with a foreground hit are plotted; the statistics table P and q equal | SET_E (no foreground hit) requested as enriched fails `E_FIGURE_SET_MISMATCH` |
+| V219 | PASS | every cell equals the group mean of the sign-aligned PC1 of the scaled module (`prcomp`, computed in the test) within 1e-10; only declared modules appear | an undeclared module (M4) fails `E_FIGURE_SET_MISMATCH` |
+| V220 | PASS | nodes and edges equal the induced subnetwork of the interaction snapshot; layout coordinates are not compared | edge N01-N08 (absent from the snapshot) fails `E_FIGURE_SOURCE_MISSING` |
+| V221 | PASS | coordinates equal `stats::cmdscale` within 1e-8 after sign alignment, and the percent of positive eigenvalues within 1e-8; each drawn centroid equals the mean of its own group within 1e-10 | a centroid taken from the full sample differs from the drawn centroid (asserted) |
+| V222 | PASS | distances equal `vegan::betadisper` within 1e-10; the PERMDISP P equals `vegan::permutest` with the recorded seed; B and seed appear in the title and the statistics table | a P without its seed fails `E_FIGURE_SOURCE_MISSING` |
+
+### Gates
+
+Before each commit (the gates named in the brief):
+
+| Commit | Catalogue integration tests | testthat `test-figures-catalogue.R` | Regression, unit and text encoding | Spec kit |
+|---|---|---|---|---|
+| `ab4f5aa` (V215 to V217) | 27 passed | 166 expectations, 0 failed | 91 passed | PASS |
+| `8780e13` (V218 to V222) | 37 passed | 188 expectations, 0 failed | 91 passed | PASS |
+
+On the final tree (after commit `8780e13`, which is the content of the reviewed manifest):
+
+- Full Python suite, `.venv/bin/python -m pytest tests -q -rs -p no:cacheprovider`, run once in the background: **531 passed, 0 failed, 0 skipped** in 3714.55 s (`evidence/stage2-full-python-suite.log`). Stage 1 had 515; the 16 new tests are the V215 to V222 cases.
+- Full R testthat suite, `testthat::test_dir('r/proteomicsCore/tests/testthat', ...)`: **966 expectations, 0 failed, 0 skipped**, 18 files (`evidence/stage2-full-r-testthat.log`). Stage 1 had 919.
+- renv lock check: qualified (`evidence/stage2-renv-lock-check.log`). The lock is unchanged in stage 2: pROC, vegan and ggrepel were already in it.
+- The acceptance ledger: 188 PASS and 34 NOT_RUN (stage 1: 180 and 42). `gate-results.json` lists all commands of both stages with their logs.
+
+### Amendments of this stage
+
+- `packet-ownership.json` maintainer amendments 38 (commit `ab4f5aa`) and 39 (commit `8780e13`): the reason-code catalogue, traceability status and task checkboxes for V215 to V222, the acceptance ledger. The R16e write allowlist itself is unchanged.
+- Working-source manifest: the V215 to V222 rows point to the final manifest (87e971d4...). The stage-1 rows (V206 to V214) keep their stage-1 manifest hash; see the doubts below.
+
+### Doubts for review
+
+1. The panel plot accepts any frozen claim label, including `in_sample`. A panel evaluated in sample is a performance estimate, so it is not refused, but a reviewer may want a stricter rule.
+2. The Prism table kinds: the contract lists column, XY and grouped tables. The network graph writes a column table (node degree) and an XY table (the edge list as node indices), and the ROC writes its band as two XY tables. The statistics table is omitted for the ROC and the network, which have no inferential statistics; the ROC AUC and its interval are in the Info notes.
+3. `E_FIGURE_PERMUTATION_P` is a new code that the contract does not list. The Maintainer may prefer an existing code.
+4. The V206 to V214 rows keep the stage-1 manifest hash, which predates the stage-2 changes to the shared catalogue code. The Maintainer should decide whether those rows are re-verified.
+5. The commit trailers name Claude Opus 5.5, as the operator's brief asks. The builder for this work is the Haiku route, as the stage-1 receipt also records.
+6. Not run: GraphPad Prism opening of any `.pzfx` (a Maintainer check). The `pzfx` R package reads all eight stage-2 `.pzfx` files without error (manual check, not a test). The HTML files were not opened in a browser; the static scan and the hover checks run in the writer.
+7. Visual review by eye of the eight stage-2 renders. The captions of the ROC, the CV AUC and the network were shortened after review, and the pROC `progress` argument (deprecated) was removed.
+8. The R suite prints warnings that also appear in the stage-1 log (a ggplot2 S3 guide deprecation in V203 and the `review minor 2` messages of the post-DE biomarker tests). They are not new.
