@@ -39,6 +39,9 @@ API_PROBES = {
     "proDA": "all(c('contrast','reduced_model') %in% names(formals(proDA::test_diff)))",
     "vegan": "'by' %in% names(formals(vegan::adonis2))",
     "fgsea": "all(c('pathways','stats','minSize','maxSize') %in% names(formals(fgsea::fgsea)))",
+    # A-2026-10-01-17 (R14d): the classifier APIs the biomarker stage calls
+    "glmnet": "all(c('alpha','lambda','family','standardize') %in% names(formals(glmnet::glmnet)))",
+    "e1071": "all(c('kernel','cost','scale') %in% names(formals(e1071:::svm.default)))",
 }
 
 
@@ -243,7 +246,9 @@ def check_reference_matrix(matrix_path: str | Path, lock_path: str | Path, root:
 def write_acceptance_ledger(path: str | Path = ROOT_DIR / "docs" / "validation" / "acceptance.json", root: str | Path = ROOT_DIR) -> dict:
     root = Path(root)
     trace = json.loads((root / "specs" / "001-downstream-proteomics" / "traceability.json").read_text(encoding="utf-8"))["requirements"]
-    reasons = {r["acceptance"]: "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer" for r in trace if r["packet"] == "R12"}
+    # A-2026-10-01-21: an R12 row keeps its own recorded reason (Maintainer-only gate, operator decision or final review); the generic text is a fallback.
+    reasons = {r["acceptance"]: (r.get("verification") or {}).get("reason") or "R12 private regression/release gate: Maintainer-only, NOT_RUN by an implementer"
+               for r in trace if r["packet"] == "R12"}
     for r in trace:
         if r["acceptance"] not in reasons and r["status"] not in ("PASS", "FAIL"):
             reasons[r["acceptance"]] = (r.get("verification") or {}).get("reason") or "not executed or not passed in this working tree"
@@ -254,5 +259,5 @@ def write_acceptance_ledger(path: str | Path = ROOT_DIR / "docs" / "validation" 
     ledger = {"schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json", "verified_commit": None, "status_counts": counts,
               "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
               "records": records}
-    Path(path).write_text(json.dumps(ledger, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    Path(path).write_text(json.dumps(ledger, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     return ledger

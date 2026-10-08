@@ -1,0 +1,136 @@
+{
+  "profile": "post_de_release",
+  "gates": {
+    "nested_auc_null": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53",
+    "permutation_p_null": "binomial P(K >= k | rate 0.05) >= 0.01 and chi-square GOF P over the B+1 values >= 0.01",
+    "leaky_reference": "mean AUC > 0.75",
+    "connectivity_null": "upper95 P(P<=0.05) <= 0.10 and planted cluster P = 1/200",
+    "blocked_nested_auc_null": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53",
+    "blocked_permutation_p_null": "binomial P(K >= k | rate 0.05) >= 0.01 and chi-square GOF P >= 0.01",
+    "blocked_ungrouped_reference": "mean ungrouped AUC - mean grouped AUC > 0.05"
+  },
+  "seeds": {
+    "auc": 600000,
+    "perm": 700000,
+    "leaky": 800000,
+    "ppi": 900000
+  },
+  "design": "15 vs 15 units, 200 pure-noise features; nested CV 2 x 5-fold outer, 3-fold inner, top-5 AUC selection, ridge glmnet lambda 0.1; leaky reference selects and scales on all data",
+  "network": "300 measured genes, 1500 random edges plus a planted complete cluster of 10 genes; random sets of 10 genes drawn uniformly from the measured universe; degree-preserving null of 199 draws",
+  "seconds": 1192.94935798645,
+  "fit_path": "production R functions: pd_bm_nested, pd_bm_permute_labels, pd_connectivity_null",
+  "scenarios": {
+    "nested_auc_null": {
+      "n": 400,
+      "mean": 0.496875,
+      "mc_se": 0.006686523001560497,
+      "lower95": 0.4837694149169414,
+      "upper95": 0.5099805850830585,
+      "interval_covers_0_5": true,
+      "gate": "PASS"
+    },
+    "permutation_p_null": {
+      "n": 400,
+      "B": 19,
+      "mean": 0.522125,
+      "k_at_or_below_0_05": 23,
+      "rate": 0.0575,
+      "binomial_upper_tail_p": 0.2753826648060262,
+      "value_counts": [
+        23,
+        20,
+        23,
+        16,
+        19,
+        20,
+        14,
+        27,
+        23,
+        14,
+        24,
+        19,
+        14,
+        21,
+        19,
+        30,
+        16,
+        20,
+        20,
+        18
+      ],
+      "chi_square": 17.0,
+      "chi_square_df": 19,
+      "chi_square_p": 0.5898678221289577,
+      "gate": "PASS"
+    },
+    "leaky_reference": {
+      "n": 400,
+      "mean": 0.8751888888888888,
+      "gate": "PASS"
+    },
+    "connectivity_null": {
+      "n": 400,
+      "k_at_or_below_0_05": 10,
+      "rate": 0.025,
+      "rate_upper95": 0.04203654501425719,
+      "planted_cluster_p": 0.005,
+      "gate": "PASS"
+    },
+    "blocked_nested_auc_null": {
+      "n": 200,
+      "mean": 0.48369999999999996,
+      "mc_se": 0.010229307308663445,
+      "lower95": 0.4636505576750196,
+      "upper95": 0.5037494423249803,
+      "gate": "PASS"
+    },
+    "blocked_permutation_p_null": {
+      "n": 200,
+      "B": 19,
+      "k_at_or_below_0_05": 9,
+      "rate": 0.045,
+      "binomial_upper_tail_p": 0.6729755365865415,
+      "value_counts": [
+        9,
+        5,
+        6,
+        14,
+        11,
+        12,
+        9,
+        11,
+        11,
+        16,
+        4,
+        13,
+        8,
+        10,
+        9,
+        6,
+        5,
+        11,
+        17,
+        13
+      ],
+      "chi_square": 25.2,
+      "chi_square_df": 19,
+      "chi_square_p": 0.15406375812886106,
+      "gate": "PASS"
+    },
+    "blocked_ungrouped_reference": {
+      "n": 200,
+      "mean": 0.679290625,
+      "grouped_mean": 0.48369999999999996,
+      "difference": 0.19559062500000007,
+      "gate": "PASS"
+    }
+  },
+  "blocked": {
+    "seed": 1000000,
+    "n": 200,
+    "B": 19,
+    "seconds": 424.963925123215,
+    "design": "10 vs 10 subjects x 2 observations, subject effect SD 1 on each of 200 pure-noise features; nested CV grouped by subject 2 x 5-fold outer, 3-fold inner, top-5 AUC, ridge glmnet lambda 0.1; permutation of whole subjects; ungrouped reference uses observation-level folds"
+  },
+  "not_calibrated": "LOOCV, lasso/elastic-net selection, SVM and random-forest classifiers, tuned lambda grids (fixed ridge lambda 0.1 and top-5 AUC selection only)"
+}

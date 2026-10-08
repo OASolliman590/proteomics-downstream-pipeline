@@ -47,11 +47,20 @@ def inspect(*,config_path: str|Path|None=None):
         if name not in package_names: package_names.append(name)
     packages=[{"name":name,"available":False,"status":"NOT_AVAILABLE","version":None,"reason":"Rscript is unavailable"} for name in package_names]
     if r["available"]:
+        # Review follow-up 2026-10-03: one portable script-file probe (runtime.run_r_code) instead of two `Rscript -e`
+        # calls per package; base R only, so a missing jsonlite is itself reported.
+        from .runtime import run_r_code
+        code=("for (p in commandArgs(TRUE)) { ok <- requireNamespace(p, quietly=TRUE); "
+              "cat(p, if (ok) 'TRUE' else 'FALSE', if (ok) as.character(utils::packageVersion(p)) else '', sep='\t'); cat('\n') }")
+        probe=run_r_code(code,package_names,rscript=r["path"])
+        found={}
+        for line in probe.stdout.splitlines():
+            fields=line.split("\t")
+            if len(fields)==3 and fields[0] in package_names: found[fields[0]]=(fields[1]=="TRUE",fields[2] or None)
         packages=[]
         for package_name in package_names:
-            result=subprocess.run([r["path"],"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) quit(status=0L) else quit(status=1L)"],capture_output=True,shell=False,check=False)
-            version_result=subprocess.run([r["path"],"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,shell=False,check=False, encoding="utf-8")
-            packages.append({"name":package_name,"available":result.returncode==0,"status":"AVAILABLE" if result.returncode==0 else "NOT_AVAILABLE","version":version_result.stdout.strip() or None})
+            available,version=found.get(package_name,(False,None))
+            packages.append({"name":package_name,"available":available,"status":"AVAILABLE" if available else "NOT_AVAILABLE","version":version})
     package_by_name={item["name"]:item for item in packages}
     discovered_by_id={item["id"]:item for item in discovered}
     availability={}

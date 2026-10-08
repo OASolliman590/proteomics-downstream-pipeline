@@ -1,0 +1,122 @@
+$ .venv/bin/python -m pytest tests/scientific/test_post_de_association.py tests/scientific/reference/test_text_encoding.py tests/scientific/test_post_de_networks.py -q -p no:cacheprovider -rA -k "review or newline or release_artifact or v165"   # tree 7bce0fd + new tests, before the fixes
+FFFFF.F.                                                                 [100%]
+=================================== FAILURES ===================================
+_______ test_review_m1_default_pearson_with_group_adjustment_is_refused ________
+
+tmp_path = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-250/test_review_m1_default_pearson0')
+
+    def test_review_m1_default_pearson_with_group_adjustment_is_refused(tmp_path):
+        """Pearson/Spearman are unadjusted correlations (SM33, FR-145): with the default adjust_for_group (and a declared
+        covariate) they are refused instead of being reported as 'adjusted for group'; partial correlation is the adjusted form."""
+>       with pytest.raises(ProteomicsError) as error:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ProteomicsError
+
+tests/scientific/test_post_de_association.py:190: Failed
+____________ test_review_m1_adjusted_for_reports_only_what_was_used ____________
+
+tmp_path = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-250/test_review_m1_adjusted_for_re0')
+
+    def test_review_m1_adjusted_for_reports_only_what_was_used(tmp_path):
+        payload, code, out = run(tmp_path / "p", n=6, method="correlation", correlation="pearson", phenotype={"adjust_for": [], "adjust_for_group": False}, permutations=99)
+        assert code == 0, payload
+>       assert {r["adjusted_for"] for r in _assoc(out)} == {"none"}
+E       AssertionError: assert {''} == {'none'}
+E         
+E         Extra items in the left set:
+E         ''
+E         Extra items in the right set:
+E         'none'
+E         Use -v to get more diff
+
+tests/scientific/test_post_de_association.py:201: AssertionError
+_ test_review_m2_group_determined_phenotype_is_aliased_even_without_group_term _
+
+tmp_path = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-250/test_review_m2_group_determine0')
+
+    def test_review_m2_group_determined_phenotype_is_aliased_even_without_group_term(tmp_path):
+        payload, code = _group_determined(tmp_path / "opt")
+        stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_association")
+>       assert code == 0 and stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_PHENOTYPE_ALIASED"
+E       AssertionError: assert (0 == 0 and 'COMPLETED' == 'INAPPLICABLE'
+E         
+E         - INAPPLICABLE
+E         + COMPLETED)
+
+tests/scientific/test_post_de_association.py:229: AssertionError
+_____ test_review_minor3_simpson_flag_fires_under_default_group_adjustment _____
+
+tmp_path = PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-250/test_review_minor3_simpson_fla0')
+
+    def test_review_minor3_simpson_flag_fires_under_default_group_adjustment(tmp_path):
+        payload, code, out = run(tmp_path, kind="simpson", phenotype={"scope": "pooled", "adjust_for": []})   # adjust_for_group default (true)
+        assert code == 0, payload
+        rows = {r["feature_id"]: r for r in _assoc(out)}
+        slopes = B.r_json("""a <- commandArgs(TRUE); y <- as.matrix(read.delim(a[1], row.names = 1, check.names = FALSE, encoding = 'UTF-8'))
+          o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); o <- o[match(colnames(y), o$observation_id), ]; s <- as.numeric(o$score)
+          cat(jsonlite::toJSON(lapply(1:5, function(i) unname(coef(lm(y[i, ] ~ s))[2])), auto_unbox = TRUE, digits = NA))""",
+                          out / "preprocessing" / "primary" / "matrix.tsv", out / "preprocessing" / "primary" / "observations.tsv")
+        for i, slope in enumerate(slopes, start=1):
+            f = f"F{i:02d}"
+            assert float(rows[f]["effect"]) < 0                                           # the group-adjusted effect agrees with the within-group slopes ...
+>           assert abs(float(rows[f]["pooled_unadjusted_slope"]) - slope) <= 1e-10 and slope > 0   # ... the unadjusted pooled slope does not
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'pooled_unadjusted_slope'
+
+tests/scientific/test_post_de_association.py:246: KeyError
+____________ test_release_artifact_writers_use_lf_on_every_platform ____________
+
+    def test_release_artifact_writers_use_lf_on_every_platform():
+        problems = []
+        for path in NEWLINE_STRICT:
+            problems += newline_violations(path.read_text(encoding="utf-8"), path.relative_to(ROOT).as_posix())
+>       assert problems == [], "\n".join(problems)
+E       AssertionError: scripts/maintained/build_release.py:206: write_text() without newline="\n" (CRLF on Windows)
+E         scripts/maintained/build_release.py:210: write_text() without newline="\n" (CRLF on Windows)
+E         src/proteomics_pipeline/legacy_service.py:166: write_text() without newline="\n" (CRLF on Windows)
+E       assert ['scripts/mai... on Windows)'] == []
+E         
+E         Left contains 3 more items, first extra item: 'scripts/maintained/build_release.py:206: write_text() without newline="\\n" (CRLF on Windows)'
+E         Use -v to get more diff
+
+tests/scientific/reference/test_text_encoding.py:165: AssertionError
+________ test_v165_connectivity_null_from_the_measured_mapped_universe _________
+
+ppi = (PosixPath('/private/var/folders/94/fy64sdws3rl4tv96_nf4hl5c0000gp/T/pytest-of-megastore/pytest-250/ppi0/run'), {'mapp...nifest_sha256': '31a34abd2f95a7e03d55d8faf6b756450965d2dd71b5defcf2c3d823fa9b9e9c', 'resource_id': 'ppi', 'files': 1}})
+
+    def test_v165_connectivity_null_from_the_measured_mapped_universe(ppi):
+        """Observed edges, set sizes and the universe are counted independently here; the null sampler itself is checked
+        against exact enumeration on a tiny graph in test-post-de-networks.R (review 2026-10-05, minor 5)."""
+        out, snap, _ = ppi
+        rows = {r["set_id"]: r for r in F.read_tsv(_net(out) / "connectivity.tsv")}
+        dep, rest = rows["dep"], rows["rand"]
+        assert float(dep["p_value"]) == 1 / 200 and float(rest["p_value"]) > 0.1      # planted cluster at the floor; random-like set non-small
+        oracle = B.r_json("""a <- commandArgs(TRUE); e <- read.delim(a[1], colClasses = 'character', encoding = 'UTF-8'); e <- e[as.numeric(e$score) >= 300 & e$gene_a != e$gene_b, ]
+          e <- unique(data.frame(a = pmin(e$gene_a, e$gene_b), b = pmax(e$gene_a, e$gene_b)))
+          mp <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); mem <- read.delim(a[3], colClasses = 'character', encoding = 'UTF-8')
+          universe <- intersect(unique(mp$gene_id), unique(c(e$a, e$b))); acc <- setNames(mp$gene_id, mp$source_id)
+          res <- list(universe = length(universe))
+          for (s in c('dep', 'rand')) { genes <- intersect(unique(na.omit(acc[mem$accession_key[mem[[s]] == 'true']])), universe)
+            res[[s]] <- list(obs = sum(e$a %in% genes & e$b %in% genes), n = length(genes)) }
+          cat(jsonlite::toJSON(res, auto_unbox = TRUE, digits = NA))""",
+                          Path(snap["ppi_manifest"]).parent / "ppi_source.tsv", Path(snap["mapping_manifest"]).parent / "mapping_source.tsv", _accession_membership(out, snap))
+        for s in ("dep", "rand"):
+            assert int(rows[s]["observed_edges"]) == oracle[s]["obs"] and int(rows[s]["n_set_genes_in_universe"]) == oracle[s]["n"]
+            assert abs(float(rows[s]["p_value"]) - (int(rows[s]["k"]) + 1) / (int(rows[s]["null_draws"]) + 1)) <= 1e-15
+            assert rows[s]["seed"] == "9"
+>       assert (dep["stream"], rest["stream"]) == ("1", "2")                          # one derived L'Ecuyer stream per set, never a shared seed
+                ^^^^^^^^^^^^^
+E       KeyError: 'stream'
+
+tests/scientific/test_post_de_networks.py:254: KeyError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/scientific/reference/test_text_encoding.py::test_newline_lint_detects_platform_dependent_writes
+PASSED tests/scientific/test_post_de_networks.py::test_v165_negative_genome_wide_null_is_refused
+FAILED tests/scientific/test_post_de_association.py::test_review_m1_default_pearson_with_group_adjustment_is_refused
+FAILED tests/scientific/test_post_de_association.py::test_review_m1_adjusted_for_reports_only_what_was_used
+FAILED tests/scientific/test_post_de_association.py::test_review_m2_group_determined_phenotype_is_aliased_even_without_group_term
+FAILED tests/scientific/test_post_de_association.py::test_review_minor3_simpson_flag_fires_under_default_group_adjustment
+FAILED tests/scientific/reference/test_text_encoding.py::test_release_artifact_writers_use_lf_on_every_platform
+FAILED tests/scientific/test_post_de_networks.py::test_v165_connectivity_null_from_the_measured_mapped_universe
+6 failed, 2 passed, 22 deselected in 30.48s

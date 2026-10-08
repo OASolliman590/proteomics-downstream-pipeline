@@ -49,7 +49,7 @@ def test_doctor_matches_direct_real_runtime_inventory_when_available():
     rscript=shutil.which("Rscript")
     if not rscript: pytest.skip("NOT_RUN: Rscript unavailable")
     for package in ("jsonlite","openssl","proteomicsCore"):
-        probe=subprocess.run([rscript,"--vanilla","-e",f"if(requireNamespace('{package}', quietly=TRUE)) quit(status=0L) else quit(status=1L)"],capture_output=True,shell=False,check=False)
+        probe=__import__("proteomics_pipeline.runtime",fromlist=["run_r_code"]).run_r_code(f"if(requireNamespace('{package}', quietly=TRUE)) quit(status=0L) else quit(status=1L)",rscript=rscript)
         if probe.returncode!=0: pytest.skip("NOT_RUN: required R package unavailable")
     report=inspect(); packages={item["name"]:item for item in report["packages"]}; caps={item["id"]:item for item in report["capabilities"]}
     assert all(packages[name]["available"] for name in ("jsonlite","openssl","proteomicsCore")); assert caps["foundation.io_roundtrip"]["status"]=="AVAILABLE"

@@ -7,8 +7,14 @@ sha256_file <- function(path) {
   }
   stop("E_CAPABILITY_NOT_AVAILABLE: R package openssl is required for artifact hashes", call. = FALSE)
 }
-read_table_preserve <- function(path) read.delim(path, header=TRUE, sep="\t", quote="", comment.char="", check.names=FALSE, na.strings=character(), stringsAsFactors=FALSE, colClasses="character", fill=TRUE, blank.lines.skip=FALSE, strip.white=FALSE)
-write_table_preserve <- function(data,path) write.table(data,file=path,sep="\t",quote=FALSE,row.names=FALSE,na="NA",fileEncoding="UTF-8",qmethod="double")
+# Review follow-up 2026-10-03: explicit UTF-8 on read (strings are declared UTF-8 instead of relying on R >= 4.2's native
+# UTF-8 on Windows) and a binary LF writer (a text-mode connection writes CRLF on Windows).
+read_table_preserve <- function(path) read.delim(path, header=TRUE, sep="\t", quote="", comment.char="", check.names=FALSE, na.strings=character(), stringsAsFactors=FALSE, colClasses="character", fill=TRUE, blank.lines.skip=FALSE, strip.white=FALSE, encoding="UTF-8")
+write_table_preserve <- function(data,path) {
+  data[] <- lapply(data, function(column) if (is.character(column)) enc2utf8(column) else column)
+  connection <- file(path, open="wb"); on.exit(close(connection), add=TRUE)
+  write.table(data,file=connection,sep="\t",quote=FALSE,row.names=FALSE,na="NA",eol="\n",qmethod="double")
+}
 io_roundtrip_impl <- function(request) {
   params=request$parameters
   expected_parameters <- c("matrix_input_id","metadata_input_id")

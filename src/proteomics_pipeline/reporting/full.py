@@ -64,6 +64,9 @@ def scatter_svg(points: list[dict], *, x_label: str, y_label: str, title: str, h
     x0, x1 = min(xs + [0.0]), max(xs + [0.0]); y0, y1 = 0.0, max(ys + [hline or 0.0]) or 1.0
     if x0 == x1:
         x0, x1 = x0 - 1, x1 + 1
+    # open item 10 (V109): 5 % padding so no point sits on the frame; data coordinates themselves are never altered
+    pad_x, pad_y = 0.05 * (x1 - x0), 0.05 * (y1 - y0)
+    x0, x1, y0, y1 = x0 - pad_x, x1 + pad_x, y0 - pad_y, y1 + pad_y
     sx = lambda x: L + (x - x0) / (x1 - x0) * (W - L - R)
     sy = lambda y: H - Bm - (y - y0) / (y1 - y0) * (H - T - Bm)
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{html.escape(title)}">',
@@ -77,11 +80,21 @@ def scatter_svg(points: list[dict], *, x_label: str, y_label: str, title: str, h
         parts.append(f'<text x="{L - 6}" y="{sy(tick) + 3:.1f}" text-anchor="end" font-size="10" font-family="sans-serif">{tick:.3g}</text>')
     if hline is not None:
         parts.append(f'<line x1="{L}" y1="{sy(hline):.1f}" x2="{W - R}" y2="{sy(hline):.1f}" stroke="#555" stroke-dasharray="4 3"/>')
+    if x0 < 0 < x1:   # zero reference line (no effect)
+        parts.append(f'<line class="zero" x1="{sx(0):.1f}" y1="{T}" x2="{sx(0):.1f}" y2="{H - Bm}" stroke="#999" stroke-dasharray="2 3"/>')
+    groups: dict[tuple, list[dict]] = {}
     for p in points:
         if p["x"] is None or p["y"] is None:
             continue
-        colour = PALETTE["sig"] if p.get("highlight") else PALETTE["ns"]
-        parts.append(f'<circle cx="{sx(p["x"]):.2f}" cy="{sy(p["y"]):.2f}" r="3" fill="{colour}" fill-opacity="0.75"><title>{html.escape(str(p["label"]))}</title></circle>')
+        groups.setdefault((p["x"], p["y"]), []).append(p)
+    for (x, y), same in groups.items():   # identical coordinates are drawn once and marked with their count
+        colour = PALETTE["sig"] if any(q.get("highlight") for q in same) else PALETTE["ns"]
+        if len(same) == 1:
+            parts.append(f'<circle cx="{sx(x):.2f}" cy="{sy(y):.2f}" r="3" fill="{colour}" fill-opacity="0.75"><title>{html.escape(str(same[0]["label"]))}</title></circle>')
+        else:
+            labels = ", ".join(str(q["label"]) for q in same)
+            parts.append(f'<circle cx="{sx(x):.2f}" cy="{sy(y):.2f}" r="4.5" fill="{colour}" fill-opacity="0.9" stroke="black" stroke-width="1" data-n="{len(same)}">'
+                         f'<title>{html.escape(f"{len(same)} identical points: {labels}")}</title></circle>')
     parts.append("</svg>")
     return "".join(parts)
 
@@ -120,7 +133,7 @@ def build_figures(root: Path, out: Path, data: dict, formats: list[str]) -> list
                 points = [{"x": _num(r[1]), "y": _num(r[2]), "label": r[0], "highlight": r[6] == "true"} for r in src_rows]
                 svg = scatter_svg(points, x_label="Effect (log2 difference)", y_label="-log10 P", title=f"{key[1]} ({key[0]}, {name}); {len(tested)} tested of {len(sel)} planned")
                 (out / "figures").mkdir(parents=True, exist_ok=True)
-                (out / "figures" / f"{stem}.svg").write_text(svg, encoding="utf-8")
+                (out / "figures" / f"{stem}.svg").write_text(svg, encoding="utf-8", newline="\n")
                 record = {"stem": stem, "source": f"figure_sources/{stem}.tsv", "files": [f"figures/{stem}.svg"],
                           "caption": f"Effect versus -log10 P for {key[1]} ({name}); red points have family q at or below {cutoff} in family {fam}. Unadjusted P is not a discovery criterion.",
                           "not_run": []}
@@ -141,7 +154,7 @@ def build_figures(root: Path, out: Path, data: dict, formats: list[str]) -> list
         pts = [{"x": _num(r["d"]), "y": abs(_num(r["t"]) or 0) if _num(r["t"]) is not None else None, "label": f"{r['feature_id']} ({r['descriptive_class']})",
                 "highlight": r["descriptive_class"] in ("near_restoration", "partial_return")} for r in rows]
         (out / "figures").mkdir(parents=True, exist_ok=True)
-        (out / "figures" / "response_axes.svg").write_text(scatter_svg(pts, x_label="Disease effect d (log2)", y_label="|treatment effect t| (log2)", title="Descriptive response axes (no P values)"), encoding="utf-8")
+        (out / "figures" / "response_axes.svg").write_text(scatter_svg(pts, x_label="Disease effect d (log2)", y_label="|treatment effect t| (log2)", title="Descriptive response axes (no P values)"), encoding="utf-8", newline="\n")
         figures.append({"stem": "response_axes", "source": "figure_sources/response_axes.tsv", "files": ["figures/response_axes.svg"], "not_run": [],
                         "caption": "Descriptive disease and treatment effects; highlighted classes are descriptive, not equivalence or rescue."})
     return figures
@@ -188,12 +201,12 @@ def build_report(run_root: str | Path, snapshot: dict, out: Path, formats: list[
     validate_report_data(data)
     plan = json.loads((root / "plan.json").read_text(encoding="utf-8")) if (root / "plan.json").is_file() else None
     figures = build_figures(root, out, data, formats)
-    (out / "report_data.json").write_text(json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8")
-    (out / "methods_full.md").write_text(render_full_methods(data, plan), encoding="utf-8")
+    (out / "report_data.json").write_text(json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8", newline="\n")
+    (out / "methods_full.md").write_text(render_full_methods(data, plan), encoding="utf-8", newline="\n")
     from .stub_methods import render_methods
-    (out / "methods.md").write_text(render_methods(data), encoding="utf-8")
-    (out / "figures.json").write_text(json.dumps(figures, indent=2), encoding="utf-8")
-    (out / "index.html").write_text(render(data, root, figures), encoding="utf-8")
+    (out / "methods.md").write_text(render_methods(data), encoding="utf-8", newline="\n")
+    (out / "figures.json").write_text(json.dumps(figures, indent=2), encoding="utf-8", newline="\n")
+    (out / "index.html").write_text(render(data, root, figures), encoding="utf-8", newline="\n")
     return sorted(p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file())
 
 

@@ -1,0 +1,38 @@
+$ .venv/bin/python -m pytest tests/integration/test_plan_portability.py -q -p no:cacheprovider -rA -k line_ending   # 136da9e + crlf-checkout parametrisation (old CRLF conversion in the test body)
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+____ test_content_hash_and_code_identity_are_line_ending_independent[crlf] _____
+
+tmp_path = PosixPath('<tmp>')
+checkout = 'crlf'
+
+    @pytest.mark.parametrize("checkout", ["lf", "crlf"])
+    def test_content_hash_and_code_identity_are_line_ending_independent(tmp_path, checkout):
+        from proteomics_pipeline.provenance import content_sha256
+        lf, crlf, binary = tmp_path / "lf.tsv", tmp_path / "crlf.tsv", tmp_path / "b.png"
+        lf.write_bytes(b"a\tb\n1\t2\n"); crlf.write_bytes(b"a\tb\r\n1\t2\r\n"); binary.write_bytes(b"\x89PNG\r\n\x1a\n\x00\r\n")
+        assert content_sha256(lf) == content_sha256(crlf) == hashlib.sha256(b"a\tb\n1\t2\n").hexdigest()
+        assert content_sha256(binary) == hashlib.sha256(binary.read_bytes()).hexdigest()               # NUL bytes: hashed raw
+        package = tmp_path / "pkg"; shutil.copytree(ROOT / "src" / "proteomics_pipeline", package, ignore=shutil.ignore_patterns("__pycache__"))
+        repo = tmp_path / "repo"
+        shutil.copytree(ROOT / "r" / "proteomicsCore", repo / "r" / "proteomicsCore", ignore=shutil.ignore_patterns("tests"))
+        (repo / "scripts" / "maintained").mkdir(parents=True); shutil.copy(ROOT / "scripts" / "maintained" / "run_stage.R", repo / "scripts" / "maintained")
+        text_files = [*package.rglob("*.py"), *package.rglob("*.html"), *package.rglob("*.json"), *(repo / "r" / "proteomicsCore" / "R").glob("*.R"),
+                      repo / "r" / "proteomicsCore" / "DESCRIPTION", repo / "r" / "proteomicsCore" / "NAMESPACE"]
+        if checkout == "crlf":
+            _crlf_checkout(text_files)
+        before = workflow.code_manifest(package, repo)
+        for path in [*package.rglob("*.html"), repo / "r" / "proteomicsCore" / "DESCRIPTION", repo / "r" / "proteomicsCore" / "NAMESPACE"]:
+            path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+>       assert workflow.code_manifest(package, repo)["sha256"] == before["sha256"]
+E       AssertionError: assert '95079435c8ac...f96c5c083b810' == 'f00f85e79146...f4884dce67034'
+E         
+E         - f00f85e79146e63cd2923af3166e1317cc4a8693aaf46a7b5cdf4884dce67034
+E         + 95079435c8acf35a81040276e88d1d3f762ca8461069c261454f96c5c083b810
+
+tests/integration/test_plan_portability.py:138: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/integration/test_plan_portability.py::test_content_hash_and_code_identity_are_line_ending_independent[lf]
+FAILED tests/integration/test_plan_portability.py::test_content_hash_and_code_identity_are_line_ending_independent[crlf]
+1 failed, 1 passed, 3 deselected in 1.28s

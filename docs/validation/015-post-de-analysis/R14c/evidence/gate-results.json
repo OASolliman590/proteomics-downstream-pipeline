@@ -1,0 +1,23 @@
+{
+  "packet": "R14c",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_association.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "9 passed in 41.20s",
+      "log": "docs/validation/015-post-de-analysis/R14c/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-association.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+      "exit_code": 0,
+      "summary": "expectations=14 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/015-post-de-analysis/R14c/evidence/r-test-post-de-association.log"
+    }
+  ],
+  "working_source_manifest_sha256": "7996980e435ecee08d108f5f5035d85ecdb115522bcae5a77dbf51c53a5b189e",
+  "n_files": 7,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

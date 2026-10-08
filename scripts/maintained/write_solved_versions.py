@@ -13,7 +13,7 @@ def main(argv=None):
  if rscript:
   process=subprocess.run([rscript,"--version"],capture_output=True,text=True,check=False,shell=False, encoding="utf-8"); packages={}
   for package_name in ("jsonlite","openssl","testthat","proteomicsCore"):
-   version_process=subprocess.run([rscript,"--vanilla","-e",f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))"],capture_output=True,text=True,check=False,shell=False, encoding="utf-8")
+   version_process=__import__("proteomics_pipeline.runtime",fromlist=["run_r_code"]).run_r_code(f"if(requireNamespace('{package_name}', quietly=TRUE)) cat(as.character(packageVersion('{package_name}')))",rscript=rscript)
    packages[package_name]=version_process.stdout.strip() or None
   r_packages=packages
   r={**_safe_executable(rscript),"version":(process.stdout or process.stderr).strip(),"exit_code":process.returncode,"packages":packages}
@@ -21,5 +21,5 @@ def main(argv=None):
  for name in ("setuptools","jsonschema","PyYAML","pytest"):
   try: dependencies[name]=metadata.version(name)
   except metadata.PackageNotFoundError: dependencies[name]=None
- value={"generated_at":datetime.now(timezone.utc).isoformat(),"python":{**_safe_executable(sys.executable),"version":platform.python_version()},"dependencies":dependencies,"r_packages":r_packages,"rscript":r,"status":"AVAILABLE" if r else "NOT_RUN"}; output.parent.mkdir(parents=True,exist_ok=True); output.write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8"); print(json.dumps(value,sort_keys=True)); return 0 if r else 3
+ value={"generated_at":datetime.now(timezone.utc).isoformat(),"python":{**_safe_executable(sys.executable),"version":platform.python_version()},"dependencies":dependencies,"r_packages":r_packages,"rscript":r,"status":"AVAILABLE" if r else "NOT_RUN"}; output.parent.mkdir(parents=True,exist_ok=True); output.write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8", newline="\n"); print(json.dumps(value,sort_keys=True)); return 0 if r else 3
 if __name__=="__main__":raise SystemExit(main())

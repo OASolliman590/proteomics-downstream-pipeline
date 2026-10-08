@@ -1,0 +1,5 @@
+$ .venv/bin/python -m pytest tests/integration/test_post_de_generality.py -q -rs -p no:cacheprovider
+# started 2026-10-04T18:04:11.936676+00:00  exit 0
+
+............                                                             [100%]
+12 passed in 245.61s (0:04:05)

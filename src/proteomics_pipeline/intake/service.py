@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ..errors import CollisionError, IntegrityError, ProteomicsError
-from ..provenance import canonical_json_bytes, sha256_bytes, sha256_file
+from ..provenance import canonical_json_bytes, content_sha256, sha256_bytes, sha256_file
 from . import hierarchy as hier
 from . import legacy_workbook, vendor
 from .wide_long import (InputError, RawMatrix, format_number, parse_bool_mask, parse_long, parse_wide,
@@ -108,7 +108,10 @@ def _align(kind: str, matrix_ids: list[str], metadata_ids: list[str], file: str)
 
 
 def source_inputs(config: dict, config_dir: Path) -> list[dict]:
-    """List every source file the intake reads, with its current SHA-256."""
+    """List every source file the intake reads, with its current content SHA-256.
+
+    D-42: the content hash normalises CRLF to LF for text files, so the same table checked out on Windows
+    (CRLF) and on POSIX (LF) has one identity; any other byte change is still detected (E_SOURCE_CHANGED)."""
     spec = config["input"]
     roles = [("matrix", spec["matrix"]), ("observations", spec["observations"]), ("source_provenance", spec["source_provenance"])]
     if spec["features"] != FROM_MAPPING:
@@ -121,7 +124,7 @@ def source_inputs(config: dict, config_dir: Path) -> list[dict]:
         path = _resolve(config_dir, value)
         if not path.is_file():
             raise InputError("E_INPUT_READ", f"{role} file does not exist", file=str(path))
-        items.append({"artifact_id": f"source.{role}", "path": str(path.resolve()), "sha256": sha256_file(path)})
+        items.append({"artifact_id": f"source.{role}", "path": str(path.resolve()), "sha256": content_sha256(path)})
     return items
 
 
@@ -309,7 +312,7 @@ def _write_bundle(root: Path, *, config, scale, feature_order, feature_header, f
                            n_source_observations=len(source_order), legacy=legacy)
     (root / "scale_decision.json").write_bytes(canonical_json_bytes(scale))
     record("scale_decision", "scale_decision.json", "ScaleDecision")
-    (root / "intake_report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+    (root / "intake_report.json").write_bytes((json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n").encode("utf-8"))   # D-42: LF on every platform
     record("intake_report", "intake_report.json", "InputValidation")
     group_header = ["group", "n_injections", "n_biological_units", "n_subjects", "small_n"]
     write_tsv(root / "sample_n.tsv", group_header, ([row[c] if c != "small_n" else str(row[c]).lower() for c in group_header] for row in hierarchy.counts))

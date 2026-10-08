@@ -46,6 +46,7 @@ Every sub-block has `enabled` and `execution_requirement` (`required` | `optiona
 | `classifier` | `penalized_logistic` | `svm_linear` | `svm_polynomial` | `svm_radial` | `random_forest` | `penalized_logistic` |
 | `threshold_rule` | `youden_train` | `fixed:<value>` | `youden_train` |
 | `permutation` | `{B: 1000, seed, compute_guard_hours}` | B = 1000 |
+| `compute_policy` | `adapt` (scale repeats, then B, down to `compute_guard_hours`; minimums 10 repeats and B = 99; recorded) or `refuse` (strict) — amended 2026-10-05, D-59 | `adapt` |
 | `fixed_panels` | `[{id, feature_ids, provenance: independent|same_data|unknown}]` | `[]` |
 | `validation_cohort` | `{matrix_artifact, metadata, subject_column}` (must pass SM23 audit) | none |
 
@@ -54,6 +55,8 @@ Every sub-block has `enabled` and `execution_requirement` (`required` | `optiona
 | Field | Meaning | Default |
 |---|---|---|
 | `coabundance` | `{enabled, min_units: 20, rule: wgcna_signed|hclust_correlation, soft_threshold: auto|int, min_module_size: 10, bootstrap: 200, traits: [group|phenotype columns]}` | off |
+
+Amended 2026-10-05 (ADR 0010, D-59): `min_units` is the recommended level; between 4 units and it co-abundance runs as exploratory, and below 4 it is refused. Repeated designs are analysed on subject means (group constant within subject) or after subject-effect removal (group varying within subject). `ppi.null_universe` other than `measured` is refused and the measured-universe null runs. For `association`, `pearson`/`spearman` with an adjustment run in their partial form; `missing` other than `complete_case` is refused and complete case runs. For `biomarker`, a leaky declaration (`threshold_rule`, `permutation.scope`, `imputation`, `validation_cohort.retune`, `cv.group_by_subject: false` in a blocked design) is refused and its leakage-safe form runs. `train_only` (single-feature direction) chooses the direction on the evaluated data and is labelled `in_sample`.
 | `ppi` | `{snapshot_id, min_score, sets: [set_id], null_draws: 2000, seed}` | off |
 
 ## Claim vocabulary (frozen)
@@ -77,6 +80,6 @@ Every sub-block has `enabled` and `execution_requirement` (`required` | `optiona
 | association | `association_<phenotype>.tsv`, `heatmap_source.tsv`, figures |
 | biomarker | `single_feature_auc.tsv`, `cv_performance.tsv`, `oof_predictions.tsv`, `selection_stability.tsv`, `permutation_null.tsv`, `calibration.tsv`, `fixed_panels.tsv`, `validation.tsv`, `transform_audit.jsonl`, figures + sources |
 | networks | `modules.tsv`, `eigengenes.tsv`, `module_stability.tsv`, `module_trait.tsv`, `ppi_subnetwork.tsv`, `connectivity.tsv`, figures + sources |
-| all | `eligibility.json` (per module: state, typed reason, claim label, input hashes), `stage-result.json` |
+| all | `eligibility.json` (per module: state, typed reason, claim label, input hashes, adaptations: analysis, item, requested, used, reason), `stage-result.json` |
 
 Every figure has a source table from which every plotted coordinate can be re-derived (SM25).

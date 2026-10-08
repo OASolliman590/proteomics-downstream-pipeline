@@ -4,6 +4,7 @@ Title: Foundation I/O for the Maintained Proteomics Pipeline
 Version: 0.1.0
 Authors@R: person("Maintained", "Pipeline", role = c("aut", "cre"), email = "unresolved@example.invalid")
 Description: Real JSON and tabular I/O and fixed dispatch seam for the maintained pipeline foundation.
+License: file LICENSE
 Encoding: UTF-8
 Imports:
     jsonlite,
@@ -15,4 +16,9 @@ Suggests:
     impute,
     vegan,
     permute,
-    svglite
+    svglite,
+    glmnet,
+    pROC,
+    e1071,
+    randomForest,
+    dynamicTreeCut

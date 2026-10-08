@@ -26,7 +26,8 @@ def _require_r():
     rscript = preprocessing_service.rscript_executable()
     if not shutil.which(rscript):
         pytest.skip("NOT_RUN: Rscript unavailable")
-    probe = subprocess.run([rscript, "--vanilla", "-e", "quit(status=if(exists('preprocess_stage', envir=asNamespace('proteomicsCore'))) 0L else 1L)"], capture_output=True)
+    from proteomics_pipeline.runtime import run_r_code   # review follow-up 2026-10-03: no `Rscript -e` probes
+    probe = run_r_code("quit(status=if(exists('preprocess_stage', envir=asNamespace('proteomicsCore'))) 0L else 1L)", rscript=rscript)
     if probe.returncode != 0:
         pytest.skip("NOT_RUN: installed proteomicsCore lacks the R03 handler")
 

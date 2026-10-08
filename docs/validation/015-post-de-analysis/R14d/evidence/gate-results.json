@@ -1,0 +1,23 @@
+{
+  "packet": "R14d",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_biomarker.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "22 passed in 293.85s (0:04:53)",
+      "log": "docs/validation/015-post-de-analysis/R14d/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-biomarker.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+      "exit_code": 0,
+      "summary": "expectations=108 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/015-post-de-analysis/R14d/evidence/r-test-post-de-biomarker.log"
+    }
+  ],
+  "working_source_manifest_sha256": "a5fa8c0c13d01a035f0477d832fca391502f79efa5e4f7e8b4b62b8d9849f9d8",
+  "n_files": 7,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

@@ -81,7 +81,7 @@ def compare(left: str | Path, right: str | Path, output: str | Path) -> dict:
                "same_plan": a["status"]["plan_hash"] == b["status"]["plan_hash"], "config_differences": config_diff, "stage_states": stage_diff,
                "n_endpoints_left": len(ra), "n_endpoints_right": len(rb), "n_shared_endpoints": len(set(ra) & set(rb)),
                "note": "Keyed by model, contrast, hypothesis and feature; differences are descriptive and do not rank either run."}
-    (output / "comparison.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    (output / "comparison.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n")
     rows = "".join(f"<tr><td>{html.escape(d['field'])}</td><td>{html.escape(str(d['left']))}</td><td>{html.escape(str(d['right']))}</td></tr>" for d in config_diff) or '<tr><td colspan="3">No configuration differences.</td></tr>'
     srows = "".join(f"<tr><td>{html.escape(s['stage_id'])}</td><td>{s['left']}</td><td>{s['right']}</td></tr>" for s in stage_diff)
     page = (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Run comparison</title><style>body{{font:14px sans-serif;margin:24px;}}table{{border-collapse:collapse;margin:8px 0}}'
@@ -90,5 +90,5 @@ def compare(left: str | Path, right: str | Path, output: str | Path) -> dict:
             f'<table><caption>Configuration differences</caption><thead><tr><th scope="col">field</th><th scope="col">left</th><th scope="col">right</th></tr></thead><tbody>{rows}</tbody></table>'
             f'<table><caption>Stage states</caption><thead><tr><th scope="col">stage</th><th scope="col">left</th><th scope="col">right</th></tr></thead><tbody>{srows}</tbody></table>'
             f'<p>Endpoint-level differences: <a href="dea_differences.tsv">dea_differences.tsv</a> ({len(keys)} keyed endpoints).</p></body></html>')
-    (output / "index.html").write_text(page, encoding="utf-8")
+    (output / "index.html").write_text(page, encoding="utf-8", newline="\n")
     return summary

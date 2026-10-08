@@ -104,7 +104,7 @@ def test_real_execute_stage_child_failure_without_mock(tmp_path):
 def test_real_r_execute_stage_integration_when_local_package_exists(tmp_path):
     rscript=shutil.which("Rscript")
     if not rscript: pytest.skip("NOT_RUN: Rscript unavailable")
-    check=subprocess.run([rscript,"--vanilla","-e","if(requireNamespace('proteomicsCore', quietly=TRUE)) quit(status=0L) else quit(status=1L)"],shell=False,check=False)
+    check=runtime.run_r_code("if(requireNamespace('proteomicsCore', quietly=TRUE)) quit(status=0L) else quit(status=1L)",rscript=rscript)   # review follow-up 2026-10-03
     if check.returncode!=0: pytest.skip("NOT_RUN: local proteomicsCore unavailable")
     source=tmp_path/"input Ω space & ;.tsv"; metadata=tmp_path/"metadata.tsv"
     source.write_text("feature_id\tobs-1\tobs-2\n0001\t1.25\tNA\n",encoding="utf-8")
@@ -121,7 +121,7 @@ def test_real_r_execute_stage_integration_when_local_package_exists(tmp_path):
     assert promoted.joinpath("metadata.tsv").read_text(encoding="utf-8").splitlines()==["observation_id\tlabel","obs-1\tα","obs-2\tβ"]
     sentinel=tmp_path/"outside sentinel Ω & ;.txt"; assert not sentinel.exists()
     assert not (tmp_path/"sentinel.txt").exists()
-    failed=subprocess.run([rscript,"--vanilla","-e","stop('R01 intentional failure')"],capture_output=True,text=True,shell=False,check=False, encoding="utf-8")
+    failed=runtime.run_r_code("stop('R01 intentional failure')",rscript=rscript)
     assert failed.returncode!=0 and "R01 intentional failure" in failed.stderr
 
 def test_real_r_wrapper_failure_is_failed_with_captured_stderr(tmp_path):

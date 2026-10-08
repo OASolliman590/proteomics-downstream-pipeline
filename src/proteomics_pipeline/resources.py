@@ -19,11 +19,12 @@ from .errors import ProteomicsError
 from .provenance import canonical_json_bytes, sha256_file
 
 CAPABILITY = "resources"
-SNAPSHOT_KINDS = ("mapping", "gene_sets", "orthology")
+SNAPSHOT_KINDS = ("mapping", "gene_sets", "orthology", "ppi")   # ppi: A-2026-10-01-18 (R14e, SM40)
 SINGLE_FILE_KINDS = ("independent_score", "independent_direction")
 REQUIRED_COLUMNS = {"mapping": ["source_id", "id_type", "gene_id", "gene_symbol", "taxonomy_id", "status"],
                     "gene_sets": ["set_id", "set_name", "gene_id"],
-                    "orthology": ["source_gene_id", "source_taxonomy_id", "target_gene_id", "target_taxonomy_id", "evidence", "ambiguous"]}
+                    "orthology": ["source_gene_id", "source_taxonomy_id", "target_gene_id", "target_taxonomy_id", "evidence", "ambiguous"],
+                    "ppi": ["gene_a", "gene_b", "score"]}
 
 
 class ResourceError(ProteomicsError):
@@ -52,6 +53,8 @@ def prepare(manifest_path: str | Path, output_dir: str | Path) -> dict:
         raise ResourceError("E_RESOURCE_MANIFEST", f"kind {spec['kind']!r} is not a snapshot kind {SNAPSHOT_KINDS}")
     if spec["source_taxonomy_id"] != spec["target_taxonomy_id"] and not spec.get("projection"):
         raise ResourceError("E_RESOURCE_TAXONOMY", "a cross-species resource needs explicit orthology projection evidence")
+    if spec["kind"] == "ppi" and not spec.get("score_type"):
+        raise ResourceError("E_RESOURCE_MANIFEST", "a ppi snapshot must record its score_type (SM40)")
     output_dir = Path(output_dir)
     if output_dir.exists():
         raise ResourceError("E_PATH_COLLISION", f"snapshot output already exists: {output_dir.name}")
@@ -73,7 +76,7 @@ def prepare(manifest_path: str | Path, output_dir: str | Path) -> dict:
         snapshot = {"schema_version": "1.2.0", "resource_id": spec["resource_id"], "kind": spec["kind"], "version": spec["version"], "source": spec["source"],
                     "source_taxonomy_id": spec["source_taxonomy_id"], "target_taxonomy_id": spec["target_taxonomy_id"], "id_type": spec["id_type"], "terms": spec["terms"],
                     "collection_label": "ortholog_projected" if spec["source_taxonomy_id"] != spec["target_taxonomy_id"] else "native",
-                    "projection": spec.get("projection"), "files": files,
+                    "projection": spec.get("projection"), "files": files, **({"score_type": spec["score_type"]} if spec["kind"] == "ppi" else {}),
                     "prepared_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"), "preparation": "explicit local preparation; no network access"}
         (staging / "manifest.json").write_bytes(canonical_json_bytes(snapshot) + b"\n")
         os.replace(staging, output_dir)
@@ -98,6 +101,8 @@ def verify_resources(config: dict, config_dir: str | Path) -> list[dict]:
     verified = []
     for index, resource in enumerate(config.get("resources", [])):
         pointer = f"/resources/{index}"
+        if "://" in str(resource["path"]):   # A-2026-10-01-18: analysis never downloads (SM14, SM40)
+            raise ResourceError("E_RESOURCE_DOWNLOAD", f"resource {resource['id']!r} names a remote location; analysis reads only local hashed snapshots prepared by 'proteomics resources prepare'", f"{pointer}/path")
         path = Path(resource["path"]) if Path(resource["path"]).is_absolute() else config_dir / resource["path"]
         if set(resource["sha256"]) == {"0"}:
             raise ResourceError("E_RESOURCE_HASH", f"resource {resource['id']!r} declares a placeholder digest", f"{pointer}/sha256")
@@ -111,7 +116,9 @@ def verify_resources(config: dict, config_dir: str | Path) -> list[dict]:
             for key in ("kind", "version", "source", "source_taxonomy_id", "target_taxonomy_id", "terms"):
                 if snapshot.get(key) != resource[key]:
                     raise ResourceError("E_RESOURCE_MANIFEST", f"resource {resource['id']!r} declares {key}={resource[key]!r} but the snapshot records {snapshot.get(key)!r}", f"{pointer}/{key}")
-            if resource["kind"] in ("mapping", "gene_sets") and snapshot["target_taxonomy_id"] != organism:
+            if resource["kind"] == "ppi" and resource.get("score_type") and snapshot.get("score_type") != resource["score_type"]:
+                raise ResourceError("E_RESOURCE_MANIFEST", f"resource {resource['id']!r} declares score_type={resource['score_type']!r} but the snapshot records {snapshot.get('score_type')!r}", f"{pointer}/score_type")
+            if resource["kind"] in ("mapping", "gene_sets", "ppi") and snapshot["target_taxonomy_id"] != organism:
                 raise ResourceError("E_RESOURCE_TAXONOMY", f"resource {resource['id']!r} targets taxonomy {snapshot['target_taxonomy_id']} but the study organism is {organism}; cross-species joins are refused", f"{pointer}/target_taxonomy_id")
             if snapshot["source_taxonomy_id"] != snapshot["target_taxonomy_id"] and not snapshot.get("projection"):
                 raise ResourceError("E_RESOURCE_TAXONOMY", f"resource {resource['id']!r} crosses species without orthology projection evidence", pointer)

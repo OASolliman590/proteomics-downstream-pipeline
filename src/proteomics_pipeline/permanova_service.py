@@ -45,30 +45,47 @@ def resolved_settings(config: dict) -> dict:
     return block
 
 
-def plan_checks(config: dict, observations: list[dict], feature_ids: list[str]) -> list[tuple[str, str]]:
-    """Return scientific refusals (code, message); configuration errors raise immediately."""
+def adapted(config: dict, observations: list[dict], feature_ids: list[str]) -> tuple[dict, list[dict], list[tuple[str, str]]]:
+    """D-59 (Maintainer direction 2026-10-05): PERMANOVA adapts to the declaration and the design instead of holding up the
+    run.  Returns the settings actually used, the adaptations (requested vs used, reason) and the refusals that remain:
+    only outputs that would be invalid, scoped as narrowly as possible."""
     settings = resolved_settings(config)
-    design = config["design"]
+    design = config["design"]; group = design["group_column"]
+    adaptations: list[dict] = []; refusals: list[tuple[str, str]] = []
+    def adapt(item, requested, used, reason):
+        adaptations.append({"analysis": "permanova", "item": item, "requested": requested, "used": used, "reason": reason})
     if config["runtime"]["execution_profile"] == "production" and settings["permutations"] < 999:
-        raise PermanovaRefusal("E_PERMANOVA_RESOLUTION", "production PERMANOVA requires at least 999 permutations", "/multivariate/permanova/permutations")
-    ids = [s["id"] for s in settings["feature_sets"]]
-    if len(set(ids)) != len(ids):
-        raise PermanovaRefusal("E_ID_DUPLICATE", "feature set ids must be unique", "/multivariate/permanova/feature_sets")
-    known = set(feature_ids)
+        adapt("permutations", settings["permutations"], 999, "production PERMANOVA uses at least 999 permutations")
+        settings["permutations"] = 999
+    known = set(feature_ids) if feature_ids is not None else None
     model_ids = {m["id"] for m in config["models"]}; contrast_ids = {c["id"] for c in config["contrasts"]}
-    for index, item in enumerate(settings["feature_sets"]):
-        if item["kind"] == "declared_panel":
-            unknown = [f for f in item["feature_ids"] if f not in known]
-            if unknown:
-                raise PermanovaRefusal("E_PERMANOVA_FEATURE_SET", f"panel {item['id']!r} names features not in the primary matrix: {unknown[:5]}", f"/multivariate/permanova/feature_sets/{index}")
-        if item["kind"] == "dep_derived" and (item["model_id"] not in model_ids or item["contrast_id"] not in contrast_ids):
-            raise PermanovaRefusal("E_REFERENCE_UNKNOWN", f"DEP-derived set {item['id']!r} references an undeclared model or contrast", f"/multivariate/permanova/feature_sets/{index}")
-    refusals = []
+    kept, seen = [], set()
+    for item in settings["feature_sets"]:
+        problem = None
+        if item["id"] in seen:
+            problem = "E_ID_DUPLICATE", f"feature set id {item['id']!r} is declared twice; the later declaration is not tested"
+        elif item["kind"] == "declared_panel" and known is not None and [f for f in item["feature_ids"] if f not in known]:
+            problem = "E_PERMANOVA_FEATURE_SET", f"panel {item['id']!r} names features not in the primary matrix: {[f for f in item['feature_ids'] if f not in known][:5]}"
+        elif item["kind"] == "dep_derived" and (item["model_id"] not in model_ids or item["contrast_id"] not in contrast_ids):
+            problem = "E_REFERENCE_UNKNOWN", f"DEP-derived set {item['id']!r} references an undeclared model or contrast"
+        if problem:
+            adapt(f"feature_set:{item['id']}", "tested", "not tested", f"{problem[0]}: {problem[1]}")
+            continue
+        seen.add(item["id"]); kept.append(item)
+    settings["feature_sets"] = kept
+    if not kept:
+        refusals.append(("E_PERMANOVA_FEATURE_SET", "no declared feature set can be tested (see the adaptations)"))
+    for cov in list(settings["covariates"]):
+        if any(cov["column"] not in row for row in observations[:1]):
+            adapt(f"covariate:{cov['column']}", "adjusted", "dropped", f"E_PERMANOVA_COVARIATE: column {cov['column']!r} is not in the observation metadata")
+            settings["covariates"] = [c for c in settings["covariates"] if c is not cov]
     blocked = design["blocking"]["mode"] != "none"
-    if settings["covariates"] and blocked:
-        refusals.append(("E_PERMANOVA_DESIGN_UNSUPPORTED", "covariate PERMANOVA is not supported for subject-blocked designs"))
-    group = design["group_column"]
-    if blocked:   # audit 2026-10-02: the group term needs a valid exchangeability scheme (see pm_group_scheme in permanova.R)
+    settings["row_adaptation"] = "none"
+    if blocked:
+        if settings["covariates"]:
+            adapt("covariates", [c["column"] for c in settings["covariates"]], [], "E_PERMANOVA_DESIGN_UNSUPPORTED: covariate terms have no valid restricted permutation in a "
+                  "subject-blocked design; the group term is tested with the blocked scheme and the covariate terms are refused")
+            settings["covariates"] = []; settings["interaction"] = False
         subject = design["blocking"]["subject_column"]
         levels = set(design["group_levels"])
         by_subject: dict[str, list[str]] = {}
@@ -76,23 +93,36 @@ def plan_checks(config: dict, observations: list[dict], feature_ids: list[str]) 
             if row.get(group) in levels:
                 by_subject.setdefault(row.get(subject, ""), []).append(row[group])
         distinct = {k: len(set(v)) for k, v in by_subject.items()}
-        if distinct and all(n == 1 for n in distinct.values()):
-            if len({len(v) for v in by_subject.values()}) != 1:
-                refusals.append(("E_PERMANOVA_BLOCKING_UNBALANCED", f"group is constant within each {subject} but subjects have unequal numbers of observations; whole-subject permutation needs balanced subjects"))
-        elif distinct and not all(n > 1 for n in distinct.values()):
-            refusals.append(("E_PERMANOVA_BLOCKING_MIXED", f"group is constant within some {subject} values and varies within others; no single valid permutation scheme exists"))
+        if distinct and all(n == 1 for n in distinct.values()) and len({len(v) for v in by_subject.values()}) != 1:
+            settings["row_adaptation"] = "subject_means"
+            adapt("rows", "observations with whole-subject permutation", "subject means with unrestricted permutation of subjects",
+                  "E_PERMANOVA_BLOCKING_UNBALANCED: subjects have unequal numbers of observations, so whole-subject row permutation is not defined; "
+                  "each subject contributes its mean profile (one row per biological unit)")
+        elif distinct and any(n == 1 for n in distinct.values()) and any(n > 1 for n in distinct.values()):
+            varying = sorted(k for k, n in distinct.items() if n > 1)
+            settings["row_adaptation"] = "varying_subjects_only"; settings["varying_subjects"] = varying
+            adapt("rows", "all subjects", f"{len(varying)} subjects observed in more than one group",
+                  "E_PERMANOVA_BLOCKING_MIXED: group is constant within some subjects and varies within others, so no single permutation scheme covers all; "
+                  "the within-subject test uses the subjects observed in more than one group")
     required = (config.get("multivariate") or {}).get("execution_requirement", "optional") == "required"
+    dropped = [a for a in adaptations if a["item"].startswith(("feature_set:", "covariate")) and a["used"] in ("not tested", "dropped", [])]
+    if required and dropped:   # explicit strictness: a required analysis whose declared sets or terms cannot be tested rejects the plan
+        code = dropped[0]["reason"].split(":", 1)[0]
+        refusals.append((code, "required PERMANOVA: " + "; ".join(a["reason"] for a in dropped)))
     for cov in settings["covariates"]:
-        if any(cov["column"] not in row for row in observations[:1]):
-            raise PermanovaRefusal("E_PERMANOVA_COVARIATE", f"covariate column {cov['column']!r} is not in the observation metadata", "/multivariate/permanova/covariates")
         if settings["interaction"] and cov["type"] == "categorical":
-            levels = sorted({row[cov["column"]] for row in observations})
-            empty = [f"{g}/{lvl}" for g in design["group_levels"] for lvl in levels if not any(r[group] == g and r[cov["column"]] == lvl for r in observations)]
+            levels_c = sorted({row[cov["column"]] for row in observations})
+            empty = [f"{g}/{lvl}" for g in design["group_levels"] for lvl in levels_c if not any(r[group] == g and r[cov["column"]] == lvl for r in observations)]
             # audit 2026-10-02: for an optional analysis only the interaction term is refused (in R, recorded in refusals.tsv and
             # warnings) and the other results are kept; a required analysis that requests an inestimable term is still rejected.
             if empty and required:
                 refusals.append(("E_PERMANOVA_INTERACTION_NONESTIMABLE", f"group x {cov['column']} has empty cell(s) {empty}; the interaction is not estimable"))
-    return refusals
+    return settings, adaptations, refusals
+
+
+def plan_checks(config: dict, observations: list[dict], feature_ids: list[str]) -> list[tuple[str, str]]:
+    """Return the refusals that remain after adaptation (D-59)."""
+    return adapted(config, observations, feature_ids)[2]
 
 
 def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: str, output_temp_dir: str | Path, dea_dir: str | Path | None = None,
@@ -102,7 +132,10 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
     for artifact_id in ("primary_matrix", "primary_observed_mask", "primary_observations"):
         artifact = next(a for a in plan["artifacts"] if a["artifact_id"] == artifact_id)
         inputs.append({"artifact_id": artifact_id, "path": str((root / artifact["relative_path"]).resolve()), "sha256": artifact["sha256"]})
-    settings = resolved_settings(config)
+    # the plan-time adaptation is recomputed from the run's frozen preprocessing outputs (a request built outside a run
+    # directory, as in the service-layer guard tests, has none: membership checks are then left to the R stage)
+    observations, feature_ids = read_observations(root / "preprocessing") if (root / "preprocessing" / "primary" / "observations.tsv").is_file() else ([], None)
+    settings, adaptations, _ = adapted(config, observations, feature_ids)
     if any(s["kind"] == "dep_derived" for s in settings["feature_sets"]):
         if dea_dir is None:
             raise PermanovaRefusal("E_PERMANOVA_FEATURE_SET", "DEP-derived feature sets need the completed differential stage")
@@ -123,6 +156,7 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
                            "seed": int(settings["seed"]), "alpha": float(settings["alpha"]), "pairwise": bool(settings["pairwise"]), "adjustment": settings["adjustment"],
                            "covariates": list(settings["covariates"]), "interaction": bool(settings["interaction"]), "feature_sets": list(settings["feature_sets"]),
                            "random_sets": int(settings["random_sets"]), "execution_profile": config["runtime"]["execution_profile"],
+                           "adaptations": adaptations, "row_adaptation": settings["row_adaptation"], "varying_subjects": settings.get("varying_subjects", []),
                            "figure_formats": list(config["report"].get("figure_formats", []))},
             "rng": {"seed": int(settings["seed"]), "kind": "L'Ecuyer-CMRG", "threads": int(config["runtime"]["threads"])}}
 

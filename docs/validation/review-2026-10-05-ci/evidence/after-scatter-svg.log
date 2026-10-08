@@ -1,0 +1,2 @@
+$ .venv/bin/python -m pytest tests/unit/test_scatter_svg.py -q -p no:cacheprovider   # after
+2 passed in 0.08s

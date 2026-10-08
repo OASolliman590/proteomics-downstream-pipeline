@@ -1,0 +1,14 @@
+# before: pre-fix tree 106fb20 (git worktree), pre-fix proteomicsCore build; new tests copied in
+FAILED tests/integration/test_plan_portability.py::test_same_plan_hash_from_two_roots_and_from_crlf_inputs
+FAILED tests/integration/test_plan_portability.py::test_hash_ignores_platform_bytes_of_planning_artifacts_and_environment
+FAILED tests/integration/test_plan_portability.py::test_verify_plan_detects_provenance_and_semantic_tampering
+FAILED tests/integration/test_plan_portability.py::test_content_hash_and_code_identity_are_line_ending_independent
+FAILED tests/scientific/reference/test_text_encoding.py::test_every_r_text_io_names_utf8_and_lf
+FAILED tests/scientific/reference/test_text_encoding.py::test_every_text_io_names_utf8
+FAILED tests/integration/test_reports_new.py::test_v100_documented_commands_run_verbatim
+7 failed, 3 passed in 31.69s
+E       AssertionError: <class 'Skipped'>
+E       assert <class 'Skipped'> is <class 'Failed'>
+E        +  where <class 'Skipped'> = <ExceptionInfo NOT_RUN: could not shadow DEqMS portably ('TRUE TRUE TRUE' '') tblen=3>.type
+E        +  and   <class 'Failed'> = <_pytest.outcomes._Fail object at 0x103218980>.Exception
+E        +    where <_pytest.outcomes._Fail object at 0x103218980> = pytest.fail

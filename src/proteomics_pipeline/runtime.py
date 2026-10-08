@@ -7,7 +7,8 @@ from .errors import CapabilityError, CollisionError, IntegrityError, ProteomicsE
 from .paths import atomic_write_bytes
 from .provenance import sha256_file
 STAGE_STATES={"NOT_RUN","RUNNING","COMPLETED","INAPPLICABLE","FAILED","CANCELLED","NOT_REQUESTED"}
-R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova"}
+R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova",
+ "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks"}
 # Amendment A-2026-10-01-02: planning stages run before the plan exists, so their results carry plan_hash=null.
 PLANNING_CAPABILITIES={"intake","preprocessing","design"}
 CAPABILITY_MAP={
@@ -25,7 +26,14 @@ CAPABILITY_MAP={
  "reproduction":("proteomics_pipeline.reproduction","execute"),
  "legacy":("proteomics_pipeline.legacy_service","execute"),
  # Amendment A-2026-10-01-01 (operator-authorized PERMANOVA scope, packet R13)
- "permanova":("proteomics_pipeline.permanova_service","execute")}
+ "permanova":("proteomics_pipeline.permanova_service","execute"),
+ # Amendment A-2026-10-01-14 (operator-authorized post-differential scope, ADR 0009, packets R14a-R14f)
+ "post_de_sets":("proteomics_pipeline.post_de.sets","execute"),
+ "post_de_sensitivity":("proteomics_pipeline.post_de.sensitivity","execute"),
+ "post_de_association":("proteomics_pipeline.post_de.association","execute"),
+ "post_de_biomarker":("proteomics_pipeline.post_de.biomarker","execute"),
+ "post_de_networks":("proteomics_pipeline.post_de.networks","execute"),
+ "post_de_eligibility":("proteomics_pipeline.post_de.eligibility","execute")}
 REQUIRED_PACKAGES={"foundation.io_roundtrip":["Rscript","jsonlite","openssl","proteomicsCore"]}
 def _discovery(capability,module_name,function_name):
     record={"id":capability,"module":module_name,"function":function_name,
@@ -185,7 +193,7 @@ def run_r_code(code:str,args:Iterable=(),*,rscript=None,cwd=None,timeout=None):
     import tempfile
     executable=rscript or os.environ.get("PROTEOMICS_RSCRIPT") or "Rscript"
     with tempfile.TemporaryDirectory(prefix="proteomics-r-") as directory:
-        script=Path(directory)/"snippet.R"; script.write_text(code+"\n",encoding="utf-8")
+        script=Path(directory)/"snippet.R"; script.write_text(code+"\n",encoding="utf-8", newline="\n")
         return run_subprocess([executable,"--vanilla",script.as_posix(),*[r_argument(a) for a in args]],cwd=cwd,timeout=timeout)
 def execute_stage(request, *, rscript="Rscript", wrapper=None, cwd=None, timeout=None, run_root=None, promoted_stage_dir=None):
     validate_stage_request(request)
@@ -208,15 +216,15 @@ def execute_stage(request, *, rscript="Rscript", wrapper=None, cwd=None, timeout
         try:
             process=run_subprocess(argv,cwd=cwd,timeout=timeout)
         except FileNotFoundError as exc:
-            (output_dir/"stdout.log").write_text("",encoding="utf-8"); (output_dir/"stderr.log").write_text(str(exc),encoding="utf-8")
+            (output_dir/"stdout.log").write_text("",encoding="utf-8", newline="\n"); (output_dir/"stderr.log").write_text(str(exc),encoding="utf-8", newline="\n")
             return stage_result(request["run_id"],request["stage_id"],request["capability"],"NOT_RUN",plan_hash=request["plan_hash"],exit_code=3,reason_code="E_CAPABILITY_NOT_AVAILABLE",message=f"Rscript executable is unavailable: {rscript}")
         except subprocess.TimeoutExpired as exc:
             stdout=exc.stdout.decode("utf-8","replace") if isinstance(exc.stdout,bytes) else (exc.stdout or "")
             stderr=exc.stderr.decode("utf-8","replace") if isinstance(exc.stderr,bytes) else (exc.stderr or "")
-            (output_dir/"stdout.log").write_text(stdout,encoding="utf-8"); (output_dir/"stderr.log").write_text(stderr,encoding="utf-8")
+            (output_dir/"stdout.log").write_text(stdout,encoding="utf-8", newline="\n"); (output_dir/"stderr.log").write_text(stderr,encoding="utf-8", newline="\n")
             return stage_result(request["run_id"],request["stage_id"],request["capability"],"CANCELLED",plan_hash=request["plan_hash"],exit_code=6,reason_code="E_CHILD_TIMEOUT",message="stage subprocess exceeded its timeout")
-        (output_dir/"stdout.log").write_text(process.stdout or "",encoding="utf-8")
-        (output_dir/"stderr.log").write_text(process.stderr or "",encoding="utf-8")
+        (output_dir/"stdout.log").write_text(process.stdout or "",encoding="utf-8", newline="\n")
+        (output_dir/"stderr.log").write_text(process.stderr or "",encoding="utf-8", newline="\n")
         if not result_path.is_file():
             state="NOT_RUN" if process.returncode==3 else "FAILED"; reason="E_CAPABILITY_NOT_AVAILABLE" if state=="NOT_RUN" else "E_CHILD_EXIT"
             return stage_result(request["run_id"],request["stage_id"],request["capability"],state,plan_hash=request["plan_hash"],exit_code=process.returncode,reason_code=reason,message=(process.stderr or "stage did not produce a result"))

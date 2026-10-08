@@ -21,7 +21,7 @@ from typing import Callable
 from . import __version__
 from .config import _read as read_raw_config, load_config
 from .errors import CapabilityError, CollisionError, IntegrityError, ProteomicsError
-from .provenance import canonical_json_bytes, sha256_bytes, sha256_file
+from .provenance import canonical_json_bytes, content_sha256, sha256_bytes, sha256_file
 from .runtime import RunLock, capabilities as discovered_capabilities, execute_capability, stage_result, utc_now, validate_run_status
 
 PLANNING_CAPABILITIES = ("intake", "preprocessing", "design")
@@ -44,6 +44,9 @@ def precheck(config_path: str | Path) -> dict:
     runtime = raw.get("runtime") or {}
     if runtime.get("phase") == 1 and raw.get("score_test", "off") != "off":
         raise PlanRejected("E_PHASE_CAPABILITY", "Phase 1 has no score-testing capability; score_test must be 'off'", "/score_test")
+    if (raw.get("post_de") or {}).get("enabled"):   # A-2026-10-01-14: typed post-DE declaration refusals win over schema messages
+        from . import post_de
+        post_de.precheck(raw)
     return raw
 
 
@@ -71,6 +74,13 @@ def requested_capabilities(config: dict) -> list[dict]:
     multivariate = config.get("multivariate") or {}
     if multivariate.get("enabled"):
         items.append({"capability": "permanova", "required": multivariate.get("execution_requirement", "optional") == "required", "source": "multivariate"})
+    post_de_block = config.get("post_de") or {}
+    if post_de_block.get("enabled"):   # A-2026-10-01-14 (ADR 0009): declared post-DE modules, then the R14f eligibility report
+        from . import post_de
+        for module in post_de.requested_modules(config):
+            items.append({"capability": post_de.CAPABILITIES[module], "required": post_de.required(config, module), "source": f"post_de.{module}"})
+        if post_de.module_impl("eligibility") is not None:   # the R14f eligibility/dependency report, once that packet exists
+            items.append({"capability": post_de.ELIGIBILITY_CAPABILITY, "required": False, "source": "post_de"})
     items.append({"capability": "report_stub", "required": False, "source": "report"})
     items.append({"capability": "report_full", "required": False, "source": "report"})
     merged: dict[str, dict] = {}
@@ -104,17 +114,20 @@ def environment_inventory() -> dict:
     return info
 
 
-def code_manifest() -> dict:
+def code_manifest(package_root: Path | None = None, repository_root: Path | None = None) -> dict:
+    """Code identity: LF-normalised content hashes (D-42), so a CRLF checkout (for example DESCRIPTION or the HTML template
+    under `* text=auto` on Windows) has the same identity as an LF checkout."""
     files = []
-    package_root = Path(__file__).resolve().parent
+    package_root = Path(package_root) if package_root is not None else Path(__file__).resolve().parent
+    repository_root = Path(repository_root) if repository_root is not None else REPOSITORY_ROOT
     for path in sorted(package_root.rglob("*")):
         if path.is_file() and "__pycache__" not in path.parts and path.suffix in (".py", ".json", ".html", ".typed"):
-            files.append((f"src/proteomics_pipeline/{path.relative_to(package_root).as_posix()}", sha256_file(path)))
-    r_root = REPOSITORY_ROOT / "r" / "proteomicsCore"
+            files.append((f"src/proteomics_pipeline/{path.relative_to(package_root).as_posix()}", content_sha256(path)))
+    r_root = repository_root / "r" / "proteomicsCore"
     if r_root.is_dir():
-        for path in sorted((r_root / "R").glob("*.R")) + [r_root / "DESCRIPTION", r_root / "NAMESPACE", REPOSITORY_ROOT / "scripts" / "maintained" / "run_stage.R"]:
+        for path in sorted((r_root / "R").glob("*.R")) + [r_root / "DESCRIPTION", r_root / "NAMESPACE", repository_root / "scripts" / "maintained" / "run_stage.R"]:
             if path.is_file():
-                files.append((path.relative_to(REPOSITORY_ROOT).as_posix(), sha256_file(path)))
+                files.append((path.relative_to(repository_root).as_posix(), content_sha256(path)))
     lines = "".join(f"{digest}  {name}\n" for name, digest in sorted(files))
     return {"sha256": sha256_bytes(lines.encode("utf-8")), "n_files": len(files), "r_source_present": r_root.is_dir()}
 
@@ -180,7 +193,7 @@ class Ledger:
                 failed.parent.mkdir(parents=True, exist_ok=True)
                 os.replace(temp, failed)
                 if not (failed / "stage-result.json").is_file():
-                    (failed / "orchestrator-stage-result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+                    (failed / "orchestrator-stage-result.json").write_text(json.dumps(result, indent=2), encoding="utf-8", newline="\n")
                 else:
                     result_path = (failed / "stage-result.json").relative_to(self.root).as_posix()
         for warning in result.get("warnings", []):
@@ -283,6 +296,7 @@ def plan_into(config_path: str | Path, config: dict, *, plan_root: Path, base: P
         if permanova_refusals and multivariate_required(config):
             code, message = permanova_refusals[0]
             raise PlanRejected(code, f"required PERMANOVA is scientifically ineligible: {message}", "/multivariate")
+    post_de_decisions = post_de_plan(config, config_path, base, analysis)
     environment = environment_inventory()
     code = code_manifest()
     capability_plan = []
@@ -290,6 +304,11 @@ def plan_into(config_path: str | Path, config: dict, *, plan_root: Path, base: P
         entry = dict(item, scientific_eligibility="eligible", reason_code=None)
         if item["capability"] == "permanova" and permanova_refusals:
             entry.update(scientific_eligibility="inapplicable", reason_code=permanova_refusals[0][0], reason=permanova_refusals[0][1])
+        decision = post_de_decisions.get(item["capability"])
+        if decision is not None:   # SM41: the planner records each post-DE module's eligibility before any computation
+            entry["post_de"] = {k: v for k, v in decision.items() if k not in ("resolved",)}
+            if decision["state"] == "INAPPLICABLE":
+                entry.update(scientific_eligibility="inapplicable", reason_code=decision["reason_code"], reason=decision.get("reason"))
         capability_plan.append(entry)
     plan = design_service.build_plan(config, plan_root=plan_root, stage_dirs=stage_dirs, sources=sources, environment=environment,
                                      code_sha256=code["sha256"], capability_plan=capability_plan)
@@ -352,7 +371,7 @@ def run_command(config_path: str | Path, output: str | Path) -> tuple[dict, int]
     with RunLock(root / ".run.lock"):
         (root / "config.resolved.json").write_bytes(json.dumps(config, indent=2, ensure_ascii=False, sort_keys=True).encode("utf-8"))
         (root / "provenance").mkdir(exist_ok=True)
-        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(Path(config_path).resolve())}), encoding="utf-8")
+        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(Path(config_path).resolve())}), encoding="utf-8", newline="\n")
         plan = None
         failure: ProteomicsError | None = None
         try:
@@ -407,6 +426,8 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
     multivariate = config.get("multivariate") or {}
     if multivariate.get("enabled"):
         _run_permanova(config, plan, root, ledger)
+    if analysis and (config.get("post_de") or {}).get("enabled"):
+        _run_post_de(config, plan, root, ledger, config_dir)
 
 
 def _run_assay_engines(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path, models: list[dict]) -> None:
@@ -468,6 +489,68 @@ def _run_permanova(config: dict, plan: dict, root: Path, ledger: Ledger) -> None
                      output_temp_dir=temp, dea_dir=(root / "dea") if dea_ready else None), root / "permanova")
 
 
+def post_de_plan(config: dict, config_path: Path, base: Path, analysis: bool) -> dict[str, dict]:
+    """Plan-time eligibility of every declared post-DE module (A-2026-10-01-14, SM41); required ineligible modules reject the plan."""
+    if not (config.get("post_de") or {}).get("enabled"):
+        return {}
+    from . import post_de
+    if not analysis:
+        raise PlanRejected("E_PHASE_CAPABILITY", "post-differential analysis needs runtime.scope = analysis", "/post_de")
+    import csv
+    with (base / "preprocessing" / "primary" / "observations.tsv").open(encoding="utf-8", newline="") as handle:
+        observations = list(csv.DictReader(handle, delimiter="\t"))
+    with (base / "preprocessing" / "primary" / "features.tsv").open(encoding="utf-8", newline="") as handle:
+        features = list(csv.DictReader(handle, delimiter="\t"))
+    design_request = json.loads((base / "designs" / "stage-request.json").read_text(encoding="utf-8"))
+    context = {"observations": observations, "features": features, "design_request": design_request, "config_dir": Path(config_path).parent,
+               "preprocessing_dir": base / "preprocessing", "design_dir": base / "designs"}
+    decisions = post_de.plan_checks(config, context)
+    out = {}
+    for module, decision in decisions.items():
+        if decision["state"] == "INAPPLICABLE" and post_de.required(config, module):
+            raise PlanRejected(decision["reason_code"], f"required post-DE module {module!r} is scientifically ineligible: {decision.get('reason')}", f"/post_de/{module}")
+        impl = post_de.module_impl(module)
+        refusal = impl.required_refusal(decision) if post_de.required(config, module) and hasattr(impl, "required_refusal") else None
+        if refusal:   # a required module whose declared analysis is ineligible is rejected before any fit
+            raise PlanRejected(refusal[0], f"required post-DE module {module!r}: {refusal[1]}", f"/post_de/{module}")
+        out[post_de.CAPABILITIES[module]] = decision
+    return out
+
+
+def _run_post_de(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path) -> None:
+    """Run the declared post-DE modules in dispatch order (R14a-R14e), then the R14f eligibility/dependency stage."""
+    from . import post_de
+    implemented = {c["id"] for c in discovered_capabilities() if c["implemented"]}
+    entries = {c["capability"]: c for c in plan["capability_plan"]}
+    for module in post_de.requested_modules(config):
+        capability = post_de.CAPABILITIES[module]
+        required = post_de.required(config, module)
+        entry = entries.get(capability, {})
+        if entry.get("scientific_eligibility") == "inapplicable":
+            ledger.virtual(capability, capability, required, "INAPPLICABLE", entry["reason_code"], entry.get("reason", ""), 0)
+            continue
+        if capability not in implemented:
+            continue   # recorded NOT_RUN (E_CAPABILITY_NOT_IMPLEMENTED) by the caller's optional-capability pass; required ones never reach here
+        impl = post_de.module_impl(module)
+        missing = [p for p in getattr(impl, "PREREQUISITES", ("dea",)) if not (root / p / "stage-result.json").is_file()]
+        if missing:
+            ledger.virtual(capability, capability, required, "NOT_RUN", "E_PREREQUISITE_FAILED", f"post-DE {module} needs completed {', '.join(missing)}", 4)
+            continue
+        decision = entry.get("post_de", {})
+        try:
+            ledger.run_stage(capability, capability, required, lambda temp, impl=impl, decision=decision: impl.build_request(
+                plan, plan_path=root / "plan.json", config=config, run_id=ledger.run_id, output_temp_dir=temp, root=root, decision=decision, config_dir=config_dir),
+                root / "post_de" / module)
+        except ProteomicsError as error:   # a request that cannot be built is a typed stage failure, never a crash
+            ledger.virtual(capability, capability, required, "FAILED", error.code, error.message, error.exit_code)
+    if post_de.ELIGIBILITY_CAPABILITY in implemented:
+        from .post_de import eligibility
+        snapshot = [dict(s) for s in ledger.stages]
+        ledger.run_stage(post_de.ELIGIBILITY_CAPABILITY, post_de.ELIGIBILITY_CAPABILITY, False, lambda temp: _python_request(
+            ledger.run_id, post_de.ELIGIBILITY_CAPABILITY, post_de.ELIGIBILITY_CAPABILITY, temp, config_path=None, inputs=[],
+            parameters={"run_root": str(root), "stages": snapshot}, plan_hash=plan["plan_hash"]), root / "post_de" / "eligibility")
+
+
 def multivariate_required(config: dict) -> bool:
     return (config.get("multivariate") or {}).get("execution_requirement", "optional") == "required"
 
@@ -475,10 +558,10 @@ def multivariate_required(config: dict) -> bool:
 def _write_provenance(root: Path, config: dict, plan: dict | None) -> None:
     provenance = root / "provenance"
     provenance.mkdir(exist_ok=True)
-    (provenance / "environment.json").write_text(json.dumps(plan["environment"] if plan else environment_inventory(), indent=2, sort_keys=True), encoding="utf-8")
-    (provenance / "code_manifest.json").write_text(json.dumps(code_manifest(), indent=2, sort_keys=True), encoding="utf-8")
+    (provenance / "environment.json").write_text(json.dumps(plan["environment"] if plan else environment_inventory(), indent=2, sort_keys=True), encoding="utf-8", newline="\n")
+    (provenance / "code_manifest.json").write_text(json.dumps(code_manifest(), indent=2, sort_keys=True), encoding="utf-8", newline="\n")
     sources = plan["sources"] if plan else []
-    (provenance / "input_hashes.json").write_text(json.dumps(sources, indent=2, sort_keys=True), encoding="utf-8")
+    (provenance / "input_hashes.json").write_text(json.dumps(sources, indent=2, sort_keys=True), encoding="utf-8", newline="\n")
 
 
 def _derive_state(stages: list[dict]) -> tuple[str, int, str | None]:
@@ -603,7 +686,7 @@ def resume_command(run: str | Path) -> tuple[dict, int]:
             if (root / name).exists():
                 (root / name).unlink()
         _write_provenance(root, config, plan)
-        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(config_path)}), encoding="utf-8")
+        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(config_path)}), encoding="utf-8", newline="\n")
         status = _finalize(root, config, ledger, run_id, plan_hash, started, report=True)
     payload = {"run_id": run_id, "state": status["state"], "exit_code": status["exit_code"], "plan_hash": plan_hash, "reused": ledger.reused,
                "invalidated": ledger.invalidated, "abandoned_temporaries": abandoned}

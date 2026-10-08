@@ -1,0 +1,1 @@
+{"seed":1000000,"n":200,"B":19,"seconds":424.963925123215,"design":"10 vs 10 subjects x 2 observations, subject effect SD 1 on each of 200 pure-noise features; nested CV grouped by subject 2 x 5-fold outer, 3-fold inner, top-5 AUC, ridge glmnet lambda 0.1; permutation of whole subjects; ungrouped reference uses observation-level folds"}

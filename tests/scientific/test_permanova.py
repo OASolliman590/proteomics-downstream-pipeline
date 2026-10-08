@@ -100,15 +100,29 @@ def test_v121_v128_dep_derived_and_same_data_panel_get_circularity_context(tmp_p
 
 
 def test_v121_negative_unknown_panel_member_is_refused_at_plan(tmp_path):
-    sets = [{"id": "bad", "kind": "declared_panel", "feature_ids": ["F01", "NOT_A_FEATURE"], "selection_provenance": "unknown"}]
-    payload, code, out = run(tmp_path, "location", permanova={"feature_sets": sets})
+    """D-59: the invalid panel is not tested (recorded); optional PERMANOVA never holds up the DE results; required rejects."""
+    sets = [{"id": "bad", "kind": "declared_panel", "feature_ids": ["F01", "NOT_A_FEATURE"], "selection_provenance": "unknown"},
+            {"id": "all", "kind": "all_complete"}]
+    payload, code, out = run(tmp_path / "opt", "location", permanova={"feature_sets": sets})
+    assert code == 0, payload
+    result = json.loads((out / "permanova" / "permanova_result.json").read_text(encoding="utf-8"))
+    assert any(a["item"] == "feature_set:bad" and a["used"] == "not tested" and a["reason"].startswith("E_PERMANOVA_FEATURE_SET") for a in result["adaptations"])
+    assert {r["feature_set_id"] for r in _tests_table(out)} == {"all"}
+    payload, code, out = run(tmp_path / "only", "location", permanova={"feature_sets": sets[:1]})
+    stage = next(s for s in payload["stages"] if s["stage_id"] == "permanova")
+    assert code == 0 and stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_PERMANOVA_FEATURE_SET" and (out / "dea" / "zero_null.tsv").is_file()
+    payload, code, out = run(tmp_path / "req", "location", permanova={"feature_sets": sets}, required="required")
     assert code == 2 and payload["error"]["code"] == "E_PERMANOVA_FEATURE_SET" and not (out / "dea").exists()
 
 
 # ----------------------------------------------------------------------------- V122 / V125
 def test_v122_negative_production_resolution(tmp_path):
+    """D-59: a production run never uses fewer than 999 permutations; 199 requested -> 999 used, recorded."""
     payload, code, out = run(tmp_path, "location", permanova={"permutations": 199}, profile="production")
-    assert code == 2 and payload["error"]["code"] == "E_PERMANOVA_RESOLUTION" and not (out / "dea").exists()
+    assert code in (0, 3), payload
+    result = json.loads((out / "permanova" / "permanova_result.json").read_text(encoding="utf-8"))
+    assert result["settings"]["permutations_requested"] == 999
+    assert any(a["item"] == "permutations" and a["requested"] == 199 and a["used"] == 999 for a in result["adaptations"])
 
 
 def test_v125_empty_interaction_cell_refused_typed(tmp_path):
@@ -207,12 +221,18 @@ def test_audit_m2_subject_blocked_group_test_uses_a_valid_scheme_and_detects_a_s
     assert result["settings"]["group_permutation_scheme"] == scheme
 
 
-def test_audit_m2_mixed_subject_design_is_refused_typed(tmp_path):
-    payload, code, out = run_subjects(tmp_path / "opt", "mixed")
-    stage = next(s for s in payload["stages"] if s["stage_id"] == "permanova")
-    assert code == 0 and stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_PERMANOVA_BLOCKING_MIXED"
-    payload, code, out = run_subjects(tmp_path / "req", "mixed", required="required")
-    assert code == 2 and payload["error"]["code"] == "E_PERMANOVA_BLOCKING_MIXED"
+@pytest.mark.parametrize("kind, adaptation, scheme, n_rows", [("mixed", "varying_subjects_only", "within:subject_id", 8),
+                                                              ("between_unbalanced", "subject_means", "free", 8)])
+def test_audit_m2_mixed_and_unbalanced_subject_designs_adapt(tmp_path, kind, adaptation, scheme, n_rows):
+    """D-59: mixed designs test the group term within the subjects observed in both groups; unbalanced between-subject
+    designs use one mean profile per subject with unrestricted permutation of subjects.  Recorded; never refused."""
+    payload, code, out = run_subjects(tmp_path, kind)
+    assert code == 0, payload
+    result = json.loads((out / "permanova" / "permanova_result.json").read_text(encoding="utf-8"))
+    assert result["row_adaptation"] == adaptation and any(a["item"] == "rows" for a in result["adaptations"])
+    row = next(r for r in _tests_table(out) if r["analysis"] == "global")
+    assert row["permutation_scheme"].startswith(scheme.split(":")[0]), row["permutation_scheme"]
+    assert len({r["observation_id"] for r in B.read_tsv(out / "permanova" / "ordination.tsv")}) == n_rows
 
 
 def test_audit_m2_exact_location_label_for_identical_spread(tmp_path):

@@ -196,9 +196,9 @@ def execute(request: dict) -> dict:
     try:
         data = assemble(request["parameters"]["run_root"], request["parameters"]["run_snapshot"])
         validate_report_data(data)
-        (out / "report_data.json").write_text(json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8")
-        (out / "methods.md").write_text(render_methods(data), encoding="utf-8")
-        (out / "index.html").write_text(render(data), encoding="utf-8")
+        (out / "report_data.json").write_text(json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True), encoding="utf-8", newline="\n")
+        (out / "methods.md").write_text(render_methods(data), encoding="utf-8", newline="\n")
+        (out / "index.html").write_text(render(data), encoding="utf-8", newline="\n")
     except ProteomicsError as error:
         result = stage_result(request["run_id"], request["stage_id"], CAPABILITY, "FAILED", plan_hash=request["plan_hash"], exit_code=error.exit_code, reason_code=error.code, message=error.message)
         result["started_at"] = started

@@ -29,15 +29,18 @@ def permanova_section(directory: str | Path, *, prefix: str = "permanova") -> di
     tests = _table(root / "tests.tsv")
     rows = [[t["feature_set_id"], t["analysis"], t["comparison"], t["term"], t["n"], t["n_features"], t["df"], _f(t["r2"]), _f(t["pseudo_f"]),
              t["p_display"], t["p_adjusted_display"] if t["p_adjusted_display"] != "NA" else "", t["permutation_scheme"],
-             t["permdisp_p_display"] if t["permdisp_p_display"] != "NA" else "not applicable", t["interpretation"]] for t in tests]
+             t["permdisp_p_display"] if t["permdisp_p_display"] != "NA" else "not applicable", t["interpretation"],
+             # review follow-up 2026-10-03 (D-43): exact accounting of the admissible relabellings beside every P
+             t.get("permutation_enumeration", ""), _f(t.get("n_admissible_permutations", ""), 6), _f(t.get("p_min_attainable", ""))] for t in tests]
     section = {"state": "COMPLETED", "title": "Multivariate separation (PERMANOVA and PERMDISP)",
                "summary": [f"Distance: {result['settings']['metric']} on {result['settings']['scaling']}-scaled genuinely observed log2 abundance; "
                            f"{result['settings']['permutations_requested']} permutations, seed {result['settings']['seed']}; pairwise adjustment {result['settings']['adjustment']}.",
                            result["interpretation_rule"]],
                "tables": [{"caption": "PERMANOVA terms with their PERMDISP results", "columns": ["feature set", "analysis", "comparison", "term", "n", "features", "Df", "R2", "pseudo-F",
-                                                                                                    "P", "adjusted P", "permutation scheme", "PERMDISP P", "interpretation"],
+                                                                                                    "P", "adjusted P", "permutation scheme", "PERMDISP P", "interpretation",
+                                                                                                    "enumeration", "admissible relabellings N", "minimum attainable P (S/N)"],
                            "rows": rows, "source": f"{prefix}/tests.tsv", "numeric": ["n", "features", "Df", "R2", "pseudo-F"]}],
-               "figures": [], "notes": list(result["limitations"]), "methods": [], "values": {"n_tests": len(tests)}}
+               "figures": [], "notes": list(result["limitations"]) + ([result["permutation_rule"]] if result.get("permutation_rule") else []), "methods": [], "values": {"n_tests": len(tests)}}
     identity = result.get("identity", [])
     if identity:
         section["tables"].append({"caption": "Mean per-feature R2 versus multivariate R2 (identity under z-scored Euclidean distance)",
@@ -76,5 +79,6 @@ def permanova_section(directory: str | Path, *, prefix: str = "permanova") -> di
         section["figures"].append({"src": f"{prefix}/{record['file']}", "alt": stem.replace("_", " "), "caption": stem.replace("_", " ").capitalize() + ".", "source": f"{prefix}/{sources[kind]}"})
     section["methods"] = [f"PERMANOVA (vegan {result['versions']['vegan']}, permute {result['versions']['permute']}) with marginal sums of squares; covariate and interaction terms permuted within the primary group; "
                           f"group terms from unrestricted (or subject-blocked) permutations; PERMDISP (betadisper/permutest) with the same scheme.",
-                          f"Seed {result['settings']['seed']} ({result['settings']['rng_kind']}); P floored at 1/(nperm+1)."]
+                          f"Seed {result['settings']['seed']} ({result['settings']['rng_kind']}); complete enumeration (exact P = k/N) when the admissible relabellings N are at most S x (nperm + 1), "
+                          f"otherwise Monte Carlo P = (k+1)/(nperm+1) with '<' shown at the floor only when it is attainable."]
     return section

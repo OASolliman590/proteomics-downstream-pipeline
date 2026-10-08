@@ -37,10 +37,23 @@ Rscript --vanilla -e 'lib <- Sys.getenv("R_LIBS_USER"); .libPaths(c(lib, .Librar
 .venv/bin/proteomics compare --left runs/example --right runs/demo-phase2 --output runs/comparison --json
 ```
 
-On Windows (PowerShell) the same commands run as `.venv\Scripts\proteomics <command> ...` (or `python -m proteomics_pipeline <command> ...`), with `$env:R_LIBS_USER = "$PWD\.r-lib"` in place of `export`. Forward-slash paths such as `runs/example` work unchanged. All files are read and written as UTF-8 on every platform, and R child processes always run with UTF-8 input/output.
+On Windows (PowerShell) the same workflow is:
+
+```powershell
+$env:R_LIBS_USER = "$PWD\.r-lib"
+.venv\Scripts\proteomics.exe validate --config configs/examples/example-independent.json --json
+.venv\Scripts\proteomics.exe plan --config configs/examples/example-independent.json --output runs/plan-only/plan.json --json
+.venv\Scripts\proteomics.exe run --config configs/examples/example-independent.json --output runs/example --json
+.venv\Scripts\proteomics.exe verify --run runs/example --json
+.venv\Scripts\proteomics.exe report --run runs/example --output runs/example-report --json
+.venv\Scripts\proteomics.exe run --config tests/fixtures/reports/demo-phase2.json --output runs/demo-phase2 --json
+.venv\Scripts\proteomics.exe compare --left runs/example --right runs/demo-phase2 --output runs/comparison --json
+```
+
+`python -m proteomics_pipeline <command> ...` works on every platform. Forward-slash paths such as `runs/example` work unchanged. All files are read and written as UTF-8 on every platform, and R child processes always run with UTF-8 input/output. The plan hash is platform-independent: the same configuration and inputs give the same hash on Linux, macOS and Windows (line endings are normalised; the solved environment is recorded in the plan but outside the hash, see D-42).
 
 - `validate` runs intake, preprocessing and design checks without fitting.
-- `plan` freezes the AnalysisPlan (hash over configuration, inputs, design, families, code and environment) next to `plan-artifacts/`.
+- `plan` freezes the AnalysisPlan next to `plan-artifacts/`. The plan hash covers configuration, LF-normalised input and planning-artifact content, design, families and code identity; the solved environment and R session information are recorded beside it and protected by `integrity_sha256`.
 - `run` re-plans in the run directory, fits, and writes `report/index.html` (thin report) and `report-full/index.html` (full report with figures).
 - `verify` checks every manifest hash and the plan hash; it does not claim scientific validation.
 - `report` re-renders the full report of an existing verified run into a new directory.

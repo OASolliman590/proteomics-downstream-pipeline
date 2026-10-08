@@ -57,7 +57,9 @@ def subject_matrix(kind: str, *, n_subjects: int = 8, reps: int = 2, n_features:
     subject's observations; *_null kinds have no group shift."""
     rng = random.Random(seed)
     subjects = [f"S{i + 1}" for i in range(n_subjects)]
-    if kind.startswith("between"):
+    if kind == "between_unbalanced":   # D-59: group constant within subject, 1-3 observations per subject
+        layout = [(s, "A" if i < n_subjects // 2 else "B") for i, s in enumerate(subjects) for _ in range(1 + i % 3)]
+    elif kind.startswith("between"):
         layout = [(s, "A" if i < n_subjects // 2 else "B") for i, s in enumerate(subjects) for _ in range(reps)]
     elif kind.startswith("within"):
         layout = [(s, g) for s in subjects for g in ("A", "B")]
@@ -71,7 +73,7 @@ def subject_matrix(kind: str, *, n_subjects: int = 8, reps: int = 2, n_features:
     for subject, group in layout:
         counter[subject] = counter.get(subject, 0) + 1
         observations.append({"observation_id": f"{subject}_{counter[subject]}", "biological_unit_id": f"{subject}_{counter[subject]}", "subject_id": subject, "group": group})
-    effect = shift if kind in ("between", "within", "mixed") else 0.0
+    effect = shift if kind in ("between", "within", "mixed", "between_unbalanced") else 0.0
     subject_effect = {s: [rng.gauss(0, 0.3) for _ in range(n_features)] for s in subjects}
     values = {f"F{f + 1:02d}": [10 + 0.2 * f + subject_effect[o["subject_id"]][f] + rng.gauss(0, 0.3) + (effect if (o["group"] == "B" and f < n_features // 2) else 0.0)
                                 for o in observations] for f in range(n_features)}

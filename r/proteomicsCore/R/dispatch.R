@@ -8,7 +8,13 @@ foundation_handlers <- list(
  "pathways"="pathway_stage",
  "response"="response_stage",
  # Amendment A-2026-10-01-01: operator-authorized PERMANOVA scope (packet R13)
- "permanova"="permanova_stage"
+ "permanova"="permanova_stage",
+ # Amendment A-2026-10-01-14: operator-authorized post-differential scope (ADR 0009, packets R14a-R14e); post_de_eligibility (R14f) is Python-only
+ "post_de_sets"="post_de_sets_stage",
+ "post_de_sensitivity"="post_de_sensitivity_stage",
+ "post_de_association"="post_de_association_stage",
+ "post_de_biomarker"="post_de_biomarker_stage",
+ "post_de_networks"="post_de_networks_stage"
 )
 dispatch_stage <- function(request_path,result_path,requested=NULL) {
   request=jsonlite::fromJSON(request_path,simplifyVector=FALSE); capability=if(is.null(requested))request$capability else requested; handler_name=foundation_handlers[[capability]]
@@ -19,7 +25,7 @@ dispatch_stage <- function(request_path,result_path,requested=NULL) {
   if(!all(required_fields %in% names(result))) stop("E_CONFIG_SCHEMA: stage result is missing required fields", call.=FALSE)
   if(!identical(as.character(result$schema_version),"1.2.0") || !result$state %in% c("NOT_RUN","RUNNING","COMPLETED","INAPPLICABLE","FAILED","CANCELLED","NOT_REQUESTED") || !is.numeric(result$exit_code) || length(result$exit_code)!=1L) stop("E_CONFIG_SCHEMA: invalid stage result state or exit_code", call.=FALSE)
   if(identical(result$state,"COMPLETED") && !identical(as.integer(result$exit_code),0L)) stop("E_CONFIG_SCHEMA: completed stage requires exit_code=0", call.=FALSE)
-  jsonlite::write_json(result,temp_path,auto_unbox=TRUE,pretty=TRUE,na="null",null="null")
+  .pc_write_lf(jsonlite::toJSON(result,auto_unbox=TRUE,pretty=TRUE,na="null",null="null"),temp_path)   # D-42: UTF-8, LF on every platform
   if (!file.rename(temp_path, result_path)) { unlink(temp_path); stop("E_INTEGRITY: atomic result promotion failed", call.=FALSE) }
   result
 }

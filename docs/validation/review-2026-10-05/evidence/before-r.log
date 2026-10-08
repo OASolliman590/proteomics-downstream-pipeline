@@ -1,0 +1,37 @@
+$ Rscript --vanilla -e "for (f in c('test-post-de-biomarker.R', 'test-post-de-networks.R')) print(as.data.frame(testthat::test_file(file.path('r/proteomicsCore/tests/testthat', f), reporter = 'silent', package = 'proteomicsCore', load_package = 'installed'))[, c('test', 'nb', 'failed', 'error')])"   # installed proteomicsCore = 7bce0fd R sources, new tests
+                                                                                                 test
+1              V150 DeLong and stratified bootstrap CIs equal pROC; AUC is the Mann-Whitney statistic
+2 V151 folds are stratified and grouped: every fold holds both classes when each class has >= k units
+3                    V155 scores are oriented from the fitted model's class coding for glmnet and SVM
+4                             V152 the transform audit refuses a transform fitted on held-out samples
+5                       V156 label permutations respect units: whole subjects or within-subject swaps
+6        V158 the Youden threshold maximises sensitivity + specificity on the given (training) scores
+7                   review minor 1: a locked model applies to a cohort that lacks unselected features
+8      review minor 2: the transform audit records the rows actually used and trips on a leaky wiring
+  nb failed error
+1  4      0 FALSE
+2  2      0 FALSE
+3  8      0 FALSE
+4  2      0 FALSE
+5 90      0 FALSE
+6  2      0 FALSE
+7  1      0  TRUE
+8 37      1 FALSE
+                                                                                                  test
+1                               V162 signed adjacency, TOM, eigengenes and ARI equal hand computations
+2                 V165 degree-preserving null draws stay in the measured universe and keep degree bins
+3 V164/V165 undirected edges: one row per unordered pair, best score, no self-loops, min_score applied
+4                           V162 scale-free fit index equals the published definition computed by hand
+5               V162 bootstrap stability resamples biological units, never features (hand loop oracle)
+6   V163 a single module is tested (one-row eigengene fit) and equals a direct limma fit without trend
+7         review minor 5: the degree-preserving null matches exact enumeration on a tiny two-bin graph
+8                                  review minor 5: each set draws from its own derived L'Ecuyer stream
+  nb failed error
+1  7      0 FALSE
+2  5      0 FALSE
+3  4      0 FALSE
+4  3      0 FALSE
+5  4      0 FALSE
+6  5      0 FALSE
+7  3      0 FALSE
+8  0      0  TRUE

@@ -1,0 +1,35 @@
+{
+  "packet": "R14e",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_networks.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "11 passed in 43.72s",
+      "log": "docs/validation/015-post-de-analysis/R14e/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-networks.R', reporter='summary', package='proteomicsCore', load_package='installed', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+      "exit_code": 0,
+      "summary": "expectations=28 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/015-post-de-analysis/R14e/evidence/r-test-post-de-networks.log"
+    },
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "14 passed in 69.85s (0:01:09)",
+      "log": "docs/validation/015-post-de-analysis/R14e/evidence/python-limma-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package = 'proteomicsCore', load_package = 'installed', reporter = 'summary', stop_on_failure = FALSE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error))); quit(status = as.integer(sum(df\\$failed) + sum(df\\$error) > 0))\"",
+      "exit_code": 0,
+      "summary": "expectations=677 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/015-post-de-analysis/R14e/evidence/r-all-testthat.log"
+    }
+  ],
+  "working_source_manifest_sha256": "b3b093c05ce92455f6cf82130e8fef3c2fe52a9a8580ee9adb54248a2053b35a",
+  "n_files": 7,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

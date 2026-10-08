@@ -1,0 +1,23 @@
+{
+  "packet": "R14a",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/scientific/test_post_de_sets.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "11 passed in 16.26s",
+      "log": "docs/validation/015-post-de-analysis/R14a/evidence/python-tests-1.log"
+    },
+    {
+      "command": "Rscript --vanilla -e \"res <- testthat::test_file('r/proteomicsCore/tests/testthat/test-post-de-sets.R', reporter='summary', stop_on_failure=TRUE); df <- as.data.frame(res); cat(sprintf('expectations=%d failed=%d skipped=%d errors=%d\\n', sum(df\\$nb), sum(df\\$failed), sum(df\\$skipped), sum(df\\$error)))\"",
+      "exit_code": 0,
+      "summary": "expectations=146 failed=0 skipped=0 errors=0",
+      "log": "docs/validation/015-post-de-analysis/R14a/evidence/r-test-post-de-sets.log"
+    }
+  ],
+  "working_source_manifest_sha256": "a9dc49634dc1a87a2ce0ae42f5fdc35ec4b839292152bfcf0669b05706603662",
+  "n_files": 8,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

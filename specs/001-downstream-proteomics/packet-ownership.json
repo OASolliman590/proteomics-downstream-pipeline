@@ -370,7 +370,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-sensitivity.R",
         "tests/scientific/test_post_de_sensitivity.py",
         "tests/fixtures/post_de/sensitivity/**",
-        "docs/validation/015-post-de-analysis/R14b/**"
+        "docs/validation/015-post-de-analysis/R14b/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14c": {
@@ -387,7 +388,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-association.R",
         "tests/scientific/test_post_de_association.py",
         "tests/fixtures/post_de/association/**",
-        "docs/validation/015-post-de-analysis/R14c/**"
+        "docs/validation/015-post-de-analysis/R14c/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14d": {
@@ -405,7 +407,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-biomarker.R",
         "tests/scientific/test_post_de_biomarker.py",
         "tests/fixtures/post_de/biomarker/**",
-        "docs/validation/015-post-de-analysis/R14d/**"
+        "docs/validation/015-post-de-analysis/R14d/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14e": {
@@ -423,7 +426,8 @@
         "r/proteomicsCore/tests/testthat/test-post-de-networks.R",
         "tests/scientific/test_post_de_networks.py",
         "tests/fixtures/post_de/networks/**",
-        "docs/validation/015-post-de-analysis/R14e/**"
+        "docs/validation/015-post-de-analysis/R14e/**",
+        "tests/fixtures/post_de/design_factory.py"
       ]
     },
     "R14f": {
@@ -443,7 +447,11 @@
         "src/proteomics_pipeline/reporting/post_de_data.py",
         "tests/integration/test_post_de_generality.py",
         "tests/fixtures/post_de/generality/**",
-        "docs/validation/015-post-de-analysis/R14f/**"
+        "docs/validation/015-post-de-analysis/R14f/**",
+        "tests/fixtures/post_de/design_factory.py",
+        "scripts/maintained/run_post_de_calibration.py",
+        "tests/scientific/calibration_post_de.R",
+        "tests/scientific/reference/test_post_de_calibration_evidence.py"
       ]
     }
   },
@@ -576,6 +584,230 @@
         "docs/validation/acceptance.json"
       ],
       "change": "Portability follow-up to A-2026-10-01-11, found by the coordinator's simulated non-UTF-8 run (LC_ALL=C; non-ASCII paths) of the CI-failing tests: cli._emit printed JSON with ensure_ascii=False through the console encoding, so `proteomics report` (and any command whose payload holds non-ASCII text) crashed with UnicodeEncodeError on ASCII/cp1252 consoles. CLI output is now written to stdout as UTF-8 bytes regardless of locale. Regression test test_json_output_is_utf8_under_non_utf8_console fails on fd8dfa9 (exit 1, UnicodeEncodeError) and passes after the fix. Also: build_acceptance_ledger now writes a reason on FAIL records (taken from the traceability verification reason); V110 requires a reason on every non-PASS record and failed once V107 became FAIL. The ledger was regenerated: V107 gains its reason and V001's artifact hash follows the edited test_cli_contract.py; no status changed."
+    },
+    {
+      "id": "A-2026-10-01-13",
+      "adr": "docs/adr/0008-independent-audit-fixes.md",
+      "paths": [
+        "src/proteomics_pipeline/provenance.py",
+        "src/proteomics_pipeline/intake/service.py",
+        "src/proteomics_pipeline/design_service.py",
+        "src/proteomics_pipeline/workflow.py",
+        "r/proteomicsCore/R/preprocess.R",
+        "r/proteomicsCore/R/dispatch.R",
+        "r/proteomicsCore/R/io.R",
+        "r/proteomicsCore/R/permanova.R",
+        "src/proteomics_pipeline/reporting/permanova_data.py",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md",
+        "specs/014-multivariate-permanova/contracts/permanova.md",
+        "src/proteomics_pipeline/doctor.py",
+        "scripts/maintained/write_solved_versions.py",
+        "tests/fixtures/design/builders.py",
+        "tests/integration/test_qc.py",
+        "tests/unit/foundation/test_runtime_contract.py",
+        "tests/unit/foundation/test_doctor_contract.py",
+        "tests/contract/intake/test_r_bundle_reader.py",
+        "tests/contract/intake/test_canonical_intake.py",
+        "tests/scientific/test_assay_engines.py",
+        "tests/scientific/reference/test_text_encoding.py",
+        "tests/integration/test_reports.py",
+        "tests/integration/test_plan_portability.py",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "docs/user-guide/usage.md",
+        "docs/validation/review-2026-10-03/**"
+      ],
+      "change": "Re-review follow-ups of 2026-10-03 (decisions.md open item 12). D-42: platform-independent plan hash (LF-normalised content hashes for sources, planning artifacts and code; semantic plan hash with the solved environment and session information outside it, protected by integrity_sha256; R and intake text artifacts written UTF-8/LF; count_evidence by file name). D-43: PERMANOVA records N admissible relabellings and the minimum attainable P S/N, enumerates completely when N <= S x (nperm + 1), and never shows an unattainable floor with '<'; pairs involving an empty declared group are refused in refusals.tsv; SM27 amended. V059 setup failure is FAILED, never SKIPPED. Explicit UTF-8 R reads and LF writers; Rscript -e probes replaced by runtime.run_r_code; lint extended to direct subprocess imports, tempfile text modes, -e argv lists and R sources. PowerShell demo block and a cross-platform V100. Each fix has a test that fails on 106fb20 and passes after (docs/validation/review-2026-10-03)."
+    },
+    {
+      "id": "A-2026-10-01-14",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/runtime.py",
+        "r/proteomicsCore/R/dispatch.R",
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "src/proteomics_pipeline/schemas/run-status.schema.json",
+        "specs/001-downstream-proteomics/contracts/run-status.schema.json",
+        "src/proteomics_pipeline/schemas/report-data.schema.json",
+        "src/proteomics_pipeline/design_service.py",
+        "src/proteomics_pipeline/workflow.py",
+        "src/proteomics_pipeline/reporting/assemble.py",
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "scripts/maintained/install_r_dependencies.R"
+      ],
+      "change": "Phase 4 shared interfaces (ADR 0009, before R14a): six capability IDs (post_de_sets/sensitivity/association/biomarker/networks/eligibility) in the fixed Python map; the five R-backed ones in the R dispatch map (post_de_eligibility is Python-only, like report_full); optional post_de configuration block per contracts/post-de.md with runtime.phase 4 (Phase 1-3 configurations cannot enable it: schema rule plus typed E_PHASE_CAPABILITY precheck); resource kind 'ppi' with score_type; requested_phase 4 in run-status/report-data schemas; design_service.replan (named secondary designs through the same grammar with exact rational rank and estimability) and exact_rank; workflow: typed post-DE precheck, requested capabilities, plan-time eligibility recorded in the capability plan (SM41; required ineligible modules reject the plan), dispatch R14a-R14e in order then R14f; validation-cohort paths enter the plan by name; fixed report-section providers for every post-DE module; R Suggests glmnet, pROC, e1071, randomForest, dynamicTreeCut (installed in .r-lib and pinned in renv.lock with their dependencies foreach, iterators, shape, RcppEigen, proxy); WGCNA is not used (D-44)."
+    },
+    {
+      "id": "A-2026-10-01-15",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/workflow.py",
+        "specs/001-downstream-proteomics/packet-ownership.json"
+      ],
+      "change": "R14b integration: a required post-DE module may publish required_refusal(decision); when a declared sub-analysis of a required module is ineligible (for example a non-estimable interaction, E_SENSITIVITY_NONESTIMABLE) the plan is rejected (exit 2) before any fit (V137 negative). Optional modules record the refusal and run the remaining analyses. Allowlist amendment: plan.md requires one synthetic design factory reused by every R14 packet, so tests/fixtures/post_de/design_factory.py (created by R14a) is added to the R14b-R14f allowlists; each packet appends its own generator functions and changes no existing one."
+    },
+    {
+      "id": "A-2026-10-01-16",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/design_service.py"
+      ],
+      "change": "R14c re-plan API extension: design_service.replan(..., group_term=False) drops the group coefficients for pooled unadjusted and within-group phenotype designs (interactions with group are then refused, E_DESIGN_TERM); exact rank and estimability are computed on the reduced design."
+    },
+    {
+      "id": "A-2026-10-01-17",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "src/proteomics_pipeline/reproduction.py"
+      ],
+      "change": "R14d: optional post_de.biomarker.classifier_params (fixed lambda grid for penalised logistic, cost grid for SVM; default grids are derived in-fold); R11 lock qualification probes the glmnet and e1071 APIs the biomarker stage calls."
+    },
+    {
+      "id": "A-2026-10-01-18",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "src/proteomics_pipeline/resources.py",
+        "r/proteomicsCore/R/post_de_sets.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json"
+      ],
+      "change": "R14e: R07 snapshot kind 'ppi' (columns gene_a, gene_b, score; the preparation manifest must record score_type, which is kept in the snapshot and checked against the declared resource; target taxonomy must equal the study organism); a resource path naming a remote location fails E_RESOURCE_DOWNLOAD before analysis (analysis never downloads); the shared post-DE input check (R14a .pd_verify_inputs) accepts resource_/resfile_ inputs, which verify_resources and the hash-on-read rule already verify; optional co-abundance cut_height."
+    },
+    {
+      "id": "A-2026-10-01-19",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "r/proteomicsCore/R/model_limma.R"
+      ],
+      "change": "R14e follow-up (found by the R14f generality matrix): limma drops the row names of a one-row fit, so fit_limma_model failed in moderation_diagnostics for a model with exactly one eligible feature (a single co-abundance module); the row names of the full fit are restored from the tested universe. Fail-before/pass-after: test-post-de-networks.R 'V163 a single module ...'."
+    },
+    {
+      "id": "A-2026-10-01-20",
+      "adr": "docs/adr/0009-post-de-scope-amendment.md",
+      "paths": [
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "scripts/maintained/run_post_de_calibration.py",
+        "tests/scientific/calibration_post_de.R",
+        "tests/scientific/reference/test_post_de_calibration_evidence.py"
+      ],
+      "change": "Calibration extension for R14d/R14e (spec 015 plan: 'recorded in R14f'): the post-DE calibration runner, its R driver and its evidence test are added to the R14f allowlist. Gates were fixed before the first run (D-52)."
+    },
+    {
+      "id": "A-2026-10-01-21",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/reproduction.py",
+        "specs/001-downstream-proteomics/traceability.json"
+      ],
+      "change": "R12: write_acceptance_ledger keeps each R12 row's recorded NOT_RUN reason (Maintainer-only private gate, operator decision, final review) instead of overwriting all ten with one generic sentence; the generic text remains the fallback. Fail-before/pass-after: tests/regression/test_traceability_reconciliation.py (V116). The traceability identity note now records the ADR 0009 identities."
+    },
+    {
+      "id": "A-2026-10-01-22",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "tests/scientific/reference/test_text_encoding.py",
+        "src/proteomics_pipeline/post_de/association.py",
+        "r/proteomicsCore/R/post_de_association.R",
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "r/proteomicsCore/R/post_de_networks.R",
+        "scripts/maintained/build_release.py",
+        "src/proteomics_pipeline/legacy_service.py",
+        "scripts/maintained/run_post_de_calibration.py",
+        "tests/scientific/calibration_post_de.R"
+      ],
+      "change": "Fixes for the independent review of 106fb20..7bce0fd (2026-10-05, docs/validation/review-2026-10-05) inside the R14c, R14d, R14e, R14f and R12 allowlists after their receipts; the only path outside them is the R11 lint test, extended with an LF rule for release-artifact writers. Decisions D-54 to D-57."
+    },
+    {
+      "id": "A-2026-10-01-23",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        ".github/workflows/maintained.yml",
+        ".gitattributes",
+        "tests/integration/test_plan_portability.py",
+        "tests/regression/test_traceability_reconciliation.py"
+      ],
+      "change": "PR #2 CI run 37244850636: checkout with full history (fetch-depth: 0) so V116 can verify historical verified_commits, with a specific failure message on a shallow clone (never a skip); the line-ending test converted an already-CRLF Windows checkout to CR CR LF (the content-hash rule was correct), now idempotent and parametrised over LF and CRLF checkouts; .gitattributes checks text out as LF everywhere (eol=lf) with binary patterns, protected recovered paths unchanged (-text)."
+    },
+    {
+      "id": "A-2026-10-01-24",
+      "adr": "docs/adr/0010-adaptive-post-de-policy.md",
+      "paths": [
+        "src/proteomics_pipeline/post_de/__init__.py",
+        "src/proteomics_pipeline/post_de/sets.py",
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "src/proteomics_pipeline/post_de/association.py",
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "src/proteomics_pipeline/post_de/networks.py",
+        "src/proteomics_pipeline/post_de/eligibility.py",
+        "src/proteomics_pipeline/reporting/post_de_data.py",
+        "src/proteomics_pipeline/permanova_service.py",
+        "r/proteomicsCore/R/permanova.R",
+        "r/proteomicsCore/R/post_de_sets.R",
+        "r/proteomicsCore/R/post_de_sensitivity.R",
+        "r/proteomicsCore/R/post_de_association.R",
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "r/proteomicsCore/R/post_de_networks.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md",
+        "specs/015-post-de-analysis/contracts/post-de.md",
+        "tests/fixtures/permanova/make_fixtures.py",
+        "tests/scientific/test_permanova.py",
+        "docs/methods/README.md",
+        "docs/methods/reason-codes.md"
+      ],
+      "change": "Maintainer-directed adaptive policy (ADR 0010, D-59, D-60): optional post-DE/PERMANOVA declaration refusals never block the run; validity refusals are scoped to the smallest piece with the valid alternative run automatically; every adaptation is recorded (plan decision, eligibility.json/result settings, W_POST_DE_ADAPTED/W_PERMANOVA_ADAPTED, R14f report table); optional biomarker compute_policy (adapt|refuse) in both schema copies; scientific methods v1.3.1."
+    },
+    {
+      "id": "A-2026-10-01-25",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/cache.py",
+        "src/proteomics_pipeline/reporting/comparison.py",
+        "src/proteomics_pipeline/reporting/full.py",
+        "src/proteomics_pipeline/reporting/stub.py",
+        "src/proteomics_pipeline/reproduction.py",
+        "src/proteomics_pipeline/runtime.py",
+        "src/proteomics_pipeline/workflow.py",
+        "scripts/maintained/benchmark.py",
+        "scripts/maintained/run_calibration.py",
+        "scripts/maintained/write_solved_versions.py",
+        "tests/scientific/reference/test_text_encoding.py"
+      ],
+      "change": "Open item 17 (D-61): every text write in src/ and scripts/maintained writes LF (newline=\"\\n\"), so outputs are byte-identical across operating systems; the R11 newline lint covers all maintained Python code (39 sites fixed; before-lint evidence in docs/validation/review-2026-10-05-ci)."
+    },
+    {
+      "id": "A-2026-10-01-26",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/reporting/full.py",
+        "tests/unit/test_scatter_svg.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/integration/test_reports.py"
+      ],
+      "change": "Open item 10 (D-62): SVG scatter padding, x = 0 reference line and marked identical coordinates; the V109 inversion oracle and the V100 mark count follow the new layout."
+    },
+    {
+      "id": "A-2026-10-01-27",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "LICENSE.md",
+        "r/proteomicsCore/LICENSE",
+        "r/proteomicsCore/DESCRIPTION",
+        "pyproject.toml",
+        "docs/validation/013-release/operator-decisions.json",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/methods/README.md",
+        "docs/user-guide/release.md",
+        "tests/regression/test_docs.py",
+        "tests/regression/test_release.py"
+      ],
+      "change": "D-63: the Maintainer selected the PolyForm Noncommercial License 1.0.0 with Omar A. Solliman as copyright holder and licensor (commercial use needs his separate written license). The operator decision record, license files and package metadata are added; V115 now asserts that every license claim matches the recorded decision and that no other license is claimed; V117 asserts the recorded license while public release stays refused (no disclosure review). pyproject.toml uses the PEP 639 SPDX expression `PolyForm-Noncommercial-1.0.0` with `license-files` (setuptools >= 77)."
     }
   ]
 }

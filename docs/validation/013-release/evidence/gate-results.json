@@ -1,0 +1,29 @@
+{
+  "packet": "R12",
+  "commands": [
+    {
+      "command": ".venv/bin/python -m pytest tests/regression -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "38 passed in 7.08s",
+      "log": "docs/validation/013-release/evidence/python-tests-1.log"
+    },
+    {
+      "command": ".venv/bin/python scripts/maintained/build_release.py check",
+      "exit_code": 0,
+      "summary": "}",
+      "log": "docs/validation/013-release/evidence/release-hygiene-check.log"
+    },
+    {
+      "command": ".venv/bin/python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "summary": "\"PASS\"",
+      "log": "docs/validation/013-release/evidence/spec-kit-check.log"
+    }
+  ],
+  "working_source_manifest_sha256": "6e0260c0c30cbfb8e3ef2c6e52451279862b9d91a5d67f015dd3069d95b32879",
+  "n_files": 15,
+  "environment": {
+    "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
+    "python": "3.13.15"
+  }
+}

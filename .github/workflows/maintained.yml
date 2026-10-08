@@ -28,6 +28,8 @@ jobs:
       R_LIBS_USER: ${{ github.workspace }}/.r-lib
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # V116 checks that every verified_commit exists in history (A-2026-10-01-23)
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -79,6 +81,8 @@ jobs:
       R_LIBS_USER: ${{ github.workspace }}/.r-lib
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # V116 checks that every verified_commit exists in history (A-2026-10-01-23)
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

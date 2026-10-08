@@ -1,0 +1,84 @@
+R 4.6.1; ; 2026-10-03 19:10:39 UTC; unix <scratch>/before-lib/proteomicsCore 
+permanova: .............................................................123....45...................6.789abcdefg.hijklmn...op
+
+══ Failed ══════════════════════════════════════════════════════════════════════
+── 1. Failure ('test-permanova.R:197:17'): audit M2: group constant within subje
+Expected `is.matrix(P)` to be TRUE.
+Differences:
+`actual`:   FALSE
+`expected`: TRUE 
+
+
+── 2. Failure ('test-permanova.R:197:54'): audit M2: group constant within subje
+Expected `nrow(P)` to be identical to 69L.
+Differences:
+target is NULL, current is numeric
+
+── 3. Error ('test-permanova.R:198:3'): audit M2: group constant within subjects
+Error in `apply(P, 1L, function(i) all(tapply(d$obs$group[order(i)], d$obs$subject, function(v) length(unique(v))) == 1))`: dim(X) must have a positive length
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at test-permanova.R:198:3
+ 2. │ └─testthat::quasi_label(enquo(object), label)
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. └─base::apply(...)
+
+── 4. Failure ('test-permanova.R:217:3'): audit M2: group varying within every s
+Expected `nrow(how$how)` to be identical to 255L.
+Differences:
+target is NULL, current is numeric
+
+── 5. Error ('test-permanova.R:218:3'): audit M2: group varying within every sub
+Error in `apply(how$how, 1L, function(i) all(d$obs$subject[i] == d$obs$subject))`: dim(X) must have a positive length
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at test-permanova.R:218:3
+ 2. │ └─testthat::quasi_label(enquo(object), label)
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. └─base::apply(...)
+
+── 6. Failure ('test-permanova.R:302:3'): review m3 gap: with three declared gro
+Expected `res$refusals$comparison[res$refusals$analysis == "pairwise"]` to have the same values as `c("C vs A", "C vs B")`.
+Actual: 
+Expected: "C vs A", "C vs B"
+Absent: "C vs A", "C vs B"
+
+── 7. Failure ('test-permanova.R:305:3'): review m3 gap: with three declared gro
+Expected `pw$comparison` to be identical to "B vs A".
+Differences:
+Lengths differ: 0 is not 1
+
+── 8. Failure ('test-permanova.R:306:3'): review m3 gap: with three declared gro
+Expected `pw$adjustment_family_size` to be identical to 1L.
+Differences:
+Lengths differ: 0 is not 1
+
+── 9. Failure ('test-permanova.R:306:62'): review m3 gap: with three declared gr
+Expected `pw$adjustment_family_planned` to be identical to 3L.
+Differences:
+Lengths differ: 0 is not 1
+
+── 10. Failure ('test-permanova.R:322:3'): review P floor: whole-subject permuta
+Expected `row$permutation_enumeration` to be identical to "complete".
+Differences:
+target is NULL, current is character
+  ... and 15 more
+
+
+Maximum number of 10 failures reached, some test results may be missing.
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+                                                                                                               test
+9                   audit M2: group constant within subjects permutes whole subjects (known answer, not degenerate)
+10                              audit M2: group varying within every subject permutes within subject (known answer)
+18         review m3 gap: with three declared groups and one empty, every pair involving the empty group is refused
+19               review P floor: whole-subject permutation is enumerated exactly; N, S/N and the display are honest
+20 review P floor: free designs enumerate when N <= S x (nperm + 1); otherwise Monte Carlo with an attainable floor
+21                          review P floor: the enumerator yields each distinct admissible relabelling exactly once
+   failed error
+9       2  TRUE
+10      1  TRUE
+18      4 FALSE
+19      9 FALSE
+20      5  TRUE
+21      0  TRUE

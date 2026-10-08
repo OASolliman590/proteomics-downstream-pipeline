@@ -51,7 +51,7 @@ def reusable(stage_dir: Path, expected: str) -> bool:
 
 
 def record(stage_dir: Path, value: str) -> None:
-    (stage_dir / "fingerprint.json").write_text(json.dumps({"fingerprint": value, "rule": "normalized request + code manifest + environment"}), encoding="utf-8")
+    (stage_dir / "fingerprint.json").write_text(json.dumps({"fingerprint": value, "rule": "normalized request + code manifest + environment"}), encoding="utf-8", newline="\n")
 
 
 def retire(path: Path, root: Path, label: str) -> Path:

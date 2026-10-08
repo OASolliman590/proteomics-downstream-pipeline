@@ -1,0 +1,5 @@
+$ .venv/bin/python -m pytest tests/scientific/test_limma.py -q -rs -p no:cacheprovider
+# started 2026-10-04T12:09:12.658075+00:00  exit 0
+
+..............                                                           [100%]
+14 passed in 69.85s (0:01:09)

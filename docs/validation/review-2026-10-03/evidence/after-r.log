@@ -1,0 +1,20 @@
+permanova: ...........................................................................................................................
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations=123 failed=0 skipped=0 errors=0
+                                                                                                               test
+9                   audit M2: group constant within subjects permutes whole subjects (known answer, not degenerate)
+10                              audit M2: group varying within every subject permutes within subject (known answer)
+11                                         audit M2: mixed constant/varying subjects are refused with a typed error
+18         review m3 gap: with three declared groups and one empty, every pair involving the empty group is refused
+19               review P floor: whole-subject permutation is enumerated exactly; N, S/N and the display are honest
+20 review P floor: free designs enumerate when N <= S x (nperm + 1); otherwise Monte Carlo with an attainable floor
+21                          review P floor: the enumerator yields each distinct admissible relabelling exactly once
+   nb failed error
+9  12      0 FALSE
+10  7      0 FALSE
+11  1      0 FALSE
+18  6      0 FALSE
+19 10      0 FALSE
+20 10      0 FALSE
+21  5      0 FALSE

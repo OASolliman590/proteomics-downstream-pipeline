@@ -1,0 +1,15 @@
+$ .venv/bin/python scripts/maintained/build_release.py check
+# started 2026-10-04T19:22:37.431559+00:00  exit 0
+
+{
+  "result_type": "ReleaseHygiene",
+  "root_name": "proteomics-downstream-pipeline",
+  "n_tracked_files": 529,
+  "findings": [],
+  "blocking": false,
+  "license": "unresolved (operator decision required, AGENTS.md)",
+  "ownership": "unresolved (operator decision required, AGENTS.md)",
+  "disclosure_review": "not recorded",
+  "public_release_allowed": false,
+  "untracked_files_included": false
+}

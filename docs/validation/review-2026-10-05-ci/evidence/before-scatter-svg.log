@@ -1,0 +1,4 @@
+$ .venv/bin/python -m pytest tests/unit/test_scatter_svg.py -q -p no:cacheprovider   # before (open item 10)
+FAILED tests/unit/test_scatter_svg.py::test_identical_points_are_marked_with_their_count
+FAILED tests/unit/test_scatter_svg.py::test_ranges_are_padded_and_zero_is_marked
+2 failed in 0.07s
