@@ -10,8 +10,9 @@
   "licence_note": "LICENSE is the MIT notice shipped with the plotly package (copyright line 2021, Plotly, Inc); the banner of the library reads Copyright 2012-2025, Plotly, Inc. Both are kept unmodified.",
   "vendored_by_packet": "R16d",
   "approval": {
-    "status": "pending",
-    "approved_by": null,
-    "note": "contracts/figures.md: PINNED.json is finalised when the Maintainer approves the pin; the Maintainer must confirm this is the latest stable plotly.js release (no network access was used to check)."
+    "status": "approved",
+    "approved_by": "Omar A. Solliman (Maintainer)",
+    "date": "2026-10-08",
+    "note": "Maintainer kept plotly.js 2.25.2, the copy bundled in the CRAN plotly package: it covers every trace type the catalogue uses, is the release that fixed the last known plotly.js prototype-pollution issue, needs no download and matches R plotly. Upgrade to 3.x later is a contained change (swap file, update hash, title objects)."
   }
 }
