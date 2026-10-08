@@ -103,13 +103,8 @@ def built(tmp_path_factory):
 
 EXPECTED = {
     "response_axes": "scatter",
-    "roc_cv": "curve_band",
-    "cv_auc_repeats": "strip",
-    "permutation_null": "histogram",
     "upset_all": "regions",
     "venn_A_B": "regions",
-    "eigengenes": "eigen_means",
-    "ppi_subnetwork": "network",
     "association_heatmap": "heat_table",
 }
 
@@ -121,7 +116,15 @@ def test_every_known_producer_table_is_retrofitted_with_its_kind_and_the_unknown
         assert registry["figures"][figure_id]["kind"] == kind
     skipped = {item["path"]: item["reason"] for item in registry["retrofit"]["not_retrofitted"]}
     assert set(skipped) == {"report-full/figure_sources/volcano_zero_null_limma-main_disease-control.tsv",
-                            "post_de/other/figure_sources/not_a_known_figure.tsv", "post_de/biomarker/figure_sources/roc_cv_band.tsv"}
+                            "post_de/other/figure_sources/not_a_known_figure.tsv", "post_de/biomarker/figure_sources/roc_cv_band.tsv",
+                            "post_de/biomarker/figure_sources/roc_cv.tsv", "post_de/biomarker/figure_sources/cv_auc_repeats.tsv",
+                            "post_de/biomarker/figure_sources/permutation_null.tsv", "post_de/networks/figure_sources/eigengenes.tsv",
+                            "post_de/networks/figure_sources/ppi_subnetwork.tsv"}
+    # the post-DE tables are drawn by their run-level figures (D3, figures/run_sources.py), from the same tables
+    assert "bio_roc_ci_band" in skipped["post_de/biomarker/figure_sources/roc_cv.tsv"]
+    assert "bio_cv_auc_vs_permutation" in skipped["post_de/biomarker/figure_sources/permutation_null.tsv"]
+    assert "net_module_heatmap" in skipped["post_de/networks/figure_sources/eigengenes.tsv"]
+    assert "net_network_graph" in skipped["post_de/networks/figure_sources/ppi_subnetwork.tsv"]
     # the R10b volcano is drawn by the run's own differential figure with the catalogue renderer (test_figure_run_e2e)
     assert "diff_volcano_labelled" in skipped["report-full/figure_sources/volcano_zero_null_limma-main_disease-control.tsv"]
     assert "R13" in registry["retrofit"]["producers"]
@@ -141,35 +144,11 @@ def test_each_figure_has_its_three_outputs_and_the_registered_hashes_match_the_f
     assert (catalogue / f"{figure_id}.png").read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
 
 
-def test_the_roc_curve_and_band_tables_equal_the_producer_values(built):
-    pzfx = built["catalogue"] / "roc_cv.pzfx"
-    source = _rows(built["tables"]["roc"])
-    curve = _pzfx(pzfx, 0)
-    assert curve["columns"]["1 - specificity"] == [float(r["fpr"]) for r in source]
-    assert curve["columns"]["sensitivity"] == [float(r["tpr"]) for r in source]
-    band = _rows(built["tables"]["band"])
-    lower, upper = _pzfx(pzfx, 1), _pzfx(pzfx, 2)
-    assert lower["columns"]["1 - specificity"] == [float(r["fpr"]) for r in band]
-    assert lower["columns"]["lower bound"] == [float(r["tpr_lower"]) for r in band]
-    assert upper["columns"]["upper bound"] == [float(r["tpr_upper"]) for r in band]
-    assert "cross_validated_nested" in (built["catalogue"] / "roc_cv.pzfx").read_text(encoding="utf-8")   # the claim label of the band source
-
-
 def test_the_upset_regions_are_the_producer_counts_with_the_defining_sets_as_row_titles(built):
     table = _pzfx(built["catalogue"] / "upset_all.pzfx", 0)
     source = _rows(built["tables"]["upset"])
     assert table["rows"] == [r["defining_sets"] for r in source]
     assert list(table["columns"].values())[0] == [float(r["n_protein_groups"]) for r in source]
-
-
-def test_the_eigengene_group_means_equal_the_mean_of_the_producer_values(built):
-    table = _pzfx(built["catalogue"] / "eigengenes.pzfx", 0)
-    source = _rows(built["tables"]["eigen"])
-    for module in ("M1", "M2"):
-        for group in ("Control", "Chronic"):
-            values = [float(r[module]) for r in source if r["group"] == group]
-            cell = table["columns"][group][table["rows"].index(module)]
-            assert abs(cell - sum(values) / len(values)) <= 1e-12
 
 
 def test_the_association_cells_equal_the_producer_values(built):
@@ -178,49 +157,6 @@ def test_the_association_cells_equal_the_producer_values(built):
     for r in source:
         cell = table["columns"][r["analysis_id"]][table["rows"].index(r["feature_id"])]
         assert abs(cell - float(r["value"])) <= 1e-12
-
-
-def test_the_subnetwork_nodes_and_edges_equal_the_producer_tables(built):
-    degree = _pzfx(built["catalogue"] / "ppi_subnetwork.pzfx", 0)
-    edges = _pzfx(built["catalogue"] / "ppi_subnetwork.pzfx", 1)
-    source_edges = _rows(built["tables"]["ppi_edges"])
-    nodes = [r["gene_id"] for r in _rows(built["tables"]["ppi_nodes"])]
-    assert degree["rows"] == nodes
-    counts = {n: 0 for n in nodes}
-    for e in source_edges:
-        counts[e["gene_a"]] += 1
-        counts[e["gene_b"]] += 1
-    assert list(degree["columns"].values())[0] == [float(counts[n]) for n in nodes]
-    assert len(list(edges["columns"].values())[0]) == len(source_edges)
-
-
-def test_a_source_without_the_columns_its_rule_needs_is_refused_and_writes_no_output(tmp_path):
-    run = tmp_path / "run"
-    _write(run / "post_de" / "biomarker" / "figure_sources" / "cv_auc_repeats.tsv", ["repeat_id", "claim_label"], [[1, "cross_validated_nested"]])
-    summary = run_catalogue.build(run, {"formats": ["png", "pzfx", "html"]}, run / "report" / "figure_catalogue")
-    figure = summary["figures"][0]
-    assert figure["outputs"] == {}
-    assert figure["refusals"][0]["code"] == "E_FIGURE_SOURCE_MISSING"
-    registry = json.loads((run / "report" / "figure_catalogue" / "registry.json").read_text(encoding="utf-8"))
-    assert registry["figures"]["cv_auc_repeats"]["state"] == "NOT_RUN"
-    assert not (run / "report" / "figure_catalogue" / "cv_auc_repeats.pzfx").exists()
-
-
-def test_a_subnetwork_without_its_edge_table_is_refused(tmp_path):
-    run = tmp_path / "run"
-    _write(run / "post_de" / "networks" / "figure_sources" / "ppi_subnetwork.tsv", ["set_id", "gene_id", "x", "y", "claim_label"],
-           [["s", "G0", 0.0, 1.0, "descriptive"], ["s", "G1", 1.0, 0.0, "descriptive"]])
-    summary = run_catalogue.build(run, {"formats": ["pzfx"]}, run / "report" / "figure_catalogue")
-    assert summary["figures"][0]["refusals"][0]["code"] == "E_FIGURE_SOURCE_MISSING"
-
-
-def test_an_edge_whose_endpoint_is_not_a_node_is_refused(tmp_path):
-    run = tmp_path / "run"
-    _write(run / "post_de" / "networks" / "figure_sources" / "ppi_subnetwork.tsv", ["set_id", "gene_id", "x", "y", "claim_label"],
-           [["s", "G0", 0.0, 1.0, "descriptive"], ["s", "G1", 1.0, 0.0, "descriptive"]])
-    _write(run / "post_de" / "networks" / "ppi_subnetwork.tsv", ["set_id", "gene_a", "gene_b", "claim_label"], [["s", "G0", "G9", "descriptive"]])
-    summary = run_catalogue.build(run, {"formats": ["pzfx"]}, run / "report" / "figure_catalogue")
-    assert summary["figures"][0]["refusals"][0]["code"] == "E_FIGURE_SOURCE_MISSING"
 
 
 def test_an_invalid_block_is_a_typed_refusal_before_anything_is_written(tmp_path):

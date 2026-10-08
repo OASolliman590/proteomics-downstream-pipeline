@@ -385,6 +385,13 @@ def _claim_check(rows: Sequence[Mapping[str, str]], allowed: Sequence[str]) -> s
     return next(iter(labels))
 
 
+def _opt_float(text: str | None) -> float | None:
+    """A number of the source, or None for a missing value (NA or empty)."""
+    if text is None or text in ("", "NA", "NaN"):
+        return None
+    return float(text)
+
+
 def _mean(values: Sequence[float]) -> float:
     return sum(values) / len(values)
 
@@ -398,7 +405,7 @@ def _content_roc(rows: list[dict], sha: str, **_: Any) -> dict:
     head = rows[0]
     curve = [r for r in rows if r["component"] == "curve"]
     band = [r for r in rows if r["component"] == "band"]
-    auc, lo, hi = float(head["auc"]), float(head["auc_lower"]), float(head["auc_upper"])
+    auc, lo, hi = float(head["auc"]), _opt_float(head.get("auc_lower")), _opt_float(head.get("auc_upper"))
     seed, boots = int(head["seed"]), int(head["B"])
     n_control, n_case = int(head["n_control"]), int(head["n_case"])
     cfpr = [float(r["fpr"]) for r in curve]
@@ -407,6 +414,7 @@ def _content_roc(rows: list[dict], sha: str, **_: Any) -> dict:
     blo = [float(r["band_lower"]) for r in band]
     bhi = [float(r["band_upper"]) for r in band]
     hover = "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>%{customdata[2]}<extra></extra>"
+    auc_text = f"AUC {auc:.3f} (95% CI {lo:.3f}-{hi:.3f})" if lo is not None and hi is not None else f"AUC {auc:.3f} (no CI published)"
     traces = [
         {"type": "scatter", "mode": "lines", "name": "95% CI band, lower", "x": bfpr, "y": blo, "line": {"width": 0}, "showlegend": False,
          "customdata": [["95% CI band (stratified bootstrap)", claim, f"lower sensitivity {v:.3f}; seed {seed}, B {boots}"] for v in blo],
@@ -418,49 +426,58 @@ def _content_roc(rows: list[dict], sha: str, **_: Any) -> dict:
         {"type": "scatter", "mode": "lines", "name": "chance", "x": [0.0, 1.0], "y": [0.0, 1.0], "line": {"dash": "dash", "color": "#9E9E9E", "width": 1},
          "customdata": [["chance diagonal", claim, "no discrimination"]] * 2, "hovertemplate": hover},
         {"type": "scatter", "mode": "lines", "name": "ROC (out-of-fold)", "x": cfpr, "y": csens, "line": {"shape": "hv", "color": "#D55E00", "width": 2.5},
-         "customdata": [["ROC (out-of-fold)", claim, f"AUC {auc:.3f} (95% CI {lo:.3f}-{hi:.3f})"] for _ in cfpr],
+         "customdata": [["ROC (out-of-fold)", claim, auc_text] for _ in cfpr],
          "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>1 - specificity %{x:.3f}"
                           "<br>sensitivity %{y:.3f}<br>%{customdata[2]}<extra></extra>"},
     ]
     # D-75 statistics table: the AUC as the effect, its 95 per cent interval, and the group sizes; the claim label is in the row title
-    stats_table = ColumnTable("ROC with CI band - pipeline statistics",
-                              (("AUC", (auc,)), ("CI95_low", (lo,)), ("CI95_high", (hi,)),
-                               ("n_Control", (float(n_control),)), ("n_Case", (float(n_case),))),
-                              row_titles=(f"AUC out-of-fold (claim: {claim})",))
     tables = [xy_table("ROC curve (out-of-fold)", "1 - specificity", "sensitivity", cfpr, csens),
               xy_table("ROC CI band, lower", "1 - specificity", "sensitivity (lower)", bfpr, blo),
-              xy_table("ROC CI band, upper", "1 - specificity", "sensitivity (upper)", bfpr, bhi),
-              stats_table]
-    notes = [f"AUC {auc:.3f} (95% CI {lo:.3f}-{hi:.3f}, DeLong); band from the stratified bootstrap with seed {seed} and B = {boots}.",
+              xy_table("ROC CI band, upper", "1 - specificity", "sensitivity (upper)", bfpr, bhi)]
+    if lo is not None and hi is not None:
+        tables.append(ColumnTable("ROC with CI band - pipeline statistics",
+                                  (("AUC", (auc,)), ("CI95_low", (lo,)), ("CI95_high", (hi,)),
+                                   ("n_Control", (float(n_control),)), ("n_Case", (float(n_case),))),
+                                  row_titles=(f"AUC out-of-fold (claim: {claim})",)))
+        ci_text = f"(95% CI {lo:.3f}-{hi:.3f}, DeLong)"
+    else:
+        ci_text = "(no interval published for the pooled AUC)"
+    notes = [f"AUC {auc:.3f} {ci_text}; band from the stratified bootstrap with seed {seed} and B = {boots}.",
              CLAIM_NOTE.format(claim=claim)]
+    statistics_kind = "table" if lo is not None and hi is not None else "none"
     return {"tables": tables, "statistics": {"AUC": auc, "CI95": (lo, hi)},
-            "info": _info("ROC with CI band", "table", "pROC ROC; DeLong AUC CI; stratified bootstrap band",
+            "info": _info("ROC with CI band", statistics_kind, "pROC ROC; DeLong AUC CI; stratified bootstrap band",
                           sha, f"Control {n_control}; Case {n_case}", notes, multiplicity="none (performance estimate; no multiplicity family)",
                           effect_scale="AUC (0 to 1)", stage="R16e stage 2"),
             "traces": traces, "layout": _layout(f"ROC with 95% CI band ({claim})", "1 - specificity", "sensitivity"), "png": {}}
 
 
-def _content_forest(rows: list[dict], sha: str, **_: Any) -> dict:
-    """V216: panel effects with their 95 per cent intervals (Welch, per feature). The claim label must be frozen."""
+def _content_forest(rows: list[dict], sha: str, xlab: str | None = None, **_: Any) -> dict:
+    """V216: panel effects with their 95 per cent intervals. The Welch panel of the synthetic fixture carries P and q; a panel of
+    the run may publish only the estimate and its interval (the statistics table is then omitted and recorded as none)."""
     claim = _claim_check(rows, PANEL_CLAIMS)
     features = [r["feature"] for r in rows]
     estimate = [float(r["estimate"]) for r in rows]
     lo = [float(r["ci_lower"]) for r in rows]
     hi = [float(r["ci_upper"]) for r in rows]
-    p_values = [float(r["P"]) for r in rows]
-    q_values = [float(r["q"]) for r in rows]
+    p_values = [_opt_float(r.get("P")) for r in rows]
+    q_values = [_opt_float(r.get("q")) for r in rows]
     n_control, n_case = int(rows[0]["n_Control"]), int(rows[0]["n_Case"])
     table = ColumnTable("panel forest (effect and 95% CI)", (("estimate", tuple(estimate)), ("ci_lower", tuple(lo)), ("ci_upper", tuple(hi))),
                         row_titles=tuple(features))
+    tables = [table]
+    with_stats = all(p is not None for p in p_values) and all(q is not None for q in q_values)
     stats = [{"row": f"{f}: Case - Control", "effect": e, "P": p, "q": q, "n": {"Control": n_control, "Case": n_case}}
-             for f, e, p, q in zip(features, estimate, p_values, q_values)]
-    tables = [table, statistics_table("panel forest - pipeline statistics", stats, ["Control", "Case"])]
+             for f, e, p, q in zip(features, estimate, p_values, q_values)] if with_stats else []
+    if with_stats:
+        tables.append(statistics_table("panel forest - pipeline statistics", stats, ["Control", "Case"]))
     traces = [
         {"type": "scatter", "mode": "markers", "name": "panel effect", "x": estimate, "y": features,
          "error_x": {"type": "data", "symmetric": False, "array": [h - e for h, e in zip(hi, estimate)],
                      "arrayminus": [e - l for l, e in zip(lo, estimate)], "color": "#000000"},
          "marker": {"color": "#0072B2", "size": 8},
-         "customdata": [[f, claim, f"P = {p:.3g}", f"q = {q:.3g}"] for f, p, q in zip(features, p_values, q_values)],
+         "customdata": [[f, claim, f"P = {p:.3g}" if p is not None else "P not published", f"q = {q:.3g}" if q is not None else "q not published"]
+                        for f, p, q in zip(features, p_values, q_values)],
          "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>effect %{x:.3f}<br>%{customdata[2]}"
                           "<br>%{customdata[3]}<extra></extra>"},
         {"type": "scatter", "mode": "lines", "name": "no difference", "x": [0.0, 0.0], "y": [features[0], features[-1]],
@@ -468,10 +485,17 @@ def _content_forest(rows: list[dict], sha: str, **_: Any) -> dict:
          "customdata": [["no difference", claim, "effect 0", "zero line"]] * 2,
          "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>%{customdata[2]}<extra></extra>"},
     ]
-    notes = ["Effects are Case minus Control on the log2 scale (Welch t, 95% CI); q is BH across the panel.", CLAIM_NOTE.format(claim=claim)]
-    return {"tables": tables, "statistics": stats, "info": _info("panel forest", "table", "Welch t per panel feature (95% CI from t.test)", sha,
-            f"Control {n_control}; Case {n_case}", notes, multiplicity="BH within the panel family (q)", effect_scale="log2 difference", stage="R16e stage 2"),
-            "traces": traces, "layout": _layout(f"Panel forest plot ({claim})", "log2 difference (Case - Control), 95% CI", "panel feature"), "png": {}}
+    xtitle = xlab or "log2 difference (Case - Control), 95% CI"
+    notes = (["Effects are Case minus Control on the log2 scale (Welch t, 95% CI); q is BH across the panel."] if with_stats
+             else ["Estimates and intervals as published by the producer; no P value is published for this panel (statistics: none)."])
+    notes.append(CLAIM_NOTE.format(claim=claim))
+    return {"tables": tables, "statistics": stats or None,
+            "info": _info("panel forest",
+                          "table" if with_stats else "none", "Welch t per panel feature (95% CI from t.test)" if with_stats else "producer intervals",
+                          sha, f"Control {n_control}; Case {n_case}", notes,
+                          multiplicity="BH within the panel family (q)" if with_stats else "none (descriptive)",
+                          effect_scale="log2 difference" if not xlab else xlab, stage="R16e stage 2"),
+            "traces": traces, "layout": _layout(f"Panel forest plot ({claim})", xtitle, "panel feature"), "png": {"xlab": xlab} if xlab else {}}
 
 
 def _content_cv_permutation(rows: list[dict], sha: str, **_: Any) -> dict:
@@ -591,8 +615,11 @@ def _content_module_heatmap(rows: list[dict], sha: str, modules: Sequence[str] =
 
 
 def _snapshot_pairs(path: str | Path) -> set[frozenset[str]]:
-    """The undirected edges of the interaction snapshot (node_a, node_b columns)."""
-    return {frozenset((r["node_a"], r["node_b"])) for r in read_source(path)}
+    """The undirected edges of an interaction snapshot (node_a/node_b, or the gene_a/gene_b columns of a PPI resource)."""
+    rows = read_source(path)
+    if rows and "gene_a" in rows[0]:
+        return {frozenset((r["gene_a"], r["gene_b"])) for r in rows}
+    return {frozenset((r["node_a"], r["node_b"])) for r in rows}
 
 
 def _network_layout(nodes: Sequence[Mapping[str, str]]) -> dict[str, tuple[float, float]]:
@@ -849,10 +876,14 @@ def build_figure(run_dir: str | Path, figure_id: str, source: str | Path, *, reg
         png_options = {"brackets": _dotplot_brackets(content["png"]["family"], rows, options.get("brackets"))}
     elif figure_id == "diff_upset_venn":
         png_options = {"set_names": list(options.get("sets", ())), "venn": bool(options.get("venn"))}
+        if options.get("set_labels"):
+            png_options["set_labels"] = [str(x) for x in options["set_labels"]]
     elif figure_id == "path_enrichment_dotplot":
         png_options = {"show_sets": content["png"]["show_sets"]}
     elif figure_id == "net_module_heatmap":
         png_options = {"modules": content["png"]["modules"]}
+    elif figure_id == "bio_panel_forest":
+        png_options = dict(content.get("png", {}))
     if options.get("title"):
         png_options["title"] = str(options["title"])
         content["layout"]["title"] = {"text": str(options["title"])}

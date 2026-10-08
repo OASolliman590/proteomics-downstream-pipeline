@@ -143,7 +143,7 @@ def _permanova_jobs(run: Path, work: Path) -> list[dict[str, Any]]:
     return jobs
 
 
-def build_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+def _core_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
     """All run-level catalogue jobs and the figures that were skipped, with their reasons."""
     jobs: list[dict[str, Any]] = []
     skipped: list[dict[str, str]] = []
@@ -225,11 +225,10 @@ def build_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[s
         universe = sorted(set().union(*(s["tested"] for s in venn_sets)))
         letters = [chr(ord("A") + i) for i in range(len(venn_sets))]
         vrows = [[f] + [1 if f in s["deps"] else 0 for s in venn_sets] for f in universe]
-        legend = "; ".join(f"{letter} = {s['label']}" for letter, s in zip(letters, venn_sets))
         jobs.append({"figure_id": "diff_upset_venn", "output_id": "diff_upset_venn__primary",
                      "source": _write(work / "venn_primary.tsv", ["feature"] + letters, vrows),
-                     "options": {"sets": letters, "venn": len(letters) <= 3, "title": "DEPs across the primary contrasts",
-                                 "caption": legend}})
+                     "options": {"sets": letters, "set_labels": [s["label"] for s in venn_sets], "venn": len(letters) <= 3,
+                                 "title": "DEPs across the primary contrasts", "caption": "DEPs at the family cutoff"}})
     else:
         skipped.append({"figure": "diff_upset_venn__primary", "reason": "fewer than two primary contrasts"})
     return jobs, skipped
@@ -238,3 +237,122 @@ def build_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[s
 def _mean(values: list[float | None]) -> float | None:
     present = [v for v in values if v is not None]
     return sum(present) / len(present) if present else None
+
+
+def _ppi_snapshot(run: Path) -> Path | None:
+    """The interaction snapshot of the run's PPI resource (its edge file, named in the snapshot manifest)."""
+    if not (run / "config.resolved.json").is_file():
+        return None
+    config = json.loads((run / "config.resolved.json").read_text(encoding="utf-8"))
+    for resource in config.get("resources", []):
+        if resource.get("kind") == "ppi":
+            manifest = Path(resource["path"])
+            if not manifest.is_file():
+                return None
+            for item in json.loads(manifest.read_text(encoding="utf-8")).get("files", []):
+                if item.get("role") == "ppi":
+                    return manifest.parent / item["name"]
+    return None
+
+
+def _postde_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Post-DE figures, from the result tables of the modules that ran (no statistic is recomputed; the derived columns are the
+    ones named in the receipt: the pooled AUC is the producer's, the permutation P is the contract rule on the published null,
+    the module eigengenes are group means of the producer's values)."""
+    jobs: list[dict[str, Any]] = []
+    skipped: list[dict[str, str]] = []
+    biomarker = run / "post_de" / "biomarker"
+    figure_sources = biomarker / "figure_sources"
+    if (biomarker / "cv_performance.tsv").is_file() and (figure_sources / "roc_cv.tsv").is_file() and (figure_sources / "roc_cv_band.tsv").is_file():
+        performance = _read(biomarker / "cv_performance.tsv")[0]
+        claim, seed = performance["claim_label"], performance["seed"]
+        nulls = _read(figure_sources / "permutation_null.tsv")
+        band_draws = min(500, int(performance["threshold_bootstrap_draws"]))   # the producer's ROC band rule (min(500, bootstrap))
+        counts = [performance["n_negative_units"], performance["n_positive_units"]]
+        header = ["component", "fpr", "sensitivity", "band_lower", "band_upper", "auc", "auc_lower", "auc_upper", "n_control", "n_case",
+                  "claim_label", "score_source", "seed", "B"]
+        common = [performance["pooled_oof_auc"], "NA", "NA", counts[0], counts[1], claim, "out_of_fold", seed, band_draws]
+        roc = [["curve", r["fpr"], r["tpr"], "NA", "NA"] for r in _read(figure_sources / "roc_cv.tsv")]
+        band = [["band", r["fpr"], "NA", r["tpr_lower"], r["tpr_upper"]] for r in _read(figure_sources / "roc_cv_band.tsv")]
+        jobs.append({"figure_id": "bio_roc_ci_band", "output_id": "bio_roc_ci_band", "source": _write(work / "bio_roc.tsv", header, [r + common for r in roc + band]),
+                     "options": {"title": "ROC of the cross-validated classifier", "caption": f"claim label: {claim}; out-of-fold predictions"}})
+        repeats = _read(figure_sources / "cv_auc_repeats.tsv")
+        if performance["permutation_p"] in ("NA", "") or performance["permutation_B"] in ("NA", ""):
+            skipped.append({"figure": "bio_cv_auc_vs_permutation", "reason": "the run has no permutation test (permutation disabled)"})
+        else:
+            # The displayed P is the producer's published value; the builder checks it against (k + 1) / (B + 1) and refuses a mismatch.
+            perm_b, p_display = int(performance["permutation_B"]), float(performance["permutation_p"])
+            cv_rows = [["cv_repeat", r["auc"], perm_b, seed, p_display, claim] for r in repeats] + \
+                      [["null", n["pooled_oof_auc"], perm_b, seed, p_display, claim] for n in nulls]
+            jobs.append({"figure_id": "bio_cv_auc_vs_permutation", "output_id": "bio_cv_auc_vs_permutation",
+                         "source": _write(work / "bio_cv.tsv", ["series", "value", "B", "seed", "P_display", "claim_label"], cv_rows),
+                         "options": {"title": "CV AUC against the permutation null", "caption": f"claim label: {claim}"}})
+        single = sorted(_read(biomarker / "single_feature_auc.tsv"), key=lambda r: -float(r["auc"]))[:10]
+        forest = [[r["feature_id"], r["auc"], r["bootstrap_lower"], r["bootstrap_upper"], r["n_negative_units"], r["n_positive_units"],
+                   r["claim_label"]] for r in single]
+        jobs.append({"figure_id": "bio_panel_forest", "output_id": "bio_panel_forest",
+                     "source": _write(work / "bio_forest.tsv", ["feature", "estimate", "ci_lower", "ci_upper", "n_Control", "n_Case", "claim_label"], forest),
+                     "options": {"xlab": "single-feature AUC (95% bootstrap interval)", "title": "Single-feature AUC, top 10 features",
+                                 "caption": f"in-sample (optimistic); not a panel effect; claim label: {single[0]['claim_label']}; no P value"}})
+    else:
+        skipped.append({"figure": "biomarker figures", "reason": "the biomarker module did not run (no CV tables)"})
+    pathways = run / "pathways"
+    for direction in ("ora_up", "ora_down"):
+        table = pathways / f"{direction}.tsv"
+        if not table.is_file():
+            skipped.append({"figure": f"path_enrichment_dotplot__{direction}", "reason": "no over-representation table (the pathway stage did not run)"})
+            continue
+        rows = [r for r in _read(table) if r["status"] == "tested"]
+        if not any(int(r["k"]) >= 1 for r in rows):
+            skipped.append({"figure": f"path_enrichment_dotplot__{direction}", "reason": "no gene set with a foreground hit"})
+            continue
+        header = ["set_id", "N", "K", "n", "k", "p_value", "q_value", "overlap_genes"]
+        jobs.append({"figure_id": "path_enrichment_dotplot", "output_id": f"path_enrichment_dotplot__{direction}",
+                     "source": _write(work / f"{direction}.tsv", header, [[r[c] for c in header] for r in rows]),
+                     "options": {"title": f"Over-representation, {direction.replace('ora_', '')} sets", "caption": f"family {rows[0]['family_id']} (BH)"}})
+    networks = run / "post_de" / "networks"
+    observations = run / "preprocessing" / "primary" / "observations.tsv"
+    if (networks / "modules.tsv").is_file() and (networks / "eigengenes.tsv").is_file() and observations.is_file():
+        assigned = sorted({r["module"] for r in _read(networks / "modules.tsv") if r["module"] not in ("unassigned", "")})
+        eigen = _read(networks / "eigengenes.tsv")
+        modules = [m for m in assigned if m in eigen[0]]
+        if not modules:
+            skipped.append({"figure": "net_module_heatmap", "reason": "no co-abundance module was assigned"})
+        else:
+            group_of = {r["observation_id"]: r["group"] for r in _read(observations)}
+            groups = list(dict.fromkeys(group_of[r["observation_id"]] for r in eigen))
+            rows = []
+            for m in modules:
+                for g in groups:
+                    values = [float(r[m]) for r in eigen if group_of[r["observation_id"]] == g]
+                    rows.append([m, g, sum(values) / len(values), len(values), "TRUE"])
+            jobs.append({"figure_id": "net_module_heatmap", "output_id": "net_module_heatmap",
+                         "source": _write(work / "modules.tsv", ["module", "group", "eigengene", "n", "declared"], rows),
+                         "options": {"modules": modules, "title": "Module eigengenes, group means",
+                                     "caption": "module level, descriptive"}})
+    else:
+        skipped.append({"figure": "net_module_heatmap", "reason": "the network stage did not write its module tables"})
+    edges_table = networks / "ppi_subnetwork.tsv"
+    if edges_table.is_file():
+        snapshot = _ppi_snapshot(run)
+        if snapshot is None or not snapshot.is_file():
+            skipped.append({"figure": "net_network_graph", "reason": "the run has no PPI resource to check the subnetwork edges against"})
+        else:
+            edges = _read(edges_table)
+            for set_id in dict.fromkeys(e["set_id"] for e in edges):
+                members = [e for e in edges if e["set_id"] == set_id]
+                nodes = list(dict.fromkeys([m["gene_a"] for m in members] + [m["gene_b"] for m in members]))
+                rows = [["node", n, "", "", set_id] for n in nodes] + [["edge", f"{m['gene_a']}-{m['gene_b']}", m["gene_a"], m["gene_b"], ""] for m in members]
+                jobs.append({"figure_id": "net_network_graph", "output_id": f"net_network_graph__{set_id}",
+                             "source": _write(work / f"network_{set_id}.tsv", ["kind", "id", "from", "to", "module"], rows),
+                             "options": {"snapshot": snapshot, "title": f"Declared subnetwork ({set_id})",
+                                         "caption": "edges as in the run's PPI resource; layout is presentation only"}})
+    return jobs, skipped
+
+
+def build_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """All run-level catalogue jobs (QC, differential, PERMANOVA, post-DE) and the figures that were skipped, with reasons."""
+    jobs, skipped = _core_jobs(run, work)
+    post_jobs, post_skipped = _postde_jobs(run, work)
+    return jobs + post_jobs, skipped + post_skipped
+
