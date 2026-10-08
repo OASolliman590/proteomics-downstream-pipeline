@@ -223,3 +223,33 @@ testthat::test_that("retrofit: a scatter of a registered table has one point per
   testthat::expect_equal(sort(built$data[[1]]$y), c(0.8, 3.2))
   testthat::expect_error(ns$render_retrofit_png("no_such_kind", tmp, tempfile(fileext = ".png")), "E_FIGURE_SOURCE_MISSING")
 })
+
+testthat::test_that("D1 dot plot: one jittered point per sample, a mean bar and a SD bar per group, and the top bracket label inside the y range", {
+  values <- read_fixture("diff_dotplot_values.tsv")
+  top <- tapply(values$value, values$protein, max)
+  brackets <- data.frame(protein = names(top), group1 = "Control", group2 = "Chronic", label = "FR-198",
+                         y.position = as.numeric(top) + 0.5, stringsAsFactors = FALSE)
+  built <- ggplot2::ggplot_build(catalogue_dotplot_brackets(values, brackets))
+  points <- built$data[[1]]
+  testthat::expect_equal(nrow(points), nrow(values))            # one point per sample
+  testthat::expect_true(all(!is.na(points$colour)))             # every point has a group colour
+  sd_bars <- built$data[[3]]                                    # the +/- SD error bars: one per group and protein
+  testthat::expect_equal(nrow(sd_bars), length(unique(values$group)) * length(unique(values$protein)))
+  tip <- 0.02 * diff(range(values$value))
+  for (i in seq_len(nrow(built$layout$layout))) {
+    protein <- as.character(built$layout$layout$protein[i])
+    label_y <- brackets$y.position[brackets$protein == protein] + tip
+    testthat::expect_gte(built$layout$panel_params[[i]]$y.range[2], label_y)   # the top label is not clipped
+  }
+})
+
+testthat::test_that("D2 Venn: each circle carries its contrast name and total, the wrapped name is rejoined, and no A/B letter is drawn", {
+  src <- read_fixture("diff_upset_venn_k3.tsv")
+  labels <- c("disease vs control", "treated vs disease", "treated vs control")
+  text <- gsub("\\s+", " ", catalogue_text_labels(catalogue_venn(src, c("A", "B", "C"), set_labels = labels)))
+  counts <- as.integer(colSums(src[, c("A", "B", "C")]))
+  for (i in seq_along(labels)) {
+    testthat::expect_true(any(grepl(sprintf("%s (n = %d)", labels[i], counts[i]), text, fixed = TRUE)))
+  }
+  testthat::expect_false(any(text %in% c("A", "B", "C")))
+})

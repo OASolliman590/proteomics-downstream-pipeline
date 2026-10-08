@@ -143,7 +143,8 @@ catalogue_dotplot_brackets <- function(values, brackets) {
     ggplot2::stat_summary(fun = mean, geom = "crossbar", width = 0.45, linewidth = 0.35, colour = "black") +
     ggplot2::stat_summary(fun.data = function(x) data.frame(y = mean(x), ymin = mean(x) - stats::sd(x), ymax = mean(x) + stats::sd(x)),
                           geom = "errorbar", width = 0.22, linewidth = 0.6, colour = "black") +
-    ggplot2::scale_colour_manual(values = unname(catalogue_colours()[levels(values$group)])) +
+    # the group colours follow the declared group order (the stable palette), whatever the group names are
+    ggplot2::scale_colour_manual(values = stats::setNames(catalogue_palette[seq_along(levels(values$group))], levels(values$group))) +
     ggplot2::labs(x = NULL, y = "log2 abundance", title = NULL) + prism_figure_theme()
   p <- p + ggplot2::facet_wrap(~protein, scales = "free_y")
   if (!is.null(brackets) && nrow(brackets)) {
@@ -161,7 +162,7 @@ catalogue_dotplot_brackets <- function(values, brackets) {
     p <- p + ggplot2::geom_segment(data = segments, ggplot2::aes(x = x, xend = xend, y = y, yend = yend), inherit.aes = FALSE, linewidth = 0.5) +
       ggplot2::geom_text(data = labels, ggplot2::aes(x = x, y = y, label = label), inherit.aes = FALSE, size = 3.2, family = "Arial", vjust = 0) +
       # the free y scale of each protein must include the bracket labels, not only the points
-      ggplot2::geom_blank(data = labels, ggplot2::aes(x = x, y = y), inherit.aes = FALSE)
+      ggplot2::geom_blank(data = transform(labels, y = y + 0.12 * diff(range(values$value))), ggplot2::aes(x = x, y = y), inherit.aes = FALSE)
   }
   p + ggplot2::theme(axis.text.x = ggplot2::element_text(size = 8, angle = 30, hjust = 1))
 }
@@ -225,7 +226,7 @@ catalogue_circle <- function(cx, cy, r = 1, n = 120) {
 
 # Venn of the exclusive regions: every region carries its count (the centroid of the grid cells with that exact membership),
 # and every circle carries its set name with the set total outside it.
-catalogue_venn <- function(source, set_names) {
+catalogue_venn <- function(source, set_names, set_labels = NULL) {
   k <- length(set_names)
   layout <- catalogue_venn_layout(k)
   membership <- as.matrix(source[, set_names, drop = FALSE])
@@ -241,13 +242,22 @@ catalogue_venn <- function(source, set_names) {
   labels <- merge(regions, centre, by = "pattern")
   circles <- do.call(rbind, lapply(seq_len(k), function(i) cbind(set = set_names[i], catalogue_circle(layout$x[i], layout$y[i]))))
   outward <- sqrt(layout$x^2 + layout$y^2)
-  totals <- data.frame(label = sprintf("%s (n = %d)", set_names, as.integer(colSums(membership))),
-                       x = layout$x + 1.35 * layout$x / outward,
-                       y = layout$y + 1.35 * layout$y / outward, stringsAsFactors = FALSE)
+  # each circle carries its name (the contrast label when given, wrapped) and its total, placed outside the circle on its side
+  shown <- if (is.null(set_labels)) set_names else set_labels
+  text <- sprintf("%s (n = %d)", shown, as.integer(colSums(membership)))
+  totals <- data.frame(label = vapply(text, function(s) paste(strwrap(s, width = if (k == 2L) 18 else 20), collapse = "\n"), character(1), USE.NAMES = FALSE),
+                       x = layout$x + 1.6 * layout$x / outward,
+                       y = layout$y + 1.6 * layout$y / outward, stringsAsFactors = FALSE)
+  totals$hjust <- ifelse(abs(layout$x) < 1e-9, 0.5, ifelse(layout$x < 0, 1, 0))
+  if (k == 2L) {  # two circles side by side: each name above its own circle keeps the labels inside the canvas
+    totals$x <- layout$x
+    totals$y <- 1.5
+    totals$hjust <- 0.5
+  }
   ggplot2::ggplot() +
     ggplot2::geom_polygon(data = circles, ggplot2::aes(x, y, group = set, fill = set), alpha = 0.3, colour = "black", linewidth = 0.4) +
     ggplot2::geom_text(data = labels, ggplot2::aes(x, y, label = count), size = 4) +
-    ggplot2::geom_text(data = totals, ggplot2::aes(x, y, label = label), size = 3.8) +
+    ggplot2::geom_text(data = totals, ggplot2::aes(x, y, label = label, hjust = hjust), size = 3.6, lineheight = 0.9) +
     ggplot2::scale_fill_manual(values = c("#0072B2", "#E69F00", "#D55E00")[seq_len(k)], guide = "none") +
     ggplot2::coord_equal(clip = "off") +
     ggplot2::labs(title = "Venn (exclusive regions)", x = NULL, y = NULL) + prism_figure_theme() +
@@ -284,8 +294,8 @@ catalogue_upset <- function(source, set_names) {
     ggplot2::coord_cartesian(clip = "off")
 }
 
-catalogue_upset_venn <- function(source, set_names, venn = FALSE) {
-  if (venn) return(catalogue_venn(source, set_names))
+catalogue_upset_venn <- function(source, set_names, venn = FALSE, set_labels = NULL) {
+  if (venn) return(catalogue_venn(source, set_names, set_labels))
   catalogue_upset(source, set_names)
 }
 
@@ -325,7 +335,7 @@ catalogue_roc_ci_band <- function(source) {
     ggplot2::geom_abline(linetype = "dashed", linewidth = 0.4, colour = "grey50") +
     ggplot2::geom_step(data = curve, ggplot2::aes(x = fpr, y = sensitivity), colour = "#D55E00", linewidth = 0.9, direction = "vh") +
     ggplot2::annotate("text", x = 0.42, y = 0.1, hjust = 0, size = 3.2, family = "Arial",
-                      label = sprintf("AUC = %.3f\n95%% CI %.3f-%.3f", first$auc, first$auc_lower, first$auc_upper)) +
+                      label = if (is.na(first$auc_lower)) sprintf("AUC = %.3f", first$auc) else sprintf("AUC = %.3f\n95%% CI %.3f-%.3f", first$auc, first$auc_lower, first$auc_upper)) +
     ggplot2::coord_equal() +
     ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
     ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
@@ -335,14 +345,14 @@ catalogue_roc_ci_band <- function(source) {
 }
 
 # Panel forest plot (V216): Case minus Control effects with their intervals, the claim label in the caption.
-catalogue_forest <- function(source) {
+catalogue_forest <- function(source, xlab = NULL) {
   claim <- catalogue_claim(source, catalogue_panel_claims)
   source$feature <- factor(source$feature, levels = rev(source$feature))
   ggplot2::ggplot(source, ggplot2::aes(estimate, feature)) +
     ggplot2::geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.4, colour = "grey50") +
     ggplot2::geom_errorbar(ggplot2::aes(xmin = ci_lower, xmax = ci_upper), orientation = "y", width = 0.2, linewidth = 0.6) +
     ggplot2::geom_point(size = 2.6, colour = "#0072B2") +
-    ggplot2::labs(x = "log2 difference (Case - Control), 95% CI", y = NULL, title = "Panel forest plot",
+    ggplot2::labs(x = if (is.null(xlab)) "log2 difference (Case - Control), 95% CI" else xlab, y = NULL, title = "Panel forest plot",
                   caption = sprintf("claim: %s", claim)) +
     prism_figure_theme()
 }
@@ -514,9 +524,9 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     diff_ma_plot = catalogue_ma(source),
     diff_protein_dotplot_brackets = catalogue_dotplot_brackets(source, if (is.null(options$brackets)) NULL else as.data.frame(options$brackets, stringsAsFactors = FALSE)),
     diff_dep_heatmap_clustered = catalogue_dep_heatmap(source),
-    diff_upset_venn = catalogue_upset_venn(source, options$set_names, isTRUE(options$venn)),
+    diff_upset_venn = catalogue_upset_venn(source, options$set_names, isTRUE(options$venn), options$set_labels),
     bio_roc_ci_band = catalogue_roc_ci_band(source),
-    bio_panel_forest = catalogue_forest(source),
+    bio_panel_forest = catalogue_forest(source, options$xlab),
     bio_cv_auc_vs_permutation = catalogue_cv_permutation(source),
     path_enrichment_dotplot = catalogue_enrichment(source, options$show_sets),
     net_module_heatmap = catalogue_module_heatmap(source, options$modules),
@@ -526,7 +536,8 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("no renderer for figure %s", figure_id)))
   # the title and the caption come from the run (contrast label, family and cutoff); every renderer accepts them
   if (!is.null(options$title)) plot <- plot + ggplot2::labs(title = options$title)
-  if (!is.null(options$caption)) plot <- plot + ggplot2::labs(caption = options$caption)
+  # captions from the run can be long: wrapped to the journal width so the legend line is not clipped at the canvas edge
+  if (!is.null(options$caption)) plot <- plot + ggplot2::labs(caption = paste(strwrap(options$caption, width = 46), collapse = "\n"))
   render_prism_png(plot, out_path, width_mm = width_mm, height_mm = height_mm)
 }
 
