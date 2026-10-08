@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,8 @@ name = "proteomics-downstream-pipeline"
 version = "0.1.0.dev0"
 description = "Maintained downstream proteomics orchestration foundation"
 requires-python = ">=3.10"
+license = "PolyForm-Noncommercial-1.0.0"
+license-files = ["LICENSE.md"]
 dependencies = [
   "jsonschema>=4.18",
   "PyYAML>=6.0",

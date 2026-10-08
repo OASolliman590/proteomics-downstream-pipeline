@@ -1,6 +1,6 @@
 # Releases and the versioned successor
 
-This guide covers the release tooling of packet R12 (FR-115–FR-120). The current tree is **not a v1.0 release**. No license has been selected, and no publication has been authorized. Both are operator decisions (AGENTS.md); the tooling refuses to stand in for them.
+This guide covers the release tooling of packet R12 (FR-115–FR-120). The current tree is **not a v1.0 release**. The software is available under the [PolyForm Noncommercial License 1.0.0](../../LICENSE.md) (decided by the Maintainer, Omar A. Solliman, on 2026-10-08; D-63). Academic, research, personal and non-profit use is permitted; any commercial use requires a separate written license from Omar A. Solliman. No publication has been authorized, and no disclosure review is recorded; those remain operator decisions (AGENTS.md), and the tooling refuses to stand in for them.
 
 ## What a release needs
 

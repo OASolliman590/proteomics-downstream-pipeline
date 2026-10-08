@@ -103,7 +103,8 @@ def test_v117_ci_runner_paths_are_not_private(tmp_path):
 def test_v117_this_repository_has_no_blocking_hygiene_finding():
     report = BR.check(ROOT)
     assert report["findings"] == [], report["findings"]
-    assert report["license"].startswith("unresolved") and report["public_release_allowed"] is False     # no license has been selected
+    assert report["license"] == "PolyForm-Noncommercial-1.0.0"                                         # D-63, Maintainer decision
+    assert report["public_release_allowed"] is False                                                  # no disclosure review recorded
 
 
 def _authorization(tmp_path: Path, version: str, scope: str = "private_successor", **extra) -> Path:

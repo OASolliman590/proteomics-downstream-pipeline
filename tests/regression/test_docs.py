@@ -20,7 +20,11 @@ RELEASE = ROOT / "docs" / "user-guide" / "release.md"
 PUBLIC_DOCS = [ROOT / "README.md", ROOT / "CHANGELOG.md", ROOT / "docs" / "user-guide" / "usage.md", METHODS, RELEASE]
 spec = importlib.util.spec_from_file_location("build_release", ROOT / "scripts" / "maintained" / "build_release.py")
 BR = importlib.util.module_from_spec(spec); spec.loader.exec_module(BR)
-LICENSE_CLAIM = re.compile(r"(?i)licensed under|\bMIT License\b|Apache License|GNU (?:Affero |Lesser )?General Public License|BSD [0-9]-Clause|CC-BY|SPDX-License-Identifier")
+# D-63: the Maintainer selected PolyForm Noncommercial 1.0.0 (docs/validation/013-release/operator-decisions.json).
+# Any claim of a different license is unsupported.
+OTHER_LICENSE_CLAIM = re.compile(r"(?i)\bMIT License\b|Apache License|GNU (?:Affero |Lesser )?General Public License|BSD [0-9]-Clause|CC-BY|Creative Commons|SPDX-License-Identifier")
+RECORDED_LICENSE = "PolyForm Noncommercial License 1.0.0"
+REQUIRED_NOTICE = "Required Notice: Copyright (c) 2026 Omar A. Solliman"
 
 
 def _documented_capabilities() -> set[str]:
@@ -58,19 +62,27 @@ def test_v115_reason_code_catalogue_matches_the_sources_both_ways():
     assert CODES.read_text(encoding="utf-8") == BR.codes_markdown(ROOT)          # regenerated, not hand-edited
 
 
-def test_v115_negative_no_license_selected_and_no_v1_completion_claim():
+def test_v115_negative_license_claims_match_the_recorded_decision_and_no_v1_completion_claim():
+    decision = json.loads((ROOT / BR.DECISION_RECORD).read_text(encoding="utf-8"))
+    assert decision["license"] == "PolyForm-Noncommercial-1.0.0" and decision["license_file"] == "LICENSE.md"
     for path in PUBLIC_DOCS:
+        assert not OTHER_LICENSE_CLAIM.search(path.read_text(encoding="utf-8")), path
+    for path in (ROOT / "README.md", METHODS, RELEASE, ROOT / "CHANGELOG.md"):
         text = path.read_text(encoding="utf-8")
-        assert not LICENSE_CLAIM.search(text), path
-    for path in (ROOT / "README.md", METHODS, RELEASE):
-        assert "No license has been selected" in path.read_text(encoding="utf-8"), path
+        assert RECORDED_LICENSE in text and "No license has been selected" not in text, path
     for path in (METHODS, RELEASE):
         assert "not a v1.0 release" in path.read_text(encoding="utf-8"), path
-    assert not any(p.name.upper().startswith(("LICENSE", "LICENCE", "COPYING")) for p in ROOT.iterdir())
+    license_files = sorted(p.name for p in ROOT.iterdir() if p.name.upper().startswith(("LICENSE", "LICENCE", "COPYING")))
+    assert license_files == ["LICENSE.md"]
+    text = (ROOT / "LICENSE.md").read_text(encoding="utf-8")
+    assert text.startswith("# " + RECORDED_LICENSE) and REQUIRED_NOTICE in text
+    assert (ROOT / "r" / "proteomicsCore" / "LICENSE").read_text(encoding="utf-8") == text
+    assert "License: file LICENSE" in (ROOT / "r" / "proteomicsCore" / "DESCRIPTION").read_text(encoding="utf-8")
 
 
 def test_v115_negative_detector_catches_an_unsupported_claim(tmp_path):
-    assert LICENSE_CLAIM.search("This project is licensed under the MIT License.")
+    assert OTHER_LICENSE_CLAIM.search("This project is licensed under the MIT License.")
+    assert not OTHER_LICENSE_CLAIM.search("Licensed under the " + RECORDED_LICENSE + ".")
     fake = "| `deep_learning_engine` | R99 | not implemented |"
     table = METHODS.read_text(encoding="utf-8").replace("## Capabilities\n", "## Capabilities\n" + fake + "\n", 1)
     rows = {c for row in table.split("## Capabilities", 1)[1].split("\n## ", 1)[0].splitlines() if row.startswith("| `") for c in re.findall(r"`([a-z_.]+)`", row.split("|")[1])}

@@ -2,7 +2,9 @@
 
 This page lists what the maintained successor implements today, which declarations it accepts, and where each method is specified. The normative rules are the scientific methods contract ([SM01–SM41](../../specs/001-downstream-proteomics/contracts/scientific-methods.md), v1.3.0). Every typed refusal and warning the code can emit is listed in [reason-codes.md](reason-codes.md). Exact, tested commands are in the [usage guide](../user-guide/usage.md). Release and versioning rules are in the [release guide](../user-guide/release.md).
 
-**Status.** Phases 1–3 (R01–R11), PERMANOVA (R13) and post-differential analysis (R14a–R14f) are implemented. Their acceptance cases pass on **synthetic fixtures**, self-verified by the operator-authorized Claude route; the independent audit of the post-DE work has not been run. R12 private regression and release gates are Maintainer-only and **NOT_RUN**. This is **not a v1.0 release**: v1.0 also needs the Maintainer-only private regression (V111, V114) and the release decisions below. No license has been selected; licensing and publication are operator decisions (AGENTS.md).
+**Status.** Phases 1–3 (R01–R11), PERMANOVA (R13) and post-differential analysis (R14a–R14f) are implemented. Their acceptance cases pass on **synthetic fixtures**, self-verified by the operator-authorized Claude route; the independent review of 2026-10-05 covered R14a–R14f, the calibration and R12 (findings fixed); the later adaptive-policy redesign (ADR 0010) is self-verified. R12 private regression and release gates are Maintainer-only and **NOT_RUN**. This is **not a v1.0 release**: v1.0 also needs the Maintainer-only private regression (V111, V114) and the release decisions below. Publication and disclosure review are operator decisions (AGENTS.md); the license is stated below.
+
+**License.** The software is available under the [PolyForm Noncommercial License 1.0.0](../../LICENSE.md) (decided by the Maintainer, Omar A. Solliman, on 2026-10-08; D-63). Academic, research, personal and non-profit use is permitted; any commercial use requires a separate written license from Omar A. Solliman.
 
 ## Capabilities
 

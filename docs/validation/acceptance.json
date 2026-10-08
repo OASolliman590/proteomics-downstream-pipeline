@@ -3976,7 +3976,7 @@
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,
-      "reason": "operator decision required (AGENTS.md): no release authorization and no license decision exist. The export tooling and its refusals (collision, missing authorization, unresolved license) are tested in tests/regression/test_release.py."
+      "reason": "operator decision required (AGENTS.md): no release authorization exists (license decided by the Maintainer, D-63; disclosure review not recorded). The export tooling and its refusals (collision, missing authorization, unresolved license) are tested in tests/regression/test_release.py."
     },
     {
       "acceptance_id": "V119",

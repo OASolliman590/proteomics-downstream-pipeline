@@ -1,6 +1,6 @@
 # Changelog
 
-No version of the maintained successor has been released. No license has been selected; licensing and publication are operator decisions (AGENTS.md). Statuses below come from executed evidence ([acceptance ledger](docs/validation/acceptance.json)). They are self-verified by the operator-authorized Claude route unless an independent audit is named.
+No version of the maintained successor has been released. The software is available under the [PolyForm Noncommercial License 1.0.0](LICENSE.md) (decided by the Maintainer, Omar A. Solliman, on 2026-10-08; D-63). Academic, research, personal and non-profit use is permitted; any commercial use requires a separate written license from Omar A. Solliman. Publication remains an operator decision (AGENTS.md). Statuses below come from executed evidence ([acceptance ledger](docs/validation/acceptance.json)). They are self-verified by the operator-authorized Claude route unless an independent audit is named.
 
 ## Unreleased — branch `claude/post-de`
 

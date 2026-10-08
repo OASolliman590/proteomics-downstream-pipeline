@@ -4170,7 +4170,7 @@
       "verification": {
         "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
         "date": "2026-10-04",
-        "reason": "operator decision required (AGENTS.md): no release authorization and no license decision exist. The export tooling and its refusals (collision, missing authorization, unresolved license) are tested in tests/regression/test_release.py."
+        "reason": "operator decision required (AGENTS.md): no release authorization exists (license decided by the Maintainer, D-63; disclosure review not recorded). The export tooling and its refusals (collision, missing authorization, unresolved license) are tested in tests/regression/test_release.py."
       }
     },
     {

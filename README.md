@@ -38,4 +38,8 @@ The historical runner remains documented in [docs/PIPELINE.md](docs/PIPELINE.md)
 
 ## Specification
 
-Start with [START_HERE](specs/001-downstream-proteomics/START_HERE.md), [PHASES](specs/001-downstream-proteomics/PHASES.md), the [packet index](specs/001-downstream-proteomics/packet-index.md), the [scientific methods contract](specs/001-downstream-proteomics/contracts/scientific-methods.md) (v1.3.0) and [decisions and open questions](specs/001-downstream-proteomics/decisions.md). No phase is complete merely because its specification exists; acceptance is recorded only from executed evidence in [traceability](specs/001-downstream-proteomics/traceability.json). No license has been selected.
+Start with [START_HERE](specs/001-downstream-proteomics/START_HERE.md), [PHASES](specs/001-downstream-proteomics/PHASES.md), the [packet index](specs/001-downstream-proteomics/packet-index.md), the [scientific methods contract](specs/001-downstream-proteomics/contracts/scientific-methods.md) (v1.3.0) and [decisions and open questions](specs/001-downstream-proteomics/decisions.md). No phase is complete merely because its specification exists; acceptance is recorded only from executed evidence in [traceability](specs/001-downstream-proteomics/traceability.json). Licensed under PolyForm Noncommercial 1.0.0 (see [License](#license)).
+
+## License
+
+The software is available under the [PolyForm Noncommercial License 1.0.0](LICENSE.md) (decided by the Maintainer, Omar A. Solliman, on 2026-10-08; D-63). Academic, research, personal and non-profit use is permitted; any commercial use requires a separate written license from Omar A. Solliman. The required notice is in [LICENSE.md](LICENSE.md). This is a source-available, non-commercial license, not an OSI open-source license.

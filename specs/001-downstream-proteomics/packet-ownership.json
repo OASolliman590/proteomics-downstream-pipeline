@@ -790,6 +790,24 @@
         "tests/integration/test_reports.py"
       ],
       "change": "Open item 10 (D-62): SVG scatter padding, x = 0 reference line and marked identical coordinates; the V109 inversion oracle and the V100 mark count follow the new layout."
+    },
+    {
+      "id": "A-2026-10-01-27",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "LICENSE.md",
+        "r/proteomicsCore/LICENSE",
+        "r/proteomicsCore/DESCRIPTION",
+        "pyproject.toml",
+        "docs/validation/013-release/operator-decisions.json",
+        "README.md",
+        "CHANGELOG.md",
+        "docs/methods/README.md",
+        "docs/user-guide/release.md",
+        "tests/regression/test_docs.py",
+        "tests/regression/test_release.py"
+      ],
+      "change": "D-63: the Maintainer selected the PolyForm Noncommercial License 1.0.0 with Omar A. Solliman as copyright holder and licensor (commercial use needs his separate written license). The operator decision record, license files and package metadata are added; V115 now asserts that every license claim matches the recorded decision and that no other license is claimed; V117 asserts the recorded license while public release stays refused (no disclosure review). pyproject.toml uses the PEP 639 SPDX expression `PolyForm-Noncommercial-1.0.0` with `license-files` (setuptools >= 77)."
     }
   ]
 }
