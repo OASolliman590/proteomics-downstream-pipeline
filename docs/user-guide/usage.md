@@ -63,6 +63,37 @@ $env:R_LIBS_USER = "$PWD\.r-lib"
 
 Exit codes: 0 completed, 2 configuration/design/eligibility rejection, 3 missing capability or package, 4 numerical/backend failure, 5 integrity or collision error.
 
+## Figures
+
+Figures are optional. To write the figure catalogue of a run, declare `report.figures` in the configuration. Keys left out take their defaults:
+
+```json
+"report": {
+  "figures": {
+    "formats": ["png", "pzfx", "html"],
+    "dpi": 300,
+    "journal_width_mm": 120,
+    "palette": "okabe_ito",
+    "font": "Arial",
+    "p_annotation": "exact"
+  }
+}
+```
+
+Only `dpi` 300, `journal_width_mm` 85, 120 or 180, the listed formats and the listed keys are accepted. An invalid value makes the figure stage INAPPLICABLE with its typed code (for example `E_FIGURE_DPI`); the run still completes. Without `report.figures` the run writes exactly what it wrote before.
+
+Run `proteomics run` as usual. The figures are written to `<run>/report/figure_catalogue/`:
+
+- `<figure_id>.png`: Prism-style figure at 300 dpi;
+- `<figure_id>.pzfx`: GraphPad Prism file with the data tables, the pipeline statistics table where the figure has inferential statistics, and an Info sheet (test, multiplicity, effect scale, group sizes, pipeline version, source hash, run);
+- `<figure_id>.html`: standalone interactive figure, works offline in any browser;
+- `sources/<figure_id>.tsv`: the registered source table every output is drawn from;
+- `registry.json`: the resolved style, the font-substitution record (null when Arial is installed), the source and output SHA-256 of every figure, and the notes of the retrofit.
+
+The figures of the report (the volcano figures of the R10b report and the figures of the R14 post-DE analyses) are retrofitted from their registered tables; the PERMANOVA (R13) figures are not yet covered. `proteomics verify --run <run>` checks every figure file recorded in `run_status.json`.
+
+To open a `.pzfx` file, start GraphPad Prism and choose File > Open, then select the file. The data are in the data tables; the statistics table and the Info sheet state the pipeline's own test and P values. Prism runs its own tests when you ask it to analyse the data, and those can differ from the pipeline's, so report the pipeline values from the statistics table. Opening the files in Prism is a manual check and is not run by the test suite.
+
 ## Implemented capabilities
 
 intake (R02), preprocessing/QC (R03), design and plan (R04), limma (R05), thin report (R10a), DEqMS/proDA (R06), resources and gene matrix (R07), pathways CAMERA/ROAST/fgsea/ORA (R08), response/equivalence/scores (R09), full report and comparison (R10b), PERMANOVA/PERMDISP (R13). Locks, offline reproduction, resume, the golden reference matrix, release calibration and the benchmark are R11 (see `docs/validation/012-validation`); the private legacy regression (R12) is Maintainer-only and not run here.

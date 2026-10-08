@@ -1,5 +1,5 @@
 {
-  "packet": "R16e (stages 1 and 2)",
+  "packet": "R16e (stages 1 to 3: figures, retrofit of existing figures, run wiring)",
   "commands": [
     {
       "name": "pytest figure catalogue",
@@ -104,10 +104,58 @@
       "summary": "expectations=966 failed=0 skipped=0",
       "log": "docs/validation/017-visualization/R16e/evidence/stage2-full-r-testthat.log",
       "stage": 2
+    },
+    {
+      "name": "retrofit integration tests (stage 3)",
+      "command": ".venv/bin/python -m pytest tests/integration/test_figure_retrofit.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "21 passed in 23.46s",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2b-full-python-suite.log",
+      "stage": 3
+    },
+    {
+      "name": "run wiring end-to-end tests (stage 3)",
+      "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "7 passed in 22.10s",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2b-full-python-suite.log",
+      "stage": 3
+    },
+    {
+      "name": "regression, unit and text encoding (stage 3)",
+      "command": ".venv/bin/python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "91 passed",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2b-regression-unit.log",
+      "stage": 3
+    },
+    {
+      "name": "spec kit (stage 3)",
+      "command": ".venv/bin/python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "summary": "PASS",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2b-spec-kit-check.log",
+      "stage": 3
+    },
+    {
+      "name": "full Python suite (final tree, stages 1 to 3)",
+      "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "562 passed, 0 failed, 0 skipped in 1882.66s (0:31:22)",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2b-full-python-suite.log",
+      "stage": 3
+    },
+    {
+      "name": "full R testthat suite (final tree, stages 1 to 3)",
+      "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+      "exit_code": 0,
+      "summary": "expectations=975 failed=0 skipped=0",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+      "stage": 3
     }
   ],
-  "working_source_manifest_sha256": "87e971d493fad96067422976b4c3841235186136df05d0da403c6740f337932b",
-  "n_files": 50,
+  "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+  "n_files": 68,
   "environment": {
     "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
     "python": "3.13.15",

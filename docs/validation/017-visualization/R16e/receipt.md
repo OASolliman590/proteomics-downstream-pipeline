@@ -1,4 +1,4 @@
-# R16e Claude-route receipt, stages 1 and 2 of 2: QC, differential, biomarker, pathway, network and PERMANOVA figures (ADR 0012)
+# R16e Claude-route receipt: stages 1 and 2 (figures), the review fixes, and part B (retrofit of existing figures and run wiring; ADR 0012, D-72)
 
 Stage 1 of packet R16e implements the figures FR-206 to FR-214 (V206 to V214): the four QC figures and the five differential figures. Stage 2 implements FR-215 to FR-222 (V215 to V222): the biomarker, pathway, network and PERMANOVA figures, see the stage-2 section at the end. The retrofit of the existing R10b, R13 and R14 figures (part B) and the `proteomics run` wiring are not in this receipt. Implemented 2026-10-08 by the Claude route (Haiku builder, Opus review), at the operator's direction. This is not work by the routes named in AGENTS.md. The receipt means ready for review, not accepted. Independent audit: **NOT_RUN** (the Opus review follows this receipt).
 
@@ -133,3 +133,57 @@ On the final tree (after commit `8780e13`, which is the content of the reviewed 
 6. Not run: GraphPad Prism opening of any `.pzfx` (a Maintainer check). The `pzfx` R package reads all eight stage-2 `.pzfx` files without error (manual check, not a test). The HTML files were not opened in a browser; the static scan and the hover checks run in the writer.
 7. Visual review by eye of the eight stage-2 renders. The captions of the ROC, the CV AUC and the network were shortened after review, and the pROC `progress` argument (deprecated) was removed.
 8. The R suite prints warnings that also appear in the stage-1 log (a ggplot2 S3 guide deprecation in V203 and the `review minor 2` messages of the post-DE biomarker tests). They are not new.
+
+## Review fixes after stage 2 (commit 635bdb2)
+
+Reviewed by the coordinator: all eight figures rendered from the fixtures and judged good, with four fixes made.
+
+- Enrichment dot plot: colour is -log10 q (grey to #D55E00, darker is more significant); rows are ordered by q with the most significant set at the top; sets with q < 0.05 have a black outline; both legends are titled. The fixture plants one significant set (SET_A, q below 0.05). Tested: the colour ranking follows -log10 q, the row order follows q, and the outline layer holds exactly the significant sets.
+- PCoA with centroids: the group legend is kept and titled "group"; tested in the R file (legend position not "none", labels A and B) and in the HTML (legend entries A and B).
+- ROC with CI band: the .pzfx gains the D-75 statistics table (AUC, CI95_low, CI95_high, n_Control, n_Case; the claim label in the row title). Tested against the pairwise AUC and the DeLong interval (pROC::ci.auc). The Info sheet states `Statistics: table`.
+- Contract (`specs/017-visualization/contracts/figures.md`): E_FIGURE_PERMUTATION_P added to the error table; the Prism table kinds used by the ROC and the network graph are listed in the table rules.
+
+## Part B: retrofit of the existing figures (D-72) and run wiring (commits 8ed7ea2, a6fd9e6)
+
+### What is implemented
+
+- The R10b and R14 producers are read, not changed. Each registered figure-source table (`figure_sources/<stem>.tsv`, and `heatmap_source.tsv`) is mapped to a figure kind by one rule (`src/proteomics_pipeline/figures/retrofit.py`). The figure is drawn from the registered copy with the R16c theme (`proteomicsCore:::render_retrofit_png`, internal) and written as the three outputs. Kinds: scatter; curve with band; histogram; strip; bar; regions; tile heatmap; group-mean heatmap; network.
+- Transformations are only those a rule names: absolute treatment effect (response axes), eigengene group means, equal-width bins of the HTML histogram, and the subnetwork edges read from the companion table of the same stage. The statistics table is omitted; the Info sheet records the producer's statistics.
+- The run wiring (`src/proteomics_pipeline/figures/run_catalogue.py`, `workflow.py`): after the report stages, when `report.figures` is declared, the stage `figure_catalogue` writes `report/figure_catalogue/` (`Ledger.run_direct`, a stage-result file, `FigureArtifact` entries in `run_status.json`). `registry.json` holds the resolved style, the font-substitution record of the run (null with Arial installed), the source and output SHA-256, and the retrofit notes. An invalid block makes only this stage INAPPLICABLE (typed code); the run stays COMPLETED. Without `report.figures` nothing changes.
+- The registry (`figures/registry.py`) accepts a retrofit kind on `register`; catalogue IDs are checked as before.
+
+### Retrofit coverage
+
+| Producer | Stems | Kind |
+|---|---|---|
+| R10b | `volcano_zero_null_*`, `volcano_treat_*`, `response_axes` | scatter |
+| R14 sensitivity | `comparison_*`, `matched_n_discoveries`, `influence_max_effect_change` | scatter, histogram, scatter |
+| R14 biomarker | `roc_cv` (+ `roc_cv_band`), `cv_auc_repeats`, `permutation_null`, `calibration`, `selection_stability` | curve with band, strip, histogram, scatter, bar |
+| R14 sets | `upset_all`, `venn_*` | regions |
+| R14 concordance | `concordance_*` | scatter |
+| R14 networks | `eigengenes`, `ppi_subnetwork` | group-mean heatmap, network |
+| R14 association | `association_heatmap` (`heatmap_source.tsv`) | tile heatmap |
+| R13 PERMANOVA | not retrofitted (no figure-source table is written) | - |
+
+### Gates and tests
+
+- New tests: `tests/integration/test_figure_retrofit.py` (21): every known table is retrofitted with its kind; each figure has its three outputs and the registered hashes match; the ROC curve and band, UpSet counts, eigengene means, association cells, subnetwork degrees and edges, and the volcano points equal the producer values read back from the .pzfx; refusals for a missing column, a missing companion, and an edge whose endpoint is not a node; an invalid block is refused before anything is written. `tests/integration/test_figure_run_e2e.py` (7): a copy of `example-independent` with `report.figures` (`tests/fixtures/figures/run`) runs through `workflow.run_command`; each expected volcano (the three zero-null volcanoes of the run) has PNG, pzfx and HTML; source and output hashes match; `proteomics verify` exits 0 and covers the figure artifacts; an invalid block gives INAPPLICABLE with E_FIGURE_DPI while the run completes; a configuration without `report.figures` writes no catalogue.
+- testthat (`test-figures-catalogue.R`): the retrofit scatter has one point per row with an NA row not drawn; an unknown kind is refused.
+- Existing acceptance tests were run unchanged and pass (contract, regression, unit, integration, scientific, reference, top-level runner). The reason-code catalogue was regenerated, and `tests/regression/test_docs.py` (V115) checks it.
+- Full Python suite on the final tree: **562 passed, 0 failed, 0 skipped** (1882.66 s; `evidence/stage2b-full-python-suite.log`). Full R testthat suite: **975 expectations, 0 failed, 0 skipped** (`evidence/stage2b-full-r-testthat.log`).
+- Acceptance ledger: unchanged, 188 PASS and 34 NOT_RUN. No V row was added or promoted; part B has no V case of its own (see doubts).
+
+### Amendments
+
+- `packet-ownership.json` maintainer amendment 40: the retrofit and the run wiring, the new test files, the synthetic run configuration, the contract section, and the reason-code regeneration. The R16e write allowlist is unchanged; the shared files outside it (`workflow.py`, `figures/registry.py` from R16a, the contract, the user guide) are changed under this amendment.
+- The V215 to V222 rows point to the final working-source manifest (`evidence/working-source-manifest.txt`, 68 files, SHA-256 `9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d`). Stage-1 rows (V206 to V214) keep their earlier manifest hash.
+
+### Doubts for review
+
+1. R13 is not retrofitted. Its producer writes no figure-source table, so the retrofit cannot read one. Supplying one needs a change to the R13 producer (allowlist amendment). This is the main gap against the brief.
+2. The R14 retrofit rules are exercised on synthetic tables that follow the producers' writer code (`post_de_*.R`), not on a real post-DE run; no post-DE configuration was run in this session. The end-to-end run covers the R10b volcanoes only.
+3. Part B adds no V case. The end-to-end test is evidence for FR-195 (config resolved and written to the run) and FR-197 (registry with source hashes), but I did not change the status of V195 or V197. The Maintainer should decide whether to add V cases for the retrofit and the run wiring.
+4. The QC and differential catalogue figures (stage 1) are not produced from a run; only the retrofitted figures are. Wiring the QC and differential catalogue figures from run tables is a separate step.
+5. Not run: opening any `.pzfx` in GraphPad Prism (manual Maintainer check); browser check of the HTML.
+6. Several retrofit kinds are derived views: the ROC band and the histogram bins in the HTML are equal-width bins computed from the table; the PNG histogram uses ggplot2's bins. The statistic values themselves are not recomputed.
+7. The commit trailers name Claude Opus 5.5, as the brief asks; the builder for this work is the Haiku route.
