@@ -1095,6 +1095,31 @@
         "r/proteomicsCore/tests/testthat/test-pzfx-readback.R"
       ],
       "change": "D-75 (Maintainer, 2026-10-08): every .pzfx carries the pipeline statistics table and the Info sheet. The R16b writer gains the statistics table (Column table with comparison row titles; effect, P, q, n_<group>), the Info sheet (InfoSequence/Info, Constant name/value pairs, Notes) and the refusal E_PZFX_INFO_MISSING for a missing required constant (reason-code catalogue regenerated). The R16b fixtures are regenerated with both tables; xy_volcano_roc.pzfx is split into xy_volcano.pzfx (statistics table) and xy_roc.pzfx (statistics none). The pzfx read-back test reads the statistics table. FR-199 / V199 are re-verified: PASS with evidence, and T199 is re-ticked. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-37",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/NAMESPACE",
+        "src/proteomics_pipeline/figures/plotly_html.py",
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16e stage 1 (ADR 0012, FR-206 to FR-214, V206 to V214): render_catalogue_png is exported from proteomicsCore (NAMESPACE); the R16d heatmap hover check accepts a heatmap trace whose hover names the row and column identifiers (%{x} and %{y}; E_PLOTLY_HOVER otherwise), needed by the QC and clustered heatmaps; ggrepel 0.9.8 is added to the proteomicsCore R Suggests and to renv.lock (labels of the volcano); the reason-code catalogue gains the stage-1 E_FIGURE_* uses (regenerated); traceability status for FR-206 to FR-214 is PASS with evidence and the task checkboxes T206 to T214 are ticked. The R16e allowlist itself is unchanged. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-38",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "specs/001-downstream-proteomics/packet-ownership.json"
+      ],
+      "change": "R16c and R16e (ADR 0012): the public figure functions (prism_figure_theme, prism_dot_plot, render_prism_png, png_size, figure_font_status, check_prism_style, layer_data_strings, theme_report, render_catalogue_png) are exported from proteomicsCore. The R01 export invariant in test-foundation.R is updated to the dispatch seam plus these functions; no other assertion of that test changes. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
     }
   ]
 }

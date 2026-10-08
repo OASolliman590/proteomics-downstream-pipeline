@@ -104,7 +104,8 @@ def qc_pca() -> None:
         "filled <- t(apply(m, 1, function(x) { x[is.na(x)] <- median(x, na.rm = TRUE); x }))\n"
         "p <- stats::prcomp(t(filled), center = TRUE, scale. = FALSE)\n"
         "scores <- p$x[, 1:2]\n"
-        "write.table(data.frame(sample = rownames(scores), PC1 = scores[, 1], PC2 = scores[, 2]), args[2], sep = '\\t', quote = FALSE, row.names = FALSE)\n"
+        "ve <- 100 * p$sdev^2 / sum(p$sdev^2)\n"
+        "write.table(data.frame(sample = rownames(scores), PC1 = scores[, 1], PC2 = scores[, 2], PC1_var_pct = ve[1], PC2_var_pct = ve[2]), args[2], sep = '\\t', quote = FALSE, row.names = FALSE)\n"
     )
     scores_path = HERE / "qc_pca_scores_prcomp.tsv"
     result = run_r_code(r_code, [HERE / "qc_pca_matrix.tsv", scores_path])
@@ -112,11 +113,12 @@ def qc_pca() -> None:
         raise SystemExit(f"prcomp failed: {result.stderr}")
     text = scores_path.read_text(encoding="utf-8").splitlines()
     scores = {line.split("\t")[0]: line.split("\t")[1:] for line in text[1:]}
+    variance = (float(scores[samples[0]][2]), float(scores[samples[0]][3]))   # the same prcomp, variance explained in per cent
     group_main = {s: ("G1" if i < 8 else "G2") for i, s in enumerate(samples)}
     group_variant = {s: ("G1" if i < 8 else ("G2" if i < 14 else "G3")) for i, s in enumerate(samples)}
     for name, groups in (("qc_pca_ellipses_source.tsv", group_main), ("qc_pca_ellipses_variant_source.tsv", group_variant)):
-        rows = [[s, groups[s], float(scores[s][0]), float(scores[s][1])] for s in samples]
-        _tsv(name, ["sample", "group", "PC1", "PC2"], rows)
+        rows = [[s, groups[s], float(scores[s][0]), float(scores[s][1]), variance[0], variance[1]] for s in samples]
+        _tsv(name, ["sample", "group", "PC1", "PC2", "PC1_var_pct", "PC2_var_pct"], rows)
     scores_path.unlink()
 
 
@@ -177,10 +179,10 @@ def dep_heatmap() -> None:
         cluster = 0 if f <= 20 else 1
         for si, s in enumerate(samples):
             shift = (1.8 if (cluster == 0) == (si < 6) else -1.8)
-            rows.append([f"D{f:03d}", s, 20.0 + shift + 0.2 * math.sin(0.9 * f + si), True])
-    _tsv("diff_dep_heatmap_source.tsv", ["feature", "sample", "value", "declared"], rows)
-    non_dep = [[f"N{f:03d}", s, 20.0 + 0.3 * math.sin(0.5 * f + si), False] for f in range(1, 41) for si, s in enumerate(samples)]
-    _tsv("diff_dep_heatmap_with_nondep.tsv", ["feature", "sample", "value", "declared"], rows + non_dep)
+            rows.append([f"D{f:03d}", s, 20.0 + shift + 0.2 * math.sin(0.9 * f + si), True, "Control" if si < 6 else "Acute"])
+    _tsv("diff_dep_heatmap_source.tsv", ["feature", "sample", "value", "declared", "group"], rows)
+    non_dep = [[f"N{f:03d}", s, 20.0 + 0.3 * math.sin(0.5 * f + si), False, "Control" if si < 6 else "Acute"] for f in range(1, 41) for si, s in enumerate(samples)]
+    _tsv("diff_dep_heatmap_with_nondep.tsv", ["feature", "sample", "value", "declared", "group"], rows + non_dep)
 
 
 def upset_venn() -> None:

@@ -26,4 +26,5 @@ Suggests:
     ggplot2,
     ggprism,
     ragg,
-    systemfonts
+    systemfonts,
+    ggrepel

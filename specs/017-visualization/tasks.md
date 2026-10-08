@@ -13,15 +13,15 @@
 - [x] T203 — R16c: implement FR-203 (PNG dimensions and data fidelity); establish and pass V203, including its negative case, with independent evidence.
 - [x] T204 — R16d: implement FR-204 (Standalone HTML with exact data and hover fields); establish and pass V204, including its negative case, with independent evidence.
 - [x] T205 — R16d: implement FR-205 (Offline, pinned and licensed plotly.js); establish and pass V205, including its negative case, with independent evidence.
-- [ ] T206 — R16e: implement FR-206 (QC: intensity distributions); establish and pass V206, including its negative case, with independent evidence.
-- [ ] T207 — R16e: implement FR-207 (QC: missingness heatmap); establish and pass V207, including its negative case, with independent evidence.
-- [ ] T208 — R16e: implement FR-208 (QC: sample correlation heatmap); establish and pass V208, including its negative case, with independent evidence.
-- [ ] T209 — R16e: implement FR-209 (QC: PCA with ellipses); establish and pass V209, including its negative case, with independent evidence.
-- [ ] T210 — R16e: implement FR-210 (Differential: labelled volcano); establish and pass V210, including its negative case, with independent evidence.
-- [ ] T211 — R16e: implement FR-211 (Differential: MA plot); establish and pass V211, including its negative case, with independent evidence.
-- [ ] T212 — R16e: implement FR-212 (Differential: per-protein dot plots with P brackets); establish and pass V212, including its negative case, with independent evidence.
-- [ ] T213 — R16e: implement FR-213 (Differential: clustered DEP heatmap); establish and pass V213, including its negative case, with independent evidence.
-- [ ] T214 — R16e: implement FR-214 (Differential: UpSet and Venn); establish and pass V214, including its negative case, with independent evidence.
+- [x] T206 — R16e: implement FR-206 (QC: intensity distributions); establish and pass V206, including its negative case, with independent evidence.
+- [x] T207 — R16e: implement FR-207 (QC: missingness heatmap); establish and pass V207, including its negative case, with independent evidence.
+- [x] T208 — R16e: implement FR-208 (QC: sample correlation heatmap); establish and pass V208, including its negative case, with independent evidence.
+- [x] T209 — R16e: implement FR-209 (QC: PCA with ellipses); establish and pass V209, including its negative case, with independent evidence.
+- [x] T210 — R16e: implement FR-210 (Differential: labelled volcano); establish and pass V210, including its negative case, with independent evidence.
+- [x] T211 — R16e: implement FR-211 (Differential: MA plot); establish and pass V211, including its negative case, with independent evidence.
+- [x] T212 — R16e: implement FR-212 (Differential: per-protein dot plots with P brackets); establish and pass V212, including its negative case, with independent evidence.
+- [x] T213 — R16e: implement FR-213 (Differential: clustered DEP heatmap); establish and pass V213, including its negative case, with independent evidence.
+- [x] T214 — R16e: implement FR-214 (Differential: UpSet and Venn); establish and pass V214, including its negative case, with independent evidence.
 - [ ] T215 — R16e: implement FR-215 (Biomarker: ROC with CI band); establish and pass V215, including its negative case, with independent evidence.
 - [ ] T216 — R16e: implement FR-216 (Biomarker: panel forest plot); establish and pass V216, including its negative case, with independent evidence.
 - [ ] T217 — R16e: implement FR-217 (Biomarker: CV AUC against permutation null); establish and pass V217, including its negative case, with independent evidence.

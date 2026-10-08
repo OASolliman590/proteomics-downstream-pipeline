@@ -165,19 +165,25 @@ def _content_intensity(rows: list[dict], sha: str, **_: Any) -> dict:
 
 
 def _content_missingness(rows: list[dict], sha: str, **_: Any) -> dict:
+    """A binary observed / missing map: state 1 = observed, 0 = missing (never an intensity). Features are ordered by their
+    missing fraction (most missing first); the per-sample missing percentage is written in the column label."""
     _observed_cells(rows)
     features = list(dict.fromkeys(r["feature"] for r in rows))
     samples = list(dict.fromkeys(r["sample"] for r in rows))
-    cell = {(r["feature"], r["sample"]): (None if r["observed"] != "TRUE" else _num(r["value"])) for r in rows}
-    fraction = {f: sum(1 for s in samples if cell[(f, s)] is not None) / len(samples) for f in features}
-    z = [[cell[(f, s)] for s in samples] for f in features]
-    dataset = {s: [cell[(f, s)] for f in features] for s in samples}
-    table = grouped_table("qc missingness (observed log2 intensity; empty = missing)", features, dataset)
-    trace = {"type": "heatmap", "x": samples, "y": features, "z": z, "colorscale": "Blues",
-             "hovertemplate": _heatmap_hover("sample", "feature", "log2 intensity"), "hoverongaps": False}
+    state = {(r["feature"], r["sample"]): (1 if r["observed"] == "TRUE" else 0) for r in rows}
+    fraction = {f: sum(state[(f, s)] for s in samples) / len(samples) for f in features}
+    missing_pct = {s: 100.0 * sum(1 - state[(f, s)] for f in features) / len(features) for s in samples}
+    ordered = sorted(features, key=lambda f: (-(1 - fraction[f]), f))
+    z = [[state[(f, s)] for s in samples] for f in ordered]
+    table = grouped_table("qc missingness (1 = observed, 0 = missing)", ordered, {s: [state[(f, s)] for f in ordered] for s in samples})
+    trace = {"type": "heatmap", "x": [f"{s} {missing_pct[s]:.0f}%" for s in samples], "y": ordered, "z": z,
+             "zmin": 0, "zmax": 1, "showscale": False, "colorscale": [[0.0, "#000000"], [0.5, "#000000"], [0.5, "#D9D9D9"], [1.0, "#D9D9D9"]],
+             "hovertemplate": _heatmap_hover("sample", "feature", "state (1 observed, 0 missing)"),
+             "hoverongaps": False}
     return {"tables": [table], "statistics": None, "info": _info("qc missingness", "none", "none (descriptive QC)", sha,
-            "; ".join(f"{s}" for s in samples), ["Missing cells are empty in every output, never zero."]),
-            "traces": [trace], "layout": _layout("Missingness", "sample", "feature"), "png": {}, "fraction": fraction, "cells": cell}
+            "; ".join(samples), ["Binary observed / missing state of every cell; features ordered by missing fraction."]),
+            "traces": [trace], "layout": _layout("Missingness", "sample (missing %)", "feature (ordered by missing fraction)"),
+            "png": {}, "fraction": fraction, "state": state, "ordered": ordered, "missing_pct": missing_pct, "samples": samples}
 
 
 def _content_correlation(rows: list[dict], sha: str, **_: Any) -> dict:
@@ -224,7 +230,9 @@ def _content_pca(rows: list[dict], sha: str, variant: bool = False, **_: Any) ->
     groups = list(dict.fromkeys(r["group"] for r in rows))
     counts = {g: sum(1 for r in rows if r["group"] == g) for g in groups}
     small = [g for g in groups if counts[g] < 3]
-    table = xy_table("qc pca scores (PC1 against PC2)", "PC1", "PC2", [float(r["PC1"]) for r in rows], [float(r["PC2"]) for r in rows])
+    pct1, pct2 = float(rows[0]["PC1_var_pct"]), float(rows[0]["PC2_var_pct"])
+    x_title, y_title = f"PC1 ({pct1:.1f}%)", f"PC2 ({pct2:.1f}%)"
+    table = xy_table("qc pca scores (PC1 against PC2)", x_title, y_title, [float(r["PC1"]) for r in rows], [float(r["PC2"]) for r in rows])
     traces, ellipses = [], {}
     for g in groups:
         members = [r for r in rows if r["group"] == g]
@@ -241,7 +249,8 @@ def _content_pca(rows: list[dict], sha: str, variant: bool = False, **_: Any) ->
     note = "; ".join(f"no ellipse for {g} (fewer than three samples)" for g in small)
     return {"tables": [table], "statistics": None, "info": _info("qc pca", "none", "none (descriptive QC)", sha, "; ".join(f"{g} {counts[g]}" for g in groups),
             ["PCA scores of the display matrix (missing cells filled with the feature median, then centred; SM06)."] + ([note] if note else [])),
-            "traces": traces, "layout": _layout("PCA with 95% ellipses", "PC1", "PC2"), "png": {"variant": variant}, "ellipses": ellipses, "small": small}
+            "traces": traces, "layout": _layout("PCA with 95% ellipses", x_title, y_title), "png": {"variant": variant}, "ellipses": ellipses, "small": small,
+            "variance": (pct1, pct2)}
 
 
 def _content_volcano(rows: list[dict], sha: str, labels: Sequence[str] | None = None, q_cutoff: float = 0.05, **_: Any) -> dict:

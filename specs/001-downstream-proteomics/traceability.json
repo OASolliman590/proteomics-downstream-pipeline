@@ -7107,14 +7107,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V206",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V206",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7135,14 +7144,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V207",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V207",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7163,14 +7181,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V208",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V208",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7191,14 +7218,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V209",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V209",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7219,14 +7255,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V210",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V210",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7247,14 +7292,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V211",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V211",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7275,14 +7329,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V212",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V212",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7303,14 +7366,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V213",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V213",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
@@ -7331,14 +7403,23 @@
       "proposed_test_target": {
         "path": "tests/integration/test_figure_catalogue.py; r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
         "case_id": "V214",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_figure_catalogue.py",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "docs/validation/017-visualization/R16e/receipt.md",
+        "docs/validation/017-visualization/R16e/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V214",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "5423066a19df376618fe6dc4a1ebd3ab89c90f9389b0bc53a5c5d5821799b369",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16e stage-1 commits recorded in the R16e receipt; verified_commit null"
       }
     },
     {
