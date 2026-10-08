@@ -794,6 +794,30 @@
         },
         "public_path_redaction": {
           "const": true
+        },
+        "figures": {
+          "description": "Optional R16a figure block (ADR 0012, FR-195). Values are checked by proteomics_pipeline.figures.config with typed errors (E_FIGURE_FORMAT, E_FIGURE_DPI, E_FIGURE_PALETTE); the schema checks only the shape and the keys.",
+          "type": "object",
+          "properties": {
+            "formats": {
+              "type": "array",
+              "items": {"type": "string"},
+              "uniqueItems": true
+            },
+            "dpi": {"type": "integer"},
+            "journal_width_mm": {"type": "integer"},
+            "palette": {
+              "type": ["string", "array"],
+              "items": {"type": "string"}
+            },
+            "group_colours": {
+              "type": ["object", "null"],
+              "additionalProperties": {"type": "string"}
+            },
+            "font": {"type": "string"},
+            "p_annotation": {"type": "string"}
+          },
+          "additionalProperties": false
         }
       },
       "required": [

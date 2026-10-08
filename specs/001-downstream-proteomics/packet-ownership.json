@@ -998,6 +998,20 @@
         "docs/validation/acceptance.json"
       ],
       "change": "ADR 0011 and ADR 0012 (Maintainer decisions 2026-10-08): slices 016 (Phase 5, v1.2-methods-validation, R15a-R15d, FR/T/V-168-194) and 017 (Phase 6, v1.3-visualization, R16a-R16e, FR/T/V-195-222) appended; scientific methods contract v1.4.0 adds SM42-SM46; spec 001 gains US10-US12; packet allowlists for the nine new packets are disjoint; the shared-interface amendments (welch engine declaration, methods_extension and report.figures schema blocks, R Suggests entries, plotly.js pin) are made by the Maintainer before dispatch, not by allowlist exception."
+    },
+    {
+      "id": "A-2026-10-01-29",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/017-visualization/tasks.md",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "docs/validation/acceptance.json",
+        "docs/methods/reason-codes.md"
+      ],
+      "change": "R16a (ADR 0012, FR-195-FR-198, V195-V198): the optional report.figures block is added to both analysis.schema.json copies (shape and keys only; values are checked by figures/config.py with the typed codes E_FIGURE_FORMAT, E_FIGURE_DPI, E_FIGURE_PALETTE and E_CONFIG_SCHEMA); the reason-code catalogue gains the R16a E_FIGURE_* codes (regenerated, not hand-edited); traceability status for FR-195-FR-198 is PASS with evidence, the R16a task checkboxes T195-T198 are ticked in specs/017-visualization/tasks.md (as R14a did for its tasks), and the acceptance ledger is regenerated. This is the Maintainer shared-interface amendment named in A-2026-10-01-28, recorded by the implementing route at the operator's direction (2026-10-08) and open to Maintainer review."
     }
   ]
 }

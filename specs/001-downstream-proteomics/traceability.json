@@ -6712,14 +6712,22 @@
       "proposed_test_target": {
         "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
         "case_id": "V195",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/unit/test_figure_config.py",
+        "docs/validation/017-visualization/R16a/receipt.md",
+        "docs/validation/017-visualization/R16a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V195",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16a commit recorded in receipt.md; verified_commit null"
       }
     },
     {
@@ -6739,14 +6747,22 @@
       "proposed_test_target": {
         "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
         "case_id": "V196",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_figure_style.py",
+        "docs/validation/017-visualization/R16a/receipt.md",
+        "docs/validation/017-visualization/R16a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V196",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16a commit recorded in receipt.md; verified_commit null"
       }
     },
     {
@@ -6766,14 +6782,22 @@
       "proposed_test_target": {
         "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
         "case_id": "V197",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/unit/test_figure_config.py",
+        "docs/validation/017-visualization/R16a/receipt.md",
+        "docs/validation/017-visualization/R16a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V197",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16a commit recorded in receipt.md; verified_commit null"
       }
     },
     {
@@ -6793,14 +6817,22 @@
       "proposed_test_target": {
         "path": "tests/unit/test_figure_config.py; tests/scientific/test_figure_style.py",
         "case_id": "V198",
-        "status": "pending-after-freeze"
+        "status": "PASS"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_figure_style.py",
+        "docs/validation/017-visualization/R16a/receipt.md",
+        "docs/validation/017-visualization/R16a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/017-visualization/spec.md#V198",
       "verification": {
-        "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-08",
+        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
+        "committed": "R16a commit recorded in receipt.md; verified_commit null"
       }
     },
     {

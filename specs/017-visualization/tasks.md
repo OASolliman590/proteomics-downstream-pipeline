@@ -2,10 +2,10 @@
 
 **Phase:** 6. Maintainer scope decision of 2026-10-08 ([ADR 0012](../../docs/adr/0012-visualization-outputs.md)). Status changes are recorded by the Maintainer in traceability. Dispatch order: R16a → R16b → R16c → R16d → R16e.
 
-- [ ] T195 — R16a: implement FR-195 (`report.figures` configuration); establish and pass V195, including its negative case, with independent evidence.
-- [ ] T196 — R16a: implement FR-196 (Colourblind-safe palette with stable group colours); establish and pass V196, including its negative case, with independent evidence.
-- [ ] T197 — R16a: implement FR-197 (Figure registry from source tables); establish and pass V197, including its negative case, with independent evidence.
-- [ ] T198 — R16a: implement FR-198 (P-value annotation); establish and pass V198, including its negative case, with independent evidence.
+- [x] T195 — R16a: implement FR-195 (`report.figures` configuration); establish and pass V195, including its negative case, with independent evidence.
+- [x] T196 — R16a: implement FR-196 (Colourblind-safe palette with stable group colours); establish and pass V196, including its negative case, with independent evidence.
+- [x] T197 — R16a: implement FR-197 (Figure registry from source tables); establish and pass V197, including its negative case, with independent evidence.
+- [x] T198 — R16a: implement FR-198 (P-value annotation); establish and pass V198, including its negative case, with independent evidence.
 - [ ] T199 — R16b: implement FR-199 (Column tables for group comparisons); establish and pass V199, including its negative case, with independent evidence.
 - [ ] T200 — R16b: implement FR-200 (XY tables); establish and pass V200, including its negative case, with independent evidence.
 - [ ] T201 — R16b: implement FR-201 (Grouped tables for multi-protein panels); establish and pass V201, including its negative case, with independent evidence.

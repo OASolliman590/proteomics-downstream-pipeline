@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 160,
-    "NOT_RUN": 62
+    "PASS": 164,
+    "NOT_RUN": 58
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -6173,61 +6173,209 @@
       "acceptance_id": "V195",
       "requirement": "FR-195",
       "task": "T195",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_figure_style.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
+          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
+          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
+          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
+          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+        }
+      ],
       "expected_oracle": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85 or 180; default 85), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V196",
       "requirement": "FR-196",
       "task": "T196",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_figure_style.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
+          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
+          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
+          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
+          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+        }
+      ],
       "expected_oracle": "The system MUST colour groups from the Okabe–Ito palette in declared group order by default, or from an explicit `group_colours` mapping. The same group MUST have the same colour in every figure of a run, independent of figure order.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V197",
       "requirement": "FR-197",
       "task": "T197",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_figure_style.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
+          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
+          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
+          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
+          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+        }
+      ],
       "expected_oracle": "The system MUST register each catalogue figure ID with its source table path and SHA-256 and MUST generate a figure only from its registered source table. A figure request without its source table MUST be refused with no output.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V198",
       "requirement": "FR-198",
       "task": "T198",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "commands": [
+        {
+          "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/scientific/test_figure_style.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
+          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
+          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
+          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
+          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+        }
+      ],
       "expected_oracle": "The system MUST annotate comparisons either as stars or as exact values, as declared. The annotation MUST be computed from the P value in the source table by the contract rule, and no annotation may appear without its P value in the source.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 6 (ADR 0012, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V199",
