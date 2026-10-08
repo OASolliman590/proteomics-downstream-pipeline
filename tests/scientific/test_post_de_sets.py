@@ -106,12 +106,21 @@ def test_v131_set_algebra_equals_python_oracle(run):
 
 
 def test_v131_negative_free_form_rule_and_unknown_operator_fail_grammar(tmp_path):
-    for bad in ("B-A & C-A", {"op": "xor", "args": [F.leaf("protein-primary", "B-A"), F.leaf("protein-secondary", "C-A")]},
-                {"op": "union", "args": [F.leaf("protein-primary", "B-A")], "expr": "eval"}):
-        block = sets_block(); block["sets"]["definitions"] = [{"id": "bad", "rule": bad}]
-        with pytest.raises(ProteomicsError) as error:
-            workflow.run_command(make_config(tmp_path / str(abs(hash(str(bad)))), block), tmp_path / "run" / str(abs(hash(str(bad)))))
-        assert error.value.code == "E_SETRULE_GRAMMAR"
+    """D-59: each malformed definition is refused on its own (E_SETRULE_GRAMMAR, never evaluated); the valid sets are still
+    built; a required sets module with a malformed definition rejects the plan."""
+    bads = ("B-A & C-A", {"op": "xor", "args": [F.leaf("protein-primary", "B-A"), F.leaf("protein-secondary", "C-A")]},
+            {"op": "union", "args": [F.leaf("protein-primary", "B-A")], "expr": "eval"})
+    block = sets_block(); block["sets"]["definitions"] = [{"id": f"bad{i}", "rule": bad} for i, bad in enumerate(bads)] + [{"id": "ok", "rule": F.leaf("protein-primary", "B-A")}]
+    block["sets"]["venn"] = []
+    payload, code = workflow.run_command(make_config(tmp_path / "opt", block), tmp_path / "opt" / "run")
+    assert code == 0, payload
+    refusals = {r["item"]: r["reason_code"] for r in F.read_tsv(tmp_path / "opt" / "run" / "post_de" / "sets" / "refusals.tsv")}
+    assert {refusals[f"bad{i}"] for i in range(3)} == {"E_SETRULE_GRAMMAR"}
+    assert {r["set_id"] for r in F.read_tsv(tmp_path / "opt" / "run" / "post_de" / "sets" / "sets.tsv")} == {"ok"}
+    block["sets"]["execution_requirement"] = "required"
+    with pytest.raises(ProteomicsError) as error:
+        workflow.run_command(make_config(tmp_path / "req", block), tmp_path / "req" / "run")
+    assert error.value.code == "E_SETRULE_GRAMMAR"
 
 
 # ----------------------------------------------------------------------------- V132
@@ -131,15 +140,17 @@ def _loaded(tmp_path, block):
 
 
 def test_v132_negative_mixed_null_unknown_contrast_and_mixed_matrix(tmp_path):
+    """Each invalid definition is refused with its own code (D-59: one refused definition never blocks the others)."""
     from proteomics_pipeline.post_de import sets
     base = _loaded(tmp_path / "a", sets_block())
+    ok = {"id": "ok", "rule": F.leaf("protein-primary", "B-A")}
+    def refused(definitions, config):
+        out = sets.resolve({"definitions": definitions}, config)
+        assert [d["id"] for d in out["definitions"]] == ["ok"]
+        return {r["item"]: r["reason_code"] for r in out["refused"]}
     mixed = {"op": "union", "args": [F.leaf("protein-primary", "B-A"), F.leaf("treat-all", "C-A", criterion="treat")]}
-    with pytest.raises(ProteomicsError) as error:
-        sets.resolve({"definitions": [{"id": "m", "rule": mixed}]}, base)
-    assert error.value.code == "E_SETRULE_MIXED_NULL"
-    with pytest.raises(ProteomicsError) as error:
-        sets.resolve({"definitions": [{"id": "u", "rule": F.leaf("protein-secondary", "E-A")}]}, base)
-    assert error.value.code == "E_SETRULE_UNKNOWN_CONTRAST"
+    assert refused([{"id": "m", "rule": mixed}, ok], base) == {"m": "E_SETRULE_MIXED_NULL"}
+    assert refused([{"id": "u", "rule": F.leaf("protein-secondary", "E-A")}, ok], base) == {"u": "E_SETRULE_UNKNOWN_CONTRAST"}
     sens = copy.deepcopy(base)
     model = copy.deepcopy(sens["models"][0]); model.update({"id": "limma-sens", "role": "sensitivity", "execution_requirement": "optional"})
     model.pop("additional_hypotheses", None)
@@ -147,9 +158,7 @@ def test_v132_negative_mixed_null_unknown_contrast_and_mixed_matrix(tmp_path):
     sens["preprocessing"]["sensitivities"] = [{"id": "mind", "method": "min_deterministic", "model_id": "limma-sens"}]
     sens["multiplicity_families"].append(F.family("protein-sensitivity", ["B-A", "C-A", "D-C"], models=("limma-sens",)))
     rule = {"op": "intersect", "args": [F.leaf("protein-primary", "B-A"), F.leaf("protein-sensitivity", "B-A")]}
-    with pytest.raises(ProteomicsError) as error:
-        sets.resolve({"definitions": [{"id": "mm", "rule": rule}]}, sens)
-    assert error.value.code == "E_SETRULE_MIXED_MATRIX"
+    assert refused([{"id": "mm", "rule": rule}, ok], sens) == {"mm": "E_SETRULE_MIXED_MATRIX"}
 
 
 # ----------------------------------------------------------------------------- V133

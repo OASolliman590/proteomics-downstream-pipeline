@@ -45,13 +45,18 @@ def covariate_specs(entries: list, observations: list[dict], pointer: str) -> li
         column, kind = (entry, None) if isinstance(entry, str) else (entry["column"], entry["type"])
         if not observations or column not in observations[0]:
             raise PostDeRefusal("E_DESIGN_TERM", f"{pointer}: covariate {column!r} is not an observation metadata column", pointer)
-        values = [o.get(column) for o in observations]
-        if any(v in (None, "", "NA") for v in values):
-            raise PostDeRefusal("E_DESIGN_COVARIATE_NONFINITE", f"{pointer}: covariate {column!r} has missing values; complete-case removal is not silent", pointer)
+        values = [o.get(column) for o in observations if o.get(column) not in (None, "", "NA")]   # D-59: missing values -> complete case, recorded by the caller
         if kind is None:
             kind = "continuous" if all(_number(v) is not None for v in values) and len(set(values)) > 2 else "categorical"
         specs.append({"column": column, "type": kind, "type_source": "declared" if not isinstance(entry, str) else "inferred from values"})
     return specs
+
+
+def complete_rows(rows: list[dict], specs: list[dict]) -> tuple[list[dict], list[str]]:
+    """Rows with every covariate present, and the ids dropped (complete-case removal is recorded, never silent)."""
+    keep = [o for o in rows if all(o.get(s["column"]) not in (None, "", "NA") for s in specs)]
+    kept = {o["observation_id"] for o in keep}
+    return keep, [o["observation_id"] for o in rows if o["observation_id"] not in kept]
 
 
 def imbalance(specs: list[dict], observations: list[dict], group_column: str, levels: list[str], units) -> list[dict]:
@@ -95,8 +100,10 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
     group_column, levels = design["group_column"], list(design["group_levels"])
     units = _units_fn(config)
     primary = next(m for m in config["models"] if m["role"] == "primary")
-    if primary["engine"] != "limma":
-        return {"state": "INAPPLICABLE", "reason_code": "E_SENSITIVITY_ENGINE", "reason": "sensitivity models are fitted with the limma primary engine settings"}
+    adaptations = []
+    if primary["engine"] != "limma":   # D-59: sensitivity models are limma models; a DEqMS/proDA primary does not block them
+        adaptations.append({"analysis": "engine", "item": primary["id"], "requested": primary["engine"], "used": "limma",
+                            "reason": "sensitivity models are fitted with limma (trend/robust settings of the primary model)"})
     coverage = primary["coverage"]
     min_units = max(2, int(coverage.get("minimum_observed_per_group", 2)))
     primary_contrasts = [c for c in config["contrasts"] if c["design_id"] == design["id"]]
@@ -104,11 +111,18 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
     all_specs = []
     for index, cm in enumerate(block.get("covariate_models", [])):
         pointer = f"/post_de/sensitivity/covariate_models/{index}"
-        specs = covariate_specs(cm["add_covariates"], observations, pointer)
+        try:
+            specs = covariate_specs(cm["add_covariates"], observations, pointer)
+        except PostDeRefusal as error:   # a covariate that is not a metadata column refuses this model only
+            sub.append({"analysis": "covariate_model", "item": cm["id"], "state": "INAPPLICABLE", "reason_code": error.code, "reason": error.message}); continue
         all_specs += [s for s in specs if s["column"] not in {x["column"] for x in all_specs}]
         cats = [s["column"] for s in specs if s["type"] == "categorical"]; conts = [s["column"] for s in specs if s["type"] == "continuous"]
+        rows, dropped = complete_rows(observations, specs)
+        if dropped:
+            adaptations.append({"analysis": "covariate_model", "item": cm["id"], "requested": "all observations", "used": f"complete case ({len(rows)} observations)",
+                                "reason": f"covariate value missing for {len(dropped)} observation(s): {dropped[:10]}"})
         try:
-            additive = design_service.replan(config, observations, design_id=cm["id"], categorical=cats, continuous=conts)
+            additive = design_service.replan(config, rows, design_id=cm["id"], categorical=cats, continuous=conts)
         except ProteomicsError as error:
             additive = None; detail = error.message
         if additive is not None and additive["full_rank"] and all(c["estimable"] for c in additive["contrasts"]):
@@ -126,12 +140,12 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
             interaction = None
             if not empty:
                 try:
-                    probe = design_service.replan(config, observations, design_id=iid, categorical=cats, continuous=conts,
+                    probe = design_service.replan(config, rows, design_id=iid, categorical=cats, continuous=conts,
                                                   interactions=[[group_column, s["column"]] for s in specs], contrast_ids=[])
                     names = [t["coefficient"] for t in probe["design"]["term_map"] if t["term"] == "interaction"]
                     extra = [{"id": f"{iid}:{n}", "design_id": iid, "label": f"interaction {n}", "estimand": "group x covariate interaction (difference of effects)",
                               "weights": {n: 1}, "role": "secondary", "required_groups": list(probe["group_levels"])} for n in names]
-                    interaction = design_service.replan(config, observations, design_id=iid, categorical=cats, continuous=conts,
+                    interaction = design_service.replan(config, rows, design_id=iid, categorical=cats, continuous=conts,
                                                         interactions=[[group_column, s["column"]] for s in specs], contrast_ids=[], extra_contrasts=extra)
                 except ProteomicsError as error:
                     empty = [error.message]
@@ -185,11 +199,11 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
     eligible = [m for m in models if m["state"] == "ELIGIBLE"]
     nothing = not eligible and not (matched and matched["state"] == "ELIGIBLE") and not block.get("influence")
     parameters = {"models": models, "matched_n": matched, "influence": bool(block.get("influence", False)), "criteria": criteria,
-                  "imbalance": imbalance_rows, "classification": classification}
+                  "imbalance": imbalance_rows, "classification": classification, "adaptations": adaptations}
     if nothing:
         first = next((s for s in sub), {"reason_code": "E_SENSITIVITY_NONESTIMABLE", "reason": "no sensitivity analysis was declared"})
-        return {"state": "INAPPLICABLE", "reason_code": first["reason_code"], "reason": first["reason"], "subanalyses": sub, "resolved": parameters}
-    return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "resolved": parameters, "classification": classification,
+        return {"state": "INAPPLICABLE", "reason_code": first["reason_code"], "reason": first["reason"], "subanalyses": sub, "adaptations": adaptations, "resolved": parameters}
+    return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "adaptations": adaptations, "resolved": parameters, "classification": classification,
             "rule": "covariate/subgroup models need full rank and estimable contrasts (exact); subgroups need every required group at the coverage minimum; matched-n needs between-unit groups"}
 
 

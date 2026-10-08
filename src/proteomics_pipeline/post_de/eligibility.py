@@ -59,6 +59,7 @@ def records(root: Path, stages: list[dict]) -> list[dict]:
                     "plan_eligibility": decision.get("state", "ELIGIBLE" if entry.get("scientific_eligibility") == "eligible" else "INAPPLICABLE"),
                     "plan_reason_code": decision.get("reason_code"), "plan_reason": decision.get("reason"), "plan_reasons": decision.get("reasons", []),
                     "eligibility_rule": decision.get("rule"), "subanalyses": decision.get("subanalyses", []),
+                    "adaptations": decision.get("adaptations", []),   # D-59: requested vs used, with the reason
                     "state": stage.get("state"), "reason_code": stage.get("reason_code"), "reason": stage.get("message") or decision.get("reason"),
                     "state_meaning": STATE_MEANING.get(stage.get("state"), ""),
                     "claim_label": module_record.get("claim_label") if stage.get("state") == "COMPLETED" else None,

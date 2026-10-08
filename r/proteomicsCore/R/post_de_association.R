@@ -29,8 +29,11 @@ pd_subject_permutations <- function(subjects, B, seed) {
 .pd_residualize <- function(v, Z) if (is.null(Z) || !ncol(Z)) v - mean(v) else as.numeric(stats::lm.fit(Z, v)$residuals)
 
 # Correlation of one feature with the phenotype and its permutation P (k counts |r_perm| >= |r_obs|, the observed included via +1).
+# method: pearson | spearman (plain), partial or pearson_partial (residuals on Z), spearman_partial (ranks of y and x
+# residualised on Z, then Pearson; D-59). Partial forms permute the residualised phenotype (D-47).
 pd_correlation <- function(y, x, method, Z, perms) {
-  if (identical(method, "partial")) { ry <- .pd_residualize(y, Z); rx <- .pd_residualize(x, Z); r <- stats::cor(ry, rx); null <- vapply(perms, function(p) stats::cor(ry, rx[p]), numeric(1)) }
+  if (identical(method, "spearman_partial")) { y <- rank(y); x <- rank(x); method <- "partial" }
+  if (method %in% c("partial", "pearson_partial")) { ry <- .pd_residualize(y, Z); rx <- .pd_residualize(x, Z); r <- stats::cor(ry, rx); null <- vapply(perms, function(p) stats::cor(ry, rx[p]), numeric(1)) }
   else { r <- stats::cor(y, x, method = method); null <- vapply(perms, function(p) stats::cor(y, x[p], method = method), numeric(1)) }
   k <- sum(abs(null) >= abs(r) - 1e-12)
   list(r = r, k = k, p = (k + 1) / (length(perms) + 1))
@@ -50,6 +53,7 @@ post_de_association_stage <- function(request) .pc_run_stage(request, function(o
   write_json <- function(value, relative, id, type) { .pc_write_json(value, file.path(out, relative)); emit(relative, id, type) }
   add_fig <- function(x) { for (f in x$files) emit(f$relative_path, f$artifact_id, "Figure"); figures <<- c(figures, x$records) }
   plan <- .pd_verify_inputs(request)
+  warnings <- c(warnings, .pd_adaptation_warnings(request))
   prim <- .pd_primary(request); obs <- prim$obs
   values <- .pc_matrix_from_tsv(.pc_find_input(request, "primary_matrix"), "numeric")
   observed <- .pc_matrix_from_tsv(.pc_find_input(request, "primary_observed_mask"), "logical")[rownames(values), colnames(values), drop = FALSE]
@@ -75,27 +79,30 @@ post_de_association_stage <- function(request) .pc_run_stage(request, function(o
         family_id = rows$family_id, method = "limma (primary engine settings)", stringsAsFactors = FALSE)
     } else {
       complete <- rowSums(!is.na(Y)) == ncol(Y)
+      used_method <- if (is.null(a$correlation_used)) p$correlation else a$correlation_used
       Z <- NULL
-      if (identical(p$correlation, "partial")) { keepcol <- setdiff(colnames(X), c("(Intercept)", a$coefficient)); Z <- cbind(1, X[, keepcol, drop = FALSE]) }
+      if (used_method %in% c("partial", "pearson_partial", "spearman_partial")) { keepcol <- setdiff(colnames(X), c("(Intercept)", a$coefficient)); Z <- cbind(1, X[, keepcol, drop = FALSE]) }
       subjects <- if (!is.null(settings$subject_column)) o[[settings$subject_column]] else NULL
       constant <- !is.null(subjects) && all(tapply(x, subjects, function(v) length(unique(v))) == 1L)
       perms <- if (is.null(subjects)) pd_unit_permutations(length(ids), as.integer(p$permutations), as.integer(p$seed))
                else if (constant) pd_subject_permutations(subjects, as.integer(p$permutations), as.integer(p$seed))
                else pd_unit_permutations(length(ids), as.integer(p$permutations), as.integer(p$seed), subjects)
       scheme <- if (is.null(subjects)) "biological_units" else if (constant) paste0("whole_subjects:", settings$subject_column) else paste0("within:", settings$subject_column)
-      stats <- lapply(rownames(Y), function(f) if (complete[f]) pd_correlation(Y[f, ], x, if (identical(p$correlation, "partial")) "partial" else p$correlation, Z, perms) else NULL)
+      stats <- lapply(rownames(Y), function(f) if (complete[f]) pd_correlation(Y[f, ], x, used_method, Z, perms) else NULL)
       r <- vapply(stats, function(s) if (is.null(s)) NA_real_ else s$r, numeric(1)); pv <- vapply(stats, function(s) if (is.null(s)) NA_real_ else s$p, numeric(1))
       kk <- vapply(stats, function(s) if (is.null(s)) NA_integer_ else as.integer(s$k), integer(1))
       q <- rep(NA_real_, length(pv)); q[complete] <- stats::p.adjust(pv[complete], "BH")
       tab <- data.frame(analysis_id = a$analysis_id, phenotype = a$phenotype, scope = a$scope, group = if (is.null(a$group)) NA_character_ else a$group,
         feature_id = rownames(Y), eligibility = ifelse(complete, "tested", "excluded"), reason_code = ifelse(complete, NA_character_, "incomplete_for_correlation"),
-        effect = r, effect_scale = paste(p$correlation, "correlation"), ci_lower = NA_real_, ci_upper = NA_real_, statistic = r, statistic_type = paste0(p$correlation, "_r"),
-        p_value = pv, q_value = q, family_id = a$family_id, method = sprintf("%s correlation, permutation P = (k+1)/(B+1), B = %d, seed %d, scheme %s", p$correlation, as.integer(p$permutations), as.integer(p$seed), scheme),
+        effect = r, effect_scale = paste(used_method, "correlation"), ci_lower = NA_real_, ci_upper = NA_real_, statistic = r, statistic_type = paste0(used_method, "_r"),
+        p_value = pv, q_value = q, family_id = a$family_id, method = sprintf("%s correlation (requested %s), permutation P = (k+1)/(B+1), B = %d, seed %d, scheme %s", used_method, p$correlation, as.integer(p$permutations), as.integer(p$seed), scheme),
+        correlation_requested = p$correlation, correlation_used = used_method,
         permutation_k = kk, permutations = as.integer(p$permutations), permutation_scheme = scheme, stringsAsFactors = FALSE)
     }
     # review 2026-10-05 M1: report only the adjustment actually applied (the model and partial correlation use the design's group/covariate columns;
     # Pearson/Spearman use none, and the planner refuses them when an adjustment is declared)
-    used <- if (identical(p$method, "model") || identical(p$correlation, "partial")) c(if (isTRUE(a$adjust_for_group)) "group", unlist(a$adjust_for)) else character()
+    partial <- !is.null(a$correlation_used) && grepl("partial$", a$correlation_used) || identical(p$correlation, "partial")
+    used <- if (identical(p$method, "model") || partial) c(if (isTRUE(a$adjust_for_group)) "group", unlist(a$adjust_for)) else character()
     tab$n_units <- a$n_units; tab$n_missing_phenotype <- a$n_missing; tab$adjusted_for <- if (length(used)) paste(used, collapse = ";") else "none"
     tab$simpson_flag <- FALSE; tab$within_group_slopes <- NA_character_; tab$pooled_unadjusted_slope <- NA_real_
     if (identical(a$scope, "pooled")) {

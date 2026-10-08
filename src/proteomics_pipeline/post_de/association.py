@@ -12,7 +12,7 @@ import math
 from pathlib import Path
 
 from . import PostDeRefusal, base_inputs, common_parameters, dea_inputs, execute_r, request
-from .sensitivity import _read_observations, _units_fn, covariate_specs
+from .sensitivity import _read_observations, _units_fn, complete_rows, covariate_specs
 
 CAPABILITY = "post_de_association"
 PREREQUISITES = ("dea",)
@@ -24,22 +24,9 @@ def capabilities():
 
 
 def precheck(block: dict, raw: dict) -> None:
-    unadjusted = block.get("method", "model") == "correlation" and block.get("correlation", "pearson") in ("pearson", "spearman")
-    for i, ph in enumerate(block.get("phenotypes", []) or []):
-        if not isinstance(ph, dict):
-            continue
-        # Review 2026-10-05 M1 (D-54): Pearson/Spearman are marginal correlations (SM33, FR-145); the adjusted form is partial.
-        pooled = ph.get("scope", "pooled") in ("pooled", "both")
-        if unadjusted and ((pooled and ph.get("adjust_for_group", True)) or ph.get("adjust_for")):
-            raise PostDeRefusal("E_PHENOTYPE_CORRELATION_ADJUSTMENT",
-                                f"phenotype {ph.get('column')!r}: {block.get('correlation', 'pearson')} correlation is unadjusted, but an adjustment is declared "
-                                "(adjust_for_group defaults to true for pooled analyses); use correlation: partial to adjust for group/covariates, "
-                                "or declare adjust_for_group: false and no adjust_for", f"/post_de/association/phenotypes/{i}")
-        if ph.get("missing", "complete_case") != "complete_case":
-            raise PostDeRefusal("E_PHENOTYPE_IMPUTATION", f"phenotype {ph.get('column')!r}: missing values are handled by complete-case exclusion only; "
-                                f"{ph['missing']!r} would impute the phenotype", f"/post_de/association/phenotypes/{i}/missing")
-        if ph.get("type") == "ordinal" and not ph.get("levels"):
-            raise PostDeRefusal("E_PHENOTYPE_ORDINAL_LEVELS", f"ordinal phenotype {ph.get('column')!r} needs its ordered levels", f"/post_de/association/phenotypes/{i}/levels")
+    """No declaration of this module blocks a run (D-59): an imputation request is replaced by complete-case analysis and an
+    ordinal phenotype without levels is refused on its own; both are recorded by plan_checks."""
+    return None
 
 
 def _score(value, phenotype):
@@ -63,20 +50,40 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
     group_column, levels = design["group_column"], list(design["group_levels"])
     units = _units_fn(config)
     primary = next(m for m in config["models"] if m["role"] == "primary")
-    if primary["engine"] != "limma":
-        return {"state": "INAPPLICABLE", "reason_code": "E_SENSITIVITY_ENGINE", "reason": "association models use the limma primary engine"}
     method = block.get("method", "model")
-    analyses, sub = [], []
+    requested_corr = block.get("correlation", "pearson")
+    analyses, sub, adaptations = [], [], []
+    if primary["engine"] != "limma":   # D-59: association models are limma models; a DEqMS/proDA primary does not block them
+        adaptations.append({"analysis": "engine", "item": primary["id"], "requested": primary["engine"], "used": "limma",
+                            "reason": "association models are fitted with limma (trend/robust settings of the primary model)"})
     for index, phenotype in enumerate(block.get("phenotypes", [])):
         pointer = f"/post_de/association/phenotypes/{index}"
         column = phenotype["column"]
         if not observations or column not in observations[0]:
-            raise PostDeRefusal("E_DESIGN_TERM", f"{pointer}: phenotype {column!r} is not an observation metadata column", pointer)
+            sub.append({"analysis": "phenotype", "item": column, "state": "INAPPLICABLE", "reason_code": "E_DESIGN_TERM", "reason": f"{column!r} is not an observation metadata column"})
+            continue
+        if phenotype.get("type") == "ordinal" and not phenotype.get("levels"):
+            sub.append({"analysis": "phenotype", "item": column, "state": "INAPPLICABLE", "reason_code": "E_PHENOTYPE_ORDINAL_LEVELS",
+                        "reason": "an ordinal phenotype needs its ordered levels to be scored; this phenotype is not analysed"})
+            continue
+        if phenotype.get("missing", "complete_case") != "complete_case":   # SM33 forbids phenotype imputation: refuse that piece, run complete case
+            sub.append({"analysis": "imputation", "item": column, "state": "INAPPLICABLE", "reason_code": "E_PHENOTYPE_IMPUTATION",
+                        "reason": f"{phenotype['missing']!r} would impute the phenotype; phenotypes are never imputed"})
+            adaptations.append({"analysis": "phenotype", "item": column, "requested": f"missing: {phenotype['missing']}", "used": "complete case",
+                                "reason": "phenotype imputation is not valid (SM33); units with a missing phenotype are excluded and n is reported"})
         adjust_group = phenotype.get("adjust_for_group", True)
         scope = phenotype.get("scope", "pooled")
         complete = [dict(o, **{column: _score(o.get(column), phenotype)}) for o in observations if _score(o.get(column), phenotype) is not None]
         n_missing = len(observations) - len(complete)
-        specs = covariate_specs(phenotype.get("adjust_for", []), complete, pointer) if complete else []
+        try:
+            specs = covariate_specs(phenotype.get("adjust_for", []), complete, pointer) if complete else []
+        except PostDeRefusal as error:
+            sub.append({"analysis": "phenotype", "item": column, "state": "INAPPLICABLE", "reason_code": error.code, "reason": error.message}); continue
+        complete, dropped = complete_rows(complete, specs)
+        if dropped:
+            adaptations.append({"analysis": "phenotype", "item": column, "requested": "all units with the phenotype", "used": f"complete case for the covariates ({len(complete)} observations)",
+                                "reason": f"adjustment covariate missing for {len(dropped)} observation(s): {dropped[:10]}"})
+            n_missing = len(observations) - len(complete)
         cats = [s["column"] for s in specs if s["type"] == "categorical"]; conts = [s["column"] for s in specs if s["type"] == "continuous"]
         coef = f"continuous.{design_service.encode(column)}"
         by_group = {g: [o for o in complete if o[group_column] == g] for g in levels}
@@ -111,38 +118,48 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
                 if not check["full_rank"] or not check["contrasts"][0]["estimable"]:
                     return None, ("E_PHENOTYPE_ALIASED", f"the phenotype is determined by group on the analysed units (aliased {check['aliased']}), "
                                                          "although the group term is not fitted")
+            adjusted = bool(group_term) or bool(specs)
+            used = requested_corr if (requested_corr == "partial" or not adjusted) else f"{requested_corr}_partial"
+            if method == "correlation" and used != requested_corr:   # D-59: the partial form of the requested correlation (never unadjusted values labelled adjusted)
+                adaptations.append({"analysis": analysis_id, "item": column, "requested": requested_corr, "used": used,
+                                    "reason": "an adjustment is declared (adjust_for_group defaults to true for pooled analyses); the partial form of the requested correlation is computed"})
             return {"analysis_id": analysis_id, "phenotype": column, "phenotype_type": phenotype["type"], "scope": analysis_scope, "group": group,
+                    "correlation_requested": requested_corr, "correlation_used": used,
                     "adjust_for": [s["column"] for s in specs], "adjust_for_group": bool(group_term), "n_units": len({units(o) for o in rows}), "n_missing": n_missing,
                     "family_id": f"phenotype__{column}" + (f"__within_{group}" if group else ""), "coefficient": coef,
                     "values": {o["observation_id"]: o[column] for o in rows},
                     "design": {k: plan["design"][k] for k in ("observation_ids", "coefficients", "matrix", "term_map")}, "contrasts": plan["contrasts"], "rank": plan["rank"],
                     "separated_by_group": separated}, None
 
+        within = scope in ("within_group", "both")
         if scope in ("pooled", "both"):
             reason = None
             if len(present) < 2 and len(levels) > 1:
-                reason = ("E_PHENOTYPE_ALIASED", f"phenotype {column!r} is measured in one group only ({present}); declare scope within_group")
+                reason = ("E_PHENOTYPE_ALIASED", f"phenotype {column!r} is measured in one group only ({present})")
             if reason is None:
                 analysis, reason = build(f"assoc_{column}", complete, adjust_group, "pooled")
-                if reason and reason[0] == "E_PHENOTYPE_ALIASED":
-                    reason = (reason[0], reason[1] + "; declare scope within_group")
             if reason is None:
                 analyses.append(analysis)
             else:
                 sub.append({"analysis": "pooled", "item": column, "state": "INAPPLICABLE", "reason_code": reason[0], "reason": reason[1]})
-        if scope in ("within_group", "both"):
+                if reason[0] == "E_PHENOTYPE_ALIASED" and not within:   # D-59: the pooled estimate is invalid; the within-group analyses are valid and run instead
+                    within = True
+                    adaptations.append({"analysis": f"assoc_{column}", "item": column, "requested": "scope: pooled", "used": "scope: within_group",
+                                        "reason": "the phenotype is aliased with group, so the pooled estimate is refused and the within-group analyses are run instead"})
+        if within:
             for g in levels:
                 analysis, reason = build(f"assoc_{column}__{g}", by_group[g], False, "within_group", g)
                 if reason is None:
                     analyses.append(analysis)
                 else:
                     sub.append({"analysis": "within_group", "item": f"{column}/{g}", "state": "INAPPLICABLE", "reason_code": reason[0], "reason": reason[1]})
-    parameters = {"analyses": analyses, "method": method, "correlation": block.get("correlation", "pearson"),
+    parameters = {"analyses": analyses, "method": method, "correlation": requested_corr, "adaptations": adaptations,
                   "permutations": int(block.get("permutations", 9999)), "seed": int(block.get("seed", config["runtime"]["seed"]))}
     if not analyses:
         first = sub[0] if sub else {"reason_code": "E_PHENOTYPE_ALIASED", "reason": "no phenotype was declared"}
-        return {"state": "INAPPLICABLE", "reason_code": first["reason_code"], "reason": first["reason"], "subanalyses": sub, "resolved": parameters}
-    return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "resolved": parameters,
+        return {"state": "INAPPLICABLE", "reason_code": first["reason_code"], "reason": "; ".join(f"{x['reason_code']}: {x['reason']}" for x in sub) or first["reason"],
+                "subanalyses": sub, "adaptations": adaptations, "resolved": parameters}
+    return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "adaptations": adaptations, "resolved": parameters,
             "rule": "complete-case units per phenotype (>= 4, non-constant); pooled analysis refused when the phenotype is aliased with group (one group only, or determined by group); one family per phenotype"}
 
 

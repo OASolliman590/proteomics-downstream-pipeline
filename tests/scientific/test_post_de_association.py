@@ -120,9 +120,16 @@ def test_v146_missing_phenotype_is_complete_case_never_imputed(tmp_path):
 
 
 def test_v146_negative_phenotype_imputation_is_refused(tmp_path):
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path, missing=3, phenotype={"missing": "mean_impute"})
-    assert error.value.code == "E_PHENOTYPE_IMPUTATION"
+    """D-59: the imputation request is refused (E_PHENOTYPE_IMPUTATION, recorded) and the valid complete-case analysis runs."""
+    payload, code, out = run(tmp_path, missing=3, phenotype={"missing": "mean_impute"})
+    assert code == 0, payload
+    refusals = F.read_tsv(out / "post_de" / "association" / "refusals.tsv")
+    assert [(r["analysis"], r["reason_code"]) for r in refusals] == [("imputation", "E_PHENOTYPE_IMPUTATION")]
+    adaptations = json.loads((out / "post_de" / "association" / "eligibility.json").read_text(encoding="utf-8"))["eligibility"]["adaptations"]
+    assert any(a["item"] == "score" and a["used"] == "complete case" for a in adaptations)
+    rows = _assoc(out)
+    assert {r["n_units"] for r in rows} == {"17"} and {r["n_missing_phenotype"] for r in rows} == {"3"}   # no imputed phenotype values
+    assert any(w["code"] == "W_POST_DE_ADAPTED" for w in json.loads((out / "warnings.json").read_text(encoding="utf-8")))
 
 
 # ----------------------------------------------------------------------------- V147
@@ -184,15 +191,27 @@ def test_v148_heatmap_source_and_report_agree_with_tables(linear):
 
 
 # ----------------------------------------------------------------------------- review 2026-10-05 (M1, M2, minor 3)
-def test_review_m1_default_pearson_with_group_adjustment_is_refused(tmp_path):
-    """Pearson/Spearman are unadjusted correlations (SM33, FR-145): with the default adjust_for_group (and a declared
-    covariate) they are refused instead of being reported as 'adjusted for group'; partial correlation is the adjusted form."""
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path, method="correlation", correlation="pearson")                     # defaults: adjust_for_group true, adjust_for age
-    assert error.value.code == "E_PHENOTYPE_CORRELATION_ADJUSTMENT" and not (tmp_path / "run" / "dea").exists()
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path / "s", method="correlation", correlation="spearman", phenotype={"adjust_for_group": False})   # a covariate alone also needs partial
-    assert error.value.code == "E_PHENOTYPE_CORRELATION_ADJUSTMENT"
+def test_policy_adjusted_pearson_and_spearman_run_as_partial_correlations(tmp_path):
+    """D-59 (replaces the 2026-10-05 M1 refusal): with an adjustment declared or defaulted, the partial form of the requested
+    correlation is computed and labelled; hand oracles: Pearson on residuals, Spearman as Pearson on residualised ranks."""
+    oracle_src = """a <- commandArgs(TRUE); y <- as.matrix(read.delim(a[1], row.names = 1, check.names = FALSE, encoding = 'UTF-8'))
+      o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); o <- o[match(colnames(y), o$observation_id), ]
+      s <- as.numeric(o$score); age <- as.numeric(o$age); g <- factor(o$group); sp <- a[3] == 'spearman'
+      Z <- if (a[4] == 'group') model.matrix(~ g + age) else model.matrix(~ age)
+      res <- function(v) residuals(lm.fit(Z, v)); xs <- if (sp) rank(s) else s
+      r <- sapply(rownames(y), function(f) cor(res(if (sp) rank(y[f, ]) else y[f, ]), res(xs)))
+      cat(jsonlite::toJSON(list(f = rownames(y), r = unname(r)), digits = NA))"""
+    for corr, phenotype, terms, label in (("pearson", None, "group", "group;age"), ("spearman", {"adjust_for_group": False}, "age", "age")):
+        payload, code, out = run(tmp_path / corr, n=6, method="correlation", correlation=corr, phenotype=phenotype, permutations=99)
+        assert code == 0, payload
+        rows = {r["feature_id"]: r for r in _assoc(out)}
+        assert {(r["correlation_requested"], r["correlation_used"], r["adjusted_for"]) for r in rows.values()} == {(corr, f"{corr}_partial", label)}
+        assert {r["statistic_type"] for r in rows.values()} == {f"{corr}_partial_r"}
+        oracle = B.r_json(oracle_src, out / "preprocessing" / "primary" / "matrix.tsv", out / "preprocessing" / "primary" / "observations.tsv", corr, terms)
+        for f, r in zip(oracle["f"], oracle["r"]):
+            assert abs(float(rows[f]["effect"]) - r) <= 1e-12, (corr, f)
+        adaptations = json.loads((out / "post_de" / "association" / "eligibility.json").read_text(encoding="utf-8"))["eligibility"]["adaptations"]
+        assert any(a["requested"] == corr and a["used"] == f"{corr}_partial" for a in adaptations)
 
 
 def test_review_m1_adjusted_for_reports_only_what_was_used(tmp_path):

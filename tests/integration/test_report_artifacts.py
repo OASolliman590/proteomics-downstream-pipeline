@@ -9,6 +9,7 @@ receipt (the independent-reviewer inspection is NOT_RUN).
 from __future__ import annotations
 
 import csv
+import html
 import importlib.util
 import json
 import math
@@ -26,7 +27,8 @@ B = importlib.util.module_from_spec(spec); spec.loader.exec_module(B)
 pytestmark = pytest.mark.skipif(B.rscript() is None, reason="NOT_RUN: Rscript/proteomicsCore unavailable")
 
 W, H, L, R, T, BM = 520, 380, 64, 16, 40, 52     # frozen layout of the report scatter
-CIRCLE = re.compile(r'<circle cx="([-0-9.]+)" cy="([-0-9.]+)" r="3" fill="([^"]+)"[^>]*><title>([^<]*)</title>')
+CIRCLE = re.compile(r'<circle cx="([-0-9.]+)" cy="([-0-9.]+)" r="(?:3|4\.5)" fill="([^"]+)"[^>]*><title>([^<]*)</title>')
+PAD = 0.05   # open item 10: 5 % axis padding; identical coordinates share one mark titled "N identical points: a, b"
 
 
 def _tsv(path: Path) -> list[dict]:
@@ -47,9 +49,16 @@ def check_figure(svg_text: str, source_rows: list[dict], xcol: str, ycol: str, f
     findings = []
     pts = [(r["feature_id"], _f(r[xcol]), _f(r[ycol]), r.get(flag) == "true" if flag else False) for r in source_rows]
     pts = [p for p in pts if p[1] is not None and p[2] is not None]
-    marks = {m.group(4): (float(m.group(1)), float(m.group(2)), m.group(3)) for m in CIRCLE.finditer(svg_text)}
-    if len(marks) != len(pts):
-        findings.append(f"{len(marks)} marks for {len(pts)} finite source rows")
+    marks = {}
+    n_marks = 0
+    for m in CIRCLE.finditer(svg_text):
+        n_marks += 1
+        title = html.unescape(m.group(4))
+        labels = title.split(": ", 1)[1].split(", ") if re.match(r"^[0-9]+ identical points: ", title) else [title]
+        for label in labels:
+            marks[label] = (float(m.group(1)), float(m.group(2)), m.group(3))
+    if n_marks != len({(p[1], p[2]) for p in pts}) or len(marks) != len(pts):
+        findings.append(f"{n_marks} marks ({len(marks)} labels) for {len(pts)} finite source rows")
     if not pts:
         return findings
     xs, ys = [p[1] for p in pts], [p[2] for p in pts]
@@ -57,6 +66,7 @@ def check_figure(svg_text: str, source_rows: list[dict], xcol: str, ycol: str, f
     y0, y1 = 0.0, max(ys) or 1.0
     if x0 == x1:
         x0, x1 = x0 - 1, x1 + 1
+    x0, x1, y0, y1 = x0 - PAD * (x1 - x0), x1 + PAD * (x1 - x0), y0 - PAD * (y1 - y0), y1 + PAD * (y1 - y0)
     colours = set()
     for label, x, y, hi in pts:
         if label not in marks:

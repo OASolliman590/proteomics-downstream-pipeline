@@ -109,7 +109,7 @@ def main(argv=None):
     pathways = json.loads((args.output / "pathways.json").read_text(encoding="utf-8"))
     pathways["seconds"] = round(time.time() - start, 1)
     report["pathways"] = pathways
-    (args.output / "calibration_summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    (args.output / "calibration_summary.json").write_text(json.dumps(report, indent=2), encoding="utf-8", newline="\n")
     print(json.dumps({s: e["gate"] for s, e in report["scenarios"].items()} | {"pathways": pathways["gate"]}))
     return 0 if all(report["scenarios"][s]["gate"] == "PASS" for s in CORE) else 1
 

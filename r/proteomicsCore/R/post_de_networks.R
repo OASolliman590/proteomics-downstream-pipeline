@@ -112,6 +112,27 @@ pd_connectivity_null <- function(set_genes, universe, edges_in, degree, draws, s
   list(observed = count_edges(set_genes), null = null)
 }
 
+# Rows for co-abundance (D-59).  none: observations are independent units.  subject_means: group is constant within
+# subject, so each subject contributes its mean (one row per biological unit).  remove_subject: group varies within
+# subject; per feature, subject effects are removed with the group term kept (limma::removeBatchEffect), and whole
+# subjects are the resampling units.
+pd_coabundance_rows <- function(X, obs, group_column, subject_column, transform) {
+  o <- obs[match(rownames(X), obs$observation_id), , drop = FALSE]
+  if (identical(transform, "subject_means")) {
+    subj <- o[[subject_column]]; u <- sort(unique(subj))
+    M <- rowsum(X, subj)[u, , drop = FALSE] / as.vector(table(subj)[u])
+    so <- o[match(u, subj), , drop = FALSE]; so$observation_id <- u
+    return(list(X = M, units = u, groups = so[[group_column]], obs = so, transform = transform))
+  }
+  if (identical(transform, "remove_subject")) {
+    g <- factor(o[[group_column]])
+    R <- t(limma::removeBatchEffect(t(X), batch = factor(o[[subject_column]]), design = stats::model.matrix(~ g)))
+    dimnames(R) <- dimnames(X)
+    return(list(X = R, units = o[[subject_column]], groups = o[[group_column]], obs = o, transform = transform))
+  }
+  list(X = X, units = .pd_units(o, NULL), groups = o[[group_column]], obs = o, transform = "none")
+}
+
 # Unit-level bootstrap stability: biological units (never features) are resampled with replacement from one
 # L'Ecuyer stream; every draw re-runs module construction on all features with fixed parameters and records, per
 # reference module, the best Jaccard overlap with any module of the draw.  A draw whose construction fails is NA
@@ -143,6 +164,7 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
   write_json <- function(value, relative, id, type) { .pc_write_json(value, file.path(out, relative)); emit(relative, id, type) }
   add_fig <- function(x) { for (f in x$files) emit(f$relative_path, f$artifact_id, "Figure"); figures <<- c(figures, x$records) }
   plan <- .pd_verify_inputs(request)
+  warnings <- c(warnings, .pd_adaptation_warnings(request))
   prim <- .pd_primary(request); obs <- prim$obs; fm <- unlist(p$figure_formats)
   for (s in p$eligibility$subanalyses) refusals[[length(refusals) + 1L]] <- data.frame(analysis = s$analysis, item = s$item, reason_code = s$reason_code, reason = s$reason, stringsAsFactors = FALSE)
   co <- p$coabundance; summary <- list()
@@ -151,6 +173,8 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
     feats <- unlist(co$features)
     X <- t(prim$Y[feats, , drop = FALSE])
     if (anyNA(X)) stop("E_INTEGRITY: co-abundance features must be observed in every unit (no imputation)", call. = FALSE)
+    prepared <- pd_coabundance_rows(X, obs, p$group_column, co$subject_column, if (is.null(co$transform)) "none" else co$transform)
+    X <- prepared$X; row_units <- prepared$units; row_groups <- prepared$groups
     beta <- NA_integer_; fit_table <- NULL
     if (identical(co$rule, "wgcna_signed")) {
       if (identical(co$soft_threshold, "auto")) { ch <- pd_choose_beta(stats::cor(X), nrow(X)); beta <- ch$beta; fit_table <- ch$table
@@ -160,7 +184,7 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
     labels <- pd_modules(X, co$rule, beta, as.integer(co$min_module_size), as.integer(co$deep_split), as.numeric(co$cut_height))
     eg <- pd_eigengenes(X, labels)
     modules <- data.frame(feature_id = names(labels), module = ifelse(labels == 0L, "unassigned", paste0("M", labels)), rule = co$rule, soft_threshold = beta, cut_height = as.numeric(co$cut_height),
-                          min_module_size = as.integer(co$min_module_size), claim_label = "module_level", stringsAsFactors = FALSE)
+                          min_module_size = as.integer(co$min_module_size), row_transform = prepared$transform, exploratory = isTRUE(co$exploratory), claim_label = "module_level", stringsAsFactors = FALSE)
     write_tsv(modules, "modules.tsv", "post_de_modules", "CoabundanceModules")
     if (!is.null(fit_table)) write_tsv(cbind(fit_table, claim_label = "descriptive"), "soft_threshold.tsv", "post_de_soft_threshold", "CoabundanceModules")
     E <- eg$eigengenes
@@ -169,7 +193,7 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
     } else {
       write_tsv(data.frame(observation_id = rownames(X), E, check.names = FALSE, claim_label = "module_level"), "eigengenes.tsv", "post_de_eigengenes", "CoabundanceModules")
       # unit-level bootstrap stability (units resampled with replacement; beta and parameters fixed)
-      units <- .pd_units(obs[match(rownames(X), obs$observation_id), , drop = FALSE], p$subject_column)
+      units <- row_units
       boot <- pd_module_stability(X, labels, units, co$rule, beta, as.integer(co$min_module_size), as.integer(co$deep_split), as.numeric(co$cut_height), as.integer(co$bootstrap), as.integer(co$seed))
       jac <- boot$jaccard; mods <- colnames(E)
       stability <- data.frame(module = mods, n_features = as.integer(table(labels[labels != 0L])[sub("^M", "", mods)]), variance_explained = unname(eg$variance[mods]),
@@ -181,25 +205,30 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
       trait_rows <- list()
       Em <- t(E); colnames(Em) <- rownames(X)
       observedE <- matrix(TRUE, nrow(Em), ncol(Em), dimnames = dimnames(Em))
-      settings <- list(group_column = p$group_column, subject_column = p$subject_column, blocking_mode = p$blocking_mode, consensus_correlation = p$consensus_correlation,
-                       trend = FALSE, robust = isTRUE(p$robust), ci_level = p$ci_level)   # eigengenes are centred: their means are identically 0, so a mean-variance trend is undefined (D-49)
+      base_settings <- list(group_column = p$group_column, subject_column = p$subject_column, blocking_mode = p$blocking_mode, consensus_correlation = p$consensus_correlation,
+                       trend = FALSE, robust = isTRUE(p$robust), ci_level = p$ci_level)
+      # trend = FALSE: a mean-variance trend is only fitted when it is estimable; eigengenes are centred (means identically 0), so it is not (D-49, D-59)   # eigengenes are centred: their means are identically 0, so a mean-variance trend is undefined (D-49)
       for (tr in co$trait_designs) {
         Xd <- .pd_design_from(tr$design); ids <- rownames(Xd)
         fam <- list(family_id = tr$family_id, hypothesis_type = "protein_zero_null", role = "secondary", adjustment = "BH", q_cutoff = 0.05, dependence_assumption = "BH",
                     members = lapply(tr$contrasts, function(c) list(model_id = tr$model_id, contrast_id = c$contrast_id)))
-        res <- pd_fit_model(tr$model_id, Em[, ids, drop = FALSE], observedE[, ids, drop = FALSE], obs[match(ids, obs$observation_id), , drop = FALSE], Xd, tr$contrasts, settings, list(fam), list(run_id = request$run_id, plan_hash = request$plan_hash), p$coverage)
+        settings <- base_settings
+        if (identical(tr$blocking, "none")) { settings$blocking_mode <- "none"; settings$subject_column <- NULL; settings$consensus_correlation <- NULL }
+        trait_obs <- prepared$obs[match(ids, prepared$obs$observation_id), , drop = FALSE]
+        res <- pd_fit_model(tr$model_id, Em[, ids, drop = FALSE], observedE[, ids, drop = FALSE], trait_obs, Xd, tr$contrasts, settings, list(fam), list(run_id = request$run_id, plan_hash = request$plan_hash), p$coverage)
         r <- res$rows
         trait_rows[[length(trait_rows) + 1L]] <- data.frame(trait = tr$trait, model_id = tr$model_id, contrast_id = r$contrast_id, module = r$feature_id, eligibility = r$eligibility,
           effect = r$effect, statistic = r$statistic, p_value = r$p_value, q_value = r$q_value, family_id = r$family_id, inference = "module-level (eigengene), not individual proteins", moderation = sprintf("limma eBayes trend=FALSE (eigengene means are 0), robust=%s", if (isTRUE(p$robust)) "TRUE" else "FALSE"),
           claim_label = "module_level", stringsAsFactors = FALSE)
       }
       if (length(trait_rows)) write_tsv(do.call(rbind, trait_rows), "module_trait.tsv", "post_de_module_trait", "ModuleTraitResult")
-      src <- data.frame(observation_id = rownames(X), group = obs[[p$group_column]][match(rownames(X), obs$observation_id)], E, check.names = FALSE, claim_label = "module_level")
+      src <- data.frame(observation_id = rownames(X), group = row_groups, E, check.names = FALSE, claim_label = "module_level")
       write_tsv(src, file.path("figure_sources", "eigengenes.tsv"), "eigengenes_source", "FigureSource")
       add_fig(.pm_devices(out, "eigengenes", fm, 6.5, 4.5, function() { graphics::par(mar = c(4.5, 4.5, 3, 1))
         graphics::boxplot(stats::as.formula(paste(sprintf("`%s`", colnames(E)[1]), "~ group")), data = src, col = "grey80", main = sprintf("%s eigengene by group (module-level)", colnames(E)[1]), cex.main = 0.85) }))
     }
-    summary$coabundance <- list(n_units = nrow(X), n_features = ncol(X), rule = co$rule, soft_threshold = beta, n_modules = if (is.null(E)) 0L else ncol(E))
+    summary$coabundance <- list(n_units = length(unique(row_units)), n_rows = nrow(X), n_features = ncol(X), rule = co$rule, soft_threshold = beta, n_modules = if (is.null(E)) 0L else ncol(E),
+                                transform = prepared$transform, exploratory = isTRUE(co$exploratory), min_module_size = as.integer(co$min_module_size))
   } else if (!is.null(co) && !is.null(co$state)) refusals[[length(refusals) + 1L]] <- data.frame(analysis = "coabundance", item = "modules", reason_code = co$reason_code, reason = co$reason, stringsAsFactors = FALSE)
 
   # interaction networks from the hashed offline snapshot
@@ -250,7 +279,7 @@ post_de_networks_stage <- function(request) .pc_run_stage(request, function(out)
     summary$ppi <- list(snapshot_id = pp$snapshot_id, source = pp$source, release = pp$release, species = pp$species, score_type = pp$score_type, snapshot_sha256 = pp$snapshot_sha256,
                         universe_size = length(universe), n_edges_in_universe = nrow(edges_in), min_score = pp$min_score)
   } else if (!is.null(pp) && !is.null(pp$state)) refusals[[length(refusals) + 1L]] <- data.frame(analysis = "ppi", item = "connectivity", reason_code = pp$reason_code, reason = pp$reason, stringsAsFactors = FALSE)
-  refusals_df <- .pd_refusal_frame(refusals)
+  refusals_df <- unique(.pd_refusal_frame(refusals))
   write_tsv(cbind(refusals_df, claim_label = rep("descriptive", nrow(refusals_df))), "refusals.tsv", "post_de_networks_refusals", "PostDeEligibility")
   for (r in seq_len(nrow(refusals_df))) warnings[[length(warnings) + 1L]] <- .pc_warning(request, refusals_df$reason_code[r], sprintf("networks %s %s: %s", refusals_df$analysis[r], refusals_df$item[r], refusals_df$reason[r]), "post_de/networks/refusals.tsv")
   write_json(list(module = "networks", state = "COMPLETED", reason_code = NULL, claim_label = "module_level", summary = summary, eligibility = p$eligibility, refusals = refusals_df,

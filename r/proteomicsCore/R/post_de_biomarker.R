@@ -331,6 +331,7 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
   if (startsWith(p$classifier, "svm_") && !requireNamespace("e1071", quietly = TRUE)) stop("E_ENGINE_NOT_AVAILABLE: R package e1071 is required for SVM classifiers", call. = FALSE)
   if (identical(p$classifier, "random_forest") && !requireNamespace("randomForest", quietly = TRUE)) stop("E_ENGINE_NOT_AVAILABLE: R package randomForest is required for the random-forest classifier", call. = FALSE)
   plan <- .pd_verify_inputs(request)
+  warnings <- c(warnings, .pd_adaptation_warnings(request))
   prim <- .pd_primary(request); obs <- prim$obs
   keep <- obs[[p$group_column]] %in% c(p$positive, p$negative)
   obs <- obs[keep, , drop = FALSE]; Yall <- prim$Y[, obs$observation_id, drop = FALSE]
@@ -461,7 +462,13 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
     hash_before <- as.character(locked$hash)
     con <- file(file.path(out, "locked_model.json"), open = "wb"); writeBin(charToRaw(attr(locked$hash, "json")), con); close(con)
     emit("locked_model.json", "post_de_locked_model", "ValidationResult")
-    sv <- pd_bm_apply_locked(locked, Xv); yv <- as.integer(vmeta[[vc$class_column]] == p$positive)
+    yv <- as.integer(vmeta[[vc$class_column]] == p$positive)
+    sv <- tryCatch(pd_bm_apply_locked(locked, Xv), error = function(e) if (startsWith(conditionMessage(e), "E_VALIDATION_FEATURES")) e else stop(e))
+  }
+  if (!is.null(vc) && inherits(sv, "error")) {   # D-59: only the validation piece is refused; every internal estimate stands
+    refuse("validation", "cohort", "E_VALIDATION_FEATURES", sub("^E_VALIDATION_FEATURES: ", "", conditionMessage(sv)))
+    validation <- data.frame(state = "refused", locked_model_sha256 = hash_before, auc = NA_real_, note = conditionMessage(sv), claim_label = "cross_validated_nested", stringsAsFactors = FALSE)
+  } else if (!is.null(vc)) {
     if (!identical(as.character(.bm_locked_hash(locked)), hash_before)) stop("E_VALIDATION_RETUNED: the locked model changed during validation", call. = FALSE)
     d <- pd_delong(sv[yv == 1L], sv[yv == 0L], level)
     pred <- as.integer(sv >= locked$threshold)
@@ -519,8 +526,8 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
   refusals_df <- .pd_refusal_frame(refusals)
   write_tsv(cbind(refusals_df, claim_label = rep("descriptive", nrow(refusals_df))), "refusals.tsv", "post_de_biomarker_refusals", "PostDeEligibility")
   write_json(list(module = "biomarker", state = "COMPLETED", reason_code = NULL, claim_label = if (!is.null(vc)) "independently_validated" else "cross_validated_nested",
-                  labels = list(single_feature = "in_sample", nested_cv = "cross_validated_nested", fixed_panels = "fixed_panel_cv", validation = if (!is.null(vc)) "independently_validated" else NULL),
-                  external_validation = if (is.null(vc)) "not externally validated" else "locked model evaluated once on a disjoint declared cohort",
+                  labels = list(single_feature = "in_sample", nested_cv = "cross_validated_nested", fixed_panels = "fixed_panel_cv", validation = if (identical(validation$claim_label[1], "independently_validated")) "independently_validated" else NULL),
+                  external_validation = if (identical(validation$claim_label[1], "independently_validated")) "locked model evaluated once on a disjoint declared cohort" else "not externally validated",
                   contrast = p$contrast, positive_class = p$positive, negative_class = p$negative, classifier = p$classifier, selection = p$selection, cv = p$cv,
                   seed = seed, rng = "L'Ecuyer-CMRG; stream 0 nested CV, streams 1..B permutations, B+1 threshold bootstrap, then fixed panels and the locked model",
                   permutation = perm, candidate_universe = sprintf("%d features genuinely observed in every analysed observation (label-free planning restriction)", length(features)),

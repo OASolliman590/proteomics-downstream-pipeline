@@ -69,36 +69,51 @@ def leaves(rule: dict) -> list[dict]:
 
 
 def resolve(block: dict, config: dict) -> dict:
+    """D-59: an invalid definition, Venn/UpSet reference or concordance pair is refused on its own (recorded in `refused`);
+    every valid set is still built."""
     index = endpoint_index(config)
-    definitions = []
-    ids = [d.get("id") for d in block.get("definitions", [])]
-    if len(set(ids)) != len(ids):
-        raise PostDeRefusal("E_ID_DUPLICATE", "post_de.sets definition ids must be unique", "/post_de/sets/definitions")
+    definitions, refused = [], []
+    seen = set()
     for i, d in enumerate(block.get("definitions", [])):
         pointer = f"/post_de/sets/definitions/{i}/rule"
-        rule = parse_rule(d.get("rule"), config, index, pointer)
-        found = leaves(rule)
-        if len({leaf["hypothesis_type"] for leaf in found}) > 1:
-            raise PostDeRefusal("E_SETRULE_MIXED_NULL", f"{pointer}: rule {d['id']!r} mixes zero-null and TREAT memberships", pointer)
-        if len({leaf["input_matrix"] for leaf in found}) > 1:
-            raise PostDeRefusal("E_SETRULE_MIXED_MATRIX", f"{pointer}: rule {d['id']!r} combines families fitted on different matrices {sorted({l['input_matrix'] for l in found})}", pointer)
+        try:
+            if d.get("id") in seen:
+                raise PostDeRefusal("E_ID_DUPLICATE", f"set id {d.get('id')!r} is declared twice; the later declaration is refused", f"/post_de/sets/definitions/{i}/id")
+            rule = parse_rule(d.get("rule"), config, index, pointer)
+            found = leaves(rule)
+            if len({leaf["hypothesis_type"] for leaf in found}) > 1:
+                raise PostDeRefusal("E_SETRULE_MIXED_NULL", f"{pointer}: rule {d['id']!r} mixes zero-null and TREAT memberships", pointer)
+            if len({leaf["input_matrix"] for leaf in found}) > 1:
+                raise PostDeRefusal("E_SETRULE_MIXED_MATRIX", f"{pointer}: rule {d['id']!r} combines families fitted on different matrices {sorted({l['input_matrix'] for l in found})}", pointer)
+        except PostDeRefusal as error:
+            refused.append({"analysis": "set", "item": str(d.get("id")), "state": "INAPPLICABLE", "reason_code": error.code, "reason": error.message}); continue
+        seen.add(d["id"])
         definitions.append({"id": d["id"], "rule": rule})
     known = {d["id"] for d in definitions}
+    views = {}
     for key in ("venn", "upset"):
-        unknown = [s for s in block.get(key, []) if s not in known]
+        unknown = [x for x in block.get(key, []) if x not in known]
         if unknown:
-            raise PostDeRefusal("E_SETRULE_GRAMMAR", f"post_de.sets.{key} names undefined sets {unknown}", f"/post_de/sets/{key}")
+            refused.append({"analysis": key, "item": ",".join(map(str, unknown)), "state": "INAPPLICABLE", "reason_code": "E_SETRULE_GRAMMAR",
+                            "reason": f"post_de.sets.{key} names undefined or refused sets {unknown}; they are left out of the {key}"})
+        views[key] = [x for x in block.get(key, []) if x in known]
     pairs = []
     for i, pair in enumerate(block.get("concordance_pairs", [])):
         criterion = pair.get("criterion", "family_q"); threshold = pair.get("threshold", 0.05)
-        sides = {side: _leaf({**pair[side], "criterion": criterion, "threshold": threshold}, config, index, f"/post_de/sets/concordance_pairs/{i}/{side}") for side in ("left", "right")}
+        try:
+            sides = {side: _leaf({**pair[side], "criterion": criterion, "threshold": threshold}, config, index, f"/post_de/sets/concordance_pairs/{i}/{side}") for side in ("left", "right")}
+        except PostDeRefusal as error:
+            refused.append({"analysis": "concordance", "item": pair.get("id", f"pair{i + 1}"), "state": "INAPPLICABLE", "reason_code": error.code, "reason": error.message}); continue
         pairs.append({"id": pair.get("id", f"pair{i + 1}"), **sides})
-    return {"definitions": definitions, "venn": list(block.get("venn", [])), "upset": list(block.get("upset", [])), "concordance_pairs": pairs,
-            "overlap_test": bool(block.get("overlap_test", False))}
+    return {"definitions": definitions, "venn": views["venn"], "upset": views["upset"], "concordance_pairs": pairs,
+            "overlap_test": bool(block.get("overlap_test", False)), "refused": refused}
 
 
 def precheck(block: dict, raw: dict) -> None:
-    """Grammar errors are refused before the schema runs; references are checked again in plan_checks on the validated config."""
+    """Grammar errors of a *required* sets module are refused before the schema runs.  For an optional module each invalid
+    definition is refused on its own in plan_checks (D-59)."""
+    if (block.get("execution_requirement") or (raw.get("post_de") or {}).get("execution_requirement") or "optional") != "required":
+        return
     for i, d in enumerate(block.get("definitions", []) or []):
         rule = d.get("rule") if isinstance(d, dict) else None
         _grammar_only(rule, f"/post_de/sets/definitions/{i}/rule")
@@ -118,12 +133,13 @@ def _grammar_only(raw, pointer):
 
 def plan_checks(block: dict, config: dict, context: dict) -> dict:
     resolved = resolve(block, config)
-    sub = []
+    sub = list(resolved["refused"])
     if len(resolved["venn"]) > 3:
         sub.append({"analysis": "venn", "item": ",".join(resolved["venn"]), "state": "INAPPLICABLE", "reason_code": "E_VENN_K",
                     "reason": f"a circle Venn needs k <= 3 sets; {len(resolved['venn'])} were requested (UpSet is still produced)"})
     if not resolved["definitions"]:
-        return {"state": "INAPPLICABLE", "reason_code": "E_SETRULE_GRAMMAR", "reason": "no set definitions were declared", "subanalyses": sub, "resolved": resolved}
+        first = sub[0] if sub else {"reason_code": "E_SETRULE_GRAMMAR", "reason": "no set definitions were declared"}
+        return {"state": "INAPPLICABLE", "reason_code": first["reason_code"], "reason": first["reason"], "subanalyses": sub, "resolved": resolved}
     return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "resolved": resolved,
             "rule": "eligible for every design with completed zero-null or TREAT families; overlap P only for unit-disjoint contrasts"}
 
@@ -138,3 +154,9 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
 
 def execute(request_value: dict) -> dict:
     return execute_r(request_value)
+
+
+def required_refusal(decision: dict):
+    """A required sets module whose declared set or pair is invalid rejects the plan (explicit strictness, D-59)."""
+    sub = [s for s in decision.get("subanalyses") or [] if s["reason_code"] != "E_VENN_K"]
+    return (sub[0]["reason_code"], sub[0]["reason"]) if sub else None

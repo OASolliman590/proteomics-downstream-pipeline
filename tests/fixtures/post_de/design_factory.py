@@ -270,7 +270,9 @@ def write_ppi_snapshot(directory: Path, features: list[str], *, cluster: list[st
 
 
 # ----------------------------------------------------------------------------- R14f generality matrix (V167)
-GENERALITY_CELLS = ("two_group", "three_group", "paired", "repeated", "continuous_exposure", "small_3v3", "unbalanced_15v80", "large_200", "human", "mouse", "rat")
+GENERALITY_CELLS = ("two_group", "three_group", "paired", "repeated", "continuous_exposure", "small_3v3", "unbalanced_15v80", "large_200", "human", "mouse", "rat",
+                    "over_budget_biomarker", "adjusted_spearman", "aliased_phenotype")   # D-59 cells: previously refused, now adapted with records
+_DECLARATION_CELLS = {"over_budget_biomarker", "adjusted_spearman", "aliased_phenotype"}
 _GENERALITY_SIZES = {"two_group": {"A": 12, "B": 12}, "three_group": {"A": 10, "B": 10, "C": 10}, "continuous_exposure": {"A": 12, "B": 12}, "small_3v3": {"A": 3, "B": 3},
                      "unbalanced_15v80": {"A": 80, "B": 15}, "large_200": {"A": 100, "B": 100}, "human": {"A": 12, "B": 12}, "mouse": {"A": 12, "B": 12}, "rat": {"A": 12, "B": 12}}
 
@@ -282,17 +284,18 @@ def generality_cell(name: str, seed: int = 90) -> dict:
     per subject (a co-abundance module); every subject has its own random effect, so repeated observations correlate."""
     rng = random.Random(seed + GENERALITY_CELLS.index(name))
     species = name if name in ("human", "mouse", "rat") else "rat"
+    layout = "two_group" if name in _DECLARATION_CELLS else name
     units, blocking = [], None
-    if name == "paired":                                   # every subject observed once in each group
+    if layout == "paired":                                 # every subject observed once in each group
         for s in range(10):
             units += [{"observation_id": f"S{s + 1}_{g}", "subject_id": f"S{s + 1}", "group": g} for g in ("A", "B")]
         blocking = {"mode": "duplicate_correlation", "subject_column": "subject_id"}
-    elif name == "repeated":                               # two visits per subject, group constant within subject
+    elif layout == "repeated":                             # two visits per subject, group constant within subject
         for s in range(12):
             units += [{"observation_id": f"S{s + 1}_{r + 1}", "subject_id": f"S{s + 1}", "group": "A" if s < 6 else "B"} for r in range(2)]
         blocking = {"mode": "duplicate_correlation", "subject_column": "subject_id"}
     else:
-        for g, n in _GENERALITY_SIZES[name].items():
+        for g, n in _GENERALITY_SIZES[layout].items():
             units += [{"observation_id": f"{g}{i + 1}", "group": g} for i in range(n)]
     subjects = sorted({o.get("subject_id", o["observation_id"]) for o in units})
     subject_score = {s: rng.gauss(5, 2) for s in subjects}
@@ -319,6 +322,10 @@ def generality_cell(name: str, seed: int = 90) -> dict:
                 subject_effect[key] = rng.gauss(0, 0.3)
             column.append(10 + 0.05 * f + effect(o, f) + subject_effect[key] + rng.gauss(0, 0.2))
         values[f"F{f + 1:02d}"] = column
+    if name == "aliased_phenotype":                        # phenotype recorded in group B only: aliased with group for a pooled estimate
+        for o in units:
+            if o["group"] == "A":
+                o["score"] = "NA"
     group_contrasts = [B.contrast(f"{g}-{groups[0]}", g, groups[0], role="secondary") for g in groups[1:]]
     design = {}
     if blocking:
@@ -331,7 +338,10 @@ def generality_cell(name: str, seed: int = 90) -> dict:
         contrasts = [dict(group_contrasts[0], role="primary")] + group_contrasts[1:]
     return {"name": name, "values": values, "observations": units, "groups": groups, "contrasts": contrasts, "design_overrides": design or None, "species": species,
             "extra_columns": ("sex", "score", "dose"), "biomarker_contrast": group_contrasts[0]["id"], "planted_primary": [f"F{i:02d}" for i in range(1, 6)],
-            "planted_phenotype": [f"F{i:02d}" for i in range(6, 11)], "planted_module": [f"F{i:02d}" for i in range(11, 21)]}
+            "planted_phenotype": [f"F{i:02d}" for i in range(6, 11)], "planted_module": [f"F{i:02d}" for i in range(11, 21)],
+            "post_de_overrides": {"over_budget_biomarker": {"biomarker": {"permutation": {"B": 199, "compute_guard_hours": 1e-6}}},
+                                  "adjusted_spearman": {"association": {"method": "correlation", "correlation": "spearman", "permutations": 99}},
+                                  "aliased_phenotype": {}}.get(name, {})}
 
 
 def generality_post_de(cell: dict, *, ppi: bool = False) -> dict:
@@ -346,4 +356,7 @@ def generality_post_de(cell: dict, *, ppi: bool = False) -> dict:
              "networks": {"enabled": True, "coabundance": {"enabled": True, "min_units": 20, "min_module_size": 5, "bootstrap": 10, "seed": 4, "traits": ["group"]}}}
     if ppi:
         block["networks"]["ppi"] = {"enabled": True, "snapshot_id": "ppi", "mapping_resource_id": "map", "min_score": 300, "sets": ["primary_any"], "null_draws": 99, "seed": 5}
+    for module, override in cell.get("post_de_overrides", {}).items():   # D-59 cells: the declaration under test
+        for key, value in override.items():
+            block[module][key] = {**block[module].get(key, {}), **value} if isinstance(value, dict) and isinstance(block[module].get(key), dict) else value
     return block

@@ -65,6 +65,12 @@ PD_CLAIM_LABELS <- c("descriptive", "exploratory_raw_p", "in_sample", "cross_val
 
 .pd_input_hashes <- function(request) lapply(request$inputs, function(i) list(artifact_id = i$artifact_id, sha256 = i$sha256))
 
+# D-59: every adaptation the planner (or the stage) made is a warning with requested vs used and the reason; the full
+# records are in eligibility.json (p$eligibility$adaptations) and in the R14f eligibility report.
+.pd_adaptation_warnings <- function(request, adaptations = request$parameters$eligibility$adaptations) {
+  lapply(adaptations, function(a) .pc_warning(request, "W_POST_DE_ADAPTED", sprintf("%s %s: requested %s, used %s (%s)", a$analysis, a$item, a$requested, a$used, a$reason)))
+}
+
 .pd_refusal_frame <- function(rows) if (length(rows)) do.call(rbind, rows) else
   data.frame(analysis = character(), item = character(), reason_code = character(), reason = character(), stringsAsFactors = FALSE)
 
@@ -238,6 +244,8 @@ post_de_sets_stage <- function(request) .pc_run_stage(request, function(out) {
     warnings[[length(warnings) + 1L]] <<- .pc_warning(request, code, sprintf("%s %s refused: %s", analysis, item, reason), "post_de/sets/refusals.tsv")
   }
   plan <- .pd_verify_inputs(request)
+  warnings <- c(warnings, .pd_adaptation_warnings(request))
+  for (r in p$refused) refuse(r$analysis, r$item, r$reason_code, r$reason)   # D-59: invalid declarations refused one by one
   zero <- .pd_read_stage_table(request, "stage__dea_zero_null"); treat <- .pd_read_stage_table(request, "stage__dea_treat")
   prim <- .pd_primary(request)
   formats <- intersect(unlist(p$figure_formats), c("png", "pdf", "svg"))

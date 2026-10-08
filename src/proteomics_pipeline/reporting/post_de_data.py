@@ -44,6 +44,12 @@ def post_de_section(directory: str | Path, *, prefix: str = "post_de/eligibility
     if sub:
         section["tables"].append({"caption": "Refused or inapplicable sub-analyses (decided by the planner)", "columns": ["module", "analysis", "item", "state", "reason code", "reason"],
                                   "rows": sub, "source": f"{prefix}/eligibility.json"})
+    adapted = [[m["module"], a.get("analysis", ""), str(a.get("item", "")), json.dumps(a.get("requested"), ensure_ascii=False).strip('"'), json.dumps(a.get("used"), ensure_ascii=False).strip('"'),
+                str(a.get("reason", ""))[:300]] for m in modules for a in m.get("adaptations") or []]
+    if adapted:   # D-59: adaptations are never silent
+        section["tables"].append({"caption": "Adaptations to the data (requested versus used, with the reason)", "columns": ["module", "analysis", "item", "requested", "used", "reason"],
+                                  "rows": adapted, "source": f"{prefix}/eligibility.json"})
+        section["values"]["n_adaptations"] = len(adapted)
     if deps:
         section["tables"].append({"caption": "What each primary discovery depends on (descriptive; module states are shown where a module did not run)",
                                   "columns": ["contrast", "feature", "q", "sets", "robustness fraction", "sign stability", "influence flag", "phenotype associations", "biomarker selection", "module"],

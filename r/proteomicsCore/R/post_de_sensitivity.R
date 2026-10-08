@@ -103,6 +103,7 @@ post_de_sensitivity_stage <- function(request) .pc_run_stage(request, function(o
     warnings[[length(warnings) + 1L]] <<- .pc_warning(request, code, sprintf("%s %s refused: %s", analysis, item, reason), "post_de/sensitivity/refusals.tsv")
   }
   plan <- .pd_verify_inputs(request)
+  warnings <- c(warnings, .pd_adaptation_warnings(request))
   prim <- .pd_primary(request)
   values <- .pc_matrix_from_tsv(.pc_find_input(request, "primary_matrix"), "numeric")
   observed <- .pc_matrix_from_tsv(.pc_find_input(request, "primary_observed_mask"), "logical")[rownames(values), colnames(values), drop = FALSE]

@@ -8,3 +8,12 @@ CI run 37244850636 on PR #2 failed in two tests. Both are fixed under A-2026-10-
 | `test_content_hash_and_code_identity_are_line_ending_independent` (Windows only: `95079435…` ≠ `f00f85e7…`) | Under `* text=auto` (no `eol`), Windows checks out the HTML template, `DESCRIPTION` and `NAMESPACE` with CRLF. The test then replaced `\n` with `\r\n` in place, which turns an already-CRLF file into CR CR LF: genuinely different content. The product's rule (hash content with CRLF → LF, D-42) was right; the test's conversion was not idempotent. | The conversion is idempotent (normalise to LF, then CRLF). The test is parametrised over an LF and a simulated CRLF checkout of the whole package. `.gitattributes` now checks text out as LF on every platform (`* text=auto eol=lf`), with binary patterns, and keeps the protected recovered paths byte-exact (`-text`). | [`before-plan-portability.log`](evidence/before-plan-portability.log): the simulated CRLF checkout reproduces the **exact CI hashes** (`95079435…` vs `f00f85e7…`) | [`after-local.log`](evidence/after-local.log): LF and CRLF cases PASS |
 
 Confirming both fixes on real Ubuntu and Windows runners needs the next CI run on the pushed branch.
+
+## Wrap-up fixes (2026-10-05/06)
+
+| Item | Fix | Before | After |
+|---|---|---|---|
+| Open item 17: text outputs written in text mode (CRLF on Windows) | Every text write in `src/` and `scripts/maintained/` writes LF (`newline="\n"`), and the R11 newline lint now covers all maintained Python code (D-61, A-2026-10-01-25) | [`before-newline-lint.log`](evidence/before-newline-lint.log): 39 violations at 20b9a02 | `test_text_encoding.py::test_release_artifact_writers_use_lf_on_every_platform` passes (full-suite run) |
+| Open item 10: V109 layout findings | The SVG scatter pads both axes by 5 %, draws an x = 0 line and marks identical coordinates once with their count (D-62, A-2026-10-01-26); the V109 inversion oracle follows the padded layout | [`before-scatter-svg.log`](evidence/before-scatter-svg.log): 2 failed | [`after-scatter-svg.log`](evidence/after-scatter-svg.log): 2 passed |
+
+The adaptive-policy redesign (ADR 0010, D-59, refusal audit D-60) is recorded in [decisions.md](../../../specs/001-downstream-proteomics/decisions.md). The tests that expected the old refusals now assert the adaptation records, and a required variant still asserts the refusal.

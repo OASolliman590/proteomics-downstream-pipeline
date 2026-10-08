@@ -432,7 +432,7 @@ pm_resolve_sets <- function(sets, features, dea_path) {
     } else if (identical(kind, "dep_derived")) {
       if (is.null(dea)) stop(sprintf("E_PERMANOVA_FEATURE_SET: DEP-derived set %s needs a completed differential table", s$id), call. = FALSE)
       rows <- dea[dea$model_id == s$model_id & dea$contrast_id == s$contrast_id & dea$eligibility == "tested", , drop = FALSE]
-      if (!nrow(rows)) stop(sprintf("E_PERMANOVA_FEATURE_SET: no tested rows for %s/%s", s$model_id, s$contrast_id), call. = FALSE)
+      # D-59: a DEP-derived set with no tested rows has no members and is refused on its own (fewer than two usable features)
       value <- suppressWarnings(as.numeric(if (identical(s$criterion, "family_q")) rows$q_value else rows$p_value))
       members <- rows$feature_id[!is.na(value) & value <= s$threshold]
     } else stop(sprintf("E_PERMANOVA_FEATURE_SET: unknown kind %s", kind), call. = FALSE)
@@ -456,8 +456,21 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
   Y[!observed[rownames(Y), colnames(Y)]] <- NA
   obs <- .pc_read_tsv(.pc_find_input(request, "primary_observations"))
   obs <- obs[match(colnames(Y), obs$observation_id), , drop = FALSE]
+  subject_column <- p$subject_column
+  # D-59 row adaptations decided by the planner (recorded in result.json settings and warnings)
+  if (identical(p$row_adaptation, "subject_means")) {
+    subj <- obs[[subject_column]]; u <- sort(unique(subj))
+    Ym <- vapply(u, function(x) { w <- subj == x; v <- Y[, w, drop = FALSE]; ifelse(rowSums(!is.na(v)) > 0, rowMeans(v, na.rm = TRUE), NA_real_) }, numeric(nrow(Y)))
+    Ym <- matrix(Ym, nrow(Y), length(u), dimnames = list(rownames(Y), u))
+    so <- obs[match(u, subj), , drop = FALSE]; so$observation_id <- u
+    Y <- Ym; obs <- so; subject_column <- NULL
+  } else if (identical(p$row_adaptation, "varying_subjects_only")) {
+    keep <- obs[[subject_column]] %in% unlist(p$varying_subjects)
+    Y <- Y[, keep, drop = FALSE]; obs <- obs[keep, , drop = FALSE]
+  }
+  for (a in p$adaptations) warnings[[length(warnings) + 1L]] <- .pc_warning(request, "W_PERMANOVA_ADAPTED", sprintf("%s: requested %s, used %s (%s)", a$item, paste(unlist(a$requested), collapse = ","), paste(unlist(a$used), collapse = ","), a$reason))
   dea_path <- .pc_find_input(request, "dea_zero_null", required = FALSE)
-  settings <- list(group_column = p$group_column, group_levels = unlist(p$group_levels), subject_column = p$subject_column, metric = p$metric, scaling = p$scaling,
+  settings <- list(group_column = p$group_column, group_levels = unlist(p$group_levels), subject_column = subject_column, metric = p$metric, scaling = p$scaling,
                    permutations = as.integer(p$permutations), seed = as.integer(p$seed), alpha = p$alpha, pairwise = isTRUE(p$pairwise), adjustment = p$adjustment,
                    covariates = p$covariates, interaction = isTRUE(p$interaction))
   sets <- pm_resolve_sets(p$feature_sets, rownames(Y), dea_path)
@@ -525,7 +538,8 @@ permanova_stage <- function(request) .pc_run_stage(request, function(out) {
   figures <- permanova_figures(out, tests_df, do.call(rbind, ord), do.call(rbind, axes), do.call(rbind, cents), do.call(rbind, nulls), do.call(rbind, fr2),
                                if (length(random)) do.call(rbind, random) else NULL, if (length(context)) do.call(rbind, context) else NULL, unlist(p$figure_formats))
   for (f in figures$files) emit(f$relative_path, f$artifact_id, "Figure")
-  write_json(list(result_type = "PermanovaResult", settings = list(metric = settings$metric, scaling = settings$scaling, permutations_requested = settings$permutations,
+  write_json(list(result_type = "PermanovaResult", adaptations = p$adaptations, row_adaptation = p$row_adaptation,
+                  settings = list(metric = settings$metric, scaling = settings$scaling, permutations_requested = settings$permutations,
                     seed = settings$seed, rng_kind = "L'Ecuyer-CMRG", adjustment = settings$adjustment, alpha = settings$alpha, pairwise = settings$pairwise,
                     covariates = settings$covariates, interaction = settings$interaction, group_column = settings$group_column,
                     group_permutation_scheme = unique(tests_df$permutation_scheme[tests_df$analysis == "global"]),

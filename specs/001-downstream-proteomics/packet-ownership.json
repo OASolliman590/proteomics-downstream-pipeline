@@ -731,6 +731,65 @@
         "tests/regression/test_traceability_reconciliation.py"
       ],
       "change": "PR #2 CI run 37244850636: checkout with full history (fetch-depth: 0) so V116 can verify historical verified_commits, with a specific failure message on a shallow clone (never a skip); the line-ending test converted an already-CRLF Windows checkout to CR CR LF (the content-hash rule was correct), now idempotent and parametrised over LF and CRLF checkouts; .gitattributes checks text out as LF everywhere (eol=lf) with binary patterns, protected recovered paths unchanged (-text)."
+    },
+    {
+      "id": "A-2026-10-01-24",
+      "adr": "docs/adr/0010-adaptive-post-de-policy.md",
+      "paths": [
+        "src/proteomics_pipeline/post_de/__init__.py",
+        "src/proteomics_pipeline/post_de/sets.py",
+        "src/proteomics_pipeline/post_de/sensitivity.py",
+        "src/proteomics_pipeline/post_de/association.py",
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "src/proteomics_pipeline/post_de/networks.py",
+        "src/proteomics_pipeline/post_de/eligibility.py",
+        "src/proteomics_pipeline/reporting/post_de_data.py",
+        "src/proteomics_pipeline/permanova_service.py",
+        "r/proteomicsCore/R/permanova.R",
+        "r/proteomicsCore/R/post_de_sets.R",
+        "r/proteomicsCore/R/post_de_sensitivity.R",
+        "r/proteomicsCore/R/post_de_association.R",
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "r/proteomicsCore/R/post_de_networks.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md",
+        "specs/015-post-de-analysis/contracts/post-de.md",
+        "tests/fixtures/permanova/make_fixtures.py",
+        "tests/scientific/test_permanova.py",
+        "docs/methods/README.md",
+        "docs/methods/reason-codes.md"
+      ],
+      "change": "Maintainer-directed adaptive policy (ADR 0010, D-59, D-60): optional post-DE/PERMANOVA declaration refusals never block the run; validity refusals are scoped to the smallest piece with the valid alternative run automatically; every adaptation is recorded (plan decision, eligibility.json/result settings, W_POST_DE_ADAPTED/W_PERMANOVA_ADAPTED, R14f report table); optional biomarker compute_policy (adapt|refuse) in both schema copies; scientific methods v1.3.1."
+    },
+    {
+      "id": "A-2026-10-01-25",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/cache.py",
+        "src/proteomics_pipeline/reporting/comparison.py",
+        "src/proteomics_pipeline/reporting/full.py",
+        "src/proteomics_pipeline/reporting/stub.py",
+        "src/proteomics_pipeline/reproduction.py",
+        "src/proteomics_pipeline/runtime.py",
+        "src/proteomics_pipeline/workflow.py",
+        "scripts/maintained/benchmark.py",
+        "scripts/maintained/run_calibration.py",
+        "scripts/maintained/write_solved_versions.py",
+        "tests/scientific/reference/test_text_encoding.py"
+      ],
+      "change": "Open item 17 (D-61): every text write in src/ and scripts/maintained writes LF (newline=\"\\n\"), so outputs are byte-identical across operating systems; the R11 newline lint covers all maintained Python code (39 sites fixed; before-lint evidence in docs/validation/review-2026-10-05-ci)."
+    },
+    {
+      "id": "A-2026-10-01-26",
+      "adr": "docs/adr/0007-claude-route-and-integration-amendments.md",
+      "paths": [
+        "src/proteomics_pipeline/reporting/full.py",
+        "tests/unit/test_scatter_svg.py",
+        "tests/integration/test_report_artifacts.py",
+        "tests/integration/test_reports.py"
+      ],
+      "change": "Open item 10 (D-62): SVG scatter padding, x = 0 reference line and marked identical coordinates; the V109 inversion oracle and the V100 mark count follow the new layout."
     }
   ]
 }

@@ -68,7 +68,9 @@ def precheck(raw: dict) -> None:
     for module in MODULES:
         sub = top.get(module) or {}
         impl = module_impl(module)
-        if isinstance(sub, dict) and sub.get("enabled") and impl is not None and hasattr(impl, "precheck"):
+        # D-59 (Maintainer direction 2026-10-05): a declaration refusal of an *optional* module never holds up the run; it is
+        # recorded as that module's INAPPLICABLE decision by plan_checks. Only a required module rejects the configuration here.
+        if isinstance(sub, dict) and sub.get("enabled") and impl is not None and hasattr(impl, "precheck") and required(raw, module):
             impl.precheck(sub, raw)
 
 
@@ -81,8 +83,16 @@ def plan_checks(config: dict, context: dict) -> dict[str, dict]:
         if impl is None or not hasattr(impl, "plan_checks"):
             decisions[module] = {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": [], "implemented": False}
             continue
-        decision = impl.plan_checks(block(config, module), config, context)
-        decision.setdefault("subanalyses", []); decision["implemented"] = True
+        try:
+            if hasattr(impl, "precheck"):
+                impl.precheck(block(config, module), config)
+            decision = impl.plan_checks(block(config, module), config, context)
+        except PostDeRefusal as error:
+            if required(config, module):
+                raise
+            decision = {"state": "INAPPLICABLE", "reason_code": error.code, "reason": error.message, "pointer": error.pointer, "declaration_refused": True,
+                        "subanalyses": [], "resolved": {}}
+        decision.setdefault("subanalyses", []); decision.setdefault("adaptations", []); decision["implemented"] = True
         decisions[module] = decision
     return decisions
 

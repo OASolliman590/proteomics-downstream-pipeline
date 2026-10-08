@@ -1,11 +1,12 @@
 """Post-DE biomarker discrimination evaluation (packet R14d, SM34-SM38, FR-149-FR-160).
 
-Binary declared contrasts only.  The planner refuses evaluation before any computation when a class has fewer than
-the declared minimum of biological units (E_BIOMARKER_SMALL_N), when cross-validation folds cannot contain both
-classes (E_BIOMARKER_FOLDS), when the declared work exceeds the compute guard (E_BIOMARKER_COMPUTE_GUARD), and when a
-declaration would leak held-out information (E_BIOMARKER_LEAKAGE, E_BIOMARKER_GROUP_LEAKAGE,
-E_BIOMARKER_THRESHOLD_LEAKAGE, E_BIOMARKER_PERMUTATION_SCOPE, E_VALIDATION_RETUNED, E_SCORE_SELECTION_OVERLAP).
-The R stage enforces leakage safety structurally (fit/apply transforms audited per fold).
+Binary declared contrasts only.  The planner adapts to the data and records every adaptation (D-59): below the
+declared minimum units per class the evaluation runs as exploratory with folds fitted to the minority class, and it
+is refused only below 4 units per class (E_BIOMARKER_SMALL_N, E_BIOMARKER_FOLDS).  Over-budget work is scaled down
+to the compute guard (compute_policy: adapt; `refuse` keeps E_BIOMARKER_COMPUTE_GUARD).  A declaration that would
+leak held-out information (E_BIOMARKER_LEAKAGE, E_BIOMARKER_GROUP_LEAKAGE, E_BIOMARKER_THRESHOLD_LEAKAGE,
+E_BIOMARKER_PERMUTATION_SCOPE, E_VALIDATION_RETUNED) is refused and its leakage-safe form runs; a required module
+rejects the plan.  The R stage enforces leakage safety structurally (fit/apply transforms audited per fold).
 """
 from __future__ import annotations
 
@@ -31,25 +32,34 @@ def capabilities():
     return [{"id": CAPABILITY, "dependencies": ["limma"], "required_r_packages": ["jsonlite", "openssl", "proteomicsCore", "limma", "glmnet"]}]
 
 
-def precheck(block: dict, raw: dict) -> None:
+def leakage_corrections(block: dict, raw: dict) -> list[tuple[str, str, str, str, str]]:
+    """Declarations that would leak held-out information: (code, item, requested, used, reason).  Each is refused and
+    replaced by its leakage-safe form (D-59); a required module rejects the plan instead."""
+    out = []
     rule = str(block.get("threshold_rule", DEFAULTS["threshold_rule"]))
     if rule != "youden_train" and not re.fullmatch(r"fixed:-?[0-9]+(\.[0-9]+)?", rule):
-        raise PostDeRefusal("E_BIOMARKER_THRESHOLD_LEAKAGE", f"threshold rule {rule!r} is not chosen inside training folds; allowed: youden_train or fixed:<value>", "/post_de/biomarker/threshold_rule")
+        out.append(("E_BIOMARKER_THRESHOLD_LEAKAGE", "threshold_rule", rule, "youden_train", "a threshold must be chosen inside training folds"))
     scope = (block.get("permutation") or {}).get("scope", "whole_procedure")
     if scope != "whole_procedure":
-        raise PostDeRefusal("E_BIOMARKER_PERMUTATION_SCOPE", f"permutation scope {scope!r}: the permutation test must rerun the whole nested procedure, including selection and tuning", "/post_de/biomarker/permutation/scope")
+        out.append(("E_BIOMARKER_PERMUTATION_SCOPE", "permutation.scope", scope, "whole_procedure", "the permutation test must rerun the whole nested procedure, including selection and tuning"))
     imputation = block.get("imputation", "none")
     if imputation not in ("none", "train_median"):
-        raise PostDeRefusal("E_BIOMARKER_LEAKAGE", f"imputation {imputation!r} would be fitted outside the training folds; allowed: none or train_median (fitted per training fold)", "/post_de/biomarker/imputation")
-    cohort = block.get("validation_cohort") or {}
-    if cohort.get("retune"):
-        raise PostDeRefusal("E_VALIDATION_RETUNED", "the validation cohort is evaluated once with the locked discovery model; re-tuning on it is forbidden", "/post_de/biomarker/validation_cohort/retune")
-    design = raw.get("design") or {}
-    blocked = (design.get("blocking") or {}).get("mode", "none") != "none"
+        out.append(("E_BIOMARKER_LEAKAGE", "imputation", imputation, "train_median", "imputation is fitted inside each training fold"))
+    if (block.get("validation_cohort") or {}).get("retune"):
+        out.append(("E_VALIDATION_RETUNED", "validation_cohort.retune", "true", "false", "the validation cohort is evaluated once with the locked discovery model"))
+    blocked = ((raw.get("design") or {}).get("blocking") or {}).get("mode", "none") != "none"
     if blocked and (block.get("cv") or {}).get("group_by_subject") is False:
-        raise PostDeRefusal("E_BIOMARKER_GROUP_LEAKAGE", "a subject-blocked design must group folds by subject; group_by_subject=false would leak subjects across folds", "/post_de/biomarker/cv/group_by_subject")
+        out.append(("E_BIOMARKER_GROUP_LEAKAGE", "cv.group_by_subject", "false", "true", "a subject-blocked design must keep each subject in one fold"))
+    return out
+
+
+def precheck(block: dict, raw: dict) -> None:
     if not block.get("contrast"):
         raise PostDeRefusal("E_BIOMARKER_CONTRAST", "post_de.biomarker.contrast must name a declared binary contrast", "/post_de/biomarker/contrast")
+    required = (block.get("execution_requirement") or (raw.get("post_de") or {}).get("execution_requirement") or "optional") == "required"
+    for code, item, requested, used, reason in leakage_corrections(block, raw):
+        if required:   # explicit strictness: a required module with a leaky declaration rejects the plan
+            raise PostDeRefusal(code, f"{item} {requested!r}: {reason}", f"/post_de/biomarker/{item.replace('.', '/')}")
 
 
 def _read_matrix(path: Path) -> tuple[list[str], dict[str, list[str]]]:
@@ -76,7 +86,37 @@ def resolved(block: dict, config: dict) -> dict:
                                "bootstrap": int(single.get("bootstrap", 2000))},
             "permutation": {"enabled": perm.get("enabled", True), "B": int(perm.get("B", 1000)), "seed": int(perm.get("seed", block.get("seed", config["runtime"]["seed"]))),
                             "compute_guard_hours": float(perm.get("compute_guard_hours", COMPUTE_GUARD_HOURS)), "scope": "whole_procedure"},
-            "fixed_panels": list(block.get("fixed_panels", [])), "validation_cohort": block.get("validation_cohort")}
+            "fixed_panels": list(block.get("fixed_panels", [])), "validation_cohort": block.get("validation_cohort"),
+            "compute_policy": block.get("compute_policy", "adapt")}
+
+
+# D-59 adaptive policy: documented minimums when the compute guard scales work down, and the smallest data on which nested
+# CV is computable: every inner training fold must keep two units of each class (glmnet and the inner tuning need two),
+# which needs four units per class (outer k = 4, inner k = 3).
+MIN_ADAPTED_REPEATS, MIN_ADAPTED_B, MIN_UNITS_COMPUTABLE = 10, 99, 4
+
+
+def adapt_compute(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels: int) -> tuple[float, dict | None]:
+    """Scale outer repeats, then permutations, down (halving) until the estimate fits the guard or the minimums are
+    reached.  Returns the final estimate and the adaptation record (None when nothing changed)."""
+    guard = r["permutation"]["compute_guard_hours"]
+    hours = compute_estimate(r, n_obs, n_candidates, threads, n_panels)
+    requested = {"repeats": r["cv"]["repeats"], "B": r["permutation"]["B"], "hours": round(hours, 4)}
+    while hours > guard:
+        if r["cv"]["scheme"] != "loocv" and r["cv"]["repeats"] > MIN_ADAPTED_REPEATS:
+            r["cv"]["repeats"] = max(MIN_ADAPTED_REPEATS, r["cv"]["repeats"] // 2)
+        elif r["permutation"]["enabled"] and r["permutation"]["B"] > MIN_ADAPTED_B:
+            r["permutation"]["B"] = max(MIN_ADAPTED_B, (r["permutation"]["B"] + 1) // 2 - 1)
+        else:
+            break
+        hours = compute_estimate(r, n_obs, n_candidates, threads, n_panels)
+    if (r["cv"]["repeats"], r["permutation"]["B"]) == (requested["repeats"], requested["B"]):
+        return hours, None
+    used_b = r["permutation"]["B"]
+    return hours, {"analysis": "compute_guard", "item": "nested_cv_permutation", "requested": f"repeats {requested['repeats']}, B {requested['B']} ({requested['hours']} h)",
+                   "used": f"repeats {r['cv']['repeats']}, B {used_b} ({hours:.4f} h)",
+                   "reason": (f"the estimate exceeded the compute guard of {guard} h; work was scaled down to the guard (minimums: {MIN_ADAPTED_REPEATS} repeats, B {MIN_ADAPTED_B}); "
+                              f"the smallest attainable permutation P is now 1/{used_b + 1}" + ("; still above the guard at the minimums" if hours > guard else ""))}
 
 
 def compute_estimate(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels: int) -> float:
@@ -92,6 +132,20 @@ def compute_estimate(r: dict, n_obs: int, n_candidates: int, threads: int, n_pan
 
 
 def plan_checks(block: dict, config: dict, context: dict) -> dict:
+    corrections = leakage_corrections(block, config)
+    if corrections:   # D-59: the leaky piece is refused and the leakage-safe form runs (recorded)
+        block = dict(block)
+        for code, item, requested, used, reason in corrections:
+            if item == "threshold_rule":
+                block["threshold_rule"] = used
+            elif item == "permutation.scope":
+                block["permutation"] = dict(block.get("permutation") or {}, scope=used)
+            elif item == "imputation":
+                block["imputation"] = used
+            elif item == "validation_cohort.retune":
+                block["validation_cohort"] = dict(block["validation_cohort"], retune=False)
+            elif item == "cv.group_by_subject":
+                block["cv"] = dict(block.get("cv") or {}, group_by_subject=True)
     r = resolved(block, config)
     design = config["design"]
     group_column = design["group_column"]
@@ -109,17 +163,35 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
         classes.setdefault(unit(o), set()).add(o[group_column])
     mixed = any(len(v) > 1 for v in classes.values())
     n_pos = sum(1 for v in classes.values() if positive in v); n_neg = sum(1 for v in classes.values() if negative in v)
-    reasons = []
+    reasons, adaptations = [], []
+    leak_sub = []
+    for code, item, requested, used, reason in corrections:
+        leak_sub.append({"analysis": "declaration", "item": item, "state": "INAPPLICABLE", "reason_code": code, "reason": f"{item} {requested!r} refused: {reason}"})
+        adaptations.append({"analysis": "declaration", "item": item, "requested": requested, "used": used, "reason": reason})
     minimum = r["min_units_per_class"]
-    if min(n_pos, n_neg) < minimum:
-        reasons.append(("E_BIOMARKER_SMALL_N", f"{positive}: {n_pos}, {negative}: {n_neg} biological units; the declared minimum per class is {minimum}"))
     minority = min(n_pos, n_neg)
+    if minority < MIN_UNITS_COMPUTABLE:   # validity: nested CV cannot be computed
+        reasons.append(("E_BIOMARKER_SMALL_N", f"{positive}: {n_pos}, {negative}: {n_neg} biological units; nested CV needs at least {MIN_UNITS_COMPUTABLE} units per class "
+                                               "(every inner training fold must keep two units of each class)"))
+    elif minority < minimum:              # D-59: below the recommended minimum the evaluation runs as exploratory, recorded
+        adaptations.append({"analysis": "nested_cv", "item": "units_per_class", "requested": f"at least {minimum} units per class", "used": f"{minority} (exploratory)",
+                            "reason": "fewer units than the recommended minimum: estimates are highly variable; reported as exploratory"})
+    if r["cv"]["scheme"] != "loocv" and minority < r["cv"]["k"] and minority >= MIN_UNITS_COMPUTABLE:
+        adaptations.append({"analysis": "nested_cv", "item": "outer_k", "requested": r["cv"]["k"], "used": minority,
+                            "reason": f"{r['cv']['k']}-fold CV with {minority} minority units would leave folds without both classes"})
+        r["cv"]["k"] = minority
     k = len(classes) if r["cv"]["scheme"] == "loocv" else r["cv"]["k"]
-    if r["cv"]["scheme"] != "loocv" and minority < k:
-        reasons.append(("E_BIOMARKER_FOLDS", f"{k}-fold CV with {minority} minority units: some folds cannot contain both classes"))
     train_minority = minority - (1 if r["cv"]["scheme"] == "loocv" else math.ceil(minority / max(1, k)))
-    if train_minority < r["cv"]["inner_k"]:
-        reasons.append(("E_BIOMARKER_FOLDS", f"inner {r['cv']['inner_k']}-fold CV with {train_minority} minority units per training fold: inner folds cannot contain both classes"))
+    if minority >= MIN_UNITS_COMPUTABLE:
+        inner = min(r["cv"]["inner_k"], max(2, train_minority))
+        while inner <= train_minority and train_minority - math.ceil(train_minority / inner) < 2:   # inner training folds keep >= 2 per class
+            inner += 1
+        if inner > train_minority:
+            reasons.append(("E_BIOMARKER_FOLDS", f"training folds hold {train_minority} minority unit(s); no inner CV keeps two units of each class"))
+        elif inner != r["cv"]["inner_k"]:
+            adaptations.append({"analysis": "nested_cv", "item": "inner_k", "requested": r["cv"]["inner_k"], "used": inner,
+                                "reason": f"training folds hold {train_minority} minority units; inner training folds must keep two units of each class"})
+            r["cv"]["inner_k"] = inner
     # candidate universe: features genuinely observed in every analysed observation (label-free planning restriction)
     pre = Path(context["preprocessing_dir"]) / "primary"
     columns, matrix = _read_matrix(pre / "matrix.tsv")
@@ -133,10 +205,13 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
         reasons.append(("E_BIOMARKER_FEATURES", f"{len(candidates)} candidate feature(s) observed in the analysed units; at least 2 are needed"))
     sel = r["selection"]
     if sel["method"] in ("top_k_auc", "top_k_t"):
-        sel["k"] = [k_ for k_ in sel["k"] if k_ <= len(candidates)]
-        if not sel["k"]:
-            reasons.append(("E_BIOMARKER_SELECTION", "every declared k exceeds the candidate universe"))
-    sub = []
+        kept = [k_ for k_ in sel["k"] if k_ <= len(candidates)]
+        if not kept and len(candidates) >= 2:   # D-59: select every candidate instead of refusing
+            adaptations.append({"analysis": "selection", "item": "k", "requested": sel["k"], "used": [len(candidates)],
+                                "reason": f"every declared k exceeds the {len(candidates)} candidate features"})
+            kept = [len(candidates)]
+        sel["k"] = kept
+    sub = list(leak_sub)
     sf = dict(r["single_feature"]); sf["state"] = "ELIGIBLE"
     if sf["enabled"] and mixed:
         sf.update(state="INAPPLICABLE", reason_code="E_BIOMARKER_PAIRED_AUC", reason="class varies within subject: unit-level single-feature AUC with independent-unit CIs is undefined")
@@ -158,16 +233,24 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
     threads = int(config["runtime"]["threads"])
     hours = compute_estimate(r, len(observations), len(candidates), threads, len(panels))
     if hours > r["permutation"]["compute_guard_hours"]:
-        reasons.append(("E_BIOMARKER_COMPUTE_GUARD", f"estimated {hours:.2f} h for nested CV x {r['permutation']['B']} permutations exceeds the declared guard of "
-                                                     f"{r['permutation']['compute_guard_hours']} h; reduce repeats or B explicitly (work is never reduced silently)"))
+        if r["compute_policy"] == "refuse":   # opt-in strict mode
+            reasons.append(("E_BIOMARKER_COMPUTE_GUARD", f"estimated {hours:.2f} h for nested CV x {r['permutation']['B']} permutations exceeds the declared guard of "
+                                                         f"{r['permutation']['compute_guard_hours']} h (compute_policy: refuse)"))
+        else:                                 # D-59 default: scale down to the budget, recorded
+            hours, record = adapt_compute(r, len(observations), len(candidates), threads, len(panels))
+            if record:
+                adaptations.append(record)
     validation = None
     cohort = r["validation_cohort"]
     if cohort:
         base_dir = Path(context["config_dir"])
         paths = {key: (Path(cohort[key]) if Path(cohort[key]).is_absolute() else base_dir / cohort[key]) for key in ("matrix", "metadata")}
-        for key, path in paths.items():
-            if not path.is_file():
-                raise PostDeRefusal("E_VALIDATION_INPUT", f"validation {key} file is missing: {path.name}", f"/post_de/biomarker/validation_cohort/{key}")
+        missing_file = next((key for key, path in paths.items() if not path.is_file()), None)
+        if missing_file:   # D-59: only the validation piece is refused; the internal evaluation runs
+            sub.append({"analysis": "validation", "item": "cohort", "state": "INAPPLICABLE", "reason_code": "E_VALIDATION_INPUT",
+                        "reason": f"validation {missing_file} file is missing: {paths[missing_file].name}"})
+            cohort = None
+    if cohort:
         with paths["metadata"].open(encoding="utf-8", newline="") as handle:
             meta = list(csv.DictReader(handle, delimiter="\t"))
         id_key = next(iter(meta[0])) if meta else "observation_id"
@@ -186,15 +269,18 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
             sub.append({"analysis": "validation", "item": "cohort", "state": "INAPPLICABLE", "reason_code": "E_SCORE_SELECTION_OVERLAP", "reason": reason})
             validation = None
         elif cohort["class_column"] not in (meta[0] if meta else {}):
-            raise PostDeRefusal("E_VALIDATION_INPUT", f"validation metadata lacks class column {cohort['class_column']!r}", "/post_de/biomarker/validation_cohort/class_column")
+            sub.append({"analysis": "validation", "item": "cohort", "state": "INAPPLICABLE", "reason_code": "E_VALIDATION_INPUT",
+                        "reason": f"validation metadata lacks class column {cohort['class_column']!r}"})
+            validation = None
     parameters = {**{k: v for k, v in r.items() if k != "validation_cohort"}, "positive": positive, "negative": negative,
                   "class_levels": [g for g in design["group_levels"] if g in (positive, negative)], "candidate_features": candidates,
                   "validation": validation, "threads": threads, "compute_estimate_hours": round(hours, 6),
                   "units": {"n_positive": n_pos, "n_negative": n_neg, "unit_level": f"subject:{subject}" if subject else "biological_unit", "class_varies_within_unit": mixed}}
+    parameters["adaptations"] = adaptations
     if reasons:
         return {"state": "INAPPLICABLE", "reason_code": reasons[0][0], "reason": "; ".join(f"{c}: {m}" for c, m in reasons),
-                "reasons": [{"reason_code": c, "reason": m} for c, m in reasons], "subanalyses": sub, "resolved": parameters}
-    return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "resolved": parameters, "compute_estimate_hours": round(hours, 6),
+                "reasons": [{"reason_code": c, "reason": m} for c, m in reasons], "subanalyses": sub, "adaptations": adaptations, "resolved": parameters}
+    return {"state": "ELIGIBLE", "reason_code": None, "reason": None, "subanalyses": sub, "adaptations": adaptations, "resolved": parameters, "compute_estimate_hours": round(hours, 6),
             "rule": "binary declared contrast; >= min units per class; outer and inner folds must contain both classes; compute guard; leakage-safe declarations only"}
 
 

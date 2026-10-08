@@ -259,5 +259,5 @@ def write_acceptance_ledger(path: str | Path = ROOT_DIR / "docs" / "validation" 
     ledger = {"schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json", "verified_commit": None, "status_counts": counts,
               "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
               "records": records}
-    Path(path).write_text(json.dumps(ledger, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    Path(path).write_text(json.dumps(ledger, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     return ledger

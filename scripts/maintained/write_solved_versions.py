@@ -21,5 +21,5 @@ def main(argv=None):
  for name in ("setuptools","jsonschema","PyYAML","pytest"):
   try: dependencies[name]=metadata.version(name)
   except metadata.PackageNotFoundError: dependencies[name]=None
- value={"generated_at":datetime.now(timezone.utc).isoformat(),"python":{**_safe_executable(sys.executable),"version":platform.python_version()},"dependencies":dependencies,"r_packages":r_packages,"rscript":r,"status":"AVAILABLE" if r else "NOT_RUN"}; output.parent.mkdir(parents=True,exist_ok=True); output.write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8"); print(json.dumps(value,sort_keys=True)); return 0 if r else 3
+ value={"generated_at":datetime.now(timezone.utc).isoformat(),"python":{**_safe_executable(sys.executable),"version":platform.python_version()},"dependencies":dependencies,"r_packages":r_packages,"rscript":r,"status":"AVAILABLE" if r else "NOT_RUN"}; output.parent.mkdir(parents=True,exist_ok=True); output.write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8", newline="\n"); print(json.dumps(value,sort_keys=True)); return 0 if r else 3
 if __name__=="__main__":raise SystemExit(main())

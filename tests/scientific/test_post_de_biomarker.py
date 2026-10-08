@@ -63,6 +63,22 @@ def run(tmp_path, values, obs, post, *, groups=("P", "N"), blocked=False, thread
     return payload, code, tmp_path / "run"
 
 
+def _leak_replaced(tmp_path, values, obs, block, code, item, used, blocked=False):
+    """D-59: a leaky declaration is refused (recorded with its code) and its leakage-safe form runs; required rejects."""
+    payload, _, out = run(tmp_path / "opt", values, obs, block, blocked=blocked)
+    stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_biomarker")
+    assert stage["state"] == "COMPLETED", stage
+    plan = json.loads((out / "plan.json").read_text(encoding="utf-8"))
+    entry = next(c for c in plan["capability_plan"] if c["capability"] == "post_de_biomarker")["post_de"]
+    assert any(x["reason_code"] == code and x["item"] == item for x in entry["subanalyses"])
+    assert any(a["item"] == item and a["used"] == used for a in entry["adaptations"])
+    block = json.loads(json.dumps(block)); block["biomarker"]["execution_requirement"] = "required"
+    with pytest.raises(ProteomicsError) as error:
+        run(tmp_path / "req", values, obs, block, blocked=blocked, expect=None)
+    assert error.value.code == code
+    return out
+
+
 def out_dir(run_dir):
     return run_dir / "post_de" / "biomarker"
 
@@ -168,13 +184,23 @@ def test_v150_auto_direction_is_in_sample_and_flagged(tmp_path):
 
 # ----------------------------------------------------------------------------- V151
 def test_v151_minimum_size_and_fold_refusal_report_both_reasons(tmp_path):
+    """D-59: 4 positive units (below the recommended 5) run as exploratory with outer folds adapted to 4; fewer than 3
+    units per class are not computable and are refused (no AUC); a required module then rejects the plan."""
     values, obs = F.biomarker_design(n_pos=4, n_neg=30)
+    payload, code, out = run(tmp_path / "small", values, obs, biomarker_block(permutation={"enabled": False}))
+    stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_biomarker")
+    assert stage["state"] == "COMPLETED"
+    plan = json.loads((out / "plan.json").read_text(encoding="utf-8"))
+    adaptations = {a["item"]: a for a in next(c for c in plan["capability_plan"] if c["capability"] == "post_de_biomarker")["post_de"]["adaptations"]}
+    assert adaptations["units_per_class"]["used"] == "4 (exploratory)" and (adaptations["outer_k"]["requested"], adaptations["outer_k"]["used"]) == (5, 4)
+    cv = F.read_tsv(out_dir(out) / "cv_performance.tsv")[0]
+    assert cv["outer_k"] == "4" and cv["claim_label"] == "cross_validated_nested"
+    values, obs = F.biomarker_design(n_pos=2, n_neg=30)
     payload, code, out = run(tmp_path / "opt", values, obs, biomarker_block())
     stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_biomarker")
     assert stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_BIOMARKER_SMALL_N"
     plan = json.loads((out / "plan.json").read_text(encoding="utf-8"))
-    entry = next(c for c in plan["capability_plan"] if c["capability"] == "post_de_biomarker")
-    assert {r["reason_code"] for r in entry["post_de"]["reasons"]} == {"E_BIOMARKER_SMALL_N", "E_BIOMARKER_FOLDS"}
+    assert "at least 4 units per class" in next(c for c in plan["capability_plan"] if c["capability"] == "post_de_biomarker")["reason"]
     assert not (out / "post_de" / "biomarker").exists()                          # no AUC emitted
     post = biomarker_block(); post["biomarker"]["execution_requirement"] = "required"
     payload, code, out = run(tmp_path / "req", values, obs, post, expect=2)
@@ -232,10 +258,8 @@ def test_v152_negative_a_transform_fitted_on_held_out_samples_fails(tmp_path):
       msg <- tryCatch({ get('pd_bm_audit_check', ns)(audit, list(`1 1` = 'c')); 'none' }, error = function(e) conditionMessage(e))
       cat(jsonlite::toJSON(msg, auto_unbox = TRUE))""")
     assert out.startswith("E_BIOMARKER_LEAKAGE")
-    with pytest.raises(ProteomicsError) as error:
-        values, obs = F.biomarker_design()
-        run(tmp_path, values, obs, biomarker_block(imputation="global_median"))
-    assert error.value.code == "E_BIOMARKER_LEAKAGE"
+    values, obs = F.biomarker_design()
+    _leak_replaced(tmp_path, values, obs, biomarker_block(imputation="global_median", permutation={"enabled": False}), "E_BIOMARKER_LEAKAGE", "imputation", "train_median")
 
 
 # ----------------------------------------------------------------------------- V153 / V154
@@ -275,9 +299,9 @@ def test_v153_repeated_design_folds_never_split_a_subject(tmp_path):
 
 def test_v153_negative_ungrouped_folds_in_a_repeated_design_fail(tmp_path):
     values, obs = F.biomarker_design(n_pos=8, n_neg=8, reps=2, seed=53)
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path, values, obs, biomarker_block(cv={"outer": {"k": 5, "repeats": 2}, "inner": {"k": 3}, "group_by_subject": False}), blocked=True)
-    assert error.value.code == "E_BIOMARKER_GROUP_LEAKAGE"
+    out_run = _leak_replaced(tmp_path, values, obs, biomarker_block(cv={"outer": {"k": 5, "repeats": 2}, "inner": {"k": 3}, "group_by_subject": False}, permutation={"enabled": False}),
+                             "E_BIOMARKER_GROUP_LEAKAGE", "cv.group_by_subject", "true", blocked=True)
+    assert F.read_tsv(out_dir(out_run) / "cv_performance.tsv")[0]["grouped_by"] == "subject_id"   # folds kept whole subjects
     out = B.r_json("""ns <- asNamespace('proteomicsCore'); X <- matrix(rnorm(8), 4, 2, dimnames = list(NULL, c('a', 'b')))
       msg <- tryCatch({ get('.bm_outer_fold', ns)(X, c(1L, 0L, 1L, 0L), c('s1', 's1', 's2', 's3'), 1:2, 2:4, list(), 1L, 1L, NULL); 'none' }, error = function(e) conditionMessage(e))
       cat(jsonlite::toJSON(msg, auto_unbox = TRUE))""")
@@ -332,9 +356,9 @@ def test_v156_whole_procedure_permutation(signal, noise):
 
 def test_v156_negative_permuting_only_the_final_classifier_is_refused(tmp_path):
     values, obs = F.biomarker_design()
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path, values, obs, biomarker_block(permutation={"B": 19, "scope": "final_classifier_only"}))
-    assert error.value.code == "E_BIOMARKER_PERMUTATION_SCOPE"
+    out_run = _leak_replaced(tmp_path, values, obs, biomarker_block(permutation={"B": 19, "scope": "final_classifier_only"}),
+                             "E_BIOMARKER_PERMUTATION_SCOPE", "permutation.scope", "whole_procedure")
+    assert F.read_tsv(out_dir(out_run) / "cv_performance.tsv")[0]["permutation_scope"].startswith("whole_procedure")
     out = B.r_json("""ns <- asNamespace('proteomicsCore'); set.seed(3, kind = "L'Ecuyer-CMRG")
       units <- rep(paste0('s', 1:6), each = 2); y <- rep(c(1L, 0L), each = 6)
       ok <- all(replicate(50, { p <- get('pd_bm_permute_labels', ns)(y, units); all(tapply(p, units, function(v) length(unique(v))) == 1) }))
@@ -386,9 +410,9 @@ def test_v158_calibration_and_threshold_metrics_equal_the_oracle(signal):
 
 def test_v158_negative_test_fold_threshold_is_refused(tmp_path):
     values, obs = F.biomarker_design()
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path, values, obs, biomarker_block(threshold_rule="youden_test"))
-    assert error.value.code == "E_BIOMARKER_THRESHOLD_LEAKAGE"
+    out_run = _leak_replaced(tmp_path, values, obs, biomarker_block(threshold_rule="youden_test", permutation={"enabled": False}),
+                             "E_BIOMARKER_THRESHOLD_LEAKAGE", "threshold_rule", "youden_train")
+    assert F.read_tsv(out_dir(out_run) / "cv_performance.tsv")[0]["threshold_rule"] == "youden_train"
 
 
 # ----------------------------------------------------------------------------- V159
@@ -421,9 +445,10 @@ def test_v159_negative_overlapping_cohort_and_retuning_fail(tmp_path):
     post = biomarker_block(validation_cohort=cohort, permutation={"enabled": False}); post["biomarker"]["execution_requirement"] = "required"
     payload, code, out = run(tmp_path / "req", values, obs, post, expect=2)
     assert payload["error"]["code"] == "E_SCORE_SELECTION_OVERLAP"
-    with pytest.raises(ProteomicsError) as error:
-        run(tmp_path / "retune", values, obs, biomarker_block(validation_cohort={**cohort, "retune": True}))
-    assert error.value.code == "E_VALIDATION_RETUNED"
+    clean = F.write_validation_cohort(tmp_path / "clean", *F.biomarker_design(seed=59, prefix="V"))
+    out_run = _leak_replaced(tmp_path / "retune", values, obs, biomarker_block(validation_cohort={**clean, "retune": True}, permutation={"enabled": False}),
+                             "E_VALIDATION_RETUNED", "validation_cohort.retune", "false")
+    assert F.read_tsv(out_dir(out_run) / "validation.tsv")[0]["state"] == "evaluated_once"
 
 
 # ----------------------------------------------------------------------------- V160
@@ -448,10 +473,21 @@ def test_v160_figures_have_sources_and_the_report_shows_the_design(signal):
 
 
 def test_v156_compute_guard_refuses_instead_of_reducing_work(tmp_path):
+    """D-59: default compute_policy adapt scales repeats and B down to the guard (documented minimums), recorded with the
+    attainable P floor; compute_policy refuse keeps the strict refusal and never lowers B."""
     values, obs = F.biomarker_design()
-    payload, code, out = run(tmp_path, values, obs, biomarker_block(permutation={"B": 5000, "compute_guard_hours": 0.001}))
+    payload, code, out = run(tmp_path / "adapt", values, obs, biomarker_block(cv={"outer": {"k": 5, "repeats": 3}, "inner": {"k": 3}}, permutation={"B": 400, "compute_guard_hours": 1e-6}))
+    stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_biomarker")
+    assert stage["state"] == "COMPLETED"
+    plan = json.loads((out / "plan.json").read_text(encoding="utf-8"))
+    record = next(a for a in next(c for c in plan["capability_plan"] if c["capability"] == "post_de_biomarker")["post_de"]["adaptations"] if a["item"] == "nested_cv_permutation")
+    assert record["requested"].startswith("repeats 3, B 400") and record["used"].startswith("repeats 3, B 99") and "1/100" in record["reason"]
+    cv = F.read_tsv(out_dir(out) / "cv_performance.tsv")[0]
+    assert cv["permutation_B"] == "99" and len(F.read_tsv(out_dir(out) / "permutation_null.tsv")) == 99
+    assert float(cv["permutation_p"]) >= 1 / 100
+    payload, code, out = run(tmp_path / "refuse", values, obs, biomarker_block(permutation={"B": 5000, "compute_guard_hours": 0.001}, compute_policy="refuse"))
     stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_biomarker")
     assert stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_BIOMARKER_COMPUTE_GUARD"
     plan = json.loads((out / "plan.json").read_text(encoding="utf-8"))
     entry = next(c for c in plan["capability_plan"] if c["capability"] == "post_de_biomarker")
-    assert "5000 permutations" in entry["reason"] and not (out / "post_de" / "biomarker").exists()   # B is never silently lowered
+    assert "5000 permutations" in entry["reason"] and not (out / "post_de" / "biomarker").exists()   # strict mode: B is never lowered

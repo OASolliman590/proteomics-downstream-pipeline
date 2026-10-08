@@ -104,7 +104,7 @@ def test_v097_figures_match_their_source_tables(tmp_path):
             d = rows[(contrast, r["feature_id"])]
             assert float(r["effect_log2"]) == float(d["effect"]) and abs(float(r["neg_log10_p"]) + math.log10(float(d["p_value"]))) <= 1e-12
         svg = (run / "report-full" / f"figures/{fig['stem']}.svg").read_text(encoding="utf-8")
-        assert svg.count("<circle") == len(src) and "*" not in svg
+        assert svg.count("<circle") == len({(r["effect_log2"], r["neg_log10_p"]) for r in src}) and "*" not in svg   # identical coordinates share one mark (item 10)
         for f in fig["files"]:
             head = (run / "report-full" / f).read_bytes()[:8]
             assert head.startswith(b"%PDF") if f.endswith(".pdf") else (head == b"\x89PNG\r\n\x1a\n" if f.endswith(".png") else head.startswith(b"<svg"))

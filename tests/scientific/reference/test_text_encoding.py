@@ -138,9 +138,10 @@ def test_lint_detects_locale_dependent_io():
     assert len(violations(bad, "bad")) == 6 and violations(good, "good") == []
 
 
-# Review 2026-10-05 (minor 6): files that write hashed release/regression artifacts must write LF bytes on every
-# platform (D-42). A text-mode write without newline="\n" translates "\n" to os.linesep (CRLF on Windows).
-NEWLINE_STRICT = [ROOT / "scripts" / "maintained" / "build_release.py", ROOT / "src" / "proteomics_pipeline" / "legacy_service.py"]
+# Review 2026-10-05 (minor 6), extended to all maintained code (open item 17, A-2026-10-01-24): every text write in src/
+# and scripts/maintained writes LF on every platform (D-42), so outputs are byte-identical across operating systems.
+# A text-mode write without newline="\n" translates "\n" to os.linesep (CRLF on Windows).
+NEWLINE_STRICT = sorted([*(ROOT / "src").rglob("*.py"), *(ROOT / "scripts" / "maintained").rglob("*.py")])
 
 
 def newline_violations(source: str, label: str) -> list[str]:

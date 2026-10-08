@@ -193,7 +193,7 @@ class Ledger:
                 failed.parent.mkdir(parents=True, exist_ok=True)
                 os.replace(temp, failed)
                 if not (failed / "stage-result.json").is_file():
-                    (failed / "orchestrator-stage-result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+                    (failed / "orchestrator-stage-result.json").write_text(json.dumps(result, indent=2), encoding="utf-8", newline="\n")
                 else:
                     result_path = (failed / "stage-result.json").relative_to(self.root).as_posix()
         for warning in result.get("warnings", []):
@@ -371,7 +371,7 @@ def run_command(config_path: str | Path, output: str | Path) -> tuple[dict, int]
     with RunLock(root / ".run.lock"):
         (root / "config.resolved.json").write_bytes(json.dumps(config, indent=2, ensure_ascii=False, sort_keys=True).encode("utf-8"))
         (root / "provenance").mkdir(exist_ok=True)
-        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(Path(config_path).resolve())}), encoding="utf-8")
+        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(Path(config_path).resolve())}), encoding="utf-8", newline="\n")
         plan = None
         failure: ProteomicsError | None = None
         try:
@@ -558,10 +558,10 @@ def multivariate_required(config: dict) -> bool:
 def _write_provenance(root: Path, config: dict, plan: dict | None) -> None:
     provenance = root / "provenance"
     provenance.mkdir(exist_ok=True)
-    (provenance / "environment.json").write_text(json.dumps(plan["environment"] if plan else environment_inventory(), indent=2, sort_keys=True), encoding="utf-8")
-    (provenance / "code_manifest.json").write_text(json.dumps(code_manifest(), indent=2, sort_keys=True), encoding="utf-8")
+    (provenance / "environment.json").write_text(json.dumps(plan["environment"] if plan else environment_inventory(), indent=2, sort_keys=True), encoding="utf-8", newline="\n")
+    (provenance / "code_manifest.json").write_text(json.dumps(code_manifest(), indent=2, sort_keys=True), encoding="utf-8", newline="\n")
     sources = plan["sources"] if plan else []
-    (provenance / "input_hashes.json").write_text(json.dumps(sources, indent=2, sort_keys=True), encoding="utf-8")
+    (provenance / "input_hashes.json").write_text(json.dumps(sources, indent=2, sort_keys=True), encoding="utf-8", newline="\n")
 
 
 def _derive_state(stages: list[dict]) -> tuple[str, int, str | None]:
@@ -686,7 +686,7 @@ def resume_command(run: str | Path) -> tuple[dict, int]:
             if (root / name).exists():
                 (root / name).unlink()
         _write_provenance(root, config, plan)
-        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(config_path)}), encoding="utf-8")
+        (root / "provenance" / "config_source.json").write_text(json.dumps({"config_path": str(config_path)}), encoding="utf-8", newline="\n")
         status = _finalize(root, config, ledger, run_id, plan_hash, started, report=True)
     payload = {"run_id": run_id, "state": status["state"], "exit_code": status["exit_code"], "plan_hash": plan_hash, "reused": ledger.reused,
                "invalidated": ledger.invalidated, "abandoned_temporaries": abandoned}

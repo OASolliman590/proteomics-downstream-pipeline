@@ -39,16 +39,18 @@ pytestmark = pytest.mark.skipif(not _ready(), reason="NOT_RUN: Rscript/proteomic
 CLAIMS = {"descriptive", "exploratory_raw_p", "in_sample", "cross_validated_nested", "fixed_panel_cv", "independently_validated", "module_level"}
 MODULES = ("post_de_sets", "post_de_sensitivity", "post_de_association", "post_de_biomarker", "post_de_networks")
 C = "COMPLETED"
-EXPECTED = {   # module -> expected state or (state, reason code); written before any run
-    "two_group": dict.fromkeys(MODULES, C),
-    "three_group": dict.fromkeys(MODULES, C),
-    "paired": {**dict.fromkeys(MODULES, C), "post_de_networks": ("INAPPLICABLE", "E_COABUNDANCE_DESIGN_UNSUPPORTED")},
-    "repeated": {**dict.fromkeys(MODULES, C), "post_de_networks": ("INAPPLICABLE", "E_COABUNDANCE_DESIGN_UNSUPPORTED")},
-    "continuous_exposure": dict.fromkeys(MODULES, C),
-    "small_3v3": {**dict.fromkeys(MODULES, C), "post_de_biomarker": ("INAPPLICABLE", "E_BIOMARKER_SMALL_N"), "post_de_networks": ("INAPPLICABLE", "E_COABUNDANCE_SMALL_N")},
-    "unbalanced_15v80": dict.fromkeys(MODULES, C),
-    "large_200": dict.fromkeys(MODULES, C),
-    "human": dict.fromkeys(MODULES, C), "mouse": dict.fromkeys(MODULES, C), "rat": dict.fromkeys(MODULES, C),
+EXPECTED = {   # module -> expected state or (state, reason code); written before any run.  D-59: nothing is refused in these cells any more
+    **{name: dict.fromkeys(MODULES, C) for name in ("two_group", "three_group", "paired", "repeated", "continuous_exposure", "unbalanced_15v80", "large_200",
+                                                    "human", "mouse", "rat", "over_budget_biomarker", "adjusted_spearman", "aliased_phenotype")},
+    "small_3v3": {**dict.fromkeys(MODULES, C), "post_de_biomarker": ("INAPPLICABLE", "E_BIOMARKER_SMALL_N")},   # validity floor: 4 units per class
+}
+ADAPTATIONS = {   # cell -> (capability, adaptation item, used) that must be recorded (D-59: never silent)
+    "paired": {("post_de_networks", "repeated_observations", "remove_subject")},
+    "repeated": {("post_de_networks", "repeated_observations", "subject_means")},
+    "small_3v3": {("post_de_networks", "units", "6 (exploratory)")},
+    "over_budget_biomarker": {("post_de_biomarker", "nested_cv_permutation", "repeats 2, B 99 (")},
+    "adjusted_spearman": {("post_de_association", "score", "spearman_partial")},
+    "aliased_phenotype": {("post_de_association", "score", "scope: within_group")},
 }
 ASSOCIATION_ORACLE = """a <- commandArgs(TRUE); Y <- as.matrix(read.delim(a[1], row.names = 1, check.names = FALSE, encoding = 'UTF-8'))
 o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); o <- o[match(colnames(Y), o$observation_id), ]
@@ -107,6 +109,13 @@ def _check_completed(out, module, cell):
         summary = [r for r in F.read_tsv(root / "robustness_summary.tsv") if r["contrast_id"] == cell["contrasts"][0]["id"]]
         assert {r["feature_id"] for r in summary if r["primary_member"] == "true"} == members
         assert all(0 <= float(r["robustness_fraction"]) <= 1 for r in summary if r["robustness_fraction"] != "NA")
+    elif module == "post_de_association" and cell["name"] == "adjusted_spearman":   # D-59: the partial form of the requested correlation, labelled
+        rows = F.read_tsv(root / "association_score.tsv")
+        assert {(r["correlation_requested"], r["correlation_used"], r["adjusted_for"]) for r in rows} == {("spearman", "spearman_partial", "group")}
+    elif module == "post_de_association" and cell["name"] == "aliased_phenotype":    # pooled refused, within-group analysis run instead
+        rows = F.read_tsv(root / "association_score.tsv")
+        assert {(r["scope"], r["group"]) for r in rows} == {("within_group", "B")}
+        assert any(r["analysis"] == "pooled" and r["reason_code"] == "E_PHENOTYPE_ALIASED" for r in F.read_tsv(root / "refusals.tsv"))
     elif module == "post_de_association":
         assert json.loads((root / "eligibility.json").read_text(encoding="utf-8"))["method"] == "model"
         rows = F.read_tsv(root / "association_score.tsv")
@@ -124,7 +133,8 @@ def _check_completed(out, module, cell):
     elif module == "post_de_biomarker":
         oof = F.read_tsv(root / "oof_predictions.tsv")
         cv = F.read_tsv(root / "cv_performance.tsv")[0]
-        assert (cv["classifier"], cv["selection"], cv["permutation_B"]) == ("penalized_logistic", "top_k_auc", "19")   # declared method, no silent switch
+        expected_b = "99" if cell["name"] == "over_budget_biomarker" else "19"                  # adapted to the compute guard (recorded) or as declared
+        assert (cv["classifier"], cv["selection"], cv["permutation_B"]) == ("penalized_logistic", "top_k_auc", expected_b)   # declared method, no silent switch
         assert cv["grouped_by"] == ("subject_id" if cell["design_overrides"] and cell["design_overrides"].get("blocking") else "biological_unit")
         assert abs(_auc([float(r["score"]) for r in oof], [int(r["label"]) for r in oof]) - float(cv["pooled_oof_auc"])) <= 1e-10
         null = F.read_tsv(root / "permutation_null.tsv")
@@ -135,9 +145,13 @@ def _check_completed(out, module, cell):
         assert {r["rule"] for r in rows} == {"wgcna_signed"}                        # the declared rule, never a silent switch
         modules = {r["feature_id"]: r["module"] for r in rows}
         planted = [modules[f] for f in cell["planted_module"]]
-        assert len(set(planted)) == 1 and planted[0] != "unassigned"                # the planted latent module
-        trait = {r["module"]: r for r in F.read_tsv(root / "module_trait.tsv")}
-        assert {r["family_id"] for r in trait.values()} == {"module_trait__group"} and planted[0] in trait
+        exploratory = {r["exploratory"] for r in rows} == {"true"}
+        if not exploratory:                                                           # recommended n: the planted latent module is recovered
+            assert len(set(planted)) == 1 and planted[0] != "unassigned"
+            trait = {r["module"]: r for r in F.read_tsv(root / "module_trait.tsv")}
+            assert {r["family_id"] for r in trait.values()} == {"module_trait__group"} and planted[0] in trait
+        else:                                                                         # below it: exploratory, flagged, still a typed module-level result
+            assert {r["claim_label"] for r in rows} == {"module_level"} and len(cell["observations"]) < 40
         if cell["name"] in ("human", "mouse", "rat"):
             row = F.read_tsv(root / "connectivity.tsv")[0]
             assert abs(float(row["p_value"]) - (int(row["k"]) + 1) / (int(row["null_draws"]) + 1)) <= 1e-15
@@ -163,6 +177,13 @@ def test_v167_every_module_completes_or_refuses_as_declared(tmp_path, name):
     plan = json.loads((out / "plan.json").read_text(encoding="utf-8"))
     found = {(c["capability"], s["analysis"], s["reason_code"]) for c in plan["capability_plan"] if c["capability"].startswith("post_de_") for s in (c.get("post_de") or {}).get("subanalyses", [])}
     assert SUBANALYSES.get(name, set()) <= found
+    recorded = [(c["capability"], a) for c in plan["capability_plan"] if c["capability"].startswith("post_de_") for a in (c.get("post_de") or {}).get("adaptations", [])]
+    for capability, item, used in ADAPTATIONS.get(name, set()):
+        assert any(cap == capability and a["item"] == item and (a["used"] == used or str(a["used"]).startswith(str(used))) for cap, a in recorded), (name, capability, item, recorded)
+    warnings = json.loads((out / "warnings.json").read_text(encoding="utf-8"))
+    assert bool(recorded) == any(w["code"] == "W_POST_DE_ADAPTED" for w in warnings)               # adaptations are never silent
+    report = json.loads((out / "report" / "report_data.json").read_text(encoding="utf-8"))["sections"]["post_de_eligibility"]
+    assert bool(recorded) == any(t["caption"].startswith("Adaptations") for t in report["tables"])
     report = json.loads((out / "post_de" / "eligibility" / "eligibility.json").read_text(encoding="utf-8"))
     assert {m["capability"]: m["state"] for m in report["modules"]} == {m: (e if e == C else e[0]) for m, e in EXPECTED[name].items()}
 
@@ -180,16 +201,16 @@ def test_v166_report_lists_every_module_with_distinct_states_and_dependencies(tm
     post = {"enabled": True,
             "sets": {"enabled": True, "definitions": [{"id": "primary_any", "rule": F.leaf("protein-primary", "B-A")}]},
             "sensitivity": {"enabled": True, "covariate_models": [{"id": "adj_sex", "add_covariates": [{"column": "sex", "type": "categorical"}]}], "influence": True},
-            "association": {"enabled": True, "phenotypes": [{"column": "score", "type": "numeric", "scope": "pooled"}]},                 # aliased: one group only
+            "association": {"enabled": True, "phenotypes": [{"column": "sex", "type": "ordinal", "scope": "pooled"}]},                   # ordinal without levels: cannot be scored
             "biomarker": {"enabled": True, "contrast": "B-A", "classifier": "random_forest", "cv": {"outer": {"k": 5, "repeats": 2}, "inner": {"k": 3}},
                           "selection": {"method": "top_k_auc", "k": [3]}, "permutation": {"enabled": False}, "single_feature": {"bootstrap": 200}},    # package absent
-            "networks": {"enabled": True, "coabundance": {"enabled": True, "min_units": 50}}}                                              # small n
+            "networks": {"enabled": True, "coabundance": {"enabled": True, "min_units": 50}}}                                              # small n: runs as exploratory (D-59)
     path = F.config(tmp_path / "data", files, groups=["A", "B"], contrasts=[B.contrast("B-A", "B", "A")], post_de=post)
     payload, code = workflow.run_command(path, tmp_path / "run")
     out = tmp_path / "run"
     states = {s["stage_id"]: (s["state"], s["reason_code"]) for s in payload["stages"]}
-    oracle = {"post_de_sets": ("COMPLETED", None), "post_de_sensitivity": ("COMPLETED", None), "post_de_association": ("INAPPLICABLE", "E_PHENOTYPE_ALIASED"),
-              "post_de_biomarker": ("NOT_RUN", "E_ENGINE_NOT_AVAILABLE"), "post_de_networks": ("INAPPLICABLE", "E_COABUNDANCE_SMALL_N")}
+    oracle = {"post_de_sets": ("COMPLETED", None), "post_de_sensitivity": ("COMPLETED", None), "post_de_association": ("INAPPLICABLE", "E_PHENOTYPE_ORDINAL_LEVELS"),
+              "post_de_biomarker": ("NOT_RUN", "E_ENGINE_NOT_AVAILABLE"), "post_de_networks": ("COMPLETED", None)}
     assert {k: states[k] for k in oracle} == oracle and payload["state"] == "PARTIAL"
     report = json.loads((out / "post_de" / "eligibility" / "eligibility.json").read_text(encoding="utf-8"))
     by = {m["capability"]: m for m in report["modules"]}

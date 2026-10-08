@@ -65,30 +65,94 @@ def _net(out):
 
 
 # ----------------------------------------------------------------------------- V161
-def test_v161_small_cohort_refused_large_cohort_runs(tmp_path, modules):
+def test_v161_small_cohort_runs_exploratory_and_large_cohort_runs(tmp_path, modules):
+    """D-59: below the declared minimum (20) the analysis runs as exploratory with a recorded adaptation."""
     payload, code, out = coab_run(tmp_path, n_per_group=6)
     stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_networks")
-    assert stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_COABUNDANCE_SMALL_N" and not _net(out).exists()
-    assert (_net(modules) / "modules.tsv").is_file()
+    assert code == 0 and stage["state"] == "COMPLETED"
+    rows = F.read_tsv(_net(out) / "modules.tsv")
+    assert {r["exploratory"] for r in rows} == {"true"} and {r["claim_label"] for r in rows} == {"module_level"}
+    eligibility = json.loads((_net(out) / "eligibility.json").read_text(encoding="utf-8"))
+    assert eligibility["summary"]["coabundance"]["exploratory"] is True and eligibility["summary"]["coabundance"]["n_units"] == 12
+    assert any(a["item"] == "units" and a["used"] == "12 (exploratory)" for a in eligibility["eligibility"]["adaptations"])
+    assert any(w["code"] == "W_POST_DE_ADAPTED" for w in json.loads((out / "warnings.json").read_text(encoding="utf-8")))
+    assert {r["exploratory"] for r in F.read_tsv(_net(modules) / "modules.tsv")} == {"false"}
 
 
-def test_v161_repeated_design_is_refused_with_its_design_reason(tmp_path):
+def test_v161_below_the_computable_minimum_is_refused_with_the_number(tmp_path):
+    """Fewer than 4 units: correlations are not computable (validity refusal, the number and the reason are stated)."""
+    from proteomics_pipeline.post_de import networks
+    pre = tmp_path / "preprocessing" / "primary"; pre.mkdir(parents=True)
+    ids = ["A1", "A2", "B1"]
+    B.write_tsv(pre / "matrix.tsv", [["feature_id"] + ids] + [[f"F{i:02d}", "1.0", "2.0", "3.5"] for i in range(1, 13)])
+    B.write_tsv(pre / "observed_mask.tsv", [["feature_id"] + ids] + [[f"F{i:02d}", "true", "true", "true"] for i in range(1, 13)])
+    config = {"design": {"group_column": "group", "group_levels": ["A", "B"], "blocking": {"mode": "none"}}, "runtime": {"seed": 1}}
+    observations = [{"observation_id": o, "group": o[0]} for o in ids]
+    decision = networks.plan_checks({"coabundance": {"enabled": True}}, config, {"observations": observations, "preprocessing_dir": tmp_path / "preprocessing"})
+    assert decision["state"] == "INAPPLICABLE" and decision["reason_code"] == "E_COABUNDANCE_SMALL_N" and "at least 4" in decision["reason"]
+
+
+def _repeated_run(tmp_path, kind):
     values, obs = F.coabundance_design(n_per_group=30)
-    for i, o in enumerate(obs):
-        o["subject_id"] = f"S{i % 30 + 1}"                                        # every subject observed in both groups (paired)
+    if kind == "paired":
+        for i, o in enumerate(obs):
+            o["subject_id"] = f"S{i % 30 + 1}"                                    # every subject observed in both groups
+    else:
+        for i, o in enumerate(obs):
+            o["subject_id"] = f"{o['group']}S{i % 15 + 1}"                        # two visits per subject, group constant within subject
     files = F.write_dataset(tmp_path / "data", values, obs)
-    networks = {"enabled": True, "coabundance": {"enabled": True, "min_units": 20, "min_module_size": 8, "bootstrap": 10, "seed": 5}}
+    networks = {"enabled": True, "coabundance": {"enabled": True, "min_units": 10, "min_module_size": 8, "bootstrap": 10, "seed": 5}}
     path = F.config(tmp_path / "data", files, groups=["A", "B"], contrasts=[B.contrast("B-A", "B", "A")], post_de={"enabled": True, "networks": networks},
                     design_overrides={"blocking": {"mode": "duplicate_correlation", "subject_column": "subject_id"}})
     payload, code = workflow.run_command(path, tmp_path / "run")
-    stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_networks")
-    assert code == 0 and stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_COABUNDANCE_DESIGN_UNSUPPORTED" and not _net(tmp_path / "run").exists()
+    assert code == 0, payload
+    return tmp_path / "run"
+
+
+REPEATED_ORACLE = """a <- commandArgs(TRUE); Y <- as.matrix(read.delim(a[1], row.names = 1, check.names = FALSE, encoding = 'UTF-8'))
+  o <- read.delim(a[2], colClasses = 'character', encoding = 'UTF-8'); o <- o[match(colnames(Y), o$observation_id), ]
+  m <- read.delim(a[3], colClasses = 'character', encoding = 'UTF-8'); e <- read.delim(a[4], check.names = FALSE, encoding = 'UTF-8')
+  if (a[5] == 'remove_subject') { R <- limma::removeBatchEffect(Y, batch = factor(o$subject_id), design = model.matrix(~ factor(o$group))); rows <- colnames(Y); grp <- o$group; subj <- o$subject_id } else { u <- sort(unique(o$subject_id)); R <- sapply(u, function(s) rowMeans(Y[, o$subject_id == s, drop = FALSE])); rows <- u; grp <- o$group[match(u, o$subject_id)]; subj <- NULL }
+  out <- list(rows = rows)
+  for (mod in setdiff(unique(m$module), 'unassigned')) { Z <- scale(t(R[m$feature_id[m$module == mod], rows])); out[[mod]] <- unname(prcomp(Z, center = FALSE)$x[, 1]) }
+  E <- t(as.matrix(e[match(rows, e$observation_id), grep('^M', names(e))])); colnames(E) <- rows
+  X <- if (is.null(subj)) model.matrix(~ factor(grp, levels = c('A', 'B'))) else model.matrix(~ factor(grp, levels = c('A', 'B')) + factor(subj))
+  eb <- limma::eBayes(limma::lmFit(E, X), trend = FALSE, robust = TRUE)
+  out$trait <- list(m = rownames(E), t = unname(eb$t[, 2]))
+  cat(jsonlite::toJSON(out, digits = NA))"""
+
+
+@pytest.mark.parametrize("kind, transform, n_rows", [("paired", "remove_subject", 60), ("repeated", "subject_means", 30)])
+def test_v161_repeated_designs_adapt_with_a_direct_oracle(tmp_path, kind, transform, n_rows):
+    """D-59: paired designs remove subject effects (group kept); repeated designs with group constant within subject use
+    subject means.  Eigengenes and module-trait statistics equal a direct computation written here."""
+    out = _repeated_run(tmp_path, kind)
+    rows = F.read_tsv(_net(out) / "modules.tsv")
+    assert {r["row_transform"] for r in rows} == {transform}
+    eig = F.read_tsv(_net(out) / "eigengenes.tsv")
+    assert len(eig) == n_rows
+    oracle = B.r_json(REPEATED_ORACLE, out / "preprocessing" / "primary" / "matrix.tsv", out / "preprocessing" / "primary" / "observations.tsv",
+                      _net(out) / "modules.tsv", _net(out) / "eigengenes.tsv", transform)
+    order = {r["observation_id"]: r for r in eig}
+    for mod in [k for k in oracle if k.startswith("M")]:
+        mine = [float(order[rid][mod]) for rid in oracle["rows"]]
+        assert all(abs(x - y) <= 1e-8 for x, y in zip(mine, oracle[mod])) or all(abs(x + y) <= 1e-8 for x, y in zip(mine, oracle[mod])), mod
+    trait = {r["module"]: r for r in F.read_tsv(_net(out) / "module_trait.tsv")}
+    for m, t in zip(oracle["trait"]["m"], oracle["trait"]["t"]):
+        assert abs(float(trait[m]["statistic"]) - t) <= 1e-8, m
+    adaptations = json.loads((_net(out) / "eligibility.json").read_text(encoding="utf-8"))["eligibility"]["adaptations"]
+    assert any(a["item"] == "repeated_observations" and a["used"] == transform for a in adaptations)
+    planted = {r["feature_id"]: r["module"] for r in rows}
+    assert len({planted[f"F{i:02d}"] for i in range(1, 13)}) == 1 and planted["F01"] != "unassigned"
 
 
 def test_v161_negative_coabundance_is_never_on_by_default(tmp_path, ppi):
-    with pytest.raises(ProteomicsError) as error:                                 # an enabled networks block with no declared analysis is refused
-        coab_run(tmp_path, coabundance=False, expect=None)
-    assert error.value.code == "E_NETWORKS_NOT_DECLARED" and not (tmp_path / "run" / "post_de").exists()
+    """An enabled networks block that declares nothing: the optional module is INAPPLICABLE and the DE results stand;
+    a required one rejects the plan."""
+    payload, code, out = coab_run(tmp_path / "opt", coabundance=False, expect=0)
+    stage = next(s for s in payload["stages"] if s["stage_id"] == "post_de_networks")
+    assert stage["state"] == "INAPPLICABLE" and stage["reason_code"] == "E_NETWORKS_NOT_DECLARED" and (out / "dea" / "zero_null.tsv").is_file()
+    assert not (_net(out) / "modules.tsv").exists()
     out = ppi[0]                                                                  # a PPI-only declaration builds no modules
     assert (_net(out) / "connectivity.tsv").is_file() and not (_net(out) / "modules.tsv").exists()
     assert json.loads((_net(out) / "eligibility.json").read_text(encoding="utf-8"))["summary"].get("coabundance") is None
@@ -268,10 +332,14 @@ def _accession_membership(out, snap):
 
 
 def test_v165_negative_genome_wide_null_is_refused(tmp_path):
+    """D-59: the genome-wide null is refused (E_NETWORK_UNIVERSE, recorded) and the measured-universe null runs instead."""
     path, _, _ = ppi_setup(tmp_path, null_universe="snapshot")
-    with pytest.raises(ProteomicsError) as error:
-        workflow.run_command(path, tmp_path / "run")
-    assert error.value.code == "E_NETWORK_UNIVERSE"
+    payload, code = workflow.run_command(path, tmp_path / "run")
+    assert code == 0, payload
+    refusals = F.read_tsv(_net(tmp_path / "run") / "refusals.tsv")
+    assert any(r["item"] == "null_universe" and r["reason_code"] == "E_NETWORK_UNIVERSE" for r in refusals)
+    rows = F.read_tsv(_net(tmp_path / "run") / "connectivity.tsv")
+    assert {r["universe"] for r in rows} == {"measured mapped genes in the snapshot"}
 
 
 def test_r14e_report_section(modules, ppi):

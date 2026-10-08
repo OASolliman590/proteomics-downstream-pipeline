@@ -2616,6 +2616,10 @@
                 }
               }
             },
+            "compute_policy": {
+              "enum": ["adapt", "refuse"],
+              "description": "D-59: adapt (default) scales repeats and permutations down to compute_guard_hours with a recorded adaptation; refuse is the opt-in strict mode (E_BIOMARKER_COMPUTE_GUARD)."
+            },
             "classifier_params": {
               "type": "object",
               "additionalProperties": false,
