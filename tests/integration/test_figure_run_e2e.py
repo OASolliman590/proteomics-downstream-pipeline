@@ -33,6 +33,7 @@ CONTRASTS = ("disease-control", "treated-disease")
 QC = ("qc_intensity_distributions", "qc_missingness_heatmap", "qc_sample_correlation_heatmap", "qc_pca_ellipses")
 EXPECTED_PHASE1 = frozenset(list(QC) + [f"{f}__{c}" for f in DIFFERENTIAL for c in CONTRASTS] + ["diff_upset_venn__primary"])
 EXPECTED_PERMANOVA = EXPECTED_PHASE1 | {"perm_pcoa_centroids__all", "perm_permdisp__all"}
+POSTDE_NOT_RUN = frozenset({"biomarker figures", "path_enrichment_dotplot__ora_up", "path_enrichment_dotplot__ora_down", "net_module_heatmap"})
 
 
 def _sha(path: Path) -> str:
@@ -57,7 +58,9 @@ def _assert_catalogue(out: Path, expected: frozenset[str]) -> None:
             assert _sha(path) == record["outputs"][kind]["sha256"], path.name
         assert (catalogue / f"{figure_id}.png").read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
         assert _sha(catalogue / record["source_path"]) == record["source_sha256"]
-    assert registry["retrofit"]["run_sources"] == []                 # no differential figure was skipped
+    # only the post-DE figures of modules that did not run may be skipped; no QC, differential or PERMANOVA figure is
+    skipped = {s["figure"] for s in registry["retrofit"]["run_sources"]}
+    assert skipped <= POSTDE_NOT_RUN, sorted(skipped)
 
 
 def _verify(out: Path) -> None:
