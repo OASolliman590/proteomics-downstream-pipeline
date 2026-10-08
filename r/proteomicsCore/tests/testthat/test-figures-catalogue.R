@@ -207,3 +207,19 @@ testthat::test_that("V222 distances equal betadisper; a P without its seed is re
   testthat::expect_s3_class(catalogue_permdisp(src), "ggplot")
   testthat::expect_error(catalogue_permdisp(read_fixture("perm_permdisp_no_seed_source.tsv")), "E_FIGURE_SOURCE_MISSING")
 })
+
+# ---------------------------------------------------------------- retrofit of existing figures (D-72)
+
+testthat::test_that("retrofit: a scatter of a registered table has one point per row and an unknown kind is refused", {
+  tmp <- tempfile(fileext = ".tsv")
+  on.exit(unlink(tmp), add = TRUE)
+  writeLines(c("feature_id\teffect_log2\tneg_log10_p\tq_at_or_below_cutoff",
+               "F1\t1.5\t3.2\ttrue", "F2\t-0.4\t0.8\tfalse", "F3\tNA\t2.0\tfalse"), tmp)
+  src <- utils::read.delim(tmp, stringsAsFactors = FALSE, na.strings = "NA", fileEncoding = "UTF-8")
+  opts <- list(x = "effect_log2", y = "neg_log10_p", flag_col = "q_at_or_below_cutoff", flag_values = list("true"),
+               xlab = "effect", ylab = "-log10 P", title = "t")
+  built <- ggplot2::ggplot_build(ns$retro_plot_scatter(src, opts))
+  testthat::expect_equal(nrow(built$data[[1]]), 2L)                 # the row with NA effect is not drawn
+  testthat::expect_equal(sort(built$data[[1]]$y), c(0.8, 3.2))
+  testthat::expect_error(ns$render_retrofit_png("no_such_kind", tmp, tempfile(fileext = ".png")), "E_FIGURE_SOURCE_MISSING")
+})

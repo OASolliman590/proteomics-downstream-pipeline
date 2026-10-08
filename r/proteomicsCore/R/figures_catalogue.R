@@ -518,3 +518,154 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("no renderer for figure %s", figure_id)))
   render_prism_png(plot, out_path, width_mm = width_mm, height_mm = height_mm)
 }
+
+# ---------------------------------------------------------------- retrofit of existing figures (D-72)
+#
+# The registered figure-source tables of the R10b, R14 producers are drawn here with the R16c theme. The Python retrofit rule
+# (figures/retrofit.py) chooses the kind and the column names; nothing is recomputed except the transformations the rule names
+# (absolute value, group means of the eigengenes). Refusals use the typed codes of the contract.
+
+retro_flag <- function(values, flag_values) {
+  if (is.null(flag_values) || !length(flag_values)) return(rep("other", length(values)))
+  ifelse(as.character(values) %in% as.character(flag_values), "flag", "other")
+}
+
+retro_plot_scatter <- function(source, o) {
+  source$.x <- as.numeric(source[[o$x]])
+  source$.y <- as.numeric(source[[o$y]])
+  if (isTRUE(o$abs_y)) source$.y <- abs(source$.y)
+  source <- source[is.finite(source$.x) & is.finite(source$.y), , drop = FALSE]
+  source$.flag <- if (!is.null(o$flag_col)) retro_flag(source[[o$flag_col]], o$flag_values) else rep("other", nrow(source))
+  p <- ggplot2::ggplot(source, ggplot2::aes(.x, .y, colour = .flag)) +
+    ggplot2::geom_point(size = 2, alpha = 0.85) +
+    ggplot2::scale_colour_manual(values = c(flag = "#D55E00", other = "grey60"), guide = "none") +
+    ggplot2::labs(x = o$xlab, y = o$ylab, title = o$title, caption = o$caption) + prism_figure_theme()
+  if (isTRUE(o$diagonal)) p <- p + ggplot2::geom_abline(linetype = "dashed", linewidth = 0.4, colour = "grey50")
+  p
+}
+
+retro_plot_curve_band <- function(source, o) {
+  band <- utils::read.delim(o$band_path, stringsAsFactors = FALSE, na.strings = "NA", fileEncoding = "UTF-8")
+  source$.x <- as.numeric(source[[o$x]])
+  source$.y <- as.numeric(source[[o$y]])
+  band$.x <- as.numeric(band[[o$band_x]])
+  band$.lo <- as.numeric(band[[o$band_lo]])
+  band$.hi <- as.numeric(band[[o$band_hi]])
+  ggplot2::ggplot() +
+    ggplot2::geom_ribbon(data = band, ggplot2::aes(.x, ymin = .lo, ymax = .hi), fill = "#D55E00", alpha = 0.18) +
+    ggplot2::geom_abline(linetype = "dashed", linewidth = 0.4, colour = "grey50") +
+    ggplot2::geom_step(data = source, ggplot2::aes(.x, .y), colour = "#D55E00", linewidth = 0.9, direction = "vh") +
+    ggplot2::coord_equal() +
+    ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
+    ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
+    ggplot2::labs(x = o$xlab, y = o$ylab, title = o$title, caption = o$caption) + prism_figure_theme()
+}
+
+retro_plot_histogram <- function(source, o) {
+  source$.x <- as.numeric(source[[o$x]])
+  source <- source[is.finite(source$.x), , drop = FALSE]
+  p <- ggplot2::ggplot(source, ggplot2::aes(.x)) +
+    ggplot2::geom_histogram(bins = 30, fill = "grey75", colour = "white") +
+    ggplot2::labs(x = o$xlab, y = "count", title = o$title, caption = o$caption) + prism_figure_theme()
+  if (!is.null(o$ref)) p <- p + ggplot2::geom_vline(xintercept = as.numeric(o$ref), colour = "#D55E00", linewidth = 0.8)
+  p
+}
+
+retro_plot_strip <- function(source, o) {
+  source$.x <- as.numeric(source[[o$x]])
+  source <- source[is.finite(source$.x), , drop = FALSE]
+  source$.g <- "repeats"
+  ggplot2::ggplot(source, ggplot2::aes(.g, .x)) +
+    ggplot2::geom_point(colour = "#0072B2", size = 2.4, alpha = 0.85, position = ggplot2::position_jitter(width = 0.08, height = 0, seed = 2026)) +
+    ggplot2::labs(x = NULL, y = o$xlab, title = o$title, caption = o$caption) + prism_figure_theme() +
+    ggplot2::theme(axis.text.x = ggplot2::element_blank(), axis.ticks.x = ggplot2::element_blank())
+}
+
+# Horizontal bars with the label on the axis, in the source order (the source is already ordered by the producer).
+retro_plot_bar <- function(source, o, descending = TRUE) {
+  source$.v <- as.numeric(source[[o$value]])
+  source$.l <- as.character(source[[o$label]])
+  source <- source[is.finite(source$.v), , drop = FALSE]
+  source$.l <- factor(source$.l, levels = rev(source$.l))
+  ggplot2::ggplot(source, ggplot2::aes(.v, .l)) +
+    ggplot2::geom_col(fill = "#4c78a8", width = 0.6) +
+    ggplot2::labs(x = o$xlab, y = NULL, title = o$title, caption = o$caption) + prism_figure_theme()
+}
+
+# Regions with their counts (UpSet-like bars), labelled by the defining sets, largest first.
+retro_plot_regions <- function(source, o) {
+  source$.v <- as.numeric(source[[o$value]])
+  source$.l <- as.character(source[[o$label]])
+  source <- source[order(-source$.v, source$.l), , drop = FALSE]
+  source$.l <- factor(source$.l, levels = rev(source$.l))
+  ggplot2::ggplot(source, ggplot2::aes(.v, .l)) +
+    ggplot2::geom_col(fill = "black", width = 0.6) +
+    ggplot2::geom_text(ggplot2::aes(label = .v), hjust = -0.2, size = 2.8) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.12))) +
+    ggplot2::labs(x = o$xlab, y = NULL, title = o$title, caption = o$caption) + prism_figure_theme()
+}
+
+# Tile heatmap of a long table: x and y are identifiers, fill the value (NA cells in grey).
+retro_plot_heat <- function(long, o) {
+  long$.x <- factor(as.character(long$.x), levels = unique(as.character(long$.x)))
+  long$.y <- factor(as.character(long$.y), levels = rev(unique(as.character(long$.y))))
+  limit <- max(abs(long$.v), na.rm = TRUE)
+  if (!is.finite(limit) || limit == 0) limit <- 1
+  ggplot2::ggplot(long, ggplot2::aes(.x, .y, fill = .v)) +
+    ggplot2::geom_tile(colour = "white", linewidth = 0.2) +
+    ggplot2::scale_fill_gradient2(low = "#0072B2", mid = "white", high = "#D55E00", midpoint = 0, limits = c(-limit, limit),
+                                  na.value = "grey90", name = o$fill_title) +
+    ggplot2::labs(x = o$xlab, y = o$ylab, title = o$title, caption = o$caption) + prism_figure_theme() +
+    ggplot2::theme(axis.text.y = ggplot2::element_text(size = 6))
+}
+
+retro_plot_association <- function(source, o) {
+  long <- data.frame(.x = as.character(source[[o$x]]), .y = as.character(source[[o$y]]), .v = as.numeric(source[[o$fill]]), stringsAsFactors = FALSE)
+  retro_plot_heat(long, o)
+}
+
+# Group means of the eigengenes (one column per module): the modules are the value columns of the source.
+retro_plot_eigen <- function(source, o) {
+  modules <- setdiff(names(source), c("observation_id", "group", "claim_label"))
+  groups <- unique(source$group)
+  long <- do.call(rbind, lapply(modules, function(m) data.frame(.x = groups, .y = m,
+    .v = vapply(groups, function(g) mean(as.numeric(source[[m]])[source$group == g]), numeric(1)), stringsAsFactors = FALSE)))
+  retro_plot_heat(long, o)
+}
+
+# Node-link drawing with the layout of the source (x, y), edges read from the companion table of the same stage.
+retro_plot_network <- function(source, o) {
+  edges <- utils::read.delim(o$edges_path, stringsAsFactors = FALSE, na.strings = "NA", fileEncoding = "UTF-8")
+  source$.x <- as.numeric(source[[o$x]])
+  source$.y <- as.numeric(source[[o$y]])
+  ids <- as.character(source[[o$label]])
+  edges$.x1 <- source$.x[match(edges[[o$edge_a]], ids)]
+  edges$.y1 <- source$.y[match(edges[[o$edge_a]], ids)]
+  edges$.x2 <- source$.x[match(edges[[o$edge_b]], ids)]
+  edges$.y2 <- source$.y[match(edges[[o$edge_b]], ids)]
+  edges <- edges[is.finite(edges$.x1) & is.finite(edges$.x2), , drop = FALSE]
+  ggplot2::ggplot() +
+    ggplot2::geom_segment(data = edges, ggplot2::aes(x = .x1, y = .y1, xend = .x2, yend = .y2), colour = "grey60", linewidth = 0.4) +
+    ggplot2::geom_point(data = source, ggplot2::aes(.x, .y), colour = "#0072B2", size = 3) +
+    ggplot2::geom_text(data = source, ggplot2::aes(.x, .y, label = .data[[o$label]]), size = 2.4, vjust = -1.1, family = "Arial") +
+    ggplot2::coord_equal(clip = "off") +
+    ggplot2::labs(x = NULL, y = NULL, title = o$title, caption = o$caption) + prism_figure_theme() +
+    ggplot2::theme(axis.text = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(), axis.line = ggplot2::element_blank())
+}
+
+# Renders one retrofitted figure from its registered source copy. `kind` and `options` come from the Python retrofit rule.
+render_retrofit_png <- function(kind, source_path, out_path, options = list(), width_mm = 120, height_mm = 100) {
+  source <- utils::read.delim(source_path, stringsAsFactors = FALSE, na.strings = "NA", fileEncoding = "UTF-8")
+  plot <- switch(kind,
+    scatter = retro_plot_scatter(source, options),
+    curve_band = retro_plot_curve_band(source, options),
+    histogram = retro_plot_histogram(source, options),
+    strip = retro_plot_strip(source, options),
+    bar = retro_plot_bar(source, options),
+    regions = retro_plot_regions(source, options),
+    heat_table = retro_plot_association(source, options),
+    eigen_means = retro_plot_eigen(source, options),
+    network = retro_plot_network(source, options),
+    catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("no retrofit renderer for kind %s", kind)))
+  render_prism_png(plot, out_path, width_mm = width_mm, height_mm = height_mm)
+}

@@ -105,6 +105,25 @@ Every `.pzfx` written by the pipeline holds, besides the figure's data table(s):
 
 The writer self-check covers the Statistics table values. The Info sheet uses the Prism `InfoSequence` and `Info` elements, with `Constant` name/value pairs and `Notes`. Readers that ignore the Info sheet (for example `pzfx::read_pzfx`) still read every data table.
 
+## Retrofit of existing figures (D-72)
+
+When `report.figures` is declared, the figures that the existing producers already register are produced through the catalogue with the three outputs, in `<run>/report/figure_catalogue/`. The figure IDs are the stems of the producers' registered figure-source tables. The producers are not changed: their tables (`figure_sources/<stem>.tsv`, and `heatmap_source.tsv` for the association heatmap) are the figure sources. Each stem is mapped to a figure kind by one rule (`proteomics_pipeline.figures.retrofit`); the registry records the kind of each figure.
+
+| Producer | Stems (rule) | Kind |
+|---|---|---|
+| R10b (report) | `volcano_zero_null_*`, `volcano_treat_*`; `response_axes` | scatter |
+| R14 sensitivity | `comparison_*`; `matched_n_discoveries`; `influence_max_effect_change` | scatter; histogram; scatter |
+| R14 biomarker | `roc_cv` (with `roc_cv_band`); `cv_auc_repeats`; `permutation_null`; `calibration`; `selection_stability` | curve with band; strip; histogram; scatter; bar |
+| R14 sets | `upset_all`; `venn_*` | regions |
+| R14 concordance | `concordance_*` | scatter |
+| R14 networks | `eigengenes`; `ppi_subnetwork` (edges from the stage's `ppi_subnetwork.tsv`) | group-mean heatmap; network |
+| R14 association | `association_heatmap` (`heatmap_source.tsv`) | heatmap |
+| R13 PERMANOVA | not retrofitted: the producer writes no figure-source table | - |
+
+A registered table with no rule is listed under `retrofit.not_retrofitted` in `registry.json`. A table whose rule needs a column that is absent, or a companion that is missing, is refused with `E_FIGURE_SOURCE_MISSING` and its outputs are NOT_RUN. Transformations are those named by a rule only: the absolute treatment effect of the response axes, group means of the eigengenes, equal-width bins of a histogram in the HTML, and the subnetwork edges from the companion table. The statistics table is omitted (the producer's inference is not recomputed), and the Info sheet records `Statistics: none` or `table` as the producer's table requires.
+
+The run writes the catalogue as the stage `figure_catalogue` after the report stages. An invalid `report.figures` block makes only that stage INAPPLICABLE with its typed reason; the run stays COMPLETED. `registry.json` holds the resolved style, the font-substitution record of the run, and the retrofit notes. The outputs are listed in `run_status.json` (artifact type `FigureArtifact`), so `proteomics verify` checks them.
+
 ## Figure IDs
 
 | Area | Figure ID | Packet | Source family or analysis | Claim or method label |

@@ -47,10 +47,15 @@ class FigureRegistry:
         self.directory = Path(directory)
         self.style = dict(style)
         self.figures: dict[str, dict[str, Any]] = {}
+        self.font_substitution: str | None = None     # recorded for the run (contracts/figures.md, registry.json)
+        self.retrofit: dict[str, Any] = {}            # the retrofit of existing figures (D-72): rules used and stems not retrofitted
 
-    def register(self, figure_id: str, source_table: str | Path) -> dict[str, Any]:
-        """Register a catalogue figure with its source table (copied into the catalogue, hashed)."""
-        if figure_id not in CATALOGUE:
+    def register(self, figure_id: str, source_table: str | Path, *, retrofit_kind: str | None = None) -> dict[str, Any]:
+        """Register a catalogue figure with its source table (copied into the catalogue, hashed).
+
+        A retrofitted figure of an existing producer (D-72) is registered with the figure kind chosen by its rule instead of a
+        catalogue ID; any other ID is refused (E_FIGURE_SOURCE_MISSING)."""
+        if figure_id not in CATALOGUE and retrofit_kind is None:
             raise ConfigurationError("E_FIGURE_SOURCE_MISSING", f"{figure_id!r} is not a catalogue figure", "/figure_id")
         source = Path(source_table)
         if not source.is_file():
@@ -59,7 +64,8 @@ class FigureRegistry:
         destination = self.directory / SOURCE_DIR / f"{figure_id}.tsv"
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(source.read_bytes())
-        record = {"state": "REGISTERED", "reason": None, "source_path": f"{SOURCE_DIR}/{figure_id}.tsv", "source_sha256": digest, "outputs": {}}
+        record = {"state": "REGISTERED", "reason": None, "source_path": f"{SOURCE_DIR}/{figure_id}.tsv", "source_sha256": digest, "outputs": {},
+                  "kind": retrofit_kind or "catalogue", "companions": {}}
         self.figures[figure_id] = record
         return dict(record)
 
@@ -93,7 +99,8 @@ class FigureRegistry:
     def write(self) -> Path:
         """Write registry.json (style, figures, outputs with SHA-256). UTF-8 with LF line endings."""
         self.directory.mkdir(parents=True, exist_ok=True)
-        document = {"schema": "figure-catalogue-registry/1", "style": self.style, "font_substitution": None,
+        document = {"schema": "figure-catalogue-registry/1", "style": self.style, "font_substitution": self.font_substitution,
+                    "retrofit": self.retrofit,
                     "catalogue": {key: {"packet": v[0], "area": v[1], "source_family": v[2], "claim_label": v[3]} for key, v in CATALOGUE.items()},
                     "figures": {key: self.figures[key] for key in sorted(self.figures)}}
         path = self.directory / REGISTRY_FILE
