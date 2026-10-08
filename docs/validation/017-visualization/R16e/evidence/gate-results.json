@@ -1,5 +1,5 @@
 {
-  "packet": "R16e (stages 1 to 3: figures, retrofit of existing figures, run wiring)",
+  "packet": "R16e (stages 1 to 4: figures, retrofit, run wiring, publication catalogue of a run)",
   "commands": [
     {
       "name": "pytest figure catalogue",
@@ -152,10 +152,34 @@
       "summary": "expectations=975 failed=0 skipped=0",
       "log": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
       "stage": 3
+    },
+    {
+      "name": "targeted: catalogue, retrofit and run end-to-end tests (stage 4)",
+      "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "all passed (6 + 19 + 40 = 65 tests)",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+      "stage": 4
+    },
+    {
+      "name": "full Python suite (final tree, stages 1 to 4)",
+      "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "559 passed, 0 failed, 0 skipped in 1802.62s (0:30:02)",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+      "stage": 4
+    },
+    {
+      "name": "full R testthat suite (final tree, stages 1 to 4)",
+      "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+      "exit_code": 0,
+      "summary": "expectations=975 failed=0 skipped=0",
+      "log": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
+      "stage": 4
     }
   ],
-  "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
-  "n_files": 68,
+  "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
+  "n_files": 70,
   "environment": {
     "platform": "macOS-26.7-x86_64-i386-64bit-Mach-O",
     "python": "3.13.15",

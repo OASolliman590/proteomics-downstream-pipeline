@@ -90,7 +90,7 @@ Run `proteomics run` as usual. The figures are written to `<run>/report/figure_c
 - `sources/<figure_id>.tsv`: the registered source table every output is drawn from;
 - `registry.json`: the resolved style, the font-substitution record (null when Arial is installed), the source and output SHA-256 of every figure, and the notes of the retrofit.
 
-The figures of the report (the volcano figures of the R10b report and the figures of the R14 post-DE analyses) are retrofitted from their registered tables; the PERMANOVA (R13) figures are not yet covered. `proteomics verify --run <run>` checks every figure file recorded in `run_status.json`.
+A run writes the publication catalogue of its primary-family analysis: the four QC figures, and for each primary contrast a labelled volcano, an MA plot, a DEP heatmap and a dot plot of the top DEPs with their P brackets, plus a Venn (or UpSet) of the DEPs across contrasts. When the PERMANOVA stage ran, its PCoA with centroids and PERMDISP plot are written for each feature set. The figures of the R14 post-DE analyses are retrofitted from their registered tables where a rule exists; the post-DE figures are not yet produced from a run. `proteomics verify --run <run>` checks every figure file recorded in `run_status.json`.
 
 To open a `.pzfx` file, start GraphPad Prism and choose File > Open, then select the file. The data are in the data tables; the statistics table and the Info sheet state the pipeline's own test and P values. Prism runs its own tests when you ask it to analyse the data, and those can differ from the pipeline's, so report the pipeline values from the statistics table. Opening the files in Prism is a manual check and is not run by the test suite.
 

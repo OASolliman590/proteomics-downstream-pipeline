@@ -7454,7 +7454,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7491,7 +7491,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7528,7 +7528,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7565,7 +7565,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7602,7 +7602,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7639,7 +7639,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7676,7 +7676,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }
@@ -7713,7 +7713,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+        "working_source_manifest_sha256": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
         "committed": "R16e stage-2 commits recorded in the R16e receipt; verified_commit null"
       }

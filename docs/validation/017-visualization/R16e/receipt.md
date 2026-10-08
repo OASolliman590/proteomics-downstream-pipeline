@@ -187,3 +187,54 @@ Reviewed by the coordinator: all eight figures rendered from the fixtures and ju
 5. Not run: opening any `.pzfx` in GraphPad Prism (manual Maintainer check); browser check of the HTML.
 6. Several retrofit kinds are derived views: the ROC band and the histogram bins in the HTML are equal-width bins computed from the table; the PNG histogram uses ggplot2's bins. The statistic values themselves are not recomputed.
 7. The commit trailers name Claude Opus 5.5, as the brief asks; the builder for this work is the Haiku route.
+
+## Part C: publication catalogue of a run (commits d0877f9, ce0a296)
+
+### What is implemented
+
+- The run writes its catalogue from registered tables built from its own outputs (`figures/run_sources.py`): the analysis matrix and its observed mask, the observations, the PCA scores and variance, the DE table of each primary-family contrast (family `protein-primary`, the role `primary` in `families.tsv`), and the PERMANOVA tables. Nothing recomputes a statistic: DE values are copied; MA means are means of the analysis matrix over observed cells; the DEP set is the family q at or below the cutoff.
+- Differential figures per primary contrast, with the contrast label as title: the labelled volcano (at most 10 labels by smallest q; dashed line at the largest family P among the rejections; up, down and not-significant classes); the MA plot; the clustered DEP heatmap (skipped with a recorded reason below 2 DEPs; none skipped here); and the dot plot of the top 6 DEPs by q with P brackets from the family table. Across the primary contrasts: a Venn of the DEPs (UpSet when there are more than three contrasts).
+- PERMANOVA, when the stage ran: PCoA with centroids and PERMDISP per feature set. The producer is not changed: `permanova/ordination.tsv`, `ordination_axes.tsv` and `tests.tsv` (typed FigureSource already) are read by the run-level builder. The PERMDISP P, the permutation count and the seed come from `tests.tsv`.
+- The R10b volcano tables are covered by the run's `diff_volcano_labelled__<contrast>` built from the same table; the retrofitted figures keep their titled renderers. The renderers take the title, the caption and the family threshold, and colour the heatmap group bar by group order.
+- The contract (retrofit and run-level sections) and the user guide are updated; ownership amendment 41 records the shared changes; the reason-code catalogue is unchanged.
+
+### Figures produced by the end-to-end run (final tree)
+
+Configuration `example-independent-figures.json` (phase 1), 13 figures, each with `.png`, `.pzfx` and `.html` (39 files, plus `registry.json` and `sources/`):
+
+1. `qc_intensity_distributions`
+2. `qc_missingness_heatmap`
+3. `qc_sample_correlation_heatmap`
+4. `qc_pca_ellipses`
+5. `diff_volcano_labelled__disease-control`
+6. `diff_ma_plot__disease-control`
+7. `diff_dep_heatmap_clustered__disease-control`
+8. `diff_protein_dotplot_brackets__disease-control`
+9. `diff_volcano_labelled__treated-disease`
+10. `diff_ma_plot__treated-disease`
+11. `diff_dep_heatmap_clustered__treated-disease`
+12. `diff_protein_dotplot_brackets__treated-disease`
+13. `diff_upset_venn__primary` (Venn of the two primary contrasts)
+
+Configuration `example-independent-permanova.json` (phase 2, PERMANOVA enabled): the same 13 and two more, `perm_pcoa_centroids__all` and `perm_permdisp__all` (15 figures, 45 output files).
+
+The visual check was made by reading the final renders of the PCA, missingness, intensity, volcano, MA, heatmap, dot plot, Venn, PCoA and PERMDISP figures. The missingness and intensity figures were checked after the last renderer change; the others before their final caption or colour changes, which were checked on rerun.
+
+### Gates and tests
+
+- Targeted (final code): `test_figure_run_e2e.py` (6: the exact expected set of each configuration, `proteomics verify` exit 0 with every figure file covered, the invalid block, the configuration without `report.figures`); `test_figure_retrofit.py` (19); `test_figure_catalogue.py` (40). Together 65 passed.
+- Regression, unit and text encoding: 91 passed. Spec kit: PASS.
+- Full Python suite on the final tree: **559 passed, 0 failed, 0 skipped** (1802.62 s; `evidence/stage2c-full-python-suite.log`). The count is below the previous 562 because two retrofit tests about the R10b volcano and one end-to-end case were replaced.
+- Full R testthat suite: **975 expectations, 0 failed, 0 skipped** (`evidence/stage2c-full-r-testthat.log`).
+- Ledger: unchanged, 188 PASS and 34 NOT_RUN. No V row was added.
+
+### Doubts for review
+
+1. Post-DE figures (ROC, forest, CV against the null, enrichment, module heatmap, network) are not yet produced from a run. Their renderers exist from part A, but the run-level mapping and their configurations are not done.
+2. The R13 producer was not changed. The brief asked for a producer change with an amendment. The producer already publishes the same data as FigureSource-typed tables, so the run-level builder reads them; I judged a change unnecessary. The Maintainer should confirm.
+3. The retrofitted scatter-type figures (sensitivity, concordance, calibration, influence, response axes) and the ROC and regions kinds still use the retrofit's own titled renderers, not the catalogue renderers. The R14 region tables could be mapped to the catalogue UpSet by expanding counts into rows; that is not done.
+4. The differential set is restricted to the primary family (`protein-primary`). The secondary contrast `treated-control` is not drawn.
+5. The MA plot's group means and the DEP heatmap's row scaling are derived from the analysis matrix, as the brief allows; no inference is recomputed.
+6. Not run: opening any `.pzfx` in GraphPad Prism (manual Maintainer check); a browser check of the HTML files.
+7. The end-to-end figure sets are fixed to these two synthetic configurations; a real study will produce a different set, and skipped figures are recorded in `registry.json`.
+8. The commit trailers name Claude Opus 5.5, as the brief asks; the builder for this work is the Haiku route.

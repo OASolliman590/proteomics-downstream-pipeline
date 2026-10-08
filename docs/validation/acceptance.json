@@ -6839,13 +6839,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -6921,6 +6933,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -7011,13 +7035,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7093,6 +7129,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -7183,13 +7231,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7265,6 +7325,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -7355,13 +7427,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7437,6 +7521,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -7527,13 +7623,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7609,6 +7717,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -7699,13 +7819,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7781,6 +7913,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -7871,13 +8015,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -7953,6 +8109,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8043,13 +8211,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -8125,6 +8305,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8215,13 +8407,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -8297,6 +8501,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8310,7 +8526,7 @@
       "requirement": "FR-215",
       "task": "T215",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8387,13 +8603,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -8469,6 +8697,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8482,7 +8722,7 @@
       "requirement": "FR-216",
       "task": "T216",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8559,13 +8799,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -8641,6 +8893,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8654,7 +8918,7 @@
       "requirement": "FR-217",
       "task": "T217",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8731,13 +8995,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -8813,6 +9089,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8826,7 +9114,7 @@
       "requirement": "FR-218",
       "task": "T218",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -8903,13 +9191,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -8985,6 +9285,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -8998,7 +9310,7 @@
       "requirement": "FR-219",
       "task": "T219",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -9075,13 +9387,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -9157,6 +9481,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -9170,7 +9506,7 @@
       "requirement": "FR-220",
       "task": "T220",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -9247,13 +9583,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -9329,6 +9677,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
@@ -9342,7 +9702,7 @@
       "requirement": "FR-221",
       "task": "T221",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -9419,13 +9779,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -9502,6 +9874,18 @@
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
       "expected_oracle": "The system MUST plot principal coordinates of the declared distance with group centroids computed from each group's members, and MUST NOT draw a centroid from the full sample.",
@@ -9514,7 +9898,7 @@
       "requirement": "FR-222",
       "task": "T222",
       "status": "PASS",
-      "reviewed_tree": "9ecc8463c5a6774f5c430c242e9f3815cf0b5e3dc133da629b4f260ba8bfe47d",
+      "reviewed_tree": "9ab88e1b856e4d8bd6cc96f7dfe97f58ae8d7f92775b8fba4e100552fa2492da",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/integration/test_figure_catalogue.py -q -rs -p no:cacheprovider",
@@ -9591,13 +9975,25 @@
         {
           "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
           "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests/integration/test_figure_run_e2e.py tests/integration/test_figure_retrofit.py tests/integration/test_figure_catalogue.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": ".venv/bin/python -m pytest tests -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript --vanilla -e \"res <- testthat::test_dir('r/proteomicsCore/tests/testthat', package='proteomicsCore', load_package='installed', reporter='summary', stop_on_failure=FALSE); ...\"",
+          "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16e/evidence/gate-results.json",
-          "sha256": "a957128d45d323dab536d0311f7325bccb8cf403e31ea6a2e1391052dc325707"
+          "sha256": "7eb1664c0e6c5bb7834692febfbc6a811dcee6ac54b82bb32c58cdfd96a9de73"
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/python-tests-catalogue.log",
@@ -9673,6 +10069,18 @@
         },
         {
           "path": "docs/validation/017-visualization/R16e/evidence/stage2b-full-r-testthat.log",
+          "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-targeted-python.log",
+          "sha256": "ddf1950a5738ed5f130a1b41b0d1311812d2ff4f751b39fbfaf1b35509670137"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-python-suite.log",
+          "sha256": "146416ce106e801eec03c18ce3e64defcf8fbc2ad47a968ee13308246e654030"
+        },
+        {
+          "path": "docs/validation/017-visualization/R16e/evidence/stage2c-full-r-testthat.log",
           "sha256": "3494e0799c034cd311c0136384965032989422437be5237cc3d85ad08d61e32b"
         }
       ],
