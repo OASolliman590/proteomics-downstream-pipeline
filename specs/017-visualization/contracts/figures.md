@@ -40,13 +40,15 @@ Group order is the declared group order of the frozen plan. A `group_colours` ma
 
 | P value | `stars` | `exact` |
 |---|---|---|
-| P ≥ 0.05 | `ns` | `p = ` two significant digits in plain decimal, for example `p = 0.20` |
-| 0.01 ≤ P < 0.05 | `*` | same rule, for example `p = 0.04` |
-| 0.001 ≤ P < 0.01 | `**` | same rule |
-| 0.0001 ≤ P < 0.001 | `***` | same rule, for example `p = 0.0004` |
+| P ≥ 0.05 | `ns` | `p = ` two significant digits in plain decimal, trailing zeros kept, for example `p = 0.20`, `p = 0.050` |
+| 0.01 ≤ P < 0.05 | `*` | same rule, for example `p = 0.040`, `p = 0.010` |
+| 0.001 ≤ P < 0.01 | `**` | same rule, for example `p = 0.0010` |
+| 0.0001 ≤ P < 0.001 | `***` | same rule, for example `p = 0.00040` |
 | P < 0.0001 | `****` | `p < 0.0001` |
 
 The annotation is computed from the P value in the source table. The rule applies to the family P value named in the figure (for example the zero-null family).
+
+**Note (review of R16a, commit 16bb03e).** The exact label has two significant digits and keeps trailing zeros. If the two-digit rounding would land on or above a significance threshold (0.05, 0.01, 0.001, 0.0001) from below, more significant digits are used until the label stays below it: `p = 0.04999` (not `p = 0.05`) and `p = 0.0499` (not `p = 0.05`). A value at or above a threshold is never rounded below it, so `0.05` reads `p = 0.050`. The stars and exact labels therefore always agree on significance.
 
 ## Output layout
 

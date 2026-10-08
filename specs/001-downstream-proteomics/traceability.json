@@ -6725,9 +6725,9 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "working_source_manifest_sha256": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
-        "committed": "R16a commit recorded in receipt.md; verified_commit null"
+        "committed": "local commit 16bb03e; review fix (p_annotation rule) committed separately, see the R16b receipt; verified_commit null"
       }
     },
     {
@@ -6760,9 +6760,9 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "working_source_manifest_sha256": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
-        "committed": "R16a commit recorded in receipt.md; verified_commit null"
+        "committed": "local commit 16bb03e; review fix (p_annotation rule) committed separately, see the R16b receipt; verified_commit null"
       }
     },
     {
@@ -6795,9 +6795,9 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "working_source_manifest_sha256": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
-        "committed": "R16a commit recorded in receipt.md; verified_commit null"
+        "committed": "local commit 16bb03e; review fix (p_annotation rule) committed separately, see the R16b receipt; verified_commit null"
       }
     },
     {
@@ -6830,9 +6830,9 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-08",
-        "working_source_manifest_sha256": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+        "working_source_manifest_sha256": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
         "independent_audit": "NOT_RUN (Opus review stage follows this receipt)",
-        "committed": "R16a commit recorded in receipt.md; verified_commit null"
+        "committed": "local commit 16bb03e; review fix (p_annotation rule) committed separately, see the R16b receipt; verified_commit null"
       }
     },
     {

@@ -15,7 +15,7 @@ Packet R16a (FR-195–FR-198 / T195–T198 / V195–V198) was implemented on 202
 | Command | Exit | Result | Log |
 |---|---|---|---|
 | `.venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider` | 0 | 16 passed | `evidence/python-tests-unit.log` |
-| `.venv/bin/python -m pytest tests/scientific/test_figure_style.py -q -rs -p no:cacheprovider` | 0 | 26 passed | `evidence/python-tests-scientific.log` |
+| `.venv/bin/python -m pytest tests/scientific/test_figure_style.py -q -rs -p no:cacheprovider` | 0 | 37 passed | `evidence/python-tests-scientific.log` |
 | `.venv/bin/python scripts/check_spec_kit.py` | 0 | PASS | `evidence/spec-kit-check.log` |
 | `.venv/bin/python -m pytest tests/regression tests/unit -q -p no:cacheprovider` | 0 | 85 passed | `evidence/regression-unit.log` |
 
@@ -28,11 +28,11 @@ The regression and unit run includes the reason-code catalogue test (V115), the 
 | V195 | PASS | the contract defaults written in the test (formats png, pzfx, html; dpi 300; width 120 mm; Okabe–Ito; Arial; exact). Absent and explicit-default configurations resolve to them, and the values are written to `registry.json` (`style`). | dpi 150 fails `E_FIGURE_DPI`; `formats: ["jpg"]` fails `E_FIGURE_FORMAT`; an unknown key fails `E_CONFIG_SCHEMA` (through `load_config` and the resolver). No figure or registry is written. |
 | V196 | PASS | Okabe–Ito hex values and the declared group order written in the test. Three figure types in two orders get the same colour for each group. | an order-dependent assigner fails `E_FIGURE_COLOUR_UNSTABLE`. |
 | V197 | PASS | the three registered catalogue IDs; the SHA-256 of each source table computed with `hashlib`. Each `sources/<id>.tsv` and every output (png, pzfx, html) equals its registered source. | a request without a source table fails `E_FIGURE_SOURCE_MISSING`; the renderer is never called and no file is written. A missing or changed source is refused. |
-| V198 | PASS | the synthetic fixture `tests/fixtures/figures/style/p_values.tsv` (0.2, 0.04, 0.0004, 1e-7): stars ns, *, \*\*\*, \*\*\*\*; exact p = 0.20, p = 0.04, p = 0.0004, p < 0.0001. Thresholds at the contract boundaries. | stars shown in exact mode fail; a missing, NaN or out-of-range P gives `E_FIGURE_SOURCE_MISSING`, so no annotation appears without its P value. |
+| V198 | PASS | the synthetic fixture `tests/fixtures/figures/style/p_values.tsv` (0.2, 0.04, 0.0004, 1e-7): stars ns, *, \*\*\*, \*\*\*\*; exact p = 0.20, p = 0.040, p = 0.00040, p < 0.0001 (after the review fix, see below). Thresholds at the contract boundaries. | stars shown in exact mode fail; a missing, NaN or out-of-range P gives `E_FIGURE_SOURCE_MISSING`, so no annotation appears without its P value. |
 
 ## Notes and decisions
 
-- **Exact P rule.** Two significant digits, plain decimal, trailing zeros removed and then padded to two decimals. This reproduces the contract examples (0.20, 0.04, 0.0004). The floor is `p < 0.0001`.
+- **Exact P rule (corrected after review).** Two significant digits, plain decimal, trailing zeros kept (0.20, 0.040, 0.00040, 0.010, 0.0010, 0.050). If the two-digit rounding would reach a threshold (0.05, 0.01, 0.001, 0.0001) from below, more digits are used (0.04999 gives `p = 0.04999`, not `p = 0.05`). The floor is `p < 0.0001`. The first implementation (16bb03e) trimmed trailing zeros and rounded across 0.05; the coordinator's review refuted both, and the fix commit is a separate commit whose tests fail on the old code (see the R16b receipt).
 - **Run settings.** The resolved style is written to `<run>/report/figure_catalogue/registry.json`, under `style`. `config.resolved.json` is written by `workflow.py`, which is outside the R16a allowlist, so the figure resolver is not yet called from `load_config` or the workflow. Wiring belongs to R16e.
 - **Unknown-key and typed codes.** The contract names no code for width, font or annotation values, so those use `E_CONFIG_SCHEMA`. The schema accepts any integer `dpi` and any string format, so that `E_FIGURE_DPI` and `E_FIGURE_FORMAT` come from the resolver, as the negative cases require.
 - **Registry.** Each source table is copied to `sources/<id>.tsv` and hashed. The original path is not recorded, so no private path enters the registry.

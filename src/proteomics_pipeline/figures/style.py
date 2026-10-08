@@ -81,21 +81,31 @@ def p_stars(p: Any) -> str:
     return "****"
 
 
-def p_exact(p: Any) -> str:
-    """Exact annotation: two significant digits in plain decimal, at least two decimals, floor at 0.0001 (FR-198).
+_THRESHOLDS = (0.05, 0.01, 0.001, 0.0001)
 
-    The rounding position is taken from the rounded two-digit value, so the digits always agree with the number shown.
+
+def _significant(value: float, digits: int) -> str:
+    """``value`` rounded to ``digits`` significant digits, in plain decimal, trailing zeros kept."""
+    exponent = int(f"{value:.{digits - 1}e}".split("e")[1])
+    return f"{value:.{max(0, digits - 1 - exponent)}f}"
+
+
+def p_exact(p: Any) -> str:
+    """Exact annotation (FR-198, figures.md note): two significant digits in plain decimal, trailing zeros kept
+    (0.2 -> 0.20, 0.01 -> 0.010, 0.001 -> 0.0010, 0.05 -> 0.050), floor at 0.0001.
+
+    A value below a significance threshold (0.05, 0.01, 0.001, 0.0001) is never shown as reaching it: if the two-digit
+    rounding would land on or above the threshold, more significant digits are used until it stays below
+    (0.04999 -> 0.04999, 0.0499 -> 0.0499). A value at or above a threshold is not rounded below it.
     """
     value = _p_value(p)
     if value < 0.0001:
         return "p < 0.0001"
-    exponent = int(f"{value:.1e}".split("e")[1])
-    decimals = max(0, 1 - exponent)
-    text = f"{value:.{decimals}f}"
-    if "." in text:
-        text = text.rstrip("0")
-    if "." not in text or len(text.split(".")[1]) < 2:
-        text = f"{value:.2f}"
+    for digits in range(2, 18):
+        text = _significant(value, digits)
+        rounded = float(text)
+        if not any(value < threshold <= rounded for threshold in _THRESHOLDS):
+            break
     return f"p = {text}"
 
 

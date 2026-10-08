@@ -80,9 +80,10 @@ def _p_fixture() -> list[dict]:
 def test_v198_fixture_annotations_equal_the_contract_table():
     rows = _p_fixture()
     assert [row["p"] for row in rows] == [0.2, 0.04, 0.0004, 1e-7]
-    # Oracle: stars ns, *, ***, **** and exact p = 0.20, p = 0.04, p = 0.0004, p < 0.0001 (contract FR-198 table).
+    # Oracle: stars ns, *, ***, **** and exact p = 0.20, p = 0.040, p = 0.00040, p < 0.0001 (contract FR-198 table and note).
     assert annotate_rows(rows, "stars") == ["ns", "*", "***", "****"]
-    assert annotate_rows(rows, "exact") == ["p = 0.20", "p = 0.04", "p = 0.0004", "p < 0.0001"]
+    # two significant digits, trailing zeros kept (figures.md note, fix after review of 16bb03e)
+    assert annotate_rows(rows, "exact") == ["p = 0.20", "p = 0.040", "p = 0.00040", "p < 0.0001"]
 
 
 @pytest.mark.parametrize(("p", "stars"), [
@@ -94,10 +95,31 @@ def test_v198_star_thresholds_follow_the_contract(p, stars):
 
 
 @pytest.mark.parametrize(("p", "exact"), [
-    (0.05, "p = 0.05"), (0.0001, "p = 0.0001"), (0.00009, "p < 0.0001"), (1.0, "p = 1.00"), (0.0999, "p = 0.10"),
+    (0.05, "p = 0.050"), (0.01, "p = 0.010"), (0.001, "p = 0.0010"), (0.0001, "p = 0.00010"), (0.00009, "p < 0.0001"),
+    (1.0, "p = 1.0"), (0.0999, "p = 0.10"), (0.00999, "p = 0.00999"), (0.2, "p = 0.20"),
+    # rounding must not cross a threshold from below: more significant digits are used
+    (0.04999, "p = 0.04999"), (0.0499, "p = 0.0499"),
 ])
 def test_v198_exact_rounding_follows_the_contract(p, exact):
     assert p_annotation(p, "exact") == exact
+
+
+# Outputs of the first implementation (commit 16bb03e), refuted by the coordinator's review: they must fail.
+OLD_EXACT_OUTPUTS = {0.04999: "p = 0.05", 0.0499: "p = 0.05"}
+
+
+@pytest.mark.parametrize("p", [0.04999, 0.0499])
+def test_v198_negative_a_label_never_reads_as_non_significant_when_stars_say_significant(p):
+    # stars gives '*' here; the exact label must also read below 0.05, so the old "p = 0.05" fails
+    assert p_annotation(p, "stars") == "*"
+    assert float(p_annotation(p, "exact").split("=")[1]) < 0.05
+    assert p_annotation(p, "exact") != OLD_EXACT_OUTPUTS[p]
+
+
+@pytest.mark.parametrize(("p", "old"), [(0.01, "p = 0.01"), (0.001, "p = 0.001"), (0.05, "p = 0.05")])
+def test_v198_negative_trailing_zeros_are_kept_so_the_old_short_labels_fail(p, old):
+    assert p_annotation(p, "exact") != old
+    assert len(p_annotation(p, "exact").split(".")[1]) == len(old.split(".")[1]) + 1
 
 
 def test_v198_negative_stars_never_appear_in_exact_mode():

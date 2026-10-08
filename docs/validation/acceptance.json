@@ -6174,7 +6174,7 @@
       "requirement": "FR-195",
       "task": "T195",
       "status": "PASS",
-      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "reviewed_tree": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
@@ -6197,15 +6197,15 @@
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
-          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+          "sha256": "3912d574403577e493927815b77e43be85fdbec7e1d5475e10aee7fb5bf1de2f"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
-          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+          "sha256": "ceb1f43f9a00610a82f72126bc690b6420161f359f18a310946ec0e049593a78"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
-          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+          "sha256": "720de4d197dadb0d549911f6572e6818fa523f2a0babd1976c5822b45576fabf"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
@@ -6213,7 +6213,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
-          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+          "sha256": "1ffe450ee68a065971feddedb5d3b961775c8eb41ff5dbb0ba8b5e3da8242e94"
         }
       ],
       "expected_oracle": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85 or 180; default 85), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
@@ -6226,7 +6226,7 @@
       "requirement": "FR-196",
       "task": "T196",
       "status": "PASS",
-      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "reviewed_tree": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
@@ -6249,15 +6249,15 @@
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
-          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+          "sha256": "3912d574403577e493927815b77e43be85fdbec7e1d5475e10aee7fb5bf1de2f"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
-          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+          "sha256": "ceb1f43f9a00610a82f72126bc690b6420161f359f18a310946ec0e049593a78"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
-          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+          "sha256": "720de4d197dadb0d549911f6572e6818fa523f2a0babd1976c5822b45576fabf"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
@@ -6265,7 +6265,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
-          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+          "sha256": "1ffe450ee68a065971feddedb5d3b961775c8eb41ff5dbb0ba8b5e3da8242e94"
         }
       ],
       "expected_oracle": "The system MUST colour groups from the Okabe–Ito palette in declared group order by default, or from an explicit `group_colours` mapping. The same group MUST have the same colour in every figure of a run, independent of figure order.",
@@ -6278,7 +6278,7 @@
       "requirement": "FR-197",
       "task": "T197",
       "status": "PASS",
-      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "reviewed_tree": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
@@ -6301,15 +6301,15 @@
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
-          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+          "sha256": "3912d574403577e493927815b77e43be85fdbec7e1d5475e10aee7fb5bf1de2f"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
-          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+          "sha256": "ceb1f43f9a00610a82f72126bc690b6420161f359f18a310946ec0e049593a78"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
-          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+          "sha256": "720de4d197dadb0d549911f6572e6818fa523f2a0babd1976c5822b45576fabf"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
@@ -6317,7 +6317,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
-          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+          "sha256": "1ffe450ee68a065971feddedb5d3b961775c8eb41ff5dbb0ba8b5e3da8242e94"
         }
       ],
       "expected_oracle": "The system MUST register each catalogue figure ID with its source table path and SHA-256 and MUST generate a figure only from its registered source table. A figure request without its source table MUST be refused with no output.",
@@ -6330,7 +6330,7 @@
       "requirement": "FR-198",
       "task": "T198",
       "status": "PASS",
-      "reviewed_tree": "9a7f826d366a8fe64b4e893e5207ff4dcf0c8fb71c2610dc0a43707fefa5a2ec",
+      "reviewed_tree": "9025734921e510f18cce86c147147920baa1dfa1bac8550832b7b9aeb546f65f",
       "commands": [
         {
           "command": ".venv/bin/python -m pytest tests/unit/test_figure_config.py -q -rs -p no:cacheprovider",
@@ -6353,15 +6353,15 @@
       "artifacts": [
         {
           "path": "docs/validation/017-visualization/R16a/evidence/gate-results.json",
-          "sha256": "e116b13e51ce084fd1e616ef6e9e42fe3b233d3d536e8e4e23cbfba7ea634b90"
+          "sha256": "3912d574403577e493927815b77e43be85fdbec7e1d5475e10aee7fb5bf1de2f"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-unit.log",
-          "sha256": "915abf6e3013302ef73970c963eb3c6ab123954f7590724a18abe0f03b651f65"
+          "sha256": "ceb1f43f9a00610a82f72126bc690b6420161f359f18a310946ec0e049593a78"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/python-tests-scientific.log",
-          "sha256": "6f7ac328809138dbbdacb9c79771235b743272a61d38f55e254d016b211fadb3"
+          "sha256": "720de4d197dadb0d549911f6572e6818fa523f2a0babd1976c5822b45576fabf"
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/spec-kit-check.log",
@@ -6369,7 +6369,7 @@
         },
         {
           "path": "docs/validation/017-visualization/R16a/evidence/regression-unit.log",
-          "sha256": "9124f931309f723b68e84caed1fd1af14915c5ff94ecc29aad7f156f669deeb3"
+          "sha256": "1ffe450ee68a065971feddedb5d3b961775c8eb41ff5dbb0ba8b5e3da8242e94"
         }
       ],
       "expected_oracle": "The system MUST annotate comparisons either as stars or as exact values, as declared. The annotation MUST be computed from the P value in the source table by the contract rule, and no annotation may appear without its P value in the source.",
