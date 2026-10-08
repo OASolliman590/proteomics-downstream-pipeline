@@ -6704,7 +6704,7 @@
       "packet": "R16a",
       "phase": 6,
       "capability": "`report.figures` configuration",
-      "criterion": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85 or 180; default 85), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
+      "criterion": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85, 120 or 180; default 120, D-74), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
       "scientific_rule": "SM25",
       "implementation_targets": [
         "src/proteomics_pipeline/figures/config.py"
@@ -6980,7 +6980,7 @@
       "packet": "R16c",
       "phase": 6,
       "capability": "PNG dimensions and data fidelity",
-      "criterion": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi and rounded to the nearest integer, and its plotted data MUST equal the source table as reported by `ggplot_build`.",
+      "criterion": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi, rounded down to an integer (the raster device truncates), and its plotted data MUST equal the source table as reported by `ggplot_build`.",
       "scientific_rule": "SM25",
       "implementation_targets": [
         "r/proteomicsCore/R/figures_prism_png.R"

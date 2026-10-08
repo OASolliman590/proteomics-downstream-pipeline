@@ -6216,7 +6216,7 @@
           "sha256": "1ffe450ee68a065971feddedb5d3b961775c8eb41ff5dbb0ba8b5e3da8242e94"
         }
       ],
-      "expected_oracle": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85 or 180; default 85), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
+      "expected_oracle": "The system MUST accept an optional `report.figures` block with `formats` (default `[\"png\", \"pzfx\", \"html\"]`), `dpi` (300; any other value for the PNG output is refused), `journal_width_mm` (85, 120 or 180; default 120, D-74), `palette`, `group_colours`, `font` and `p_annotation`, and MUST refuse unknown keys and unknown formats. Existing `report.figure_formats` keeps its meaning and is never merged silently into `report.figures`.",
       "observed": "see packet receipt and gate logs",
       "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN (Opus review stage follows this receipt)",
       "verified_commit": null
@@ -6581,7 +6581,7 @@
       "commands": [],
       "versions": {},
       "artifacts": [],
-      "expected_oracle": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi and rounded to the nearest integer, and its plotted data MUST equal the source table as reported by `ggplot_build`.",
+      "expected_oracle": "The system MUST export the PNG at the declared dpi, with pixel width equal to the width in inches multiplied by dpi, rounded down to an integer (the raster device truncates), and its plotted data MUST equal the source table as reported by `ggplot_build`.",
       "observed": "no execution recorded",
       "reviewer_conclusion": "NOT_RUN",
       "verified_commit": null,

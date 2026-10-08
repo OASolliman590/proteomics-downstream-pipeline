@@ -116,7 +116,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 **Oracle:** The annotation rule table in the contract, written in the test.
 
-**Exact assertion:** Stars mode gives ns, *, ***, and **** respectively under the contract thresholds. Exact mode gives p = 0.20, p = 0.04, p = 0.0004 and p < 0.0001 under the contract rounding (two significant digits, floor at 0.0001).
+**Exact assertion:** Stars mode gives ns, *, ***, and **** respectively under the contract thresholds. Exact mode gives p = 0.20, p = 0.040, p = 0.00040 and p < 0.0001 under the contract rounding (two significant digits with trailing zeros kept, never rounded onto or across a threshold, floor at 0.0001; review fix d2b8414).
 
 **Negative case:** Stars shown when the declared mode is exact fails.
 
