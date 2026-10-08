@@ -288,8 +288,87 @@ catalogue_text_labels <- function(plot) {
   unlist(lapply(built$data, function(d) if ("label" %in% names(d)) as.character(d$label) else character(0)), use.names = FALSE)
 }
 
+# ---------------------------------------------------------------- stage 2 (V215-V222)
+
+catalogue_cv_claim <- "cross_validated_nested"
+catalogue_panel_claims <- c("in_sample", "cross_validated_nested", "fixed_panel_cv", "independently_validated")
+catalogue_palette <- c("#0072B2", "#E69F00", "#D55E00", "#009E73", "#CC79A7", "#56B4E9", "#F0E442", "#000000")
+
+# The one claim label of a figure, which must be a frozen label (E_BIOMARKER_CLAIM otherwise).
+catalogue_claim <- function(source, allowed) {
+  labels <- unique(source$claim_label)
+  if (length(labels) != 1L || !labels %in% allowed) {
+    catalogue_refuse("E_BIOMARKER_CLAIM", sprintf("the claim label is %s; the figure needs one of %s",
+                                                  paste(sQuote(labels), collapse = ", "), paste(allowed, collapse = ", ")))
+  }
+  labels
+}
+
+# ROC with the stratified bootstrap band (V215). The curve and the band are the figure source (pROC, seed recorded).
+catalogue_roc_ci_band <- function(source) {
+  claim <- catalogue_claim(source, catalogue_cv_claim)
+  if (any(source$score_source != "out_of_fold")) {
+    catalogue_refuse("E_BIOMARKER_CLAIM", "the ROC is drawn from training-fold scores; only out-of-fold scores carry the cross-validated claim")
+  }
+  curve <- source[source$component == "curve", ]
+  band <- source[source$component == "band", ]
+  first <- source[1, ]
+  ggplot2::ggplot() +
+    ggplot2::geom_ribbon(data = band, ggplot2::aes(x = fpr, ymin = band_lower, ymax = band_upper), fill = "#D55E00", alpha = 0.18) +
+    ggplot2::geom_abline(linetype = "dashed", linewidth = 0.4, colour = "grey50") +
+    ggplot2::geom_step(data = curve, ggplot2::aes(x = fpr, y = sensitivity), colour = "#D55E00", linewidth = 0.9, direction = "vh") +
+    ggplot2::annotate("text", x = 0.42, y = 0.1, hjust = 0, size = 3.2, family = "Arial",
+                      label = sprintf("AUC = %.3f\n95%% CI %.3f-%.3f", first$auc, first$auc_lower, first$auc_upper)) +
+    ggplot2::coord_equal() +
+    ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
+    ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(0.01, 0.01)) +
+    ggplot2::labs(x = "1 - specificity", y = "sensitivity", title = "ROC with 95% CI band",
+                  caption = sprintf("claim: %s\nbootstrap band: seed %d, B = %d", claim, as.integer(first$seed), as.integer(first$B))) +
+    prism_figure_theme()
+}
+
+# Panel forest plot (V216): Case minus Control effects with their intervals, the claim label in the caption.
+catalogue_forest <- function(source) {
+  claim <- catalogue_claim(source, catalogue_panel_claims)
+  source$feature <- factor(source$feature, levels = rev(source$feature))
+  ggplot2::ggplot(source, ggplot2::aes(estimate, feature)) +
+    ggplot2::geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.4, colour = "grey50") +
+    ggplot2::geom_errorbar(ggplot2::aes(xmin = ci_lower, xmax = ci_upper), orientation = "y", width = 0.2, linewidth = 0.6) +
+    ggplot2::geom_point(size = 2.6, colour = "#0072B2") +
+    ggplot2::labs(x = "log2 difference (Case - Control), 95% CI", y = NULL, title = "Panel forest plot",
+                  caption = sprintf("claim: %s", claim)) +
+    prism_figure_theme()
+}
+
+# CV AUC against the permutation null (V217). The displayed P must equal (k + 1) / (B + 1) (E_FIGURE_PERMUTATION_P).
+catalogue_cv_permutation <- function(source) {
+  claim <- catalogue_claim(source, catalogue_cv_claim)
+  cv <- source[source$series == "cv_repeat", ]
+  nulls <- source[source$series == "null", ]
+  B <- as.integer(source$B[1])
+  if (nrow(nulls) != B) catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("the permutation null has %d values for B = %d", nrow(nulls), B))
+  observed <- mean(cv$value)
+  k <- as.integer(sum(nulls$value >= observed))
+  p <- (k + 1) / (B + 1)
+  if (any(abs(source$P_display - p) > 1e-12)) {
+    catalogue_refuse("E_FIGURE_PERMUTATION_P", sprintf("the displayed permutation P differs from (k + 1) / (B + 1) = %g with k = %d and B = %d", p, k, B))
+  }
+  nulls$x <- "permutation null"
+  cv$x <- "nested-CV repeats"
+  ggplot2::ggplot() +
+    ggplot2::geom_point(data = nulls, ggplot2::aes(x, value), colour = "grey60", size = 2, alpha = 0.85,
+                        position = ggplot2::position_jitter(width = 0.12, height = 0, seed = 2026)) +
+    ggplot2::geom_point(data = cv, ggplot2::aes(x, value), colour = "#0072B2", size = 2.4,
+                        position = ggplot2::position_jitter(width = 0.12, height = 0, seed = 2026)) +
+    ggplot2::geom_point(data = data.frame(x = "nested-CV repeats", value = observed), ggplot2::aes(x, value),
+                        shape = 23, fill = "black", colour = "black", size = 3.5) +
+    ggplot2::labs(x = NULL, y = "AUC", title = "CV AUC against permutation null",
+                  caption = sprintf("permutation P = %.3f = (k + 1) / (B + 1), B = %d\nclaim: %s", p, B, claim)) +
+    prism_figure_theme()
+}
+
 # Renders one catalogue figure to PNG (300 dpi, Prism style). `options` is a named list (labels, brackets, q_cutoff,
-# set_names, venn, variant).
+# set_names, venn, variant; stage 2: show_sets, modules).
 render_catalogue_png <- function(figure_id, source_path, out_path, options = list(), width_mm = 120, height_mm = 100) {
   source <- utils::read.delim(source_path, stringsAsFactors = FALSE, na.strings = "NA", fileEncoding = "UTF-8")
   plot <- switch(figure_id,
@@ -302,6 +381,9 @@ render_catalogue_png <- function(figure_id, source_path, out_path, options = lis
     diff_protein_dotplot_brackets = catalogue_dotplot_brackets(source, if (is.null(options$brackets)) NULL else as.data.frame(options$brackets, stringsAsFactors = FALSE)),
     diff_dep_heatmap_clustered = catalogue_dep_heatmap(source),
     diff_upset_venn = catalogue_upset_venn(source, options$set_names, isTRUE(options$venn)),
+    bio_roc_ci_band = catalogue_roc_ci_band(source),
+    bio_panel_forest = catalogue_forest(source),
+    bio_cv_auc_vs_permutation = catalogue_cv_permutation(source),
     catalogue_refuse("E_FIGURE_SOURCE_MISSING", sprintf("no renderer for figure %s", figure_id)))
   render_prism_png(plot, out_path, width_mm = width_mm, height_mm = height_mm)
 }

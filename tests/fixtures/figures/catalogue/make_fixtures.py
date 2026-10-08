@@ -196,6 +196,119 @@ def upset_venn() -> None:
     _tsv("diff_upset_venn_k5.tsv", ["feature", "A", "B", "C", "D", "E"], k5)
 
 
+# ---------------------------------------------------------------- stage 2 (R16e, V215-V222)
+#
+# Biomarker, pathway, network and PERMANOVA figures. The analysis values of each source (ROC curve and bootstrap band,
+# Welch intervals, permutation P, hypergeometric P and BH q, module eigengenes, principal coordinates, PERMDISP P) are
+# computed here with the R packages that the pipeline uses (pROC, stats, vegan), and written as the figure's source
+# table. The R renderers draw only from those tables; the tests recompute the same values independently.
+
+CV_LABEL = "cross_validated_nested"     # the frozen claim label of cross-validated results (post_de_biomarker.R)
+ROC_SEED = 20261008
+ROC_BOOTSTRAPS = 2000
+PERMDISP_SEED = 20261003
+PERMDISP_B = 199
+
+
+def _r_json(code: str, args: list) -> dict:
+    result = run_r_code(code, args, cwd=HERE)
+    if result.returncode != 0:
+        raise SystemExit(f"R fixture step failed: {result.stderr[-600:]}")
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def bio_roc() -> None:
+    """V215: 15 controls and 15 cases with planted separation; out-of-fold scores (the analysis input), then the ROC curve,
+    the stratified bootstrap band (pROC ci.se, seed recorded) and the AUC (the figure source)."""
+    scores = []
+    for i in range(15):
+        scores.append([f"C{i + 1:02d}", "Control", round(0.8 * math.sin(1.7 * i + 0.4), 6), "out_of_fold"])
+        scores.append([f"K{i + 1:02d}", "Case", round(1.0 + 0.9 * math.sin(1.3 * i + 1.1), 6), "out_of_fold"])
+    _tsv("bio_roc_scores.tsv", ["unit_id", "class", "score", "score_source"], scores)
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "suppressPackageStartupMessages(library(pROC))\n"
+        "d <- read.delim(args[1], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "r <- roc(response = d$class, predictor = d$score, levels = c('Control', 'Case'), direction = '<', quiet = TRUE)\n"
+        "ci <- as.numeric(ci.auc(r, method = 'delong'))\n"
+        "sp_grid <- seq(0, 1, 0.02)\n"
+        f"set.seed({ROC_SEED})\n"
+        f"se <- ci.se(r, specificities = sp_grid, boot.n = {ROC_BOOTSTRAPS})\n"
+        "curve <- data.frame(fpr = 1 - r$specificities, sensitivity = r$sensitivities)\n"
+        "curve <- curve[order(curve$fpr, curve$sensitivity), ]\n"
+        "out <- list(auc = as.numeric(pROC::auc(r)), auc_lower = ci[1], auc_upper = ci[3],\n"
+        "  curve_fpr = curve$fpr, curve_sensitivity = curve$sensitivity,\n"
+        "  band_fpr = 1 - sp_grid, band_lower = se[, 1], band_upper = se[, 3])\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = _r_json(code, [HERE / "bio_roc_scores.tsv"])
+    n_control, n_case = 15, 15
+    header = ["component", "fpr", "sensitivity", "band_lower", "band_upper", "auc", "auc_lower", "auc_upper", "n_control", "n_case",
+              "claim_label", "score_source", "seed", "B"]
+    common = [result["auc"], result["auc_lower"], result["auc_upper"], n_control, n_case, CV_LABEL, "out_of_fold", ROC_SEED, ROC_BOOTSTRAPS]
+    rows = [["curve", f, s, NAN, NAN] + common for f, s in zip(result["curve_fpr"], result["curve_sensitivity"])]
+    rows += [["band", f, NAN, lo, hi] + common for f, lo, hi in zip(result["band_fpr"], result["band_lower"], result["band_upper"])]
+    _tsv("bio_roc_ci_band_source.tsv", header, rows)
+    # the same figure from a training-fold (in-sample) score set: refused by V215 (E_BIOMARKER_CLAIM)
+    training = [list(r) for r in rows]
+    for r in training:
+        r[header.index("claim_label")] = "in_sample"
+        r[header.index("score_source")] = "training_fold"
+    _tsv("bio_roc_ci_band_training_source.tsv", header, training)
+
+
+PANEL_FEATURES = ["PANEL1", "PANEL2", "PANEL3", "PANEL4", "PANEL5"]
+PANEL_EFFECTS = [1.2, 0.8, 0.0, -0.6, 0.4]
+
+
+def bio_panel_forest() -> None:
+    """V216: five panel features, ten units per group; Welch intervals and P from stats::t.test, BH q across the panel."""
+    values = []
+    for f, feature in enumerate(PANEL_FEATURES):
+        for g, group in enumerate(("Control", "Case")):
+            for u in range(10):
+                value = 20.0 + 0.3 * f + (PANEL_EFFECTS[f] if group == "Case" else 0.0) + 0.4 * math.sin(0.7 * u + f + 1.3 * g)
+                values.append([feature, f"{group[0]}{u + 1:02d}", group, value])
+    _tsv("bio_panel_values.tsv", ["feature", "unit_id", "group", "value"], values)
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "d <- read.delim(args[1], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "feats <- unique(d$feature)\n"
+        "res <- lapply(feats, function(f) {\n"
+        "  x <- d[d$feature == f, ]\n"
+        "  t <- stats::t.test(x$value[x$group == 'Case'], x$value[x$group == 'Control'])\n"
+        "  data.frame(feature = f, estimate = unname(t$estimate[1] - t$estimate[2]), ci_lower = t$conf.int[1], ci_upper = t$conf.int[2],\n"
+        "    P = t$p.value, n_Control = sum(x$group == 'Control'), n_Case = sum(x$group == 'Case'))\n"
+        "})\n"
+        "res <- do.call(rbind, res)\n"
+        "res$q <- stats::p.adjust(res$P, method = 'BH')\n"
+        "cat(jsonlite::toJSON(as.list(res), auto_unbox = FALSE, digits = NA))\n"
+    )
+    result = _r_json(code, [HERE / "bio_panel_values.tsv"])
+    header = ["feature", "estimate", "ci_lower", "ci_upper", "P", "q", "n_Control", "n_Case", "claim_label"]
+    rows = [[result["feature"][i], result["estimate"][i], result["ci_lower"][i], result["ci_upper"][i], result["P"][i], result["q"][i],
+             result["n_Control"][i], result["n_Case"][i], CV_LABEL] for i in range(len(PANEL_FEATURES))]
+    _tsv("bio_panel_forest_source.tsv", header, rows)
+    _tsv("bio_panel_forest_unlabelled_source.tsv", header, [r[:-1] + [""] for r in rows])
+
+
+CV_REPEATS = [0.84, 0.79, 0.86, 0.81, 0.83]
+
+
+def bio_cv_auc() -> None:
+    """V217: five nested-CV repeat AUCs and a permutation null of B = 19 AUCs (planted near 0.5). The displayed P is
+    (k + 1) / (B + 1) with k the null values at or above the observed mean of the repeats (0 here: P = 0.05)."""
+    null = [0.5 + 0.09 * math.sin(2.3 * j + 0.7) for j in range(19)]
+    observed = sum(CV_REPEATS) / len(CV_REPEATS)
+    k = sum(1 for v in null if v >= observed)
+    p_display = (k + 1) / (19 + 1)
+    header = ["series", "value", "B", "seed", "P_display", "claim_label"]
+    rows = [["cv_repeat", v, 19, 20261009, p_display, CV_LABEL] for v in CV_REPEATS]
+    rows += [["null", v, 19, 20261009, p_display, CV_LABEL] for v in null]
+    _tsv("bio_cv_auc_vs_permutation_source.tsv", header, rows)
+    _tsv("bio_cv_auc_vs_permutation_wrong_p_source.tsv", header, [r[:4] + [0.1] + r[5:] for r in rows])
+
+
 def main() -> None:
     qc_intensity()
     qc_missingness()
@@ -206,6 +319,9 @@ def main() -> None:
     dotplot_brackets()
     dep_heatmap()
     upset_venn()
+    bio_roc()
+    bio_panel_forest()
+    bio_cv_auc()
 
 
 if __name__ == "__main__":

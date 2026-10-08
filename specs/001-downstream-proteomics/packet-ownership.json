@@ -1120,6 +1120,9 @@
         "specs/001-downstream-proteomics/packet-ownership.json"
       ],
       "change": "R16c and R16e (ADR 0012): the public figure functions (prism_figure_theme, prism_dot_plot, render_prism_png, png_size, figure_font_status, check_prism_style, layer_data_strings, theme_report, render_catalogue_png) are exported from proteomicsCore. The R01 export invariant in test-foundation.R is updated to the dispatch seam plus these functions; no other assertion of that test changes. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "change": "R16e stage 2 (ADR 0012, FR-215 to FR-217, V215 to V217): the reason-code catalogue gains E_FIGURE_PERMUTATION_P (the CV-AUC figure refuses a displayed permutation P that differs from (k + 1) / (B + 1)); the biomarker figure sources are synthetic fixtures computed with pROC and stats, labelled with the frozen claim labels of post_de_biomarker.R (cross_validated_nested for ROC and CV AUC, any frozen label for the panel plot; in_sample refused for a ROC); traceability status for FR-215 to FR-217 is PASS with evidence, the task checkboxes T215 to T217 are ticked, and the acceptance ledger is regenerated. The R16e allowlist itself is unchanged. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
     }
   ]
 }

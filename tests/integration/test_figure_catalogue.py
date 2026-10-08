@@ -546,3 +546,155 @@ def test_v214_upset_matrix_rows_carry_the_set_names_and_the_bars_carry_their_cou
     assert positions == sorted(positions)
     matrix_order = [labels.index(letter) for letter in sets]
     assert matrix_order == sorted(matrix_order)
+
+
+# ---------------------------------------------------------------- stage 2 (V215-V222)
+
+def _trace(figure: dict, name: str) -> dict:
+    return next(t for t in figure["data"] if t["name"] == name)
+
+
+def _pzfx_text(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def _r_roc_band(scores: Path, seed: int, boots: int) -> dict:
+    """The stratified bootstrap band of pROC::ci.se with the recorded seed, computed independently of the builder."""
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "suppressPackageStartupMessages(library(pROC))\n"
+        "d <- read.delim(args[1], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "r <- roc(response = d$class, predictor = d$score, levels = c('Control', 'Case'), direction = '<', quiet = TRUE)\n"
+        "sp_grid <- seq(0, 1, 0.02)\n"
+        "set.seed(as.integer(args[2]))\n"
+        "se <- ci.se(r, specificities = sp_grid, boot.n = as.integer(args[3]))\n"
+        "cat(jsonlite::toJSON(list(lower = se[, 1], upper = se[, 3]), auto_unbox = FALSE, digits = NA))\n"
+    )
+    result = run_r_code(code, [scores, seed, boots], cwd=scores.parent)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def _r_welch_panel(values: Path) -> dict:
+    """Welch estimates and 95 per cent intervals per feature by stats::t.test, computed independently of the builder."""
+    code = (
+        "args <- commandArgs(trailingOnly = TRUE)\n"
+        "d <- read.delim(args[1], stringsAsFactors = FALSE, fileEncoding = 'UTF-8')\n"
+        "out <- list()\n"
+        "for (f in unique(d$feature)) {\n"
+        "  x <- d[d$feature == f, ]\n"
+        "  t <- stats::t.test(x$value[x$group == 'Case'], x$value[x$group == 'Control'])\n"
+        "  out[[f]] <- list(estimate = unname(t$estimate[1] - t$estimate[2]), lower = t$conf.int[1], upper = t$conf.int[2], P = t$p.value)\n"
+        "}\n"
+        "cat(jsonlite::toJSON(out, auto_unbox = TRUE, digits = NA))\n"
+    )
+    result = run_r_code(code, [values], cwd=values.parent)
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout.strip().splitlines()[-1])
+
+
+def _auc_mann_whitney(cases: list[float], controls: list[float]) -> float:
+    """AUC as the proportion of case-control pairs ranked correctly (ties count one half), written here."""
+    wins = sum(1.0 if c > k else 0.5 if c == k else 0.0 for c in cases for k in controls)
+    return wins / (len(cases) * len(controls))
+
+
+def _roc_points(cases: list[float], controls: list[float]) -> set[tuple[float, float]]:
+    """(1 - specificity, sensitivity) at every threshold, with the origin; computed here from the scores."""
+    points = {(0.0, 0.0)}
+    for t in sorted(set(cases + controls), reverse=True):
+        points.add((sum(1 for k in controls if k >= t) / len(controls), sum(1 for c in cases if c >= t) / len(cases)))
+    return points
+
+
+# ---------------------------------------------------------------- V215: ROC with CI band
+
+def test_v215_curve_points_auc_and_band_equal_the_oracle_and_the_claim_label_is_printed(tmp_path):
+    result = _build(tmp_path, "bio_roc_ci_band", "bio_roc_ci_band_source.tsv")
+    _assert_three_outputs(result)
+    scores = _rows("bio_roc_scores.tsv")
+    cases = [float(r["score"]) for r in scores if r["class"] == "Case"]
+    controls = [float(r["score"]) for r in scores if r["class"] == "Control"]
+    source = _rows("bio_roc_ci_band_source.tsv")
+    # AUC: the source value equals the pairwise oracle (within 1e-10), and the figure prints it to three decimals
+    assert abs(float(source[0]["auc"]) - _auc_mann_whitney(cases, controls)) <= 1e-10
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    assert f"AUC {_auc_mann_whitney(cases, controls):.3f}" in json.dumps(_trace(figure, "ROC (out-of-fold)")["customdata"][0])
+    # curve: every drawn point equals the threshold oracle, and the set of points is the oracle set
+    drawn = {(round(x, 10), round(y, 10)) for x, y in zip(_trace(figure, "ROC (out-of-fold)")["x"], _trace(figure, "ROC (out-of-fold)")["y"])}
+    assert drawn == {(round(x, 10), round(y, 10)) for x, y in _roc_points(cases, controls)}
+    # band: the drawn lower and upper bounds equal the pROC bootstrap band with the recorded seed (within 1e-10)
+    band = _r_roc_band(FIX / "bio_roc_scores.tsv", int(source[0]["seed"]), int(source[0]["B"]))
+    lower = _trace(figure, "95% CI band, lower")
+    upper = _trace(figure, "95% CI band")
+    assert len(lower["y"]) == len(band["lower"]) == len(upper["y"]) == len(band["upper"])
+    assert max(abs(a - b) for a, b in zip(lower["y"], band["lower"])) <= 1e-10
+    assert max(abs(a - b) for a, b in zip(upper["y"], band["upper"])) <= 1e-10
+    # the claim label is in the source, in the figure title and in the Info sheet
+    assert {r["claim_label"] for r in source} == {"cross_validated_nested"}
+    assert "cross_validated_nested" in json.dumps(figure["layout"])
+    assert "cross_validated_nested" in _pzfx_text(Path(result["outputs"]["pzfx"]))
+
+
+def test_v215_negative_roc_from_training_fold_scores_fails_e_biomarker_claim(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "bio_roc_ci_band", "bio_roc_ci_band_training_source.tsv")
+    assert caught.value.code == "E_BIOMARKER_CLAIM"
+    assert not (tmp_path / "run" / "report" / "figure_catalogue" / "bio_roc_ci_band.html").exists()
+
+
+# ---------------------------------------------------------------- V216: panel forest plot
+
+def test_v216_estimates_and_intervals_equal_the_welch_oracle_and_the_claim_label_is_shown(tmp_path):
+    result = _build(tmp_path, "bio_panel_forest", "bio_panel_forest_source.tsv")
+    _assert_three_outputs(result)
+    oracle = _r_welch_panel(FIX / "bio_panel_values.tsv")
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    trace = _trace(figure, "panel effect")
+    assert trace["y"] == list(oracle)                                          # one row per feature, in source order
+    for i, feature in enumerate(trace["y"]):
+        est = oracle[feature]["estimate"]
+        assert abs(trace["x"][i] - est) <= 1e-10
+        assert abs((trace["x"][i] + trace["error_x"]["array"][i]) - oracle[feature]["upper"]) <= 1e-10
+        assert abs((trace["x"][i] - trace["error_x"]["arrayminus"][i]) - oracle[feature]["lower"]) <= 1e-10
+    stats = _pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=1)        # statistics table: effect, P, q, n
+    assert max(abs(a - oracle[f]["P"]) for a, f in zip(stats["P"], oracle)) <= 1e-12
+    assert "cross_validated_nested" in json.dumps(figure["layout"])
+    assert "cross_validated_nested" in _pzfx_text(Path(result["outputs"]["pzfx"]))
+
+
+def test_v216_negative_panel_plot_without_a_claim_label_fails_e_biomarker_claim(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "bio_panel_forest", "bio_panel_forest_unlabelled_source.tsv")
+    assert caught.value.code == "E_BIOMARKER_CLAIM"
+
+
+# ---------------------------------------------------------------- V217: CV AUC against the permutation null
+
+def test_v217_observed_auc_null_values_and_the_displayed_permutation_p_equal_the_oracle(tmp_path):
+    result = _build(tmp_path, "bio_cv_auc_vs_permutation", "bio_cv_auc_vs_permutation_source.tsv")
+    _assert_three_outputs(result)
+    rows = _rows("bio_cv_auc_vs_permutation_source.tsv")
+    cv = [float(r["value"]) for r in rows if r["series"] == "cv_repeat"]
+    null = [float(r["value"]) for r in rows if r["series"] == "null"]
+    boots = int(rows[0]["B"])
+    assert len(null) == boots == 19
+    observed = sum(cv) / len(cv)                                                # oracle: mean of the nested-CV repeats
+    k = sum(1 for v in null if v >= observed)
+    oracle_p = (k + 1) / (boots + 1)
+    figure = _figure_json(Path(result["outputs"]["html"]))
+    assert _trace(figure, "permutation null")["y"] == null                       # every null value
+    assert _trace(figure, "nested-CV repeat")["y"] == cv                         # every repeat value
+    assert abs(_trace(figure, "observed (mean of repeats)")["y"][0] - observed) <= 1e-12
+    assert abs(float(rows[0]["P_display"]) - oracle_p) <= 1e-12
+    title = figure["layout"]["title"]["text"]
+    assert f"permutation P = {oracle_p:.3f}" in title and f"B = {boots}" in title   # the P with B displayed
+    stats = _pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=1)
+    assert abs(stats["P"][0] - oracle_p) <= 1e-12
+
+
+def test_v217_negative_displayed_p_that_differs_from_the_oracle_fails_e_figure_permutation_p(tmp_path):
+    with pytest.raises(ConfigurationError) as caught:
+        _build(tmp_path, "bio_cv_auc_vs_permutation", "bio_cv_auc_vs_permutation_wrong_p_source.tsv")
+    assert caught.value.code == "E_FIGURE_PERMUTATION_P"
+    assert not (tmp_path / "run" / "report" / "figure_catalogue" / "bio_cv_auc_vs_permutation.png").exists()

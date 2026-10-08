@@ -1,4 +1,4 @@
-"""Figure catalogue, stage 1 (packet R16e; FR-206 to FR-214; V206-V214; ADR 0012).
+"""Figure catalogue, stages 1 and 2 (packet R16e; FR-206 to FR-222; V206-V222; ADR 0012).
 
 Each figure is generated from its registered source table (R16a registry): the source is copied into the catalogue, its SHA-256
 is recorded, and the three outputs are produced from that copy only:
@@ -40,6 +40,12 @@ STAGE1 = (
     "qc_intensity_distributions", "qc_missingness_heatmap", "qc_sample_correlation_heatmap", "qc_pca_ellipses",
     "diff_volcano_labelled", "diff_ma_plot", "diff_protein_dotplot_brackets", "diff_dep_heatmap_clustered", "diff_upset_venn",
 )
+STAGE2 = ("bio_roc_ci_band", "bio_panel_forest", "bio_cv_auc_vs_permutation")
+# Claim labels of the biomarker results (post_de_biomarker.R). The cross-validated label is the only one a ROC or a
+# cross-validated AUC may carry; a panel plot may carry any frozen label (E_BIOMARKER_CLAIM otherwise).
+CV_CLAIM = "cross_validated_nested"
+PANEL_CLAIMS = ("in_sample", "cross_validated_nested", "fixed_panel_cv", "independently_validated")
+CLAIM_NOTE = "claim label {claim}: performance estimate from the pipeline, not a diagnostic or clinical-utility claim"
 
 
 def read_source(path: str | Path) -> list[dict[str, str]]:
@@ -124,11 +130,13 @@ def _regions(membership: Mapping[str, Sequence[int]], sets: Sequence[str]) -> li
     return out
 
 
-def _info(title: str, statistics: str, test: str, source_sha: str, group_sizes: str, notes: Sequence[str]) -> dict:
+def _info(title: str, statistics: str, test: str, source_sha: str, group_sizes: str, notes: Sequence[str], *,
+          multiplicity: str | None = None, effect_scale: str | None = None, stage: str = "R16e stage 1") -> dict:
     return info_sheet(title, {
-        "Test": test, "Multiplicity adjustment": "BH within figure family (as in the source table)" if statistics == "table" else "none (descriptive)",
-        "Effect scale": "log2 difference" if statistics == "table" else "not applicable", "Group sizes": group_sizes,
-        "Pipeline version and commit": "0.1.0.dev0 (R16e stage 1)", "Source table SHA-256": source_sha, "Run ID": "catalogue-fixture",
+        "Test": test,
+        "Multiplicity adjustment": multiplicity or ("BH within figure family (as in the source table)" if statistics == "table" else "none (descriptive)"),
+        "Effect scale": effect_scale or ("log2 difference" if statistics == "table" else "not applicable"), "Group sizes": group_sizes,
+        "Pipeline version and commit": f"0.1.0.dev0 ({stage})", "Source table SHA-256": source_sha, "Run ID": "catalogue-fixture",
         "Created (UTC)": CREATED, "Statistics": statistics,
     }, notes=list(notes) + ["A test run inside Prism may give a different P value from the pipeline's test."])
 
@@ -354,6 +362,139 @@ def _content_upset_venn(rows: list[dict], sha: str, sets: Sequence[str] = (), **
             "layout": _layout("UpSet (exclusive intersections)", "pattern (sets A..)", "count"), "png": {"set_names": list(sets)}, "regions": regions}
 
 
+# ---------------------------------------------------------------- stage 2 (V215-V222)
+
+def _claim_check(rows: Sequence[Mapping[str, str]], allowed: Sequence[str]) -> str:
+    """The one claim label of the figure, which must be frozen (allowed). E_BIOMARKER_CLAIM otherwise."""
+    labels = {r.get("claim_label", "") for r in rows}
+    if len(labels) != 1 or next(iter(labels)) not in allowed:
+        _refuse("E_BIOMARKER_CLAIM", f"the claim label is {sorted(labels)!r}; the figure needs one of {list(allowed)}")
+    return next(iter(labels))
+
+
+def _mean(values: Sequence[float]) -> float:
+    return sum(values) / len(values)
+
+
+def _content_roc(rows: list[dict], sha: str, **_: Any) -> dict:
+    """V215: ROC curve and stratified bootstrap band (pROC, seed recorded). Only out-of-fold scores with the cross-validated
+    label may be drawn (a training-fold ROC is refused as E_BIOMARKER_CLAIM)."""
+    claim = _claim_check(rows, (CV_CLAIM,))
+    if any(r["score_source"] != "out_of_fold" for r in rows):
+        _refuse("E_BIOMARKER_CLAIM", "the ROC is drawn from training-fold scores; only out-of-fold scores carry the cross-validated claim")
+    head = rows[0]
+    curve = [r for r in rows if r["component"] == "curve"]
+    band = [r for r in rows if r["component"] == "band"]
+    auc, lo, hi = float(head["auc"]), float(head["auc_lower"]), float(head["auc_upper"])
+    seed, boots = int(head["seed"]), int(head["B"])
+    n_control, n_case = int(head["n_control"]), int(head["n_case"])
+    cfpr = [float(r["fpr"]) for r in curve]
+    csens = [float(r["sensitivity"]) for r in curve]
+    bfpr = [float(r["fpr"]) for r in band]
+    blo = [float(r["band_lower"]) for r in band]
+    bhi = [float(r["band_upper"]) for r in band]
+    hover = "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>%{customdata[2]}<extra></extra>"
+    traces = [
+        {"type": "scatter", "mode": "lines", "name": "95% CI band, lower", "x": bfpr, "y": blo, "line": {"width": 0}, "showlegend": False,
+         "customdata": [["95% CI band (stratified bootstrap)", claim, f"lower sensitivity {v:.3f}; seed {seed}, B {boots}"] for v in blo],
+         "hovertemplate": hover},
+        {"type": "scatter", "mode": "lines", "name": "95% CI band", "x": bfpr, "y": bhi, "line": {"width": 0}, "fill": "tonexty",
+         "fillcolor": "rgba(213,94,0,0.18)",
+         "customdata": [["95% CI band (stratified bootstrap)", claim, f"upper sensitivity {v:.3f}; seed {seed}, B {boots}"] for v in bhi],
+         "hovertemplate": hover},
+        {"type": "scatter", "mode": "lines", "name": "chance", "x": [0.0, 1.0], "y": [0.0, 1.0], "line": {"dash": "dash", "color": "#9E9E9E", "width": 1},
+         "customdata": [["chance diagonal", claim, "no discrimination"]] * 2, "hovertemplate": hover},
+        {"type": "scatter", "mode": "lines", "name": "ROC (out-of-fold)", "x": cfpr, "y": csens, "line": {"shape": "hv", "color": "#D55E00", "width": 2.5},
+         "customdata": [["ROC (out-of-fold)", claim, f"AUC {auc:.3f} (95% CI {lo:.3f}-{hi:.3f})"] for _ in cfpr],
+         "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>1 - specificity %{x:.3f}"
+                          "<br>sensitivity %{y:.3f}<br>%{customdata[2]}<extra></extra>"},
+    ]
+    tables = [xy_table("ROC curve (out-of-fold)", "1 - specificity", "sensitivity", cfpr, csens),
+              xy_table("ROC CI band, lower", "1 - specificity", "sensitivity (lower)", bfpr, blo),
+              xy_table("ROC CI band, upper", "1 - specificity", "sensitivity (upper)", bfpr, bhi)]
+    notes = [f"AUC {auc:.3f} (95% CI {lo:.3f}-{hi:.3f}, DeLong); band from the stratified bootstrap with seed {seed} and B = {boots}.",
+             CLAIM_NOTE.format(claim=claim)]
+    return {"tables": tables, "statistics": None, "info": _info("ROC with CI band", "none", "pROC ROC; DeLong AUC CI; stratified bootstrap band",
+            sha, f"Control {n_control}; Case {n_case}", notes, multiplicity="none (performance estimate; no multiplicity family)",
+            effect_scale="not applicable", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout(f"ROC with 95% CI band ({claim})", "1 - specificity", "sensitivity"), "png": {}}
+
+
+def _content_forest(rows: list[dict], sha: str, **_: Any) -> dict:
+    """V216: panel effects with their 95 per cent intervals (Welch, per feature). The claim label must be frozen."""
+    claim = _claim_check(rows, PANEL_CLAIMS)
+    features = [r["feature"] for r in rows]
+    estimate = [float(r["estimate"]) for r in rows]
+    lo = [float(r["ci_lower"]) for r in rows]
+    hi = [float(r["ci_upper"]) for r in rows]
+    p_values = [float(r["P"]) for r in rows]
+    q_values = [float(r["q"]) for r in rows]
+    n_control, n_case = int(rows[0]["n_Control"]), int(rows[0]["n_Case"])
+    table = ColumnTable("panel forest (effect and 95% CI)", (("estimate", tuple(estimate)), ("ci_lower", tuple(lo)), ("ci_upper", tuple(hi))),
+                        row_titles=tuple(features))
+    stats = [{"row": f"{f}: Case - Control", "effect": e, "P": p, "q": q, "n": {"Control": n_control, "Case": n_case}}
+             for f, e, p, q in zip(features, estimate, p_values, q_values)]
+    tables = [table, statistics_table("panel forest - pipeline statistics", stats, ["Control", "Case"])]
+    traces = [
+        {"type": "scatter", "mode": "markers", "name": "panel effect", "x": estimate, "y": features,
+         "error_x": {"type": "data", "symmetric": False, "array": [h - e for h, e in zip(hi, estimate)],
+                     "arrayminus": [e - l for l, e in zip(lo, estimate)], "color": "#000000"},
+         "marker": {"color": "#0072B2", "size": 8},
+         "customdata": [[f, claim, f"P = {p:.3g}", f"q = {q:.3g}"] for f, p, q in zip(features, p_values, q_values)],
+         "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>effect %{x:.3f}<br>%{customdata[2]}"
+                          "<br>%{customdata[3]}<extra></extra>"},
+        {"type": "scatter", "mode": "lines", "name": "no difference", "x": [0.0, 0.0], "y": [features[0], features[-1]],
+         "line": {"dash": "dash", "color": "#9E9E9E", "width": 1}, "showlegend": False,
+         "customdata": [["no difference", claim, "effect 0", "zero line"]] * 2,
+         "hovertemplate": "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>%{customdata[2]}<extra></extra>"},
+    ]
+    notes = ["Effects are Case minus Control on the log2 scale (Welch t, 95% CI); q is BH across the panel.", CLAIM_NOTE.format(claim=claim)]
+    return {"tables": tables, "statistics": stats, "info": _info("panel forest", "table", "Welch t per panel feature (95% CI from t.test)", sha,
+            f"Control {n_control}; Case {n_case}", notes, multiplicity="BH within the panel family (q)", effect_scale="log2 difference", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout(f"Panel forest plot ({claim})", "log2 difference (Case - Control), 95% CI", "panel feature"), "png": {}}
+
+
+def _content_cv_permutation(rows: list[dict], sha: str, **_: Any) -> dict:
+    """V217: the observed cross-validated AUC (mean of the nested-CV repeats) against the permutation null; the displayed P
+    must equal (k + 1) / (B + 1), otherwise E_FIGURE_PERMUTATION_P."""
+    claim = _claim_check(rows, (CV_CLAIM,))
+    seed, boots = int(rows[0]["seed"]), int(rows[0]["B"])
+    cv = [float(r["value"]) for r in rows if r["series"] == "cv_repeat"]
+    null = [float(r["value"]) for r in rows if r["series"] == "null"]
+    if len(null) != boots:
+        _refuse("E_FIGURE_SOURCE_MISSING", f"the permutation null has {len(null)} values for B = {boots}")
+    observed = _mean(cv)
+    k = sum(1 for v in null if v >= observed)
+    p_value = (k + 1) / (boots + 1)
+    shown = {float(r["P_display"]) for r in rows}
+    if len(shown) != 1 or not math.isclose(next(iter(shown)), p_value, rel_tol=0, abs_tol=1e-12):
+        _refuse("E_FIGURE_PERMUTATION_P", f"the displayed permutation P {sorted(shown)} differs from (k + 1) / (B + 1) = {p_value:.6g} "
+                f"with k = {k} and B = {boots}")
+    table = column_table("CV AUC against permutation null", {"cv_repeat": cv + [None] * (boots - len(cv)), "null": null})
+    stats = [{"row": "observed CV AUC (mean of repeats) against permutation null", "effect": observed - _mean(null), "P": p_value, "q": None,
+              "n": {"cv_repeat": len(cv), "null": boots}}]
+    tables = [table, statistics_table("CV AUC - pipeline statistics", stats, ["cv_repeat", "null"])]
+    hover = "<b>%{customdata[0]}</b><br>claim: %{customdata[1]}<br>AUC %{customdata[2]:.3f}<br>B = %{customdata[3]}<extra></extra>"
+    traces = [
+        {"type": "scatter", "mode": "markers", "name": "permutation null", "x": ["permutation null"] * len(null), "y": null,
+         "marker": {"color": "#9E9E9E", "size": 7, "opacity": 0.85},
+         "customdata": [["permutation null", claim, v, boots] for v in null], "hovertemplate": hover},
+        {"type": "scatter", "mode": "markers", "name": "nested-CV repeat", "x": ["observed CV"] * len(cv), "y": cv,
+         "marker": {"color": "#0072B2", "size": 8},
+         "customdata": [["nested-CV repeat", claim, v, boots] for v in cv], "hovertemplate": hover},
+        {"type": "scatter", "mode": "markers", "name": "observed (mean of repeats)", "x": ["observed CV"], "y": [observed],
+         "marker": {"color": "#000000", "size": 12, "symbol": "diamond"},
+         "customdata": [["observed (mean of repeats)", claim, observed, boots]], "hovertemplate": hover},
+    ]
+    notes = [f"P = (k + 1) / (B + 1) = ({k} + 1) / ({boots} + 1) = {p_value:.4g}, one-sided (null AUC at or above the observed mean); seed {seed}.",
+             CLAIM_NOTE.format(claim=claim)]
+    return {"tables": tables, "statistics": stats, "info": _info("CV AUC against permutation null", "table",
+            "permutation test of the observed cross-validated AUC", sha, f"cv_repeat {len(cv)}; null {boots}", notes,
+            multiplicity="none (one observed statistic per figure)", effect_scale="AUC difference from the null mean", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout(f"CV AUC against permutation null (permutation P = {p_value:.3f}, B = {boots})", "", "AUC"),
+            "png": {}}
+
+
 _BUILDERS: dict[str, Callable[..., dict]] = {
     "qc_intensity_distributions": _content_intensity,
     "qc_missingness_heatmap": _content_missingness,
@@ -364,6 +505,9 @@ _BUILDERS: dict[str, Callable[..., dict]] = {
     "diff_protein_dotplot_brackets": _content_dotplot,
     "diff_dep_heatmap_clustered": _content_dep_heatmap,
     "diff_upset_venn": _content_upset_venn,
+    "bio_roc_ci_band": _content_roc,
+    "bio_panel_forest": _content_forest,
+    "bio_cv_auc_vs_permutation": _content_cv_permutation,
 }
 
 

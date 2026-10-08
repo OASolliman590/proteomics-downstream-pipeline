@@ -22,9 +22,9 @@
 - [x] T212 — R16e: implement FR-212 (Differential: per-protein dot plots with P brackets); establish and pass V212, including its negative case, with independent evidence.
 - [x] T213 — R16e: implement FR-213 (Differential: clustered DEP heatmap); establish and pass V213, including its negative case, with independent evidence.
 - [x] T214 — R16e: implement FR-214 (Differential: UpSet and Venn); establish and pass V214, including its negative case, with independent evidence.
-- [ ] T215 — R16e: implement FR-215 (Biomarker: ROC with CI band); establish and pass V215, including its negative case, with independent evidence.
-- [ ] T216 — R16e: implement FR-216 (Biomarker: panel forest plot); establish and pass V216, including its negative case, with independent evidence.
-- [ ] T217 — R16e: implement FR-217 (Biomarker: CV AUC against permutation null); establish and pass V217, including its negative case, with independent evidence.
+- [x] T215 — R16e: implement FR-215 (Biomarker: ROC with CI band); establish and pass V215, including its negative case, with independent evidence.
+- [x] T216 — R16e: implement FR-216 (Biomarker: panel forest plot); establish and pass V216, including its negative case, with independent evidence.
+- [x] T217 — R16e: implement FR-217 (Biomarker: CV AUC against permutation null); establish and pass V217, including its negative case, with independent evidence.
 - [ ] T218 — R16e: implement FR-218 (Pathways: enrichment dot plot); establish and pass V218, including its negative case, with independent evidence.
 - [ ] T219 — R16e: implement FR-219 (Networks: module heatmap); establish and pass V219, including its negative case, with independent evidence.
 - [ ] T220 — R16e: implement FR-220 (Networks: network graph); establish and pass V220, including its negative case, with independent evidence.

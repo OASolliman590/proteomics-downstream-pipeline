@@ -77,3 +77,42 @@ testthat::test_that("V206 negative: an intensity source without the observed mas
   src <- read_fixture("qc_intensity_distributions_imputed.tsv")
   testthat::expect_error(catalogue_qc_intensity(src), "E_FIGURE_SOURCE_IMPUTED")
 })
+
+# ---------------------------------------------------------------- stage 2 (V215-V222)
+
+testthat::test_that("V215 the ROC band equals pROC::ci.se with the recorded seed; a training-fold ROC is refused", {
+  src <- read_fixture("bio_roc_ci_band_source.tsv")
+  scores <- utils::read.delim(file.path(fixtures, "bio_roc_scores.tsv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  r <- pROC::roc(response = scores$class, predictor = scores$score, levels = c("Control", "Case"), direction = "<", quiet = TRUE)
+  set.seed(src$seed[1])
+  se <- pROC::ci.se(r, specificities = seq(0, 1, 0.02), boot.n = src$B[1])
+  band <- src[src$component == "band", ]
+  testthat::expect_equal(band$band_lower, unname(se[, 1]), tolerance = 1e-10)
+  testthat::expect_equal(band$band_upper, unname(se[, 3]), tolerance = 1e-10)
+  testthat::expect_s3_class(catalogue_roc_ci_band(src), "ggplot")
+  testthat::expect_error(catalogue_roc_ci_band(read_fixture("bio_roc_ci_band_training_source.tsv")), "E_BIOMARKER_CLAIM")
+})
+
+testthat::test_that("V216 forest estimates and intervals equal stats::t.test; a panel without a claim label is refused", {
+  src <- read_fixture("bio_panel_forest_source.tsv")
+  vals <- utils::read.delim(file.path(fixtures, "bio_panel_values.tsv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  for (i in seq_len(nrow(src))) {
+    x <- vals[vals$feature == src$feature[i], ]
+    t <- stats::t.test(x$value[x$group == "Case"], x$value[x$group == "Control"])
+    testthat::expect_equal(src$estimate[i], unname(t$estimate[1] - t$estimate[2]), tolerance = 1e-10)
+    testthat::expect_equal(src$ci_lower[i], t$conf.int[1], tolerance = 1e-10)
+    testthat::expect_equal(src$ci_upper[i], t$conf.int[2], tolerance = 1e-10)
+  }
+  testthat::expect_s3_class(catalogue_forest(src), "ggplot")
+  testthat::expect_error(catalogue_forest(read_fixture("bio_panel_forest_unlabelled_source.tsv")), "E_BIOMARKER_CLAIM")
+})
+
+testthat::test_that("V217 the displayed permutation P equals (k + 1) / (B + 1); a wrong displayed P is refused", {
+  src <- read_fixture("bio_cv_auc_vs_permutation_source.tsv")
+  observed <- mean(src$value[src$series == "cv_repeat"])
+  null <- src$value[src$series == "null"]
+  k <- sum(null >= observed)
+  testthat::expect_equal(src$P_display[1], (k + 1) / (src$B[1] + 1), tolerance = 1e-12)
+  testthat::expect_s3_class(catalogue_cv_permutation(src), "ggplot")
+  testthat::expect_error(catalogue_cv_permutation(read_fixture("bio_cv_auc_vs_permutation_wrong_p_source.tsv")), "E_FIGURE_PERMUTATION_P")
+})
