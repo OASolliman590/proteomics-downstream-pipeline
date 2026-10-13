@@ -52,16 +52,28 @@ End-to-end: a synthetic three-group study (control, disease, treated; 60 feature
 
 ## Full suites
 
-Recorded below after the final run on the reviewed tree (see the bottom of this file).
+Final run on the reviewed tree (after the follow-up group F1–F4):
+
+| Suite | Command | Exit | Result | Log |
+|---|---|---|---|---|
+| Full Python suite | `python -m pytest tests -q -rs -p no:cacheprovider` | 0 | 596 passed, 0 skipped (36 min) | `evidence/full-python-suite.log` |
+| Full R suite | `testthat::test_dir("r/proteomicsCore/tests/testthat", load_package = "installed", stop_on_failure = TRUE)` | 0 | 2249 expectations, 0 failed, 0 skipped, 20 files | `evidence/r-all-testthat.log` |
+
+The first full Python run of this stage (before F1 to F4) was stopped at about 24 percent: the post-DE generality test (`test_v167_*`) runs one full pipeline per cell and takes minutes per cell, so the run had not hung; it was stopped to start the final run. No result from that run is recorded.
+
+## Follow-up group F1 (review of stage 1): Welch primary feeds the whole run
+
+Recorded under A-2026-10-01-46. A welch primary now writes the `dea/` contract: `dea/zero_null.tsv` (the Welch rows with the shared envelope), `dea/families.tsv`, `dea/model_status.json` (engine welch, observed cells, no imputation), `welch_results.tsv`, `paper_compatible.tsv` and `eligibility.json`. The statistic label is `Welch t` (`paired t` for the paired variant). The report's dea section and the methods writers pick the primary differential stage (`dea/stage-result.json`), and describe a Welch model without limma moderation. The run catalogue draws the volcano, MA, dot-plot and Venn figures from the Welch `dea/` tables; `proteomics verify` returns exit 0. Post-DE association and eligibility consume the Welch families (the post-DE phase precheck now accepts Phase 5 as well as Phase 4). A welch primary cannot share a run with limma models (`E_PRIMARY_MODEL_CONFLICT`), because both would write `dea/`. The end-to-end tests are `test_f1_welch_primary_feeds_dea_report_figures_and_verify` and `test_f1_post_de_association_consumes_the_welch_dea_families`. The DEP heatmap is not asserted (it needs a discovery count that the synthetic study does not give).
 
 ## Gaps and doubts (for the reviewer)
 
-- **Downstream consumers are not wired.** Figures, post-DE modules and the report's complete-results section read `dea/` tables. A Welch-primary run has no `dea/` directory, so the report states "no differential rows exist for this run". The R15a allowlist excludes the report and post-DE producers; wiring them needs a further amendment.
+- **Heatmap.** The DEP heatmap is not asserted in the Welch end-to-end test; the figure appears only when the family has discoveries in the synthetic study.
 - **V169 (a) baseline.** The "identical to the R05 baseline" check compares the same configuration with and without a disabled `methods_extension` block, not an archived R05 artifact.
-- **New reason codes beyond the spec's table:** `E_WELCH_BIOLOGICAL_UNIT`, `E_WELCH_CONTRAST_NOT_PAIRWISE`, `E_WELCH_FAMILY_MIXED`, `E_WELCH_WEIGHTS_UNSUPPORTED`; the reason `insufficient_units_per_group` (not a code). The Maintainer should confirm them.
+- **New reason codes beyond the spec's table:** `E_WELCH_BIOLOGICAL_UNIT`, `E_WELCH_CONTRAST_NOT_PAIRWISE`, `E_WELCH_FAMILY_MIXED`, `E_WELCH_WEIGHTS_UNSUPPORTED`, `E_WELCH_MATRIX_UNSUPPORTED`; the reason `insufficient_units_per_group` (not a code). All are documented in `specs/016-methods-extension-validation/contracts/methods-extension.md` and in the regenerated reason-code catalogue. The Maintainer should confirm them.
+- **Role mapping (F4).** The spec's `secondary` is declared as `models[].role: sensitivity`, because the schema admits only `primary` and `sensitivity`. The mapping does not trigger `E_SENSITIVITY_PRIMARY_MODEL` (tested), and a sensitivity matrix on a welch model is refused (`E_WELCH_MATRIX_UNSUPPORTED`, tested).
 - **Coverage and weights.** Welch accepts only `available_case` coverage and no precision weights (`E_COVERAGE_POLICY_UNSUPPORTED`, `E_WELCH_WEIGHTS_UNSUPPORTED`).
 - **Phase label.** The stub report's phase label text ("Phase 1 thin offline report") is existing text and is not changed for phase 5 runs.
-- **Maintainer ratification.** Amendment A-2026-10-01-44, the ADR 0002 amendment and the phase-5 enum are drafted by the implementing route and pending Maintainer confirmation.
+- **Maintainer ratification.** Amendments A-2026-10-01-44 and A-2026-10-01-46, the ADR 0002 amendment and the phase-5 enum are drafted by the implementing route and pending Maintainer confirmation.
 
 ## Acceptance
 

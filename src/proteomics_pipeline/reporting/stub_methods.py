@@ -34,6 +34,9 @@ def render_methods(data: dict) -> str:
     lines += ["## Differential abundance", ""]
     if dea.get("state") == "COMPLETED":
         for model_id, settings in dea["settings"].items():
+            if settings.get("engine") == "welch":   # amendment A-2026-10-01-46
+                lines.append(f"- Model `{model_id}`: Welch t-test on genuinely observed cells; no limma moderation.")
+                continue
             lines.append(f"- Model `{model_id}`: limma {settings['limma_version']}, eBayes trend={str(settings['trend_applied']).lower()}, robust={str(settings['robust_applied']).lower()} "
                          f"(robust empirical-Bayes hyperparameters), exact contrast-as-coefficient refits, genuinely observed cells only.")
         for family in dea["families"]:

@@ -6,8 +6,8 @@ p.adjust(BH) applied per family. Synthetic marked fixtures only. Each case has a
 """
 from __future__ import annotations
 
-import hashlib
 import importlib.util
+import hashlib
 import itertools
 import json
 import socket
@@ -17,6 +17,8 @@ from pathlib import Path
 import pytest
 
 from proteomics_pipeline import gene_set_libraries as GSL
+from proteomics_pipeline import workflow
+from proteomics_pipeline.cli import main as cli_main
 from proteomics_pipeline.errors import ProteomicsError
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,6 +32,7 @@ def _load(name, path):
 
 
 G = _load("pathway_factory", ROOT / "tests" / "fixtures" / "methods_extension" / "pathway_libraries" / "factory.py")
+W = _load("welch_factory", ROOT / "tests" / "fixtures" / "methods_extension" / "welch" / "factory.py")
 B = _load("design_builders", ROOT / "tests" / "fixtures" / "design" / "builders.py")
 R_REQUIRED = pytest.mark.skipif(B.rscript() is None, reason="NOT_RUN: Rscript/proteomicsCore/limma unavailable")
 
@@ -90,7 +93,7 @@ def test_v174_run_records_the_same_hash_and_writes_the_manifest(tmp_path):
     gmt = Path(ROOT / "tests" / "fixtures" / "methods_extension" / "pathway_libraries" / "synthetic_small.gmt")
     result, out = _stage(tmp_path, [_decl("syn_small", gmt)], welch, background={"kind": "measured", "size": 12}, max_size=12)
     assert result["state"] == "COMPLETED", result
-    manifest = json.loads((out / "pathways" / "libraries.json").read_text(encoding="utf-8"))
+    manifest = json.loads((out / "libraries.json").read_text(encoding="utf-8"))
     record = manifest["libraries"][0]
     assert record["sha256"] == hashlib.sha256(gmt.read_bytes()).hexdigest()
     assert manifest["library_content_written"] is False and manifest["network"] == "none"
@@ -176,7 +179,7 @@ def test_v176_ora_p_values_equal_phyper_and_bh_stays_inside_the_family(tmp_path)
     gmt, welch, set_a, set_b, foreground, universe = _ora_fixture(tmp_path)
     result, out = _stage(tmp_path, [_decl("ora_lib", gmt)], welch, background={"kind": "measured", "size": 500}, max_size=500)
     assert result["state"] == "COMPLETED", result
-    rows = [r for r in _rows(out / "pathways" / "ora_ora_lib.tsv") if r["method"] == "ora_up"]
+    rows = [r for r in _rows(out / "ora_ora_lib.tsv") if r["method"] == "ora_up"]
     by_set = {r["set_id"]: r for r in rows}
     oracle = B.r_json(PHYPER, json.dumps({"N": 500, "K": [30, 30], "n": 40, "k": [8, 0]}))
     assert abs(float(by_set["SET_A"]["p_value"]) - oracle[0]) / oracle[0] <= 1e-12
@@ -234,7 +237,7 @@ def test_v177_prerank_on_welch_t_equals_brute_force_and_is_labelled_exploratory(
     gmt = G.write_gmt(tmp_path / "rank_lib.gmt", gene_sets)
     result, out = _stage(tmp_path, [_decl("rank_lib", gmt)], welch, background={"kind": "measured", "size": 10}, min_size=1, max_size=10, name="rank")
     assert result["state"] == "COMPLETED", result
-    rows = {r["set_id"]: r for r in _rows(out / "pathways" / "prerank_rank_lib.tsv")}
+    rows = {r["set_id"]: r for r in _rows(out / "prerank_rank_lib.tsv")}
     for set_id, members in gene_sets.items():
         es_oracle, p_oracle, n_subsets = _brute_force(stats_, set(members))
         assert abs(float(rows[set_id]["es"]) - es_oracle) <= 1e-12
@@ -276,7 +279,7 @@ def test_v178_each_library_method_contrast_is_its_own_family_with_bh_inside(tmp_
     lib_b = G.write_gmt(tmp_path / "fam_b.gmt", {"B1": universe[0:30], "B2": universe[20:50]})          # overlapping with A
     result, out = _stage(tmp_path, [_decl("fam_a", lib_a), _decl("fam_b", lib_b)], welch, background={"kind": "measured", "size": 120}, max_size=120, name="fam")
     assert result["state"] == "COMPLETED", result
-    table = _rows(out / "pathways" / "ora_fam_a.tsv") + _rows(out / "pathways" / "prerank_fam_a.tsv") + _rows(out / "pathways" / "ora_fam_b.tsv") + _rows(out / "pathways" / "prerank_fam_b.tsv")
+    table = _rows(out / "ora_fam_a.tsv") + _rows(out / "prerank_fam_a.tsv") + _rows(out / "ora_fam_b.tsv") + _rows(out / "prerank_fam_b.tsv")
     families = {}
     for r in table:
         families.setdefault(r["family_id"], []).append(r)
@@ -293,3 +296,67 @@ def test_v178_each_library_method_contrast_is_its_own_family_with_bh_inside(tmp_
     with pytest.raises(RuntimeError) as info:
         B.r_json(POOLED, json.dumps(pooled))
     assert "E_ENRICHMENT_FAMILY_POOLED" in str(info.value)
+
+
+# ----------------------------------------------------------------------------- F2: the libraries run inside a workflow
+SYNTHETIC_GMT = ROOT / "tests" / "fixtures" / "methods_extension" / "pathway_libraries" / "synthetic_small.gmt"
+
+
+def _workflow_config(tmp: Path, *, licence="SYNTHETIC-CC0", redistributable=True, gmt=SYNTHETIC_GMT, sha=None):
+    values, obs = W.three_group(shifts={0: {"disease": 2.0}, 1: {"treated": -2.0}})
+    contrasts = [W.contrast("disease-control", "disease", "control"), W.contrast("treated-control", "treated", "control"),
+                 W.contrast("treated-disease", "treated", "disease")]
+    cfg = W.study_config(tmp / "study", values, obs, groups=["control", "disease", "treated"], contrasts=contrasts, primary="welch",
+                         methods=W.welch_methods(), genes=True)
+    data = json.loads(cfg.read_text(encoding="utf-8"))
+    data["methods_extension"]["pathways"] = {"enabled": True, "execution_requirement": "optional", "methods": ["ora", "prerank"], "min_size": 1, "max_size": 500,
+                                             "libraries": [{"id": "syn_small", "path": str(gmt), "sha256": sha or _sha(gmt), "source": "synthetic fixture",
+                                                            "version": "1", "species": "synthetic", "identifier_type": "gene_symbol", "licence_id": licence,
+                                                            "redistributable": redistributable}]}
+    data["report"]["figures"] = {"formats": ["png", "pzfx", "html"], "dpi": 300, "journal_width_mm": 120, "palette": "okabe_ito", "font": "Arial", "p_annotation": "exact"}
+    cfg.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    return cfg
+
+
+@R_REQUIRED
+def test_f2_offline_libraries_run_in_the_workflow_with_records_and_figures(tmp_path, capsys):
+    cfg = _workflow_config(tmp_path)
+    payload, code = workflow.run_command(cfg, tmp_path / "run")
+    assert code == 0 and payload["state"] == "COMPLETED", payload
+    states = {s["stage_id"]: s["state"] for s in payload["stages"]}
+    assert states.get("offline_gene_set_libraries") == "COMPLETED" and states.get("welch") == "COMPLETED", states
+    out = tmp_path / "run" / "methods_extension" / "pathways"
+    plan = json.loads((tmp_path / "run" / "plan.json").read_text(encoding="utf-8"))
+    planned = [c for c in plan["capability_plan"] if c["capability"] == "offline_gene_set_libraries"]
+    assert planned and planned[0]["required"] is False and planned[0]["implemented"] is True
+    manifest = json.loads((out / "libraries.json").read_text(encoding="utf-8"))["libraries"][0]
+    assert manifest["sha256"] == hashlib.sha256(SYNTHETIC_GMT.read_bytes()).hexdigest()       # the hash recorded equals the file bytes
+    assert manifest["licence_id"] == "SYNTHETIC-CC0" and manifest["redistributable"] is True and manifest["synthetic"] is True
+    assert "path" not in manifest and str(tmp_path) not in (out / "libraries.json").read_text(encoding="utf-8")
+    ora = [r for r in _rows(out / "ora_syn_small.tsv") if r["method"] == "ora_up"]
+    assert any(int(r["k"]) >= 1 for r in ora)                                                  # the planted up genes hit a set
+    # the measured universe is the run's mapped genes (60 features -> 60 genes), not a genome
+    assert {r["N"] for r in ora} == {"60"}
+    catalogue = {p.name for p in (tmp_path / "run" / "report" / "figure_catalogue").iterdir()}
+    assert any(name.startswith("path_enrichment_dotplot__syn_small__ora_up") and name.endswith(".png") for name in catalogue)
+    capsys.readouterr()
+    assert cli_main(["verify", "--run", str(tmp_path / "run"), "--json"]) == 0
+
+
+def test_f2_negative_a_one_byte_edit_after_declaration_fails_the_plan_with_e_resource_hash(tmp_path):
+    gmt = tmp_path / "edited.gmt"
+    gmt.write_bytes(SYNTHETIC_GMT.read_bytes())
+    declared_sha = _sha(gmt)
+    raw = bytearray(gmt.read_bytes()); raw[-3] = ord("Z")          # the file changes after the hash was declared
+    gmt.write_bytes(bytes(raw))
+    cfg = _workflow_config(tmp_path, gmt=gmt, sha=declared_sha)
+    payload, code = workflow.run_command(cfg, tmp_path / "run")
+    assert code != 0 and payload["state"] == "FAILED" and payload["error"]["code"] == "E_RESOURCE_HASH", payload
+    assert not (tmp_path / "run" / "methods_extension").exists()
+
+
+def test_f2_negative_a_restricted_licence_declared_redistributable_fails_the_plan(tmp_path):
+    kegg = G.write_gmt(tmp_path / "kegg_like.gmt", {"KEGG_X": ["G0001", "G0002"]})
+    cfg = _workflow_config(tmp_path, licence="KEGG-restricted", redistributable=True, gmt=kegg)
+    payload, code = workflow.run_command(cfg, tmp_path / "run")
+    assert code != 0 and payload["state"] == "FAILED" and payload["error"]["code"] == "E_LIBRARY_REDISTRIBUTION", payload

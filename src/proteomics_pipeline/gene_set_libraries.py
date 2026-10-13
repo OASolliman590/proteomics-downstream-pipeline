@@ -109,6 +109,67 @@ def build_request(libraries: list[dict], *, base_dir: str | Path, welch_results:
             "rng": {"seed": int(seed), "kind": "L'Ecuyer-CMRG", "threads": 1}}
 
 
+def declared(config: dict) -> list[dict]:
+    """The methods_extension.pathways libraries of a configuration, or [] when the block is absent or disabled."""
+    block = (config.get("methods_extension") or {}).get("pathways") or {}
+    return list(block.get("libraries", [])) if block.get("enabled") else []
+
+
+def verify_declared(config: dict, base_dir: str | Path) -> list[dict]:
+    """Plan-time check: every declared library is hashed and licence-checked before the plan is frozen (E_RESOURCE_HASH and others)."""
+    return [library_record(decl, base_dir) for decl in declared(config)]
+
+
+def gene_table(dea_zero_null: Path, features_tsv: Path, out_path: Path) -> int:
+    """The measured, mapped input of the stage: one row per tested feature with its representative gene (SM15: the smallest stable
+    feature ID is the last tie key); features without a gene are left out and are not part of the universe."""
+    import csv
+    import json as _json
+    genes = {}
+    with features_tsv.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            try:
+                ids = _json.loads(row.get("gene_ids") or "[]")
+            except ValueError:
+                ids = []
+            genes[row["feature_id"]] = ids[0] if ids else ""
+    columns = ["feature_id", "gene_id", "contrast_id", "effect", "statistic", "q_value", "eligibility"]
+    rows = []
+    with dea_zero_null.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            if row["eligibility"] != "tested":
+                continue
+            gene = genes.get(row["feature_id"], "")
+            rows.append({"feature_id": row["feature_id"], "gene_id": gene, "contrast_id": row["contrast_id"], "effect": row["effect"],
+                         "statistic": row["statistic"], "q_value": row["q_value"], "eligibility": "tested"})
+    rows.sort(key=lambda r: (r["contrast_id"], r["gene_id"], r["feature_id"]))
+    keep, seen = [], set()
+    for row in rows:                       # one feature per gene and contrast; genes without a mapping are excluded
+        key = (row["contrast_id"], row["gene_id"])
+        if not row["gene_id"] or key in seen:
+            continue
+        seen.add(key); keep.append(row)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns, delimiter="\t", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(keep)
+    return len({r["gene_id"] for r in keep})
+
+
+def run_request(config: dict, *, config_dir: str | Path, root: str | Path, run_id: str, output_temp_dir: str | Path, plan_hash: str | None) -> dict:
+    """The stage request of a run: the declared libraries over the primary differential table (dea/zero_null.tsv) of the run."""
+    root = Path(root)
+    block = (config.get("methods_extension") or {}).get("pathways") or {}
+    input_dir = root / "methods_extension" / "pathways_input"
+    input_path = input_dir / "pathway_input.tsv"
+    universe = gene_table(root / "dea" / "zero_null.tsv", root / "preprocessing" / "primary" / "features.tsv", input_path)
+    return build_request(declared(config), base_dir=config_dir, welch_results=input_path,
+                         background={"kind": "measured", "size": universe}, min_size=int(block.get("min_size", 1)),
+                         max_size=int(block.get("max_size", 500)), run_id=run_id, output_temp_dir=output_temp_dir, plan_hash=plan_hash,
+                         tie_break="sm15_stable_id", ora_threshold=float(block.get("ora_threshold", 0.05)))
+
+
 @contextmanager
 def no_network():
     """Analysis runs under this guard: any attempt to create a socket fails with E_RESOURCE_DOWNLOAD (FR-174)."""

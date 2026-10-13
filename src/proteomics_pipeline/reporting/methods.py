@@ -32,7 +32,8 @@ def render_full_methods(data: dict, plan: dict | None) -> str:
         lines.append("- Input stage did not complete; no input description is available.")
     if plan:
         for model in plan["models"]:
-            state = "fitted" if executed.get("limma", {}).get("state") == "COMPLETED" and model["engine"] == "limma" else executed.get(f"model.{model['model_id']}", executed.get("assay_engines", {})).get("state", "not executed")
+            engine_stage = {"limma": "limma", "welch": "welch"}.get(model["engine"])
+            state = "fitted" if engine_stage and executed.get(engine_stage, {}).get("state") == "COMPLETED" else executed.get(f"model.{model['model_id']}", executed.get("assay_engines", {})).get("state", "not executed")
             lines.append(f"- Model `{model['model_id']}` ({model['engine']}, {model['role']}, {model['execution_requirement']}): {state}.")
         for family in plan["families"]:
             members = ", ".join(f"{m['model_id']}/{m['contrast_id']}" for m in family["members"])
@@ -42,6 +43,9 @@ def render_full_methods(data: dict, plan: dict | None) -> str:
     lines += ["## Differential abundance", ""]
     if dea.get("state") == "COMPLETED":
         for model_id, settings in dea["settings"].items():
+            if settings.get("engine") == "welch":   # amendment A-2026-10-01-46: Welch primary engine, no limma moderation
+                lines.append(f"- `{model_id}`: Welch t-test (Welch-Satterthwaite df; paired t on within-subject differences when paired) on genuinely observed cells; no limma moderation.")
+                continue
             lines.append(f"- `{model_id}`: limma {settings['limma_version']} lmFit/eBayes(trend={settings['trend_applied']}, robust={settings['robust_applied']}) on genuinely observed cells; "
                          "each contrast estimated by an exact contrast-as-coefficient refit; 95% intervals use the moderated-t quantile.")
         for family in dea["families"]:

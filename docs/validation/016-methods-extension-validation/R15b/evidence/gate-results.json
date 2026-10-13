@@ -1,6 +1,6 @@
 {
   "packet": "R15b",
-  "scope": "Offline GMT libraries (FR-174 to FR-178, V174 to V178); packet-local gates",
+  "scope": "Offline GMT libraries (FR-174 to FR-178, V174 to V178); packet-local gates and the full suites on the final tree",
   "commands": [
     {
       "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
@@ -21,6 +21,16 @@
       "command": "python scripts/check_spec_kit.py",
       "exit_code": 0,
       "log": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log"
+    },
+    {
+      "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15b/evidence/full-python-suite.log"
+    },
+    {
+      "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15b/evidence/r-all-testthat.log"
     }
   ]
 }

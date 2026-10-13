@@ -2020,7 +2020,42 @@
       "properties": {
         "welch": {
           "$ref": "#/$defs/methods_extension_welch"
+        },
+        "pathways": {
+          "$ref": "#/$defs/methods_extension_pathways"
         }
+      },
+      "additionalProperties": false
+    },
+    "methods_extension_pathways": {
+      "description": "Offline GMT pathway libraries (R15b, FR-174 to FR-178; ADR 0011). Runs only when enabled; every library is a local file verified by SHA-256 at plan time. KEGG and MSigDB are never redistributable.",
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean", "default": false},
+        "execution_requirement": {"enum": ["required", "optional"], "default": "optional"},
+        "libraries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "source": {"type": "string", "minLength": 1},
+              "version": {"type": "string", "minLength": 1},
+              "species": {"type": "string", "minLength": 1},
+              "identifier_type": {"type": "string", "minLength": 1},
+              "licence_id": {"type": "string", "minLength": 1},
+              "redistributable": {"type": "boolean"}
+            },
+            "required": ["id", "path", "sha256", "source", "version", "species", "identifier_type", "licence_id", "redistributable"],
+            "additionalProperties": false
+          }
+        },
+        "methods": {"type": "array", "items": {"enum": ["ora", "prerank"]}, "uniqueItems": true},
+        "min_size": {"type": "integer", "minimum": 1},
+        "max_size": {"type": "integer", "minimum": 1},
+        "ora_threshold": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
       },
       "additionalProperties": false
     },
@@ -3117,6 +3152,13 @@
           "methods_extension": {
             "properties": {
               "welch": {
+                "properties": {
+                  "enabled": {
+                    "const": false
+                  }
+                }
+              },
+              "pathways": {
                 "properties": {
                   "enabled": {
                     "const": false

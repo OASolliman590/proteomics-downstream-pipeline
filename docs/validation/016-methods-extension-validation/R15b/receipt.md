@@ -23,7 +23,7 @@ Packet R15b (FR-174 to FR-178 / T174 to T178 / V174 to V178) was implemented on 
 2. **Licence rule.** A restricted licence (KEGG or MSigDB prefix) cannot be declared redistributable. A library that is not synthetic cannot be part of an artifact (only marked synthetic fixtures may be redistributed), even under an open licence.
 3. **Family key.** A family is `library|method|contrast` (`gene_set_family_key`); methods are `ora_up`, `ora_down` and `prerank_welch`.
 4. **Foreground.** ORA foreground is the Welch family q within the threshold (default 0.05) with the stated direction, on the measured universe of tested, mapped genes.
-5. **Not wired into the run.** The stage runs through its Python service and its request. No `methods_extension.pathways` configuration block is added to the schema, and the stage is not part of `workflow.run_command`. The packet's allowlist does not include the schema or the workflow.
+5. **Wired into the run (F2).** The `methods_extension.pathways` block (both schema copies; Phase 5 only) declares the libraries. The plan verifies every library by SHA-256 and licence before it is frozen, and the capability is planned with `required` from `execution_requirement`. The stage runs after the primary differential stage on `dea/zero_null.tsv`, with one representative gene per feature and contrast (the smallest stable feature ID wins a tie, and features without a mapped gene are left out). Its measured universe is the mapped genes of the run (one universe for every contrast, SM17). Outputs: `methods_extension/pathways/libraries.json` (manifest records: hash, source, version, species, identifier type, licence, redistributable and synthetic flags; no path), `ora_<library>.tsv` and `prerank_<library>.tsv`. The run catalogue draws `path_enrichment_dotplot` for each library and direction with at least one foreground hit.
 
 ## Gates executed
 
@@ -48,16 +48,24 @@ Full-suite results are recorded in the section "Full suites" below.
 
 ## Full suites
 
-Recorded below after the final run on the reviewed tree (see the bottom of this file).
+Final run on the reviewed tree (after the follow-up group F1–F4):
+
+| Suite | Command | Exit | Result | Log |
+|---|---|---|---|---|
+| Full Python suite | `python -m pytest tests -q -rs -p no:cacheprovider` | 0 | 596 passed, 0 skipped (36 min) | `evidence/full-python-suite.log` |
+| Full R suite | `testthat::test_dir("r/proteomicsCore/tests/testthat", load_package = "installed", stop_on_failure = TRUE)` | 0 | 2249 expectations, 0 failed, 0 skipped, 20 files | `evidence/r-all-testthat.log` |
+
+The first full Python run of this stage (before F1 to F4) was stopped at about 24 percent: the post-DE generality test (`test_v167_*`) runs one full pipeline per cell and takes minutes per cell, so the run had not hung; it was stopped to start the final run. No result from that run is recorded.
 
 ## Gaps and doubts (for the reviewer)
 
-- **Not wired into the run or the configuration.** See decision 5. The library declaration therefore cannot yet be made in an analysis configuration, and no run writes `methods_extension/pathways/`. The R15b allowlist and the R15b spec do not require it, but the contract's `methods_extension.pathways` block is not implemented.
-- **New reason codes beyond the spec's table:** `E_LIBRARY_FORMAT` (malformed GMT) and `E_RANK_INVALID` (non-finite ranks). The Maintainer should confirm them.
+- **Representative gene.** The stage keeps the smallest stable feature ID per gene and contrast. The full SM15 rule (greatest coverage, then median abundance, then the stable ID) needs the coverage and median columns of the R07 mapping, which the run does not pass to this stage; the simpler rule is a documented gap.
+- **Universe.** The measured universe counts only tested features with a mapped gene (the eligible, mapped and measured set of SM17).
+- **New reason codes beyond the spec's table:** `E_LIBRARY_FORMAT` (malformed GMT) and `E_RANK_INVALID` (non-finite ranks). Both are documented in the methods-extension contract and in the regenerated catalogue. The Maintainer should confirm them.
 - **Licence identifiers.** The fixtures use the synthetic identifiers `SYNTHETIC-CC0` and `KEGG-restricted`/`MSigDB-restricted`. Real identifiers must be confirmed by the Maintainer before any library is used (D-69).
 - **Socket guard scope.** The guard covers socket creation in the Python process that runs the stage. Rscript runs as a subprocess and is not sandboxed; no network use is present in the stage code.
 - **Prerank scale.** The exact enumeration is limited to 200,000 subsets; larger rankings use the exploratory fgsea adapter whose P values are randomised and are not exact.
-- **Maintainer ratification.** Amendment A-2026-10-01-45 is drafted by the implementing route and is pending Maintainer confirmation.
+- **Maintainer ratification.** Amendments A-2026-10-01-45 and A-2026-10-01-46 are drafted by the implementing route and are pending Maintainer confirmation.
 
 ## Acceptance
 

@@ -138,7 +138,8 @@ def build_request(plan: dict, *, plan_path: str | Path, config: dict, run_id: st
             "parameters": {"group_column": config["design"]["group_column"],
                            "ci_level": float(declaration.get("ci_level", config["report"]["ci_level"])),
                            "paper_compatible": {"enabled": bool(paper.get("enabled", False)), "raw_p_cutoff": float(paper.get("raw_p_cutoff", 0.05))},
-                           "models": models, "families": family_payload},
+                           "models": models, "families": family_payload,
+                           "primary_dea": any(m["role"] == "primary" for m in welch_models)},
             "rng": {"seed": int(plan["runtime"]["seed"]), "kind": "L'Ecuyer-CMRG", "threads": int(plan["runtime"]["threads"])}}
 
 

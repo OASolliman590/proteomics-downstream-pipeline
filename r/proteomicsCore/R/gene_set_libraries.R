@@ -80,13 +80,14 @@ gene_set_libraries_stage <- function(request) .pc_run_stage(request, function(ou
   ora_threshold <- if (is.null(p$ora_threshold)) 0.05 else as.numeric(p$ora_threshold)
   tie_break <- if (is.null(p$tie_break)) "none" else p$tie_break
   libraries <- p$libraries
+  # SM17: one measured universe for every contrast (the mapped, eligible genes of the analysed set)
+  universe <- sort(unique(welch$gene_id[nzchar(welch$gene_id)]), method = "radix")
+  ora_background_check(p$background, universe)
   for (library in libraries) {
     sets <- gmt_parse(.pc_find_input(request, paste0("library_", library$id)))
     rows <- list()
     for (contrast_id in unique(welch$contrast_id)) {
       w <- welch[welch$contrast_id == contrast_id, , drop = FALSE]
-      universe <- sort(unique(w$gene_id[nzchar(w$gene_id)]), method = "radix")
-      ora_background_check(p$background, universe)
       eligible_sets <- lapply(sets, function(genes) intersect(genes, universe))
       # ORA: measured background, foreground = Welch family q within threshold and the stated direction (SM17)
       for (direction in c("up", "down")) {
@@ -96,7 +97,7 @@ gene_set_libraries_stage <- function(request) .pc_run_stage(request, function(ou
         if (!is.null(o)) rows[[length(rows) + 1L]] <- data.frame(library_id = library$id, method = paste0("ora_", direction), contrast_id = contrast_id,
                                                                set_id = o$set_id, N = o$N, K = o$K, n = o$n, k = o$k, statistic = NA_real_, es = NA_real_,
                                                                p_value = o$p_value, exploratory = FALSE, estimator = "hypergeometric_measured_background",
-                                                               stringsAsFactors = FALSE)
+                                                               status = o$status, overlap_genes = o$overlap_genes, stringsAsFactors = FALSE)
       }
       # Pre-ranked enrichment on the Welch t, gene ranks tie-free under SM15 (exploratory)
       stat <- stats::setNames(w$statistic, w$gene_id)
@@ -109,7 +110,8 @@ gene_set_libraries_stage <- function(request) .pc_run_stage(request, function(ou
         res <- prerank_set_result(ranked, idx, set_id, as.integer(request$rng$seed))
         rows[[length(rows) + 1L]] <- data.frame(library_id = library$id, method = "prerank_welch", contrast_id = contrast_id, set_id = set_id, N = length(ranked),
                                                K = k, n = NA_integer_, k = length(idx), statistic = NA_real_, es = res$es, p_value = res$p_value,
-                                               exploratory = TRUE, estimator = res$method, stringsAsFactors = FALSE)
+                                               exploratory = TRUE, estimator = res$method, status = "tested", overlap_genes = NA_character_,
+                                               stringsAsFactors = FALSE)
       }
     }
     combined <- do.call(rbind, rows)
@@ -120,13 +122,13 @@ gene_set_libraries_stage <- function(request) .pc_run_stage(request, function(ou
     combined$result_type <- "GeneSetResult"; combined$schema_version <- "1.2.0"
     ora_part <- combined[startsWith(combined$method, "ora_"), , drop = FALSE]
     prerank_part <- combined[startsWith(combined$method, "prerank"), , drop = FALSE]
-    if (nrow(ora_part)) write_tsv(ora_part, file.path("pathways", paste0("ora_", library$id, ".tsv")), paste0("pathways_ora_", library$id), "GeneSetResult")
-    if (nrow(prerank_part)) write_tsv(prerank_part, file.path("pathways", paste0("prerank_", library$id, ".tsv")), paste0("pathways_prerank_", library$id), "GeneSetResult")
+    if (nrow(ora_part)) write_tsv(ora_part, paste0("ora_", library$id, ".tsv"), paste0("pathways_ora_", library$id), "GeneSetResult")
+    if (nrow(prerank_part)) write_tsv(prerank_part, paste0("prerank_", library$id, ".tsv"), paste0("pathways_prerank_", library$id), "GeneSetResult")
   }
   manifest <- lapply(libraries, function(library) list(id = library$id, sha256 = library$sha256, source = library$source, version = library$version,
                                                        species = library$species, identifier_type = library$identifier_type, licence_id = library$licence_id,
                                                        redistributable = isTRUE(library$redistributable), synthetic = isTRUE(library$synthetic)))
   write_json(list(result_type = "LibraryManifest", libraries = manifest, library_content_written = FALSE,
-                  network = "none", versions = list(R = as.character(getRversion()))), file.path("pathways", "libraries.json"), "pathways_libraries", "LibraryManifest")
+                  network = "none", versions = list(R = as.character(getRversion()))), "libraries.json", "pathways_libraries", "LibraryManifest")
   list(outputs = outputs, warnings = warnings, message = sprintf("gene-set libraries: %d librar(ies) read from hashed local files", length(libraries)))
 })

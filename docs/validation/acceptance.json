@@ -111,7 +111,7 @@
         },
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
-          "sha256": "53aef067310d5364fe3cf2247c22dc03db18807f29896eeb6f8a1fc2bcea365f"
+          "sha256": "52f3c78428671db1c479dd7a988ea91e2b64f4e6eda602023728e32f2139d9b3"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -199,7 +199,7 @@
       "artifacts": [
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
-          "sha256": "53aef067310d5364fe3cf2247c22dc03db18807f29896eeb6f8a1fc2bcea365f"
+          "sha256": "52f3c78428671db1c479dd7a988ea91e2b64f4e6eda602023728e32f2139d9b3"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -231,7 +231,7 @@
         },
         {
           "path": "r/proteomicsCore/tests/testthat/test-foundation.R",
-          "sha256": "53aef067310d5364fe3cf2247c22dc03db18807f29896eeb6f8a1fc2bcea365f"
+          "sha256": "52f3c78428671db1c479dd7a988ea91e2b64f4e6eda602023728e32f2139d9b3"
         },
         {
           "path": "docs/validation/002-foundation/receipt.md",
@@ -5769,22 +5769,62 @@
       "requirement": "FR-168",
       "task": "T168",
       "status": "PASS",
-      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "reviewed_tree": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_welch_engine.py",
-          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json",
+          "sha256": "6e9612e365f8287cb985f24efae855da85f0d06c09727e61ce418af85cc852c5"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
-          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log",
+          "sha256": "de4e961dc878c6acb563d67e66939e1a2b124450d66fdcda9754af0f831bab23"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log",
+          "sha256": "9fce904112c593ebe8be205d3fed8ffdee92f7cba67658fa7ec7bb63adf4b83a"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "The system MUST compute, for each declared pairwise group contrast on log2 abundance, a two-sample Welch t statistic with unequal variances and Welch–Satterthwaite degrees of freedom. The effect MUST equal the difference of the two group means, and its confidence interval MUST be computed at the declared level.",
@@ -5797,22 +5837,62 @@
       "requirement": "FR-169",
       "task": "T169",
       "status": "PASS",
-      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "reviewed_tree": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_welch_engine.py",
-          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json",
+          "sha256": "6e9612e365f8287cb985f24efae855da85f0d06c09727e61ce418af85cc852c5"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
-          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log",
+          "sha256": "de4e961dc878c6acb563d67e66939e1a2b124450d66fdcda9754af0f831bab23"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log",
+          "sha256": "9fce904112c593ebe8be205d3fed8ffdee92f7cba67658fa7ec7bb63adf4b83a"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "The system MUST run `welch` only when it is declared under `methods_extension.welch`, either as the single primary engine for a hypothesis or as a named secondary model with its own family. Without a declaration the default primary engine (limma, [ADR 0002](../../docs/adr/0002-primary-engine-limma.md)) and its outputs MUST be unchanged. A missing or failed Welch result MUST NOT be replaced by a limma result under the Welch name ([ADR 0005](../../docs/adr/0005-no-silent-method-fallback.md)).",
@@ -5825,22 +5905,62 @@
       "requirement": "FR-170",
       "task": "T170",
       "status": "PASS",
-      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "reviewed_tree": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_welch_engine.py",
-          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json",
+          "sha256": "6e9612e365f8287cb985f24efae855da85f0d06c09727e61ce418af85cc852c5"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
-          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log",
+          "sha256": "de4e961dc878c6acb563d67e66939e1a2b124450d66fdcda9754af0f831bab23"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log",
+          "sha256": "9fce904112c593ebe8be205d3fed8ffdee92f7cba67658fa7ec7bb63adf4b83a"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "The system MUST apply BH within the declared family and MAY additionally export a paper-compatible DEP rule that selects features with raw P below a declared cutoff. Every paper-compatible selection MUST carry the label `not_multiplicity_controlled`, and BH MUST be reported alongside it in the same table.",
@@ -5853,22 +5973,62 @@
       "requirement": "FR-171",
       "task": "T171",
       "status": "PASS",
-      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "reviewed_tree": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_welch_engine.py",
-          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json",
+          "sha256": "6e9612e365f8287cb985f24efae855da85f0d06c09727e61ce418af85cc852c5"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
-          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log",
+          "sha256": "de4e961dc878c6acb563d67e66939e1a2b124450d66fdcda9754af0f831bab23"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log",
+          "sha256": "9fce904112c593ebe8be205d3fed8ffdee92f7cba67658fa7ec7bb63adf4b83a"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "When the frozen design declares paired or subject-blocked observations for a contrast, the system MUST run the paired t-test on within-subject differences with n − 1 degrees of freedom, in place of the two-sample Welch test for that contrast.",
@@ -5881,22 +6041,62 @@
       "requirement": "FR-172",
       "task": "T172",
       "status": "PASS",
-      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "reviewed_tree": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_welch_engine.py",
-          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json",
+          "sha256": "6e9612e365f8287cb985f24efae855da85f0d06c09727e61ce418af85cc852c5"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
-          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log",
+          "sha256": "de4e961dc878c6acb563d67e66939e1a2b124450d66fdcda9754af0f831bab23"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log",
+          "sha256": "9fce904112c593ebe8be205d3fed8ffdee92f7cba67658fa7ec7bb63adf4b83a"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "When a Welch request declares covariates or blocking that a Welch test cannot honour, the system MUST run only the valid unadjusted or within-subject form and record the adaptation (analysis, item, requested, used, reason) in the plan decision, the module's `eligibility.json` and a `W_WELCH_ADAPTED` warning. It MUST NOT drop the declaration silently.",
@@ -5909,22 +6109,62 @@
       "requirement": "FR-173",
       "task": "T173",
       "status": "PASS",
-      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "reviewed_tree": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_welch_engine.py",
-          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json",
+          "sha256": "6e9612e365f8287cb985f24efae855da85f0d06c09727e61ce418af85cc852c5"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
-          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log",
+          "sha256": "de4e961dc878c6acb563d67e66939e1a2b124450d66fdcda9754af0f831bab23"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log",
+          "sha256": "9fce904112c593ebe8be205d3fed8ffdee92f7cba67658fa7ec7bb63adf4b83a"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "For the same contrast and features, the system MUST report identical effects from Welch and limma and MUST keep their P values distinct, because limma moderates variances. Each engine's P value MUST match its own independent oracle.",
@@ -5937,22 +6177,62 @@
       "requirement": "FR-174",
       "task": "T174",
       "status": "PASS",
-      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "reviewed_tree": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-gene-set-libraries.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_gene_set_libraries.py",
-          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json",
+          "sha256": "c196b4987ed1f0e6f642c3c75b4a5dba0b065ab0199bce1f1030968fc959c20e"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
-          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/python-gene-set-libraries.log",
+          "sha256": "1944ad3d7316ef19ce7ab0456691b1e0546bfb87fb9b3b4805106ebfff493a79"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-gene-set-libraries-testthat.log",
+          "sha256": "058020238e5996da54ea3a97ee41b8f700a710d53cef87035a63aa78af3dc32f"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "The system MUST read user-supplied local GMT library files only. Each library MUST be recorded in a manifest with its file SHA-256, source, version, species, identifier type, licence identifier and a redistributable flag. Analysis MUST NOT open a network connection or download a library ([SM14](../001-downstream-proteomics/contracts/scientific-methods.md), [SM44](../001-downstream-proteomics/contracts/scientific-methods.md#methods-extension)).",
@@ -5965,22 +6245,62 @@
       "requirement": "FR-175",
       "task": "T175",
       "status": "PASS",
-      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "reviewed_tree": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-gene-set-libraries.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_gene_set_libraries.py",
-          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json",
+          "sha256": "c196b4987ed1f0e6f642c3c75b4a5dba0b065ab0199bce1f1030968fc959c20e"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
-          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/python-gene-set-libraries.log",
+          "sha256": "1944ad3d7316ef19ce7ab0456691b1e0546bfb87fb9b3b4805106ebfff493a79"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-gene-set-libraries-testthat.log",
+          "sha256": "058020238e5996da54ea3a97ee41b8f700a710d53cef87035a63aa78af3dc32f"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "KEGG and MSigDB library files MUST NOT be redistributed. They MUST NOT be committed to the repository, copied into an artifact or published by the release tooling. Reactome, GO and WikiPathways libraries MAY be used under their recorded open licences. The public repository MUST contain only synthetic, marked GMT fixtures.",
@@ -5993,22 +6313,62 @@
       "requirement": "FR-176",
       "task": "T176",
       "status": "PASS",
-      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "reviewed_tree": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-gene-set-libraries.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_gene_set_libraries.py",
-          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json",
+          "sha256": "c196b4987ed1f0e6f642c3c75b4a5dba0b065ab0199bce1f1030968fc959c20e"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
-          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/python-gene-set-libraries.log",
+          "sha256": "1944ad3d7316ef19ce7ab0456691b1e0546bfb87fb9b3b4805106ebfff493a79"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-gene-set-libraries-testthat.log",
+          "sha256": "058020238e5996da54ea3a97ee41b8f700a710d53cef87035a63aa78af3dc32f"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "The system MUST run hypergeometric over-representation for each declared library using as its universe the measured, mapped and eligible features of the analysed set (SM17). A whole-genome or library-wide background MUST NOT be used.",
@@ -6021,22 +6381,62 @@
       "requirement": "FR-177",
       "task": "T177",
       "status": "PASS",
-      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "reviewed_tree": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-gene-set-libraries.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_gene_set_libraries.py",
-          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json",
+          "sha256": "c196b4987ed1f0e6f642c3c75b4a5dba0b065ab0199bce1f1030968fc959c20e"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
-          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/python-gene-set-libraries.log",
+          "sha256": "1944ad3d7316ef19ce7ab0456691b1e0546bfb87fb9b3b4805106ebfff493a79"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-gene-set-libraries-testthat.log",
+          "sha256": "058020238e5996da54ea3a97ee41b8f700a710d53cef87035a63aa78af3dc32f"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "The system MUST support pre-ranked enrichment on a declared statistic, including the Welch t of FR-168. It MUST reuse the existing fgsea adapter with an exploratory label (FR-075) or document a named alternative, and its ranks MUST be tie-free under the SM15 tie-break rule.",
@@ -6049,22 +6449,62 @@
       "requirement": "FR-178",
       "task": "T178",
       "status": "PASS",
-      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "reviewed_tree": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
       "commands": [
         {
-          "command": "historical Maintainer receipt (see artifact)",
+          "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "Rscript test-gene-set-libraries.R (testthat, stop_on_failure)",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+          "exit_code": 0
+        },
+        {
+          "command": "python scripts/check_spec_kit.py",
+          "exit_code": 0
+        },
+        {
+          "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+          "exit_code": 0
+        },
+        {
+          "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "tests/scientific/test_gene_set_libraries.py",
-          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json",
+          "sha256": "c196b4987ed1f0e6f642c3c75b4a5dba0b065ab0199bce1f1030968fc959c20e"
         },
         {
-          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
-          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/python-gene-set-libraries.log",
+          "sha256": "1944ad3d7316ef19ce7ab0456691b1e0546bfb87fb9b3b4805106ebfff493a79"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-gene-set-libraries-testthat.log",
+          "sha256": "058020238e5996da54ea3a97ee41b8f700a710d53cef87035a63aa78af3dc32f"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/gates-regression-unit-encoding.log",
+          "sha256": "4e386fbe5772a51f9566e1230e043d983fa348569010498e9ef292e774c9c41c"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log",
+          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/full-python-suite.log",
+          "sha256": "6ba5166a2d0920b2403cd4db4f75d74cbf679adbaf1230445974955118811411"
+        },
+        {
+          "path": "docs/validation/016-methods-extension-validation/R15b/evidence/r-all-testthat.log",
+          "sha256": "bae9b4c7667a2edb7be9c83fa003b00c0855cdacc57ddfabc5929fd925462629"
         }
       ],
       "expected_oracle": "Each combination of library, method and contrast MUST be a separate family. BH MUST NOT be applied across libraries, and no pooled library family is created.",

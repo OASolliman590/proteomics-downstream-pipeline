@@ -80,8 +80,13 @@ def _rows(path: Path) -> list[dict]:
     return F.read_tsv(path)
 
 
+def _stage_dir(out: Path) -> Path:
+    """The Welch stage directory: dea/ for a Welch primary (A-2026-10-01-46), methods_extension/welch/ for a secondary."""
+    return out / "dea" if (out / "dea" / "eligibility.json").is_file() else out / "methods_extension" / "welch"
+
+
 def _welch_rows(out: Path, contrast: str | None = None) -> list[dict]:
-    rows = _rows(out / "methods_extension" / "welch" / "welch_results.tsv")
+    rows = _rows(_stage_dir(out) / "welch_results.tsv")
     return [r for r in rows if contrast is None or r["contrast_id"] == contrast]
 
 
@@ -112,7 +117,7 @@ def test_v168_welch_statistics_equal_direct_t_test_within_1e10(two_group):
     assert len(rows) == 200 and set(oracle) == set(rows)
     for feature, values in oracle.items():
         r = rows[feature]
-        assert r["eligibility"] == "tested" and r["statistic_type"] == "welch_t" and r["engine"] == "welch"
+        assert r["eligibility"] == "tested" and r["statistic_type"] == "Welch t" and r["engine"] == "welch"
         for key, column in (("statistic", "statistic"), ("df", "df_inference"), ("p", "p_value"), ("effect", "effect"), ("lower", "ci_lower"), ("upper", "ci_upper")):
             assert abs(float(r[column]) - values[key]) <= 1e-10, (feature, key)
 
@@ -136,7 +141,7 @@ def test_v170_bh_inside_the_declared_family_and_paper_rule_labelled(two_group):
     oracle_q = B.r_json(BH_ORACLE, str(path))
     for f, q in zip(sorted(rows), oracle_q):
         assert abs(float(rows[f]["q_value"]) - q) <= 1e-12
-    paper = _rows(two_group / "methods_extension" / "welch" / "paper_compatible.tsv")
+    paper = _rows(_stage_dir(two_group) / "paper_compatible.tsv")
     selected = {r["feature_id"] for r in paper}
     assert selected == {f for f in rows if float(rows[f]["p_value"]) < 0.05}                  # the raw-P set, exactly
     assert paper and all(r["claim_label"] == "not_multiplicity_controlled" for r in paper)     # every row labelled
@@ -170,10 +175,10 @@ def test_v171_paired_variant_equals_t_test_paired_with_n_minus_one_df(paired_run
     rows = {r["feature_id"]: r for r in _welch_rows(paired_run, "B-A")}
     for feature, values in oracle.items():
         r = rows[feature]
-        assert r["statistic_type"] == "paired_t" and abs(float(r["df_inference"]) - 7.0) == 0.0
+        assert r["statistic_type"] == "paired t" and abs(float(r["df_inference"]) - 7.0) == 0.0
         for key, column in (("statistic", "statistic"), ("df", "df_inference"), ("p", "p_value"), ("effect", "effect"), ("lower", "ci_lower"), ("upper", "ci_upper")):
             assert abs(float(r[column]) - values[key]) <= 1e-10, (feature, key)
-    decision = json.loads((paired_run / "methods_extension" / "welch" / "eligibility.json").read_text(encoding="utf-8"))["decisions"][0]
+    decision = json.loads((_stage_dir(paired_run) / "eligibility.json").read_text(encoding="utf-8"))["decisions"][0]
     assert decision["variant"] == "paired" and decision["n_pairs"] == 8
 
 
@@ -210,7 +215,7 @@ def test_v172_covariate_is_run_unadjusted_and_recorded_everywhere(covariate_run)
     for feature, values in oracle.items():
         assert abs(float(rows[feature]["statistic"]) - values["statistic"]) <= 1e-10 and abs(float(rows[feature]["effect"]) - values["effect"]) <= 1e-10
     expected = {"analysis": "welch", "item": "covariate:sex", "requested": "adjusted", "used": "unadjusted", "reason": "welch_not_covariate_adjusting"}
-    eligibility = json.loads((covariate_run / "methods_extension" / "welch" / "eligibility.json").read_text(encoding="utf-8"))
+    eligibility = json.loads((_stage_dir(covariate_run) / "eligibility.json").read_text(encoding="utf-8"))
     assert [{k: a[k] for k in expected} for a in eligibility["adaptations"]] == [expected]
     plan = json.loads((covariate_run / "plan.json").read_text(encoding="utf-8"))
     assert [{k: a[k] for k in expected} for a in plan["engine_eligibility"][0]["adaptations"]] == [expected]
@@ -309,9 +314,13 @@ def test_v169_welch_requested_but_not_declared_is_refused_at_validation(tmp_path
 
 
 def test_v169_welch_primary_run_never_emits_a_limma_result_under_the_welch_name(two_group):
-    assert not (two_group / "dea").exists()                    # no limma stage ran for a welch primary
-    assert {r["engine"] for r in _welch_rows(two_group)} == {"welch"}
+    dea = _rows(two_group / "dea" / "zero_null.tsv")            # the dea/ contract is written by the welch primary (A-2026-10-01-46)
+    assert {r["engine"] for r in dea} == {"welch"} and {r["engine"] for r in _welch_rows(two_group)} == {"welch"}
+    assert not (two_group / "dea" / "moderation_limma-main.tsv").exists()
     assert all(r["result_type"] == "WelchResult" for r in _welch_rows(two_group))
+    assert {r["statistic_type"] for r in dea if r["eligibility"] == "tested"} == {"Welch t"}
+    model_status = json.loads((two_group / "dea" / "model_status.json").read_text(encoding="utf-8"))
+    assert model_status["settings"]["welch-main"]["engine"] == "welch" and model_status["settings"]["welch-main"]["input_imputation"] == "none"
 
 
 # ----------------------------------------------------------------------------- end to end
@@ -335,8 +344,125 @@ def test_end_to_end_three_group_welch_primary_then_verify(tmp_path, capsys):
         assert abs(float(rows[("disease-control", feature)]["p_value"]) - values_["p"]) <= 1e-10
     assert float(rows[("disease-control", "G001")]["effect"]) > 1.5                    # planted +2 in disease
     assert len(_welch_rows(tmp_path / "run")) == 3 * 60
-    report = welch_report_data(tmp_path / "run" / "methods_extension" / "welch")       # the report reads only the stage's own outputs
+    report = welch_report_data(_stage_dir(tmp_path / "run"))       # the report reads only the stage's own outputs
     assert report["engine"] == "welch" and report["claim_labels"] == ["welch", "not_multiplicity_controlled"]
     assert report["tested_rows"] == 3 * 60 and report["endpoint_rows"] == 3 * 60
     assert report["paper_compatible"]["claim_label"] == "not_multiplicity_controlled" and report["paper_compatible"]["selected"] >= 1
     assert {f["family_id"] for f in report["families"]} == {"welch_zero_null"}
+
+
+# ----------------------------------------------------------------------------- Welch as the primary engine feeds the whole run (F1)
+DEA_COLUMNS = ["model_id", "contrast_id", "feature_id", "effect", "ci_lower", "ci_upper", "statistic", "statistic_type", "df_inference", "p_value",
+               "q_value", "family_id", "eligibility", "engine", "hypothesis_type"]
+
+
+def test_f1_welch_primary_feeds_dea_report_figures_and_verify(tmp_path, capsys):
+    values, obs = F.three_group(shifts={0: {"disease": 2.0}, 1: {"treated": -2.0}})
+    contrasts = [F.contrast("disease-control", "disease", "control"), F.contrast("treated-control", "treated", "control"),
+                 F.contrast("treated-disease", "treated", "disease")]
+    cfg = F.study_config(tmp_path / "f1", values, obs, groups=["control", "disease", "treated"], contrasts=contrasts, primary="welch",
+                         methods=F.welch_methods(paper={"enabled": True, "raw_p_cutoff": 0.05}))
+    data = json.loads(cfg.read_text(encoding="utf-8"))
+    data["report"]["figures"] = {"formats": ["png", "pzfx", "html"], "dpi": 300, "journal_width_mm": 120, "palette": "okabe_ito", "font": "Arial",
+                                 "p_annotation": "exact"}
+    cfg.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    payload, code = _run(cfg, tmp_path / "run")
+    assert code == 0 and payload["state"] == "COMPLETED", payload
+    states = {s["stage_id"]: s["state"] for s in payload["stages"]}
+    assert all(states.get(k) == "COMPLETED" for k in ("welch", "report", "report_full", "figure_catalogue")), states
+    out = tmp_path / "run"
+    # dea/: the same differential contract as limma, with the Welch engine, statistic label, family and eligibility
+    dea = _rows(out / "dea" / "zero_null.tsv")
+    assert len(dea) == 3 * 60 and set(DEA_COLUMNS) <= set(dea[0].keys())
+    assert {r["engine"] for r in dea} == {"welch"} and {r["statistic_type"] for r in dea if r["eligibility"] == "tested"} == {"Welch t"}
+    families = _rows(out / "dea" / "families.tsv")
+    assert {f["family_id"] for f in families} == {"welch_zero_null"} and families[0]["adjustment"] == "BH"
+    assert all(r["family_id"] == "welch_zero_null" and r["q_value"] != "NA" for r in dea if r["eligibility"] == "tested")
+    assert float(next(r for r in dea if r["contrast_id"] == "disease-control" and r["feature_id"] == "G001")["effect"]) > 1.5
+    paper = _rows(out / "dea" / "paper_compatible.tsv")
+    assert paper and all(r["claim_label"] == "not_multiplicity_controlled" for r in paper)
+    # report: the complete-results section lists the Welch table; the methods say Welch
+    report = (out / "report-full" / "index.html").read_text(encoding="utf-8")
+    assert "Complete zero_null table" in report and "180 rows" in report
+    methods = (out / "methods.md").read_text(encoding="utf-8")
+    section = methods.split("## Differential abundance")[1].split("\n## ")[0]
+    assert "Welch t-test" in section and "lmFit" not in section and "eBayes" not in section
+    # R16 figure catalogue: the differential figures are produced from the Welch dea/ tables
+    catalogue = {p.name for p in (out / "report" / "figure_catalogue").iterdir()}
+    for stem in ("diff_volcano_labelled__disease-control", "diff_ma_plot__disease-control", "diff_protein_dotplot_brackets__disease-control",
+                 "diff_upset_venn__primary"):
+        assert stem + ".png" in catalogue and stem + ".pzfx" in catalogue and stem + ".html" in catalogue, stem
+    # proteomics verify exit 0
+    capsys.readouterr()
+    verify_code = cli_main(["verify", "--run", str(out), "--json"])
+    verified = json.loads(capsys.readouterr().out)
+    assert verify_code == 0 and verified["valid"] is True
+
+
+def test_f1_post_de_association_consumes_the_welch_dea_families(tmp_path, capsys):
+    import random
+    values, obs = F.three_group(shifts={0: {"disease": 2.0}, 1: {"treated": -2.0}})
+    rng = random.Random(7)
+    for i, o in enumerate(obs):
+        o["age"] = 40 + i * 0.7
+        o["score"] = 1.0 + 0.2 * i + rng.gauss(0, 0.1)
+    contrasts = [F.contrast("disease-control", "disease", "control"), F.contrast("treated-control", "treated", "control"),
+                 F.contrast("treated-disease", "treated", "disease")]
+    cfg = F.study_config(tmp_path / "pd", values, obs, groups=["control", "disease", "treated"], contrasts=contrasts, primary="welch",
+                         methods=F.welch_methods(), extra_columns=("age", "score"))
+    data = json.loads(cfg.read_text(encoding="utf-8"))
+    phenotype = {"column": "score", "type": "numeric", "adjust_for": [{"column": "age", "type": "continuous"}], "adjust_for_group": True, "scope": "pooled"}
+    data["post_de"] = {"enabled": True, "execution_requirement": "optional", "sets": {"enabled": False}, "sensitivity": {"enabled": False},
+                       "biomarker": {"enabled": False}, "networks": {"enabled": False},
+                       "association": {"enabled": True, "execution_requirement": "optional", "phenotypes": [phenotype], "method": "model",
+                                       "correlation": "pearson", "permutations": 99, "seed": 777}}
+    cfg.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    payload, code = _run(cfg, tmp_path / "run")
+    assert code == 0, payload
+    states = {s["stage_id"]: s["state"] for s in payload["stages"]}
+    assert states.get("post_de_association") == "COMPLETED" and states.get("post_de_eligibility") == "COMPLETED", states
+    families = _rows(tmp_path / "run" / "dea" / "families.tsv")
+    assert {f["family_id"] for f in families} == {"welch_zero_null"}                    # the association reads the Welch family definitions
+    capsys.readouterr()
+    assert cli_main(["verify", "--run", str(tmp_path / "run"), "--json"]) == 0
+
+
+# ----------------------------------------------------------------------------- F4: the spec's "secondary" is the schema's role "sensitivity"
+def _secondary_welch_config(tmp_path: Path, *, sensitivity_model: str | None = None):
+    import copy as _copy
+    values, obs = F.two_group(n_num=12, n_den=12, features=60, seed=173, planted={0: 1.5})
+    secondary = {"id": "welch-secondary", "design_id": "joint", "engine": "welch", "role": "sensitivity", "execution_requirement": "optional",
+                 "hypothesis": "zero_null", "coverage": {"policy": "available_case", "minimum_observed_per_group": 2, "minimum_fraction": 0.5, "mask_source": "original_observed"},
+                 "precision_weights": {"kind": "none"}}
+    families = [{"id": "primary-family", "hypothesis_type": "protein_zero_null", "model_ids": ["limma-main"], "contrast_ids": ["B-A"], "adjustment": "BH",
+                 "denominator": "finite_eligible", "q_cutoff": 0.05, "role": "primary"},
+                {"id": "welch_zero_null", "hypothesis_type": "protein_zero_null", "model_ids": ["welch-secondary"], "contrast_ids": ["B-A"], "adjustment": "BH",
+                 "denominator": "finite_eligible", "q_cutoff": 0.05, "role": "secondary"}]
+    cfg = F.study_config(tmp_path / "sec", values, obs, groups=["A", "B"], contrasts=[F.contrast("B-A", "B", "A")], primary="limma",
+                         methods=F.welch_methods(role="secondary"), extra_models=[secondary], families=families, phase=5)
+    if sensitivity_model is not None:
+        data = json.loads(cfg.read_text(encoding="utf-8"))
+        data.setdefault("preprocessing", {})["sensitivities"] = [{"id": "min_s", "method": "min_deterministic", "model_id": sensitivity_model}]
+        cfg.write_text(json.dumps(data), encoding="utf-8")
+    return cfg
+
+
+def test_f4_welch_secondary_with_role_sensitivity_is_not_a_sensitivity_matrix_and_is_accepted(tmp_path):
+    cfg = _secondary_welch_config(tmp_path)
+    loaded = load_config(cfg)                                               # no E_SENSITIVITY_PRIMARY_MODEL and no refusal
+    roles = {m["id"]: m["role"] for m in loaded["models"]}
+    assert roles == {"limma-main": "primary", "welch-secondary": "sensitivity"}
+
+
+def test_f4_negative_a_sensitivity_matrix_on_the_welch_model_is_refused(tmp_path):
+    cfg = _secondary_welch_config(tmp_path, sensitivity_model="welch-secondary")
+    with pytest.raises(ConfigurationError) as info:
+        load_config(cfg)
+    assert info.value.code == "E_WELCH_MATRIX_UNSUPPORTED"
+
+
+def test_f4_negative_a_sensitivity_matrix_on_the_primary_model_is_still_refused(tmp_path):
+    cfg = _secondary_welch_config(tmp_path, sensitivity_model="limma-main")
+    with pytest.raises(ConfigurationError) as info:
+        load_config(cfg)
+    assert info.value.code == "E_SENSITIVITY_PRIMARY_MODEL"

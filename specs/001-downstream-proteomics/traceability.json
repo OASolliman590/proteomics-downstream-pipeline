@@ -5991,7 +5991,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "working_source_manifest_sha256": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6027,7 +6027,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "working_source_manifest_sha256": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6064,7 +6064,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "working_source_manifest_sha256": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6100,7 +6100,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "working_source_manifest_sha256": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6136,7 +6136,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "working_source_manifest_sha256": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6172,7 +6172,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "working_source_manifest_sha256": "342d5db4b573003e80ab66861ca38fdc4cbdc3d6c023051f532e88ec2335c159",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6208,7 +6208,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "working_source_manifest_sha256": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6245,7 +6245,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "working_source_manifest_sha256": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6281,7 +6281,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "working_source_manifest_sha256": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6317,7 +6317,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "working_source_manifest_sha256": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
@@ -6353,7 +6353,7 @@
       "verification": {
         "route": "Claude route (Haiku builder, Opus review)",
         "date": "2026-10-13",
-        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "working_source_manifest_sha256": "127fad340e361efdd727ef775f068d15df8f9125d26f03e8dd164972c3cf6ebc",
         "independent_audit": "NOT_RUN",
         "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }

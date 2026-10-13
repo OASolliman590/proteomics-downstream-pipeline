@@ -81,13 +81,19 @@ def contrast(cid: str, numerator: str, denominator: str, *, design_id: str = "jo
 
 def study_config(directory: Path, values: dict, observations: list[dict], *, groups, contrasts, primary: str = "welch", methods: dict | None = None,
                  design_overrides: dict | None = None, extra_models: list | None = None, families: list | None = None, seed: int = 20261008,
-                 extra_columns=(), phase: int = 5) -> Path:
+                 extra_columns=(), phase: int = 5, genes: bool = False) -> Path:
     """An analysis configuration whose primary model uses ``primary`` (welch or limma) on the observed primary matrix.
 
     ``methods`` is the methods_extension block (None omits it). ``extra_models`` appends secondary models.
     ``phase`` is 5 for every Welch configuration (ADR 0011); Phase 1-4 configurations cannot enable the extension.
     """
     files = B.dataset(directory, values, observations, extra_columns=tuple(extra_columns))
+    if genes:   # synthetic gene identifiers (G0001 for feature G001), so the offline libraries can map features to genes
+        rows = [["feature_id", "accessions", "gene_ids", "gene_symbols", "is_decoy", "is_contaminant", "protein_group_ambiguous"]]
+        for feature in values:
+            gene = "G%04d" % int(feature[1:])
+            rows.append([feature, json.dumps([feature]), json.dumps([gene]), json.dumps([gene]), "unknown", "unknown", "false"])
+        B.write_tsv(directory / "features.tsv", rows)
 
     def mutate(c: dict) -> None:
         c["runtime"]["seed"] = seed

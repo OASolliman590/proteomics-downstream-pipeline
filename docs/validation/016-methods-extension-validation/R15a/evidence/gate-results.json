@@ -1,6 +1,6 @@
 {
   "packet": "R15a",
-  "scope": "Welch engine (FR-168 to FR-173, V168 to V173); packet-local gates",
+  "scope": "Welch engine (FR-168 to FR-173, V168 to V173); packet-local gates and the full suites on the final tree",
   "commands": [
     {
       "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
@@ -21,6 +21,16 @@
       "command": "python scripts/check_spec_kit.py",
       "exit_code": 0,
       "log": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log"
+    },
+    {
+      "command": "python -m pytest tests -q -rs -p no:cacheprovider (full Python suite, final tree)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15a/evidence/full-python-suite.log"
+    },
+    {
+      "command": "testthat::test_dir(r/proteomicsCore/tests/testthat, load_package = installed, stop_on_failure = TRUE) (full R suite)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15a/evidence/r-all-testthat.log"
     }
   ]
 }

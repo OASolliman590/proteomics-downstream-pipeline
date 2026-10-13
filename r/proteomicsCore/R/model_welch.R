@@ -150,7 +150,7 @@ welch_stage <- function(request) .pc_run_stage(request, function(out) {
       out_rows$eligibility[broken] <- "numerical_failure"; out_rows$reason_code[broken] <- "E_NUMERICAL_NONFINITE_STATISTIC"
       tested <- out_rows$eligibility == "tested"
       out_rows$effect[tested] <- stats_m[tested, "effect"]; out_rows$effect_se[tested] <- stats_m[tested, "se"]
-      out_rows$statistic[tested] <- stats_m[tested, "t"]; out_rows$statistic_type[tested] <- if (is.null(variant$pairs)) "welch_t" else "paired_t"
+      out_rows$statistic[tested] <- stats_m[tested, "t"]; out_rows$statistic_type[tested] <- if (is.null(variant$pairs)) "Welch t" else "paired t"
       out_rows$df_residual[tested] <- stats_m[tested, "df"]; out_rows$df_inference[tested] <- stats_m[tested, "df"]
       out_rows$p_value[tested] <- stats_m[tested, "p"]
       out_rows$ci_lower[tested] <- stats_m[tested, "lower"]; out_rows$ci_upper[tested] <- stats_m[tested, "upper"]; out_rows$ci_level[tested] <- ci_level
@@ -187,6 +187,16 @@ welch_stage <- function(request) .pc_run_stage(request, function(out) {
   verify_differential_table(combined, planned)
   write_tsv(combined, "welch_results.tsv", "welch_results", "WelchResult")
   write_tsv(do.call(rbind, family_summaries), "families.tsv", "welch_families", "HypothesisFamily")
+  # Welch as the primary engine writes the dea/ contract (amendment A-2026-10-01-46): the same zero-null table name, families and model status limma writes
+  if (isTRUE(p$primary_dea)) {
+    write_tsv(combined[combined$hypothesis_type == "protein_zero_null", , drop = FALSE], "zero_null.tsv", "dea_zero_null", "ProteinZeroNullResult")
+    write_json(list(models = lapply(p$models, function(m) list(model_id = m$model_id, state = "COMPLETED", required = identical(m$execution_requirement, "required"), reason_code = NULL)),
+                    settings = setNames(lapply(p$models, function(m) list(input_matrix = "primary_matrix", observed_cells_only = TRUE, input_imputation = "none",
+                                                                          new_primary_imputation = "none", engine = "welch", moderation = "none",
+                                                                          paired = m$paired, blocked = isTRUE(m$blocked))), vapply(p$models, function(m) m$model_id, "")),
+                    score_p_values_emitted = FALSE, note = "Welch primary engine: dea/ holds the Welch tables; no limma moderation is applied."),
+               "model_status.json", "dea_model_status", "ModelFit")
+  }
   pc <- p$paper_compatible
   paper_rows <- 0L
   if (isTRUE(pc$enabled)) {
