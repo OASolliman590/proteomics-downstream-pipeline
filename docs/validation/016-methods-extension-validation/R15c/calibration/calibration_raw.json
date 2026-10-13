@@ -1,0 +1,10 @@
+{
+  "gates": "/Users/megastore/Documents/GitHub/proteomics-downstream-pipeline/docs/validation/016-methods-extension-validation/R15c/gates-preregistration.json",
+  "seconds": 1874.843,
+  "cores": 12,
+  "r_version": "4.6.1",
+  "glmnet": "5.1",
+  "e1071": "1.7.17",
+  "randomForest": "4.7.1.2",
+  "proteomicsCore": "0.1.0"
+}
