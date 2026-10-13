@@ -1195,6 +1195,17 @@
         "docs/validation/acceptance.json"
       ],
       "change": "Follow-up to the R15a and R15b stage-1 review (ADR 0011). F1: a welch primary writes the dea/ contract (zero_null.tsv, families.tsv, model_status.json, Welch t statistic label; workflow._run_welch destination dea/, welch_service primary_dea); the report data section and the methods writers select the primary differential stage and describe a Welch model (reporting/assemble.py dea_stage_id, reporting/methods.py, reporting/stub_methods.py); a welch primary cannot share a run with limma models (config.py E_PRIMARY_MODEL_CONFLICT). The post-DE phase precheck accepts Phase 5 as well as Phase 4 (post_de/__init__.py). F2: methods_extension.pathways is added to both schema copies (Phase 1-4 guard extended); config.py checks the library ids; workflow.py plans the offline_gene_set_libraries capability, verifies every library at plan time and runs the stage after the DE stage; figures/run_sources.py draws path_enrichment_dotplot from each library's ORA table. F3: the methods-extension contract documents every new reason code and the pathways behaviour; the reason-code catalogue is regenerated. F4: the secondary-to-sensitivity role mapping is documented in the contract and tested (a sensitivity matrix on a welch model is refused with E_WELCH_MATRIX_UNSUPPORTED). Traceability and the acceptance ledger are regenerated."
+    },
+    {
+      "id": "A-2026-10-01-47",
+      "adr": "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+      "paths": [
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "docs/methods/README.md"
+      ],
+      "change": "R15c (ADR 0011, FR-179, SM45): the R14d biomarker classifier gains lasso (glmnet alpha 1) and elastic_net (glmnet alpha 0.5, declared; lambda tuned by inner CV) beside the ridge penalized_logistic, through the same glmnet path (.bm_glmnet_kinds, .bm_glmnet_alpha); the classifier enumeration in both schema copies and the methods README document them. Ridge behaviour is unchanged (alpha 0)."
     }
   ]
 }

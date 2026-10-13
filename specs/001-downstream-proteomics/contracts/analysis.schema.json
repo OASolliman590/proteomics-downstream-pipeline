@@ -2629,6 +2629,8 @@
             "classifier": {
               "enum": [
                 "penalized_logistic",
+                "lasso",
+                "elastic_net",
                 "svm_linear",
                 "svm_polynomial",
                 "svm_radial",

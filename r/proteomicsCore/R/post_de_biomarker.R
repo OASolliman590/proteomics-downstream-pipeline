@@ -112,9 +112,12 @@ pd_bm_permute_labels <- function(y, units) {
 .bm_pad <- function(Z) if (ncol(Z) >= 2L) Z else cbind(Z, .pad = 0)
 
 # Classifiers: scores oriented from the fitted model's class coding (never from evaluation labels).
-.bm_fit_classifier <- function(Z, labels, levels, positive, kind, grid) {
-  if (identical(kind, "penalized_logistic")) {
-    fit <- glmnet::glmnet(.bm_pad(Z), factor(labels, levels = levels), family = "binomial", alpha = 0, lambda = grid, standardize = FALSE)
+# Amendment A-2026-10-01-47 (ADR 0011, R15c): lasso (alpha 1) and elastic net (alpha declared, default 0.5) use the same glmnet path as the ridge classifier.
+.bm_glmnet_kinds <- c("penalized_logistic", "lasso", "elastic_net")
+.bm_glmnet_alpha <- function(kind, alpha = 0.5) if (identical(kind, "lasso")) 1 else if (identical(kind, "elastic_net")) alpha else 0
+.bm_fit_classifier <- function(Z, labels, levels, positive, kind, grid, alpha = 0) {
+  if (kind %in% .bm_glmnet_kinds) {
+    fit <- glmnet::glmnet(.bm_pad(Z), factor(labels, levels = levels), family = "binomial", alpha = alpha, lambda = grid, standardize = FALSE)
     return(list(kind = kind, fit = fit, grid = grid, positive = positive, sign = if (identical(fit$classnames[2], positive)) 1 else -1, features = colnames(Z)))
   }
   if (startsWith(kind, "svm_")) {
@@ -131,7 +134,7 @@ pd_bm_permute_labels <- function(y, units) {
 
 # Returns a matrix of positive-class scores (rows = new observations, columns = classifier grid) and whether they are probabilities.
 .bm_predict <- function(model, Z) {
-  if (identical(model$kind, "penalized_logistic")) {
+  if (model$kind %in% .bm_glmnet_kinds) {
     p <- stats::predict(model$fit, .bm_pad(Z), s = model$grid, type = "response")
     p <- matrix(p, nrow = nrow(Z)); if (model$sign < 0) p <- 1 - p
     return(list(score = p, probability = TRUE))
@@ -165,7 +168,7 @@ pd_youden <- function(score, y) {
   labels <- ifelse(ytr == 1L, s$positive, s$negative)
   if (!length(feats)) return(list(score = matrix(0.5, nrow(Xte), length(s$classifier_grid)), features = character(), prep = prep, probability = TRUE,
                                   fitted_on = rownames(Ztr), applied_to = rownames(Zte)))
-  model <- .bm_fit_classifier(Ztr[, feats, drop = FALSE], labels, s$levels, s$positive, s$classifier, s$classifier_grid)
+  model <- .bm_fit_classifier(Ztr[, feats, drop = FALSE], labels, s$levels, s$positive, s$classifier, s$classifier_grid, .bm_glmnet_alpha(s$classifier, s$classifier_alpha %||% 0.5))
   pr <- .bm_predict(model, Zte[, feats, drop = FALSE])
   list(score = pr$score, features = feats, prep = prep, probability = pr$probability, model = model,
        fitted_on = rownames(Ztr), applied_to = rownames(Zte))   # rows the selection/classifier saw and the rows scored (audit)
@@ -187,9 +190,10 @@ pd_youden <- function(score, y) {
 # ties -> first in grid order) and the threshold from the inner out-of-fold scores.  Uses only the training rows.
 .bm_tune <- function(Xtr, ytr, units_tr, s) {
   if (length(unique(ytr)) < 2L) stop("E_BIOMARKER_FOLDS: a training fold lacks one class", call. = FALSE)
-  s$classifier_grid <- if (identical(s$classifier, "penalized_logistic")) {
+  s$classifier_grid <- if (s$classifier %in% .bm_glmnet_kinds) {
     if (length(s$lambda)) as.numeric(s$lambda) else { prep0 <- .bm_fit_prep(Xtr, s$imputation); Z0 <- .bm_apply_prep(prep0, Xtr)
-      glmnet::glmnet(.bm_pad(Z0), factor(ifelse(ytr == 1L, s$positive, s$negative), levels = s$levels), family = "binomial", alpha = 0, nlambda = 10, standardize = FALSE)$lambda }
+      glmnet::glmnet(.bm_pad(Z0), factor(ifelse(ytr == 1L, s$positive, s$negative), levels = s$levels), family = "binomial",
+                     alpha = .bm_glmnet_alpha(s$classifier, s$classifier_alpha %||% 0.5), nlambda = 10, standardize = FALSE)$lambda }
   } else if (startsWith(s$classifier, "svm_")) (if (length(s$cost)) as.numeric(s$cost) else c(0.1, 1, 10)) else 1
   grid <- .bm_selection_grid(s)
   ut <- .bm_unit_table(units_tr, ytr)
@@ -327,7 +331,7 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
     refusals[[length(refusals) + 1L]] <<- data.frame(analysis = analysis, item = item, reason_code = code, reason = reason, stringsAsFactors = FALSE)
     warnings[[length(warnings) + 1L]] <<- .pc_warning(request, code, sprintf("%s %s: %s", analysis, item, reason), "post_de/biomarker/refusals.tsv")
   }
-  for (pkg in c("glmnet")) if (identical(p$classifier, "penalized_logistic") && !requireNamespace(pkg, quietly = TRUE)) stop("E_ENGINE_NOT_AVAILABLE: R package glmnet is required for the penalised-logistic classifier", call. = FALSE)
+  for (pkg in c("glmnet")) if (p$classifier %in% .bm_glmnet_kinds && !requireNamespace(pkg, quietly = TRUE)) stop("E_ENGINE_NOT_AVAILABLE: R package glmnet is required for the penalised, lasso and elastic-net classifiers", call. = FALSE)
   if (startsWith(p$classifier, "svm_") && !requireNamespace("e1071", quietly = TRUE)) stop("E_ENGINE_NOT_AVAILABLE: R package e1071 is required for SVM classifiers", call. = FALSE)
   if (identical(p$classifier, "random_forest") && !requireNamespace("randomForest", quietly = TRUE)) stop("E_ENGINE_NOT_AVAILABLE: R package randomForest is required for the random-forest classifier", call. = FALSE)
   plan <- .pd_verify_inputs(request)
