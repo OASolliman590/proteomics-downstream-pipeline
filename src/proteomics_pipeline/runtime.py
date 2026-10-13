@@ -8,7 +8,7 @@ from .paths import atomic_write_bytes
 from .provenance import sha256_file
 STAGE_STATES={"NOT_RUN","RUNNING","COMPLETED","INAPPLICABLE","FAILED","CANCELLED","NOT_REQUESTED"}
 R_BACKED_CAPABILITIES={"foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova",
- "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks"}
+ "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks","welch","offline_gene_set_libraries"}
 # Amendment A-2026-10-01-02: planning stages run before the plan exists, so their results carry plan_hash=null.
 PLANNING_CAPABILITIES={"intake","preprocessing","design"}
 CAPABILITY_MAP={
@@ -33,7 +33,11 @@ CAPABILITY_MAP={
  "post_de_association":("proteomics_pipeline.post_de.association","execute"),
  "post_de_biomarker":("proteomics_pipeline.post_de.biomarker","execute"),
  "post_de_networks":("proteomics_pipeline.post_de.networks","execute"),
- "post_de_eligibility":("proteomics_pipeline.post_de.eligibility","execute")}
+ "post_de_eligibility":("proteomics_pipeline.post_de.eligibility","execute"),
+ # Amendment A-2026-10-01-44 (ADR 0011, packet R15a): optional Welch engine under methods_extension.welch
+ "welch":("proteomics_pipeline.welch_service","execute"),
+ # Amendment A-2026-10-01-45 (ADR 0011, packet R15b): offline GMT pathway libraries (hashed local files; no download)
+ "offline_gene_set_libraries":("proteomics_pipeline.gene_set_libraries","execute")}
 REQUIRED_PACKAGES={"foundation.io_roundtrip":["Rscript","jsonlite","openssl","proteomicsCore"]}
 def _discovery(capability,module_name,function_name):
     record={"id":capability,"module":module_name,"function":function_name,

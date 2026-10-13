@@ -63,7 +63,8 @@ def requested_capabilities(config: dict) -> list[dict]:
     if analysis:
         items.append({"capability": "design", "required": True, "source": "design"})
         for model in config["models"]:
-            capability = {"limma": "limma", "deqms": "assay_engines", "proda": "assay_engines"}[model["engine"]]
+            # Amendment A-2026-10-01-44 (ADR 0011, R15a): welch is a separate capability, declared under methods_extension.welch.
+            capability = {"limma": "limma", "deqms": "assay_engines", "proda": "assay_engines", "welch": "welch"}[model["engine"]]
             items.append({"capability": capability, "required": model["execution_requirement"] == "required", "source": f"model:{model['id']}"})
         if config.get("resources"):
             items.append({"capability": "resources", "required": True, "source": "resources"})
@@ -432,7 +433,7 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
     if analysis:
         for row in plan["engine_eligibility"]:
             if not row["eligible"]:
-                ledger.virtual(f"model.{row['model_id']}", "limma" if row["engine"] == "limma" else "assay_engines", False, "INAPPLICABLE", row["reason_code"],
+                ledger.virtual(f"model.{row['model_id']}", {"limma": "limma", "welch": "welch"}.get(row["engine"], "assay_engines"), False, "INAPPLICABLE", row["reason_code"],
                                f"optional model {row['model_id']} is scientifically ineligible", 0)
         limma_models = [m for m in config["models"] if m["engine"] == "limma" and eligibility[m["id"]]["eligible"]]
         if limma_models:
@@ -442,6 +443,9 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
                 for status in inference_service.model_status(root / "dea"):
                     if status["state"] != "COMPLETED":
                         ledger.virtual(f"model.{status['model_id']}", "limma", bool(status.get("required")), status["state"], status.get("reason_code"), status.get("message", ""), 4)
+        welch = [m for m in config["models"] if m["engine"] == "welch" and eligibility[m["id"]]["eligible"]]
+        if welch:
+            _run_welch(config, plan, root, ledger, welch)
         assay = [m for m in config["models"] if m["engine"] in ("deqms", "proda") and eligibility[m["id"]]["eligible"]]
         if assay:
             _run_assay_engines(config, plan, root, ledger, config_dir, assay)
@@ -456,6 +460,14 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
         _run_permanova(config, plan, root, ledger)
     if analysis and (config.get("post_de") or {}).get("enabled"):
         _run_post_de(config, plan, root, ledger, config_dir)
+
+
+def _run_welch(config: dict, plan: dict, root: Path, ledger: Ledger, models: list[dict]) -> None:
+    """Amendment A-2026-10-01-44 (ADR 0011, R15a): the Welch engine runs on the frozen plan, in its own directory, never under dea/."""
+    from . import welch_service
+    required = any(m["execution_requirement"] == "required" for m in models)
+    ledger.run_stage("welch", "welch", required, lambda temp: welch_service.build_request(plan, plan_path=root / "plan.json", config=config, run_id=ledger.run_id,
+                     output_temp_dir=temp), root / "methods_extension" / "welch")
 
 
 def _run_assay_engines(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path, models: list[dict]) -> None:

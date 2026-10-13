@@ -1,0 +1,26 @@
+{
+  "packet": "R15a",
+  "scope": "Welch engine (FR-168 to FR-173, V168 to V173); packet-local gates",
+  "commands": [
+    {
+      "command": "python -m pytest tests/scientific/test_welch_engine.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15a/evidence/python-welch-tests.log"
+    },
+    {
+      "command": "Rscript test-model-welch.R (testthat, stop_on_failure)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15a/evidence/r-model-welch-testthat.log"
+    },
+    {
+      "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15a/evidence/gates-regression-unit-encoding.log"
+    },
+    {
+      "command": "python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15a/evidence/spec-kit-check.log"
+    }
+  ]
+}

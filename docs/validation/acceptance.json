@@ -2,8 +2,8 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 188,
-    "NOT_RUN": 34
+    "PASS": 199,
+    "NOT_RUN": 23
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -5768,166 +5768,309 @@
       "acceptance_id": "V168",
       "requirement": "FR-168",
       "task": "T168",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_welch_engine.py",
+          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
+          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+        }
+      ],
       "expected_oracle": "The system MUST compute, for each declared pairwise group contrast on log2 abundance, a two-sample Welch t statistic with unequal variances and Welch–Satterthwaite degrees of freedom. The effect MUST equal the difference of the two group means, and its confidence interval MUST be computed at the declared level.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V169",
       "requirement": "FR-169",
       "task": "T169",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_welch_engine.py",
+          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
+          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+        }
+      ],
       "expected_oracle": "The system MUST run `welch` only when it is declared under `methods_extension.welch`, either as the single primary engine for a hypothesis or as a named secondary model with its own family. Without a declaration the default primary engine (limma, [ADR 0002](../../docs/adr/0002-primary-engine-limma.md)) and its outputs MUST be unchanged. A missing or failed Welch result MUST NOT be replaced by a limma result under the Welch name ([ADR 0005](../../docs/adr/0005-no-silent-method-fallback.md)).",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V170",
       "requirement": "FR-170",
       "task": "T170",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_welch_engine.py",
+          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
+          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+        }
+      ],
       "expected_oracle": "The system MUST apply BH within the declared family and MAY additionally export a paper-compatible DEP rule that selects features with raw P below a declared cutoff. Every paper-compatible selection MUST carry the label `not_multiplicity_controlled`, and BH MUST be reported alongside it in the same table.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V171",
       "requirement": "FR-171",
       "task": "T171",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_welch_engine.py",
+          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
+          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+        }
+      ],
       "expected_oracle": "When the frozen design declares paired or subject-blocked observations for a contrast, the system MUST run the paired t-test on within-subject differences with n − 1 degrees of freedom, in place of the two-sample Welch test for that contrast.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V172",
       "requirement": "FR-172",
       "task": "T172",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_welch_engine.py",
+          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
+          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+        }
+      ],
       "expected_oracle": "When a Welch request declares covariates or blocking that a Welch test cannot honour, the system MUST run only the valid unadjusted or within-subject form and record the adaptation (analysis, item, requested, used, reason) in the plan decision, the module's `eligibility.json` and a `W_WELCH_ADAPTED` warning. It MUST NOT drop the declaration silently.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V173",
       "requirement": "FR-173",
       "task": "T173",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_welch_engine.py",
+          "sha256": "36f2a390a6916d4d0d33045c5ff3e80b1cee3a03d84538abdf011a9969671612"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-model-welch.R",
+          "sha256": "1e23414592ebe0eb94e48b6885586d378575371640017e598c4af0f9e482ac36"
+        }
+      ],
       "expected_oracle": "For the same contrast and features, the system MUST report identical effects from Welch and limma and MUST keep their P values distinct, because limma moderates variances. Each engine's P value MUST match its own independent oracle.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V174",
       "requirement": "FR-174",
       "task": "T174",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_gene_set_libraries.py",
+          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+        }
+      ],
       "expected_oracle": "The system MUST read user-supplied local GMT library files only. Each library MUST be recorded in a manifest with its file SHA-256, source, version, species, identifier type, licence identifier and a redistributable flag. Analysis MUST NOT open a network connection or download a library ([SM14](../001-downstream-proteomics/contracts/scientific-methods.md), [SM44](../001-downstream-proteomics/contracts/scientific-methods.md#methods-extension)).",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V175",
       "requirement": "FR-175",
       "task": "T175",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_gene_set_libraries.py",
+          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+        }
+      ],
       "expected_oracle": "KEGG and MSigDB library files MUST NOT be redistributed. They MUST NOT be committed to the repository, copied into an artifact or published by the release tooling. Reactome, GO and WikiPathways libraries MAY be used under their recorded open licences. The public repository MUST contain only synthetic, marked GMT fixtures.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V176",
       "requirement": "FR-176",
       "task": "T176",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_gene_set_libraries.py",
+          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+        }
+      ],
       "expected_oracle": "The system MUST run hypergeometric over-representation for each declared library using as its universe the measured, mapped and eligible features of the analysed set (SM17). A whole-genome or library-wide background MUST NOT be used.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V177",
       "requirement": "FR-177",
       "task": "T177",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_gene_set_libraries.py",
+          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+        }
+      ],
       "expected_oracle": "The system MUST support pre-ranked enrichment on a declared statistic, including the Welch t of FR-168. It MUST reuse the existing fgsea adapter with an exploratory label (FR-075) or document a named alternative, and its ranks MUST be tie-free under the SM15 tie-break rule.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V178",
       "requirement": "FR-178",
       "task": "T178",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "tests/scientific/test_gene_set_libraries.py",
+          "sha256": "802b94e7f759eb097519c31b4e46f145d06cad3e54ae999ea265924ed4a7ecdb"
+        },
+        {
+          "path": "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+          "sha256": "ffdc9bd0799f58a487ba5164c769dd225f0ec02b4a66d4f121205b0156dabd2b"
+        }
+      ],
       "expected_oracle": "Each combination of library, method and contrast MUST be a separate family. BH MUST NOT be applied across libraries, and no pooled library family is created.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V179",

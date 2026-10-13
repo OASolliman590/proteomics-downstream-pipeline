@@ -366,7 +366,8 @@
       "enum": [
         "limma",
         "deqms",
-        "proda"
+        "proda",
+        "welch"
       ],
       "default": "limma"
     },
@@ -751,7 +752,8 @@
             1,
             2,
             3,
-            4
+            4,
+            5
           ]
         }
       },
@@ -834,6 +836,9 @@
     },
     "post_de": {
       "$ref": "#/$defs/post_de"
+    },
+    "methods_extension": {
+      "$ref": "#/$defs/methods_extension"
     }
   },
   "required": [
@@ -1104,7 +1109,8 @@
           "enum": [
             "limma",
             "deqms",
-            "proda"
+            "proda",
+            "welch"
           ]
         },
         "role": {
@@ -2007,6 +2013,71 @@
           }
         }
       }
+    },
+    "methods_extension": {
+      "description": "Optional methods extension (ADR 0011). Absent or disabled blocks leave every output unchanged.",
+      "type": "object",
+      "properties": {
+        "welch": {
+          "$ref": "#/$defs/methods_extension_welch"
+        }
+      },
+      "additionalProperties": false
+    },
+    "methods_extension_welch": {
+      "description": "Welch engine (R15a, FR-168 to FR-173). Runs only when enabled. Defaults: enabled false, paired auto, role secondary, family welch_zero_null, ci_level from report.ci_level, paper_compatible disabled with raw_p_cutoff 0.05.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "execution_requirement": {
+          "enum": ["required", "optional"],
+          "default": "optional"
+        },
+        "contrasts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "uniqueItems": true
+        },
+        "role": {
+          "enum": ["primary", "secondary"],
+          "default": "secondary"
+        },
+        "family": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "paired": {
+          "enum": ["auto", true, false],
+          "default": "auto"
+        },
+        "ci_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "paper_compatible": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "raw_p_cutoff": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": ["enabled"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     },
     "post_de": {
       "type": "object",
@@ -3017,6 +3088,40 @@
             "properties": {
               "enabled": {
                 "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "Amendment A-2026-10-01-44 (ADR 0011): the methods extension is Phase 5 only; Phase 1-4 configurations cannot enable it.",
+      "if": {
+        "properties": {
+          "runtime": {
+            "properties": {
+              "phase": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "methods_extension": {
+            "properties": {
+              "welch": {
+                "properties": {
+                  "enabled": {
+                    "const": false
+                  }
+                }
               }
             }
           }

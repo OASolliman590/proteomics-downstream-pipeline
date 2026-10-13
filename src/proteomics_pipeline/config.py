@@ -53,6 +53,18 @@ def _semantic(value):
     if primary["engine"]!=value["primary_engine"]: raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","primary model engine does not match primary_engine",f"/models/{pindex}/engine")
     if primary["hypothesis"]!=value["primary_hypothesis"]: raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","primary model hypothesis does not match primary_hypothesis",f"/models/{pindex}/hypothesis")
     if primary.get("execution_requirement")!="required": raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","primary model must be required",f"/models/{pindex}/execution_requirement")
+    # Amendment A-2026-10-01-44 (ADR 0011, R15a): welch exists only when declared under methods_extension.welch (FR-169).
+    welch_block=(value.get("methods_extension") or {}).get("welch") or {}
+    welch_models=[(index,m) for index,m in enumerate(value["models"]) if m["engine"]=="welch"]
+    if (welch_models or value["primary_engine"]=="welch") and not welch_block.get("enabled"):
+        raise ConfigurationError("E_WELCH_NOT_DECLARED","welch is requested but methods_extension.welch.enabled is not true; no welch result is produced and no limma result is relabelled",
+                                 "/methods_extension/welch/enabled")
+    if welch_block.get("enabled") and not welch_models:
+        raise ConfigurationError("E_WELCH_NOT_DECLARED","methods_extension.welch is enabled but no model declares engine welch","/methods_extension/welch")
+    for index,model in welch_models:
+        # A primary Welch model maps to role primary; a secondary Welch model is a non-primary model (role sensitivity) with its own family.
+        expected="primary" if model["role"]=="primary" else "secondary"
+        if welch_block.get("role","secondary")!=expected: raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","methods_extension.welch.role must be primary for the primary welch model and secondary otherwise","/methods_extension/welch/role")
     for index,contrast in enumerate(value["contrasts"]):
         if contrast["design_id"] not in design_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","contrast design does not exist",f"/contrasts/{index}/design_id")
     for index,model in enumerate(value["models"]):

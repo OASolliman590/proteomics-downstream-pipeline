@@ -5979,12 +5979,21 @@
         "case_id": "V168",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_welch_engine.py",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "docs/validation/016-methods-extension-validation/R15a/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V168",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6006,12 +6015,21 @@
         "case_id": "V169",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_welch_engine.py",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "docs/validation/016-methods-extension-validation/R15a/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V169",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6034,12 +6052,21 @@
         "case_id": "V170",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_welch_engine.py",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "docs/validation/016-methods-extension-validation/R15a/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V170",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6061,12 +6088,21 @@
         "case_id": "V171",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_welch_engine.py",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "docs/validation/016-methods-extension-validation/R15a/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V171",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6088,12 +6124,21 @@
         "case_id": "V172",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_welch_engine.py",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "docs/validation/016-methods-extension-validation/R15a/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V172",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6115,12 +6160,21 @@
         "case_id": "V173",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_welch_engine.py",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "docs/validation/016-methods-extension-validation/R15a/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15a/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V173",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d1b4e8ed5f78f5a6328946e6efc5180f0a120c35d7a9ba38daccc6776c01a4a9",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6142,12 +6196,21 @@
         "case_id": "V174",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_gene_set_libraries.py",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "docs/validation/016-methods-extension-validation/R15b/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V174",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6170,12 +6233,21 @@
         "case_id": "V175",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_gene_set_libraries.py",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "docs/validation/016-methods-extension-validation/R15b/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V175",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6197,12 +6269,21 @@
         "case_id": "V176",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_gene_set_libraries.py",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "docs/validation/016-methods-extension-validation/R15b/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V176",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6224,12 +6305,21 @@
         "case_id": "V177",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_gene_set_libraries.py",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "docs/validation/016-methods-extension-validation/R15b/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V177",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6251,12 +6341,21 @@
         "case_id": "V178",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/test_gene_set_libraries.py",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "docs/validation/016-methods-extension-validation/R15b/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15b/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V178",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "702e7b148260ca57da4fcd5cf90c95b4576c5d6d8b644169290f8d6ff16273a7",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commit on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {

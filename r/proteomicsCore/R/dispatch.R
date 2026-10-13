@@ -14,7 +14,11 @@ foundation_handlers <- list(
  "post_de_sensitivity"="post_de_sensitivity_stage",
  "post_de_association"="post_de_association_stage",
  "post_de_biomarker"="post_de_biomarker_stage",
- "post_de_networks"="post_de_networks_stage"
+ "post_de_networks"="post_de_networks_stage",
+ # Amendment A-2026-10-01-44: optional Welch engine (ADR 0011, packet R15a); declared under methods_extension.welch only
+ "welch"="welch_stage",
+ # Amendment A-2026-10-01-45: offline GMT pathway libraries (ADR 0011, packet R15b); local hashed files only
+ "offline_gene_set_libraries"="gene_set_libraries_stage"
 )
 dispatch_stage <- function(request_path,result_path,requested=NULL) {
   request=jsonlite::fromJSON(request_path,simplifyVector=FALSE); capability=if(is.null(requested))request$capability else requested; handler_name=foundation_handlers[[capability]]
