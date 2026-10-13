@@ -1,0 +1,120 @@
+{
+  "schema": "R15c calibration gates (FR-183, contracts/methods-extension.md#calibration-gates)",
+  "status": "pre-registered before the first calibration run; the planted-signal gates are PROPOSED and carried into the run under the Maintainer's 2026-10-13 instruction, with confirmation pending",
+  "gates": {
+    "nested_auc_null": {
+      "scenario": "null, each repeated-stratified family",
+      "rule": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53",
+      "source": "R14f, carried over unchanged"
+    },
+    "permutation_p_null": {
+      "scenario": "null, each family",
+      "rule": "binomial P(K >= k | rate 0.05) >= 0.01 and chi-square goodness-of-fit P over the B + 1 values >= 0.01",
+      "source": "R14f, carried over unchanged"
+    },
+    "leaky_reference": {
+      "scenario": "leaky selection on all data (fixed panel chosen on all units), each family",
+      "rule": "mean AUC > 0.75",
+      "source": "R14f, carried over unchanged"
+    },
+    "loocv_null": {
+      "scenario": "null, LOOCV outer (ridge and lasso)",
+      "rule": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53 on the pooled out-of-fold AUC",
+      "source": "R14f rule applied to LOOCV"
+    },
+    "blocked_null": {
+      "scenario": "null, subject-blocked units (ridge, lasso, elastic net)",
+      "rule": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53 (blocked nested AUC); blocked permutation P rules as permutation_p_null",
+      "source": "R14f blocked rules, carried over unchanged"
+    },
+    "blocked_ungrouped_reference": {
+      "scenario": "subject-blocked data, observation-level folds",
+      "rule": "mean ungrouped AUC - mean grouped AUC > 0.05",
+      "source": "R14f, carried over unchanged"
+    },
+    "planted_signal_auc": {
+      "scenario": "planted signal (five features shifted by 1.5 SD in the positive class), each family",
+      "rule": "mean nested AUC >= 0.70",
+      "source": "PROPOSED; requires Maintainer confirmation"
+    },
+    "planted_signal_p": {
+      "scenario": "planted signal, each family",
+      "rule": "permutation P <= 0.05 in at least 90 percent of replicates",
+      "source": "PROPOSED; requires Maintainer confirmation"
+    }
+  },
+  "design": {
+    "units": "15 vs 15 biological units (null and planted), 200 pure-noise features; planted: five features +1.5 SD in the positive class",
+    "outer": "2 x 5-fold repeated stratified (LOOCV: leave-one-unit-out with 12 vs 12 units)",
+    "inner": "3-fold, tuning on the inner out-of-fold AUC",
+    "selection": "top-5 by AUC on the training fold (the R14d top_k_auc rule)",
+    "threshold": "Youden on the training fold",
+    "blocked": "10 vs 10 subjects x 2 observations; whole-subject permutations; ungrouped reference with observation-level folds"
+  },
+  "families": [
+    {
+      "index": 0,
+      "family": "penalized_logistic",
+      "kind": "ridge logistic (glmnet alpha 0; lambda grid tuned by inner CV)"
+    },
+    {
+      "index": 1,
+      "family": "lasso",
+      "kind": "lasso logistic (glmnet alpha 1; lambda grid tuned by inner CV)"
+    },
+    {
+      "index": 2,
+      "family": "elastic_net",
+      "kind": "elastic net logistic (glmnet alpha 0.5, declared; lambda grid tuned by inner CV)"
+    },
+    {
+      "index": 3,
+      "family": "svm_linear",
+      "kind": "linear SVM (e1071, cost grid {0.1, 1, 10} tuned by inner CV on AUC)"
+    },
+    {
+      "index": 4,
+      "family": "svm_polynomial",
+      "kind": "polynomial SVM (e1071, cost grid {0.1, 1, 10} tuned by inner CV on AUC)"
+    },
+    {
+      "index": 5,
+      "family": "random_forest",
+      "kind": "random forest (randomForest, 500 trees; optional package, NOT_RUN when absent)"
+    }
+  ],
+  "replicate_counts": {
+    "nested_auc_null": 200,
+    "permutation_p_null_datasets": 40,
+    "permutation_B": 19,
+    "planted_auc": 100,
+    "planted_permutation_datasets": 40,
+    "leaky_reference": 60,
+    "loocv_null": 100,
+    "loocv_planted": 50,
+    "blocked_auc_null": 100,
+    "blocked_permutation_datasets": 30,
+    "families_blocked": [
+      "penalized_logistic",
+      "lasso",
+      "elastic_net"
+    ],
+    "families_loocv": [
+      "penalized_logistic",
+      "lasso"
+    ]
+  },
+  "seeds": {
+    "nested_auc_null_base": 600000,
+    "permutation_null_base": 700000,
+    "leaky_base": 800000,
+    "planted_auc_base": 900000,
+    "planted_permutation_base": 950000,
+    "blocked_base": 1000000,
+    "loocv_null_base": 1100000,
+    "loocv_planted_base": 1150000,
+    "family_offset": "+1000 x family index (penalized_logistic 0 ... random_forest 5); the null bases equal the R14f seeds for penalized_logistic"
+  },
+  "compute_budget_minutes": 45,
+  "reduced_replicates_recorded_as_adaptation": true
+}
