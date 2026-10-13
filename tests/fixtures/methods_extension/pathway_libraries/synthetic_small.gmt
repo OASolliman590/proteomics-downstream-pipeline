@@ -1,0 +1,3 @@
+SYN_SET_ALPHA	SYNTHETIC_FIXTURE: synthetic test set, not a pathway library	G0001	G0002	G0003	G0004	G0005	G0006	G0100
+SYN_SET_BETA	SYNTHETIC_FIXTURE: synthetic test set, not a pathway library	G0005	G0006	G0007	G0008	G0009	G0010	G0011	G0012
+SYN_SET_GAMMA	SYNTHETIC_FIXTURE: synthetic test set, not a pathway library	G0200	G0201	G0202

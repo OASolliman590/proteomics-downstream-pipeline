@@ -1,0 +1,26 @@
+{
+  "packet": "R15b",
+  "scope": "Offline GMT libraries (FR-174 to FR-178, V174 to V178); packet-local gates",
+  "commands": [
+    {
+      "command": "python -m pytest tests/scientific/test_gene_set_libraries.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15b/evidence/python-gene-set-libraries.log"
+    },
+    {
+      "command": "Rscript test-gene-set-libraries.R (testthat, stop_on_failure)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15b/evidence/r-gene-set-libraries-testthat.log"
+    },
+    {
+      "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15b/evidence/gates-regression-unit-encoding.log"
+    },
+    {
+      "command": "python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15b/evidence/spec-kit-check.log"
+    }
+  ]
+}
