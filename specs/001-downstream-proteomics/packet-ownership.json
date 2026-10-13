@@ -1206,6 +1206,18 @@
         "docs/methods/README.md"
       ],
       "change": "R15c (ADR 0011, FR-179, SM45): the R14d biomarker classifier gains lasso (glmnet alpha 1) and elastic_net (glmnet alpha 0.5, declared; lambda tuned by inner CV) beside the ridge penalized_logistic, through the same glmnet path (.bm_glmnet_kinds, .bm_glmnet_alpha); the classifier enumeration in both schema copies and the methods README document them. Ridge behaviour is unchanged (alpha 0)."
+    },
+    {
+      "id": "A-2026-10-01-48",
+      "adr": "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+      "paths": [
+        "docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "docs/validation/acceptance.json",
+        "docs/methods/reason-codes.md",
+        "specs/016-methods-extension-validation/tasks.md"
+      ],
+      "change": "Stage 2 (ADR 0011, FR-179 to FR-194, V179 to V194): the Maintainer's 2026-10-13 instruction asked for a study-validation runbook for the deferred real-study slots (V189 to V194), which sits outside the R15d folder; the traceability rows, the acceptance ledger, the reason-code catalogue and the task checkboxes are updated for R15c and R15d. The R15c calibration counts and seeds are those of the pre-registration (commit 1c79fad); the calibration run outputs are in R15c/calibration."
     }
   ]
 }
