@@ -1,0 +1,9 @@
+feature_id	accessions	gene_ids	gene_symbols	is_decoy	is_contaminant	protein_group_ambiguous
+P01	"[""P01""]"	[]	[]	unknown	unknown	false
+P02	"[""P02""]"	[]	[]	unknown	unknown	false
+P03	"[""P03""]"	[]	[]	unknown	unknown	false
+P04	"[""P04""]"	[]	[]	unknown	unknown	false
+P05	"[""P05""]"	[]	[]	unknown	unknown	false
+P06	"[""P06""]"	[]	[]	unknown	unknown	false
+P07	"[""P07""]"	[]	[]	unknown	unknown	false
+P08	"[""P08""]"	[]	[]	unknown	unknown	false

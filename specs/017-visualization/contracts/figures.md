@@ -1,0 +1,204 @@
+# Figure configuration, output layout and figure IDs (R16a–R16e)
+
+This contract fixes the configuration grammar, the three outputs of every figure, the output layout and the catalogue figure IDs. Figure values come only from saved figure-source tables. Unknown keys are refused. Defaults below are prespecified product policies, not claims about the data.
+
+## Configuration: `report.figures` (optional block of analysis.schema.json)
+
+| Key | Allowed values | Default | Meaning |
+|---|---|---|---|
+| `formats` | subset of `png`, `pzfx`, `html`, non-empty | `["png", "pzfx", "html"]` | Outputs produced for each catalogue figure. |
+| `dpi` | `300` | `300` | PNG resolution. Any other value fails E_FIGURE_DPI. |
+| `journal_width_mm` | `85`, `120`, `180` | `120` | Figure width preset (85 mm single column, 180 mm double column; 120 mm is the roomier default approved on 2026-10-08, D-74). |
+| `palette` | `okabe_ito`, or an explicit list of hex colours with one entry per group | `okabe_ito` | Group palette. |
+| `group_colours` | optional map from group identifier to hex colour | none | Overrides the palette. Stable across all figures of a run. |
+| `font` | `Arial` | `Arial` | If unavailable, the substitution is recorded in the registry. |
+| `p_annotation` | `stars`, `exact` | `exact` | P-value annotation style (FR-198). |
+
+### Relation to `report.figure_formats`
+
+`report.figure_formats` (R10b) stays accepted for backward compatibility: a run that does not declare `report.figures` produces the existing PDF, SVG and PNG figures exactly as before. When `report.figures` is declared, the catalogue in this contract, which includes the retrofitted R10b, R13 and R14 figures (D-72), produces the three outputs. If both are declared, both run, with separate outputs and separate directories. The two keys are never merged silently. An invalid `report.figures` block makes only the catalogue INAPPLICABLE with its typed reason. The existing report is unaffected, in line with [ADR 0010](../../../docs/adr/0010-adaptive-post-de-policy.md).
+
+## Style defaults
+
+| Property | Default |
+|---|---|
+| Background | white |
+| Gridlines | none (major and minor) |
+| Axis lines | black, thick: 1.5 pt |
+| Ticks | outward, length 4 pt |
+| Base font | Arial, 12 pt (title 14 pt), bold axis titles and tick labels |
+| Spacing | 8 pt gap between axis titles and tick labels, 8 pt below the title, 4 mm legend spacing, plot margins 10–14 pt |
+| Points | 2–2.4 mm points, alpha 0.8–0.85; dot plots jitter 0.18 of a category width |
+| Labels | at most 10 labelled points per volcano, repelled with 0.6 line box padding; label text 3.6 mm |
+| Points in dot plots | individual values, mean as a horizontal bar, error bar ± SD |
+| Okabe–Ito palette | `#0072B2`, `#E69F00`, `#D55E00`, `#009E73`, `#CC79A7`, `#56B4E9`, `#F0E442`, `#000000` in that order (groups take colours in declared group order) |
+| Volcano directions | up `#D55E00`, down `#0072B2`, not significant `grey70` |
+
+Group order is the declared group order of the frozen plan. A `group_colours` map overrides it.
+
+## P-value annotation rule (FR-198)
+
+| P value | `stars` | `exact` |
+|---|---|---|
+| P ≥ 0.05 | `ns` | `p = ` two significant digits in plain decimal, trailing zeros kept, for example `p = 0.20`, `p = 0.050` |
+| 0.01 ≤ P < 0.05 | `*` | same rule, for example `p = 0.040`, `p = 0.010` |
+| 0.001 ≤ P < 0.01 | `**` | same rule, for example `p = 0.0010` |
+| 0.0001 ≤ P < 0.001 | `***` | same rule, for example `p = 0.00040` |
+| P < 0.0001 | `****` | `p < 0.0001` |
+
+The annotation is computed from the P value in the source table. The rule applies to the family P value named in the figure (for example the zero-null family).
+
+**Note (review of R16a, commit 16bb03e).** The exact label has two significant digits and keeps trailing zeros. If the two-digit rounding would land on or above a significance threshold (0.05, 0.01, 0.001, 0.0001) from below, more significant digits are used until the label stays below it: `p = 0.04999` (not `p = 0.05`) and `p = 0.0499` (not `p = 0.05`). A value at or above a threshold is never rounded below it, so `0.05` reads `p = 0.050`. The stars and exact labels therefore always agree on significance.
+
+## Output layout
+
+```text
+<run>/report/figure_catalogue/
+  <figure_id>.png          Prism-style PNG at the declared dpi (R16c)
+  <figure_id>.pzfx         GraphPad Prism file (R16b)
+  <figure_id>.html        standalone interactive HTML (R16d)
+  sources/<figure_id>.tsv  figure-source table, the only input to all three outputs
+  registry.json            per figure: state, reason, source path and SHA-256, output paths and SHA-256, font substitution if any
+```
+
+`<run>/report/figures/` and `<run>/report/figure_sources/` (R10b) are not written by the catalogue. Each output has a SHA-256 in `registry.json`. A missing output is recorded as NOT_RUN with its reason (E_FIGURE_OUTPUT_MISSING). The other outputs of that figure still run.
+
+## Vendored plotly.js (R16d, FR-205)
+
+```text
+vendor/plotly/
+  plotly.min.js        vendored file, version pinned
+  LICENSE              the MIT licence notice of plotly.js, unmodified
+  PINNED.json          {package, version, sha256, licence, vendored_by_packet}
+```
+
+`PINNED.json` is written when the Maintainer approves the vendored version, and its SHA-256 is recorded then. Until approval, R16d is NOT_RUN. The HTML embeds the vendored file inline after the hash check. It has no external resource reference. The static scan allows only the XML namespace strings `http://www.w3.org/2000/svg`, `http://www.w3.org/1999/xhtml` and `http://www.w3.org/1999/xlink`, and rejects every other URL, `<script src>`, `<link href>`, `fetch(`, `XMLHttpRequest` and dynamic `import(` to a URL (E_PLOTLY_NETWORK).
+
+## Prism `.pzfx` table rules (R16b)
+
+| Figure kind | Prism table | Rows and columns |
+|---|---|---|
+| Group comparisons (dot plots, per-protein values) | Column | One column per group. Each row is a replicate value, exactly as in the source. |
+| Volcano, ROC, XY scatter | XY | One point per source row. X and Y are exactly the source values. |
+| Multi-protein panels | Grouped | One row per replicate. One data set per protein and group. |
+| ROC with CI band (stage 2, FR-215) | XY, XY, XY, Column | Curve (1 - specificity, sensitivity) and the lower and upper bootstrap band are XY tables, one point per source row. The fourth table is the statistics table of D-75 (row title: the AUC with its claim label; columns `AUC`, `CI95_low`, `CI95_high`, `n_Control`, `n_Case`). |
+| Network graph (stage 2, FR-220) | Column, XY | Node degree in the declared subnetwork (Column table, row titles are node identifiers). The edge list is an XY table whose X and Y are the node indices of each edge. No statistics table: the Info sheet records `Statistics: none`. |
+
+The writer self-check compares every value it writes with the source table (E_PZFX_VALUE_MISMATCH). Values are written with round-trip numeric precision (D-12). Opening the file in GraphPad Prism is a Maintainer check, recorded as NOT_RUN in automated tests.
+
+## Statistics table and Info sheet (D-75)
+
+Every `.pzfx` written by the pipeline holds, besides the figure's data table(s):
+
+1. **Statistics table** (`<figure title> — pipeline statistics`). A Prism Column table whose row titles are the comparisons shown in the figure (for example `chronic − control`). Its columns are `effect` (the contrast estimate on the plotted scale), `P`, `q` and `n_<group>` for each group in the comparison. Values come from the same results table as the figure's P-value annotations, with round-trip precision. A figure without inferential statistics (for example a QC distribution) omits this table and records `statistics: none` in the Info sheet.
+2. **Info sheet.** Prism Info constants:
+   - `Test`: for example `limma moderated t (trend, robust)` or `Welch t`;
+   - `Multiplicity adjustment`: method and family ID, for example `BH within protein-primary`, or `none (paper-compatible raw P rule; not multiplicity-controlled)`;
+   - `Effect scale`: for example `log2 difference`;
+   - `Group sizes`;
+   - `Pipeline version and commit`;
+   - `Source table SHA-256`;
+   - `Run ID`;
+   - `Created (UTC)`.
+
+   The Info notes repeat the figure caption and warn that a test run inside Prism may give a different P value from the pipeline's test.
+
+The writer self-check covers the Statistics table values. The Info sheet uses the Prism `InfoSequence` and `Info` elements, with `Constant` name/value pairs and `Notes`. Readers that ignore the Info sheet (for example `pzfx::read_pzfx`) still read every data table.
+
+## Retrofit of existing figures (D-72)
+
+When `report.figures` is declared, the figures that the existing producers already register are produced through the catalogue with the three outputs, in `<run>/report/figure_catalogue/`. The figure IDs are the stems of the producers' registered figure-source tables. The producers are not changed: their tables (`figure_sources/<stem>.tsv`, and `heatmap_source.tsv` for the association heatmap) are the figure sources. Each stem is mapped to a figure kind by one rule (`proteomics_pipeline.figures.retrofit`); the registry records the kind of each figure.
+
+| Producer | Stems (rule) | Kind |
+|---|---|---|
+| R10b (report) | `volcano_zero_null_*`, `volcano_treat_*` (covered: drawn by the run's `diff_volcano_labelled__<contrast>`, same table); `response_axes` | scatter |
+| R14 sensitivity | `comparison_*`; `matched_n_discoveries`; `influence_max_effect_change` | scatter; histogram; scatter |
+| R14 biomarker | `roc_cv` (with `roc_cv_band`); `cv_auc_repeats`; `permutation_null`; `calibration`; `selection_stability` | curve with band; strip; histogram; scatter; bar |
+| R14 sets | `upset_all`; `venn_*` | regions |
+| R14 concordance | `concordance_*` | scatter |
+| R14 networks | `eigengenes`; `ppi_subnetwork` (edges from the stage's `ppi_subnetwork.tsv`) | group-mean heatmap; network |
+| R14 association | `association_heatmap` (`heatmap_source.tsv`) | heatmap |
+| R13 PERMANOVA | `permanova/ordination.tsv`, `ordination_axes.tsv`, `tests.tsv` (the producer's published tables, already typed FigureSource) | `perm_pcoa_centroids__<set>`, `perm_permdisp__<set>` (catalogue renderers) |
+
+## Run-level catalogue (C1)
+
+When `report.figures` is declared, the run writes the publication catalogue from its own outputs (`src/proteomics_pipeline/figures/run_sources.py`). Each source is a TSV table written from the run's outputs (the analysis matrix and its observed mask, the observations, the PCA scores and variance, the DE table of each primary-family contrast, the PERMANOVA tables) and registered before the figure is drawn. Nothing recomputes a statistic: the DE values are copied; the MA means are means of the analysis matrix over the observed cells; the DEP set is the family q at or below the cutoff.
+
+| Figure ID (output ID) | Source | Notes |
+|---|---|---|
+| `qc_intensity_distributions`, `qc_missingness_heatmap`, `qc_sample_correlation_heatmap` | analysis matrix and observed mask | all samples |
+| `qc_pca_ellipses` | PCA scores and variance (QC) with the observation groups | 95 % ellipse per group |
+| `diff_volcano_labelled__<contrast>` | DE table of the contrast | title: contrast label; at most 10 labels (smallest q); dashed line at the largest family P among the rejections |
+| `diff_ma_plot__<contrast>` | DE table and the group means of the analysis matrix | |
+| `diff_dep_heatmap_clustered__<contrast>` | DEPs at the family cutoff | skipped with a recorded reason when fewer than 2 DEPs |
+| `diff_protein_dotplot_brackets__<contrast>` | top 6 DEPs by q, values of the two groups; family table for the P brackets | skipped when no DEP |
+| `diff_upset_venn__primary` | DEP membership of each primary contrast | Venn when at most 3 contrasts, UpSet otherwise |
+| `perm_pcoa_centroids__<set>`, `perm_permdisp__<set>` | PERMANOVA tables of the run | per feature set; B and seed in the PERMDISP title |
+
+Only the primary family (the family whose role is `primary` in `families.tsv`) is used for the differential figures.
+
+Post-DE figures are drawn from the result tables of the post-DE modules, and only when those modules ran (`run_sources.py`, D3). No statistic is recomputed from the data:
+
+| Figure ID (output ID) | Source tables of the run | Notes |
+|---|---|---|
+| `bio_roc_ci_band` | biomarker `figure_sources/roc_cv.tsv`, `roc_cv_band.tsv`; `cv_performance.tsv` (pooled AUC, seed, band draws = min(500, threshold_bootstrap_draws)) | claim label `cross_validated_nested`; out-of-fold scores |
+| `bio_cv_auc_vs_permutation` | `figure_sources/cv_auc_repeats.tsv`, `permutation_null.tsv`; `cv_performance.tsv` (`permutation_p`, `permutation_B`) | the displayed P is the producer's; a P that differs from (k + 1) / (B + 1) is refused `E_FIGURE_PERMUTATION_P`; skipped when the permutation test is disabled |
+| `bio_panel_forest` | `single_feature_auc.tsv`, top 10 by AUC with the bootstrap interval | claim label `in_sample`; captioned in-sample and not a panel effect; no P |
+| `path_enrichment_dotplot__<direction>` | `pathways/ora_up.tsv`, `ora_down.tsv` | one figure per direction; a set without a foreground hit is not plotted; skipped when no set has a hit |
+| `net_module_heatmap` | `networks/modules.tsv`, `eigengenes.tsv` and the primary observations | group means of the assigned modules only; skipped when no module was assigned |
+| `net_network_graph__<set>` | `networks/ppi_subnetwork.tsv`, checked against the edges of the run's PPI snapshot | an edge missing from the snapshot is refused `E_FIGURE_SOURCE_MISSING`; the layout is presentation only |
+
+The R14 rules of `roc_cv`, `cv_auc_repeats`, `permutation_null`, `eigengenes` and `ppi_subnetwork` are skipped with a note naming the post-DE figure above, so each table is drawn once. A module that did not run is recorded in `retrofit.run_sources` with its reason.
+
+A registered table with no rule is listed under `retrofit.not_retrofitted` in `registry.json`. A table whose rule needs a column that is absent, or a companion that is missing, is refused with `E_FIGURE_SOURCE_MISSING` and its outputs are NOT_RUN. Transformations are those named by a rule only: the absolute treatment effect of the response axes, group means of the eigengenes, equal-width bins of a histogram in the HTML, and the subnetwork edges from the companion table. The statistics table is omitted (the producer's inference is not recomputed), and the Info sheet records `Statistics: none` or `table` as the producer's table requires.
+
+The run writes the catalogue as the stage `figure_catalogue` after the report stages. An invalid `report.figures` block makes only that stage INAPPLICABLE with its typed reason; the run stays COMPLETED. `registry.json` holds the resolved style, the font-substitution record of the run, and the retrofit notes. The outputs are listed in `run_status.json` (artifact type `FigureArtifact`), so `proteomics verify` checks them.
+
+## Figure IDs
+
+| Area | Figure ID | Packet | Source family or analysis | Claim or method label |
+|---|---|---|---|---|
+| QC | `qc_intensity_distributions` | R16e | observed log2 intensity (SM06) | descriptive |
+| QC | `qc_missingness_heatmap` | R16e | observed mask (SM04) | descriptive |
+| QC | `qc_sample_correlation_heatmap` | R16e | SM06 coverage rule | descriptive |
+| QC | `qc_pca_ellipses` | R16e | PCA on observed cells | descriptive |
+| Differential | `diff_volcano_labelled` | R16e | zero-null family (SM12) | family q |
+| Differential | `diff_ma_plot` | R16e | contrast means | descriptive |
+| Differential | `diff_protein_dotplot_brackets` | R16e | family P (FR-198) | family P |
+| Differential | `diff_dep_heatmap_clustered` | R16e | declared DEP set | descriptive |
+| Differential | `diff_upset_venn` | R16e | SM31 exclusive regions (Venn for k ≤ 3) | descriptive |
+| Biomarker | `bio_roc_ci_band` | R16e | SM34 | claim label |
+| Biomarker | `bio_panel_forest` | R16e | SM34 | claim label |
+| Biomarker | `bio_cv_auc_vs_permutation` | R16e | SM36 | claim label |
+| Pathways | `path_enrichment_dotplot` | R16e | SM18 | family q |
+| Networks | `net_module_heatmap` | R16e | SM39 | module_level |
+| Networks | `net_network_graph` | R16e | SM40 | descriptive |
+| PERMANOVA | `perm_pcoa_centroids` | R16e | SM26 | descriptive |
+| PERMANOVA | `perm_permdisp` | R16e | SM29 | family P |
+
+Seventeen figure IDs. Each has one V case (V206–V222) that checks all three outputs against the same source table.
+
+## Error codes introduced by this slice
+
+| Code | Packet | Behaviour |
+|---|---|---|
+| `E_FIGURE_FORMAT` | R16a | Unknown format. No figure is produced. |
+| `E_FIGURE_DPI` | R16a, R16c | A dpi other than 300 for PNG. |
+| `E_FIGURE_PALETTE` | R16a | Invalid palette or group colour list. |
+| `E_FIGURE_COLOUR_UNSTABLE` | R16a | Group colours depend on figure order. |
+| `E_FIGURE_SOURCE_MISSING` | R16a | A figure has no registered source table, or a feature is absent from its source. |
+| `E_FIGURE_SOURCE_IMPUTED` | R16e | A source includes imputed cells without the observed mask. |
+| `E_FIGURE_SET_MISMATCH` | R16e | A figure shows a feature, set or module outside its declared set. |
+| `E_FIGURE_STYLE` | R16c | A theme property differs from the style defaults. |
+| `E_FIGURE_OUTPUT_MISSING` | R16a–R16e | One output is not produced. Recorded as NOT_RUN; the other outputs run. |
+| `E_PZFX_VALUE_MISMATCH` | R16b | The writer self-check finds a value that differs from the source. |
+| `E_PLOTLY_HOVER` | R16d | Hover text lacks an identifying field. |
+| `E_PLOTLY_NETWORK` | R16d | An external resource reference or network call in the HTML. |
+| `E_PLOTLY_HASH` | R16d | The vendored plotly.js hash differs from the pin. |
+| `E_FIGURE_PERMUTATION_P` | R16e (stage 2, FR-217) | The displayed permutation P differs from (k + 1) / (B + 1) computed from the source; no output is produced. |
+
+Existing codes are reused: `E_VENN_K` (R14a) and `E_BIOMARKER_CLAIM` (R14d).
+
+## Dependencies
+
+R Suggests: ggplot2 and ggprism (R16c), pzfx (optional read-back, R16b; a missing package is NOT_RUN). The Python writers need only the standard library for `.pzfx` and HTML. A missing dependency produces NOT_RUN for that output, never a silent change of format.

@@ -21,4 +21,10 @@ Suggests:
     pROC,
     e1071,
     randomForest,
-    dynamicTreeCut
+    dynamicTreeCut,
+    pzfx,
+    ggplot2,
+    ggprism,
+    ragg,
+    systemfonts,
+    ggrepel

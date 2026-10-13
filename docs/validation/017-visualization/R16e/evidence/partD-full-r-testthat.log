@@ -1,0 +1,68 @@
+assay-engines: .............
+design: ............................
+figures-catalogue: ...............................................................................................................................................................................................................
+figures-prism-png: ........W...........
+foundation: ...................................................
+limma: ....................
+mapping: .....WWW......
+pathways: ...................
+permanova: ...........................................................................................................................
+post-de-association: ..............
+post-de-biomarker: ...............................................................................................................WWWWWWWWW..................WWWWWWWWW.
+post-de-networks: ..................................
+post-de-sensitivity: .....................
+post-de-sets: ..................................................................................................................................................
+preprocessing: ............................................
+pzfx-readback: ...................................
+qc: ................
+response: ...................................
+
+══ Warnings ════════════════════════════════════════════════════════════════════
+1. V203 PNG pixel width is floor(width_mm / 25.4 * 300) at 85, 120 and 180 mm, and the layer equals the source ('test-figures-prism-png.R:38:5') - The S3 guide system was deprecated in ggplot2 3.5.0.
+ℹ It has been replaced by a ggproto system that can be extended.
+
+2. V068 set eligibility uses set ∩ universe with declared bounds ('test-mapping.R:38:3') - input string 'test-only bounds %d-%d applied to set ∩ universe before testing' cannot be translated from 'US-ASCII' to UTF-8, but is valid UTF-8
+
+3. V068 set eligibility uses set ∩ universe with declared bounds ('test-mapping.R:38:3') - input string 'test-only bounds %d-%d applied to set ∩ universe before testing' cannot be translated from 'US-ASCII' to UTF-8, but is valid UTF-8
+
+4. V068 set eligibility uses set ∩ universe with declared bounds ('test-mapping.R:38:3') - input string 'test-only bounds %d-%d applied to set ∩ universe before testing' cannot be translated from 'US-ASCII' to UTF-8, but is valid UTF-8
+
+5. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+6. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+7. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+8. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+9. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+10. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+11. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+12. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+13. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+14. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+15. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+16. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+17. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+18. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+19. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+20. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+21. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+22. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations 988 failed 0 errors 0 skipped 0 
+exit=0

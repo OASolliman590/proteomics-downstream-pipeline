@@ -129,6 +129,21 @@ def protected_baseline(root: Path) -> list[dict]:
     return problems
 
 
+# A-2026-10-01-35: the vendored plotly.js library (vendor/plotly/plotly.min.js, pinned in vendor/plotly/PINNED.json) contains
+# the JavaScript expression `access_token="+(...` that the hard-coded-secret rule matches. Only that exact file, while its
+# SHA-256 equals the pin, is exempt from the secret rule. Any other file, or any change to the library, is scanned as before.
+VENDORED_LIBRARY = "vendor/plotly/plotly.min.js"
+
+
+def _pinned_vendored_library(root: Path, rel: str) -> bool:
+    if rel != VENDORED_LIBRARY:
+        return False
+    pin = root / "vendor" / "plotly" / "PINNED.json"
+    if not pin.is_file() or not (root / rel).is_file():
+        return False
+    return sha256_file(root / rel) == json.loads(pin.read_text(encoding="utf-8")).get("sha256")
+
+
 def check(root: Path = ROOT) -> dict:
     root = Path(root).resolve()
     files = tracked_files(root)
@@ -144,7 +159,7 @@ def check(root: Path = ROOT) -> dict:
         text = _text(root / rel)
         if text is None:
             continue
-        for name, pattern in SECRET_PATTERNS.items():
+        for name, pattern in ([] if _pinned_vendored_library(root, rel) else SECRET_PATTERNS.items()):
             match = pattern.search(text)
             if match:
                 findings.append({"path": rel, "kind": f"credential-like content ({name})", "rule": "secret", "line": text.count("\n", 0, match.start()) + 1})

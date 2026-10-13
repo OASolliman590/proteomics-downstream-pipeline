@@ -20,7 +20,8 @@ TRACE = SPECS / "001-downstream-proteomics" / "traceability.json"
 LEDGER = ROOT / "docs" / "validation" / "acceptance.json"
 STATUSES = {"PASS", "FAIL", "NOT_RUN", "SKIPPED", "INAPPLICABLE"}
 CORE = range(1, 121)                       # FR-001-FR-120 / T001-T120 / V001-V120 (frozen kit)
-AMENDMENTS = {"014-multivariate-permanova": range(121, 131), "015-post-de-analysis": range(131, 168)}   # ADR 0006, ADR 0009
+AMENDMENTS = {"014-multivariate-permanova": range(121, 131), "015-post-de-analysis": range(131, 168),   # ADR 0006, ADR 0009
+              "016-methods-extension-validation": range(168, 195), "017-visualization": range(195, 223)}   # ADR 0011, ADR 0012
 
 
 def spec_identities() -> dict[str, dict[str, list[str]]]:
@@ -109,7 +110,7 @@ def test_v116_identities_tasks_evidence_and_ledger_reconcile():
     trace, ledger, specs = load()
     problems = reconcile(trace, ledger, specs)
     assert problems == [], "\n".join(problems)
-    assert len(trace["requirements"]) == 167 and sum(len(s["V"]) for s in specs.values()) == 167
+    assert len(trace["requirements"]) == 222 and sum(len(s["V"]) for s in specs.values()) == 222
 
 
 def history_problems(commits, root=ROOT) -> list[str]:

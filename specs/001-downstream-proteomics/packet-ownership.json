@@ -453,6 +453,168 @@
         "tests/scientific/calibration_post_de.R",
         "tests/scientific/reference/test_post_de_calibration_evidence.py"
       ]
+    },
+    "R15a": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R05"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/welch_service.py",
+        "src/proteomics_pipeline/reporting/welch_data.py",
+        "r/proteomicsCore/R/model_welch.R",
+        "r/proteomicsCore/tests/testthat/test-model-welch.R",
+        "tests/scientific/test_welch_engine.py",
+        "tests/fixtures/methods_extension/welch/**",
+        "docs/validation/016-methods-extension-validation/R15a/**"
+      ]
+    },
+    "R15b": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R08",
+        "R15a"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/gene_set_libraries.py",
+        "r/proteomicsCore/R/gene_set_libraries.R",
+        "r/proteomicsCore/R/pathway_prerank_welch.R",
+        "r/proteomicsCore/tests/testthat/test-gene-set-libraries.R",
+        "tests/scientific/test_gene_set_libraries.py",
+        "tests/fixtures/methods_extension/pathway_libraries/**",
+        "docs/validation/016-methods-extension-validation/R15b/**"
+      ]
+    },
+    "R15c": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R14d",
+        "R11"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/post_de/biomarker_families.py",
+        "r/proteomicsCore/R/post_de_biomarker_families.R",
+        "r/proteomicsCore/tests/testthat/test-post-de-biomarker-families.R",
+        "scripts/maintained/run_methods_calibration.py",
+        "tests/scientific/calibration_methods_extension.R",
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "tests/fixtures/methods_extension/calibration/**",
+        "docs/validation/016-methods-extension-validation/R15c/**"
+      ]
+    },
+    "R15d": {
+      "phase": 5,
+      "risk": "high",
+      "depends_on": [
+        "R10b",
+        "R11",
+        "R15a"
+      ],
+      "scope_amendment": "ADR 0011 (Maintainer decision 2026-10-08): slice 016-methods-extension-validation",
+      "write_allowlist": [
+        "src/proteomics_pipeline/multistudy/__init__.py",
+        "src/proteomics_pipeline/multistudy/manifest.py",
+        "src/proteomics_pipeline/multistudy/runner.py",
+        "src/proteomics_pipeline/multistudy/acceptance.py",
+        "scripts/maintained/fetch_public_study.py",
+        "scripts/maintained/verify_private_status.py",
+        "tests/integration/test_multistudy.py",
+        "tests/fixtures/methods_extension/multistudy/**",
+        "docs/validation/016-methods-extension-validation/R15d/**"
+      ]
+    },
+    "R16a": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R10b"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/__init__.py",
+        "src/proteomics_pipeline/figures/config.py",
+        "src/proteomics_pipeline/figures/style.py",
+        "src/proteomics_pipeline/figures/registry.py",
+        "r/proteomicsCore/R/figure_style.R",
+        "tests/unit/test_figure_config.py",
+        "tests/scientific/test_figure_style.py",
+        "tests/fixtures/figures/style/**",
+        "docs/validation/017-visualization/R16a/**"
+      ]
+    },
+    "R16b": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16a"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/pzfx_writer.py",
+        "r/proteomicsCore/tests/testthat/test-pzfx-readback.R",
+        "tests/scientific/test_pzfx_writer.py",
+        "tests/fixtures/figures/pzfx/**",
+        "docs/validation/017-visualization/R16b/**"
+      ]
+    },
+    "R16c": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16a"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "r/proteomicsCore/R/figures_prism_png.R",
+        "r/proteomicsCore/tests/testthat/test-figures-prism-png.R",
+        "tests/scientific/test_prism_png.py",
+        "tests/fixtures/figures/png/**",
+        "docs/validation/017-visualization/R16c/**"
+      ]
+    },
+    "R16d": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16a"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/plotly_html.py",
+        "vendor/plotly/**",
+        "tests/scientific/test_plotly_html.py",
+        "tests/fixtures/figures/plotly/**",
+        "docs/validation/017-visualization/R16d/**"
+      ]
+    },
+    "R16e": {
+      "phase": 6,
+      "risk": "high",
+      "depends_on": [
+        "R16b",
+        "R16c",
+        "R16d",
+        "R05",
+        "R08",
+        "R13",
+        "R14d",
+        "R14e"
+      ],
+      "scope_amendment": "ADR 0012 (Maintainer decision 2026-10-08): slice 017-visualization",
+      "write_allowlist": [
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "r/proteomicsCore/R/figures_catalogue.R",
+        "r/proteomicsCore/tests/testthat/test-figures-catalogue.R",
+        "tests/integration/test_figure_catalogue.py",
+        "tests/fixtures/figures/catalogue/**",
+        "docs/validation/017-visualization/R16e/**"
+      ]
     }
   },
   "parallel_groups": [
@@ -462,7 +624,7 @@
       "R09"
     ]
   ],
-  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments. 2026-10-02 (ADR 0009): R14a–R14f added for slice 015 (Phase 4), serial; allowlists are disjoint and proposed before dispatch.",
+  "note": "Authoritative frozen ownership data; packet-index links here. Maintainer-only spec/evidence-status edits are outside implementer allowlists. No packet is dispatched without explicit authorization. 2026-10-01: R13 added by operator-authorized amendment; Maintainer shared-interface amendments are listed in maintainer_amendments. 2026-10-02 (ADR 0009): R14a–R14f added for slice 015 (Phase 4), serial; allowlists are disjoint and proposed before dispatch. 2026-10-08 (ADR 0011, ADR 0012): R15a-R15d (Phase 5, serial) and R16a-R16e (Phase 6, serial) added; allowlists are disjoint from each other and from every earlier packet. Phase 6 may be built before Phase 5.",
   "maintainer_amendments": [
     {
       "id": "A-2026-10-01-01",
@@ -808,6 +970,171 @@
         "tests/regression/test_release.py"
       ],
       "change": "D-63: the Maintainer selected the PolyForm Noncommercial License 1.0.0 with Omar A. Solliman as copyright holder and licensor (commercial use needs his separate written license). The operator decision record, license files and package metadata are added; V115 now asserts that every license claim matches the recorded decision and that no other license is claimed; V117 asserts the recorded license while public release stays refused (no disclosure review). pyproject.toml uses the PEP 639 SPDX expression `PolyForm-Noncommercial-1.0.0` with `license-files` (setuptools >= 77)."
+    },
+    {
+      "id": "A-2026-10-01-28",
+      "adr": "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+      "paths": [
+        "specs/016-methods-extension-validation/spec.md",
+        "specs/016-methods-extension-validation/plan.md",
+        "specs/016-methods-extension-validation/tasks.md",
+        "specs/016-methods-extension-validation/contracts/methods-extension.md",
+        "specs/017-visualization/spec.md",
+        "specs/017-visualization/plan.md",
+        "specs/017-visualization/tasks.md",
+        "specs/017-visualization/contracts/figures.md",
+        "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+        "docs/adr/0012-visualization-outputs.md",
+        "specs/001-downstream-proteomics/spec.md",
+        "specs/001-downstream-proteomics/PHASES.md",
+        "specs/001-downstream-proteomics/packet-index.md",
+        "specs/001-downstream-proteomics/decisions.md",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md",
+        "specs/001-downstream-proteomics/roadmap.json",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "scripts/check_spec_kit.py",
+        "tests/regression/test_traceability_reconciliation.py",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "ADR 0011 and ADR 0012 (Maintainer decisions 2026-10-08): slices 016 (Phase 5, v1.2-methods-validation, R15a-R15d, FR/T/V-168-194) and 017 (Phase 6, v1.3-visualization, R16a-R16e, FR/T/V-195-222) appended; scientific methods contract v1.4.0 adds SM42-SM46; spec 001 gains US10-US12; packet allowlists for the nine new packets are disjoint; the shared-interface amendments (welch engine declaration, methods_extension and report.figures schema blocks, R Suggests entries, plotly.js pin) are made by the Maintainer before dispatch, not by allowlist exception."
+    },
+    {
+      "id": "A-2026-10-01-29",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "src/proteomics_pipeline/schemas/analysis.schema.json",
+        "specs/001-downstream-proteomics/contracts/analysis.schema.json",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/017-visualization/tasks.md",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "docs/validation/acceptance.json",
+        "docs/methods/reason-codes.md"
+      ],
+      "change": "R16a (ADR 0012, FR-195-FR-198, V195-V198): the optional report.figures block is added to both analysis.schema.json copies (shape and keys only; values are checked by figures/config.py with the typed codes E_FIGURE_FORMAT, E_FIGURE_DPI, E_FIGURE_PALETTE and E_CONFIG_SCHEMA); the reason-code catalogue gains the R16a E_FIGURE_* codes (regenerated, not hand-edited); traceability status for FR-195-FR-198 is PASS with evidence, the R16a task checkboxes T195-T198 are ticked in specs/017-visualization/tasks.md (as R14a did for its tasks), and the acceptance ledger is regenerated. This is the Maintainer shared-interface amendment named in A-2026-10-01-28, recorded by the implementing route at the operator's direction (2026-10-08) and open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-30",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16b (ADR 0012, FR-199-FR-201, V199-V201): pzfx is added to the proteomicsCore R Suggests (optional read-back oracle) and to renv.lock with its dependency xml2, both as installed in the project-local .r-lib (pzfx 0.3.1, xml2 1.6.0; check_r_lock qualified); the reason-code catalogue gains E_PZFX_VALUE_MISMATCH (regenerated); traceability status for FR-199-FR-201 is PASS with evidence, the R16a commit note is corrected to its commit hash, and the task checkboxes T199-T201 are ticked. Recorded by the implementing route at the operator's direction (2026-10-08) as the shared-interface amendment named in A-2026-10-01-28 (R Suggests entries); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-31",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "specs/017-visualization/contracts/figures.md"
+      ],
+      "change": "Review fix of R16a (commit d2b8414, coordinator review of 16bb03e): the exact P-value rule keeps two significant digits with trailing zeros and adds digits so a value below a threshold (0.05, 0.01, 0.001, 0.0001) is never shown as reaching it; the contract table gains a note with the rule and the examples (p = 0.040, p = 0.010, p = 0.0010, p = 0.050, p = 0.04999). The spec.md V198 example values (p = 0.04, p = 0.0004) are not changed here; the Maintainer must confirm them. Recorded by the implementing route at the operator's direction (2026-10-08)."
+    },
+    {
+      "id": "A-2026-10-01-32",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16c (ADR 0012, FR-202, FR-203, V202, V203): ggplot2, ggprism, ragg and systemfonts are added to the proteomicsCore R Suggests (ggplot2 and systemfonts are used by the renderer, ggprism and ragg by the Prism theme and the ragg device); ggprism 1.0.7, ragg 1.5.2 and digest 0.6.39 are added to renv.lock (installed in the project-local .r-lib; check_r_lock qualified); the reason-code catalogue gains E_FIGURE_STYLE (regenerated); traceability status for FR-202 and FR-203 is PASS with evidence and the task checkboxes T202 and T203 are ticked. Recorded by the implementing route at the operator's direction (2026-10-08) as the shared-interface amendment named in A-2026-10-01-28; open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-33",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16d (ADR 0012, FR-204, FR-205, V204, V205): the reason-code catalogue gains the E_PLOTLY_HASH, E_PLOTLY_HOVER and E_PLOTLY_NETWORK codes (regenerated); traceability status for FR-204 and FR-205 is PASS with evidence, and the task checkboxes T204 and T205 are ticked. The vendored plotly.js (vendor/plotly/) is in the R16d allowlist. Its pin is recorded as pending Maintainer approval in PINNED.json, as contracts/figures.md requires. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-34",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/NAMESPACE",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16c review fix (commit after 2c55bbb): the public figure functions (prism_figure_theme, prism_dot_plot, render_prism_png, png_size, figure_font_status, check_prism_style, layer_data_strings, theme_report) are exported from proteomicsCore so the installed package and R16e can call them; the tests use the installed package. The NAMESPACE file is the only shared file changed. The traceability rows of FR-202 and FR-203 record the new working-source manifest. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-35",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "scripts/maintained/build_release.py",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16c review fix: the release secret scanner flagged the vendored plotly.js library (vendor/plotly/plotly.min.js, line 8) because the minified code contains the expression access_token=\"+(... matched by the hard-coded-secret rule (a false positive: JavaScript, not a credential). The scanner now exempts that one file from the secret rule only while its SHA-256 equals the pin in vendor/plotly/PINNED.json; every other file, and any change to the library, is scanned as before. This narrows a security control and needs Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-36",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json",
+        "r/proteomicsCore/tests/testthat/test-pzfx-readback.R"
+      ],
+      "change": "D-75 (Maintainer, 2026-10-08): every .pzfx carries the pipeline statistics table and the Info sheet. The R16b writer gains the statistics table (Column table with comparison row titles; effect, P, q, n_<group>), the Info sheet (InfoSequence/Info, Constant name/value pairs, Notes) and the refusal E_PZFX_INFO_MISSING for a missing required constant (reason-code catalogue regenerated). The R16b fixtures are regenerated with both tables; xy_volcano_roc.pzfx is split into xy_volcano.pzfx (statistics table) and xy_roc.pzfx (statistics none). The pzfx read-back test reads the statistics table. FR-199 / V199 are re-verified: PASS with evidence, and T199 is re-ticked. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-37",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/NAMESPACE",
+        "src/proteomics_pipeline/figures/plotly_html.py",
+        "r/proteomicsCore/DESCRIPTION",
+        "renv.lock",
+        "docs/methods/reason-codes.md",
+        "specs/001-downstream-proteomics/traceability.json",
+        "specs/001-downstream-proteomics/packet-ownership.json",
+        "specs/017-visualization/tasks.md",
+        "docs/validation/acceptance.json"
+      ],
+      "change": "R16e stage 1 (ADR 0012, FR-206 to FR-214, V206 to V214): render_catalogue_png is exported from proteomicsCore (NAMESPACE); the R16d heatmap hover check accepts a heatmap trace whose hover names the row and column identifiers (%{x} and %{y}; E_PLOTLY_HOVER otherwise), needed by the QC and clustered heatmaps; ggrepel 0.9.8 is added to the proteomicsCore R Suggests and to renv.lock (labels of the volcano); the reason-code catalogue gains the stage-1 E_FIGURE_* uses (regenerated); traceability status for FR-206 to FR-214 is PASS with evidence and the task checkboxes T206 to T214 are ticked. The R16e allowlist itself is unchanged. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "id": "A-2026-10-01-38",
+      "adr": "docs/adr/0012-visualization-outputs.md",
+      "paths": [
+        "r/proteomicsCore/tests/testthat/test-foundation.R",
+        "specs/001-downstream-proteomics/packet-ownership.json"
+      ],
+      "change": "R16c and R16e (ADR 0012): the public figure functions (prism_figure_theme, prism_dot_plot, render_prism_png, png_size, figure_font_status, check_prism_style, layer_data_strings, theme_report, render_catalogue_png) are exported from proteomicsCore. The R01 export invariant in test-foundation.R is updated to the dispatch seam plus these functions; no other assertion of that test changes. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "change": "R16e stage 2 (ADR 0012, FR-215 to FR-217, V215 to V217): the reason-code catalogue gains E_FIGURE_PERMUTATION_P (the CV-AUC figure refuses a displayed permutation P that differs from (k + 1) / (B + 1)); the biomarker figure sources are synthetic fixtures computed with pROC and stats, labelled with the frozen claim labels of post_de_biomarker.R (cross_validated_nested for ROC and CV AUC, any frozen label for the panel plot; in_sample refused for a ROC); traceability status for FR-215 to FR-217 is PASS with evidence, the task checkboxes T215 to T217 are ticked, and the acceptance ledger is regenerated. The R16e allowlist itself is unchanged. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "change": "R16e stage 2, group 2 (ADR 0012, FR-218 to FR-222, V218 to V222): the stage-2 catalogue figures are the enrichment dot plot (sets without a foreground hit are refused as enriched, E_FIGURE_SET_MISMATCH), the module heatmap (declared modules only, E_FIGURE_SET_MISMATCH), the network graph (edges checked against the interaction snapshot, E_FIGURE_SOURCE_MISSING; deterministic layout computed in R by proteomicsCore:::catalogue_network_layout, not exported), the PCoA with centroids and the PERMDISP plot (a P without its permutation count or seed is refused, E_FIGURE_SOURCE_MISSING); the reason-code catalogue is regenerated; traceability status for FR-218 to FR-222 is PASS with evidence, the task checkboxes T218 to T222 are ticked, and the acceptance ledger is regenerated. No new export: the NAMESPACE is unchanged. The R16e allowlist itself is unchanged. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "change": "R16e retrofit and run wiring (D-72, ADR 0012; evidence for FR-195 and FR-197): the existing R10b and R14 figures are produced through the catalogue from their registered figure-source tables (figures/retrofit.py); the producers are read and not changed, and the R13 PERMANOVA producer, which writes no figure-source table, is not retrofitted (contract, Retrofit section). The run writes report/figure_catalogue/ as the stage figure_catalogue (figures/run_catalogue.py; workflow.py Ledger.run_direct and _finalize; FigureArtifact entries in run_status.json, so proteomics verify checks them). The registry gains the retrofit notes and the font-substitution record (figures/registry.py, a retrofit kind on register; that file is in the R16a allowlist). New tests: tests/integration/test_figure_retrofit.py, tests/integration/test_figure_run_e2e.py, the synthetic configuration and inputs in tests/fixtures/figures/run, and retrofit renderer checks in the testthat catalogue file. The contract gains the retrofit section. The reason-code catalogue is regenerated. The R16e manifest covers the figures package. The R16e write allowlist itself is unchanged. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "change": "R16e publication catalogue of a run (C1 to C4, ADR 0012, D-72): when report.figures is declared the run writes QC, differential (per primary-family contrast: volcano, MA, DEP heatmap, dot plot with P brackets), Venn or UpSet across the primary contrasts, and the PERMANOVA PCoA and PERMDISP figures per feature set, from registered tables written from the run's outputs (figures/run_sources.py; new). The catalogue builder (figures/catalogue.py, in the R16e allowlist) takes a shared registry, an output ID, the formats and a title and caption; its volcano builder takes the contrast groups and the family threshold line. The R renderers (figures_catalogue.R, in the allowlist) gain the threshold line, the title and caption options and the group colours by order. The R10b volcano tables are covered by the run's diff_volcano_labelled figure of the same table. The R13 PERMANOVA producer is NOT changed: it already publishes FigureSource-typed tables (ordination.tsv, ordination_axes.tsv, tests.tsv), which the run-level builder reads. New tests: a PERMANOVA-enabled synthetic configuration (tests/fixtures/figures/run, phase 2) and the exact expected figure sets of both configurations in tests/integration/test_figure_run_e2e.py. The reason-code catalogue is regenerated. The contract and the user guide are updated. The R16e write allowlist itself is unchanged; the figures package and workflow.py are changed under this amendment. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
+    },
+    {
+      "change": "R16e post-DE figures of a run (D3, ADR 0012, D-72): when the post-DE modules ran, the run writes bio_roc_ci_band, bio_cv_auc_vs_permutation, bio_panel_forest, path_enrichment_dotplot per direction, net_module_heatmap and net_network_graph per set, from the result tables of those modules (figures/run_sources.py, _postde_jobs; no statistic is recomputed; the displayed permutation P is the producer's and the builder checks it against (k + 1) / (B + 1)). A module that did not run is recorded in retrofit.run_sources with its reason. The R14 rules of roc_cv, cv_auc_repeats, permutation_null, eigengenes and ppi_subnetwork are skipped with a note naming their post-DE figure (figures/retrofit.py), so each table is drawn once. The R renderer wraps run captions to the journal width (figures_catalogue.R); the ROC builder states a missing interval (catalogue.py). New tests: tests/integration/test_figure_postde_mapping.py (synthetic post-DE tree), tests/integration/test_figure_postde_e2e.py (synthetic post-DE study, expected figure set, verify; NOT_RUN without limma) and the study fixture tests/fixtures/figures/run/postde_study.py. The contract (specs/017-visualization/contracts/figures.md) gains the post-DE table. Recorded by the implementing route at the operator's direction (2026-10-08); open to Maintainer review."
     }
   ]
 }

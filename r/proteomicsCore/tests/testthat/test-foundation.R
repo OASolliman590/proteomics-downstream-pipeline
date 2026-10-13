@@ -8,7 +8,9 @@ testthat::test_that("dispatch map contains only real handlers", {
                "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks")
  testthat::expect_setequal(names(handlers), expected)
  for (name in unlist(handlers)) if (exists(name, envir=asNamespace("proteomicsCore"), inherits=FALSE)) testthat::expect_true(is.function(get(name, envir=asNamespace("proteomicsCore"))))
- testthat::expect_identical(unname(unlist(exports <- getNamespaceExports("proteomicsCore")))[order(unlist(exports))], sort(c("dispatch_stage","io_roundtrip")))
+ # Amendment A-2026-10-01-38: the public figure functions of R16c and R16e (ADR 0012) are exported next to the dispatch seam.
+testthat::expect_identical(unname(unlist(exports <- getNamespaceExports("proteomicsCore")))[order(unlist(exports))], sort(c("dispatch_stage","io_roundtrip",
+  "prism_figure_theme","prism_dot_plot","render_prism_png","png_size","figure_font_status","check_prism_style","layer_data_strings","theme_report","render_catalogue_png")))
 })
 
 testthat::test_that("sha256_file does not leak file connections", {

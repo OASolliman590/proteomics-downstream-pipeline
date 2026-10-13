@@ -1,0 +1,58 @@
+assay-engines: .............
+design: ............................
+figures-catalogue: ..............................................................................................................................................
+figures-prism-png: ...................
+foundation: ...................................................
+limma: ....................
+mapping: ...........
+pathways: ...................
+permanova: ...........................................................................................................................
+post-de-association: ..............
+post-de-biomarker: ...............................................................................................................WWWWWWWWW..................WWWWWWWWW.
+post-de-networks: ..................................
+post-de-sensitivity: .....................
+post-de-sets: ..................................................................................................................................................
+preprocessing: ............................................
+pzfx-readback: ...................................
+qc: ................
+response: ...................................
+
+══ Warnings ════════════════════════════════════════════════════════════════════
+1. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+2. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+3. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+4. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+5. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+6. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+7. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+8. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+9. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:95:3') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+10. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+11. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+12. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+13. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+14. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+15. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+16. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+17. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+18. review minor 2: the transform audit records the rows actually used and trips on a leaky wiring ('test-post-de-biomarker.R:101:5') - one multinomial or binomial class has fewer than 8  observations; dangerous ground
+
+══ DONE ════════════════════════════════════════════════════════════════════════
+expectations=919 failed=0 skipped=0 errors=0 files=18

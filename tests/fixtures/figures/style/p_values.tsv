@@ -1,0 +1,5 @@
+label	p
+ns_example	0.2
+star_example	0.04
+triple_example	0.0004
+quad_example	1e-7

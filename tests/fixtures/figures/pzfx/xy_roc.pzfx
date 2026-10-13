@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GraphPadPrismFile PrismXMLVersion="5.00">
+  <Created>
+    <OriginalVersion CreatedByProgram="proteomics_pipeline" CreatedByVersion="R16e" />
+  </Created>
+  <InfoSequence>
+    <Ref ID="Info0" Selected="1" />
+  </InfoSequence>
+  <Info ID="Info0">
+    <Title>fixture figure</Title>
+    <Notes>
+      <Font Color="#000000" Face="Helvetica">Synthetic fixture for the pzfx writer.</Font>
+      <Font Color="#000000" Face="Helvetica">A test run inside Prism may give a different P value from the pipeline's test.</Font>
+    </Notes>
+    <Constant>
+      <Name>Test</Name>
+      <Value>none (ROC curve, no inferential statistics)</Value>
+    </Constant>
+    <Constant>
+      <Name>Multiplicity adjustment</Name>
+      <Value>BH within fixture-family (synthetic)</Value>
+    </Constant>
+    <Constant>
+      <Name>Effect scale</Name>
+      <Value>log2 difference</Value>
+    </Constant>
+    <Constant>
+      <Name>Group sizes</Name>
+      <Value>Control 6; Acute 6</Value>
+    </Constant>
+    <Constant>
+      <Name>Pipeline version and commit</Name>
+      <Value>0.1.0.dev0 (fixture)</Value>
+    </Constant>
+    <Constant>
+      <Name>Source table SHA-256</Name>
+      <Value>be7e86e5c38e9d3d416d14c2c95e7a9d9efa691ad660447fcf98773a085530a3</Value>
+    </Constant>
+    <Constant>
+      <Name>Run ID</Name>
+      <Value>fixture-run</Value>
+    </Constant>
+    <Constant>
+      <Name>Created (UTC)</Name>
+      <Value>2026-10-08T00:00:00Z</Value>
+    </Constant>
+    <Constant>
+      <Name>Statistics</Name>
+      <Value>none</Value>
+    </Constant>
+  </Info>
+  <TableSequence>
+    <Ref ID="Table0" Selected="1" />
+  </TableSequence>
+  <Table ID="Table0" XFormat="numbers" YFormat="replicates" Replicates="1" TableType="XY" EVFormat="AsteriskAfterNumber">
+    <Title>roc</Title>
+    <XColumn Subcolumns="1">
+      <Title>one_minus_specificity</Title>
+      <Subcolumn>
+        <d>0.0</d>
+        <d>0.034482758620689655</d>
+        <d>0.06896551724137931</d>
+        <d>0.10344827586206896</d>
+        <d>0.13793103448275862</d>
+        <d>0.1724137931034483</d>
+        <d>0.20689655172413793</d>
+        <d>0.2413793103448276</d>
+        <d>0.27586206896551724</d>
+        <d>0.3103448275862069</d>
+        <d>0.3448275862068966</d>
+        <d>0.3793103448275862</d>
+        <d>0.41379310344827586</d>
+        <d>0.4482758620689655</d>
+        <d>0.4827586206896552</d>
+        <d>0.5172413793103449</d>
+        <d>0.5517241379310345</d>
+        <d>0.5862068965517241</d>
+        <d>0.6206896551724138</d>
+        <d>0.6551724137931034</d>
+        <d>0.6896551724137931</d>
+        <d>0.7241379310344828</d>
+        <d>0.7586206896551724</d>
+        <d>0.7931034482758621</d>
+        <d>0.8275862068965517</d>
+        <d>0.8620689655172413</d>
+        <d>0.896551724137931</d>
+        <d>0.9310344827586207</d>
+        <d>0.9655172413793104</d>
+        <d>1.0</d>
+      </Subcolumn>
+    </XColumn>
+    <YColumn Subcolumns="1">
+      <Title>sensitivity</Title>
+      <Subcolumn>
+        <d>0.0</d>
+        <d>0.21093946772128874</d>
+        <d>0.28989178852421554</d>
+        <d>0.3258673606931345</d>
+        <d>0.34868660149486586</d>
+        <d>0.3864596710288057</d>
+        <d>0.44647636120137424</d>
+        <d>0.5110132824020811</d>
+        <d>0.5549064788375916</d>
+        <d>0.5694495690884083</d>
+        <d>0.5708995861880224</d>
+        <d>0.5858820558549186</d>
+        <d>0.6271703333626639</d>
+        <d>0.6821390745167855</d>
+        <d>0.7245265544504973</d>
+        <d>0.7387035874327897</d>
+        <d>0.7341442532082555</d>
+        <d>0.7367995687323897</d>
+        <d>0.7653089797551851</d>
+        <d>0.813923529690268</d>
+        <d>0.8578431560592285</d>
+        <d>0.8760626125528448</d>
+        <d>0.8707228014326733</d>
+        <d>0.8651769444364661</d>
+        <d>0.8825503014344853</d>
+        <d>0.9245061383823261</d>
+        <d>0.9697409064623868</d>
+        <d>0.9935925592061504</d>
+        <d>0.990734542530271</d>
+        <d>0.980090983473611</d>
+      </Subcolumn>
+    </YColumn>
+  </Table>
+</GraphPadPrismFile>

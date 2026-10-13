@@ -26,6 +26,15 @@ Kit frozen 2026-09-20. R01 accepted 2026-09-21. On 2026-10-01 the operator gave 
 | R14d | 4 | R14c, R09 | V149–V160 | high | [Post-DE: biomarker discrimination evaluation](../015-post-de-analysis/spec.md) (amendment) |
 | R14e | 4 | R14d, R07 | V161–V165 | high | [Post-DE: co-abundance modules and networks](../015-post-de-analysis/spec.md) (amendment) |
 | R14f | 4 | R14a–R14e, R10b | V166–V167 | high | [Post-DE: eligibility reporting and generality matrix](../015-post-de-analysis/spec.md) (amendment) |
+| R15a | 5 | R05 | V168–V173 | high | [Methods extension: Welch t-test engine](../016-methods-extension-validation/spec.md) (amendment) |
+| R15b | 5 | R08, R15a | V174–V178 | high | [Methods extension: offline pathway libraries](../016-methods-extension-validation/spec.md) (amendment) |
+| R15c | 5 | R14d, R11 | V179–V184 | high | [Methods extension: calibration extension](../016-methods-extension-validation/spec.md) (amendment) |
+| R15d | 5 | R10b, R11, R15a | V185–V194 | high | [Methods extension: multi-study validation](../016-methods-extension-validation/spec.md) (amendment) |
+| R16a | 6 | R10b | V195–V198 | high | [Visualization: style system and figure registry](../017-visualization/spec.md) (amendment) |
+| R16b | 6 | R16a | V199–V201 | high | [Visualization: Prism `.pzfx` writer](../017-visualization/spec.md) (amendment) |
+| R16c | 6 | R16a | V202–V203 | high | [Visualization: static Prism-style PNG](../017-visualization/spec.md) (amendment) |
+| R16d | 6 | R16a | V204–V205 | high | [Visualization: interactive Plotly HTML](../017-visualization/spec.md) (amendment) |
+| R16e | 6 | R16b, R16c, R16d, R05, R08, R13, R14d, R14e | V206–V222 | high | [Visualization: figure catalogue](../017-visualization/spec.md) (amendment) |
 
 ## Ownership and scheduling
 
@@ -42,3 +51,5 @@ A packet receipt identifies its frozen tree/contract versions, changed paths, ac
 Current next action: the Maintainer's review of PR #2 (`claude/post-de`) with its CI run, and the Maintainer-only R12 steps in [the runbook](../../docs/validation/013-release/MAINTAINER_RUNBOOK.md). Shared-interface amendments made by the Maintainer route are listed in `maintainer_amendments` of [packet-ownership.json](packet-ownership.json). No lockfile or validated general platform is implied.
 
 Phase 4 amendment (2026-10-02, [ADR 0009](../../docs/adr/0009-post-de-scope-amendment.md)): slice 015 adds dispatch units R14a–R14f (FR/T/V-131–167), serial after accepted R11 and the R13 audit fixes. Implemented 2026-10-04 on `claude/post-de` (see the receipts). The shared-interface amendment (capability maps, optional `post_de` schema block, R Suggests) is made by the Maintainer before R14a, as described in [the slice plan](../015-post-de-analysis/plan.md).
+
+Phase 5 and Phase 6 amendments (2026-10-08, [ADR 0011](../../docs/adr/0011-methods-extension-and-multi-study-validation.md) and [ADR 0012](../../docs/adr/0012-visualization-outputs.md)): slice 016 adds dispatch units R15a–R15d (FR/T/V-168–194), serial in that order. Slice 017 adds R16a–R16e (FR/T/V-195–222), serial in that order. Phase 6 may be built before Phase 5 because the two phases have no dependency edge and disjoint allowlists. No concurrency is authorized. Not yet dispatched. The shared-interface amendments are made by the Maintainer before the first packet of each phase.

@@ -1,0 +1,7 @@
+# Tiny synthetic contract fixtures
+
+These are invented test inputs, not animals, private study data, discoveries or scientific validation evidence. The independent fixture has eight features and twelve observations (four per group); the paired fixture has eight features and eight observations (four subjects, before/after). Missing cells are literal NA. IDs and values have no biological meaning; the rat taxonomy in example configurations only demonstrates an organism namespace.
+
+Independent feature baselines are 10 through 17. Disease shifts are [0,1,2,-1,0.4,0,1.5,-0.5]; treatment-relative-to-disease shifts are [0,-0.4,-2,0.8,-0.1,0,-2,0.2]. Within-group offsets are C=[−0.3,−0.1,0.1,0.3], U=[−0.2,−0.05,0.05,0.2], T=[−0.25,−0.15,0.15,0.25]. P07/U2 and P08/T1 are missing. Paired values use baseline 10+feature_index+subject_index/3, an alternating ±0.1 offset, and after shifts [0,1,−1,0.5,0,2,−0.5,0.2], plus after-only subject offsets [0.03,−0.04,0.02,−0.01]×(feature_index+1)/8 to avoid a perfectly fitted paired contrast. Feature_index starts at zero; subject_index starts at one.
+
+No fit-output oracle is claimed for these examples. Acceptance cases specify independent analytic/direct-R references separately. R01 may copy these fixtures into its own test allowlist; later packets create only their own small fixture locations. Production code must never branch on these identifiers or expected shifts.
