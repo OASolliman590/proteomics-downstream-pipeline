@@ -69,6 +69,15 @@ def verify_archive(archive: str | Path, inventory: str | Path = INVENTORY) -> di
                 continue
             data = handle.read(info.filename)   # bytes in memory only; nothing is extracted to disk
             members[info.filename] = {"bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+    # The archive may store every member under one package folder while the inventory lists paths relative to it.
+    # Strip that single root only when no inventory path already carries it, so a genuine mismatch is still reported.
+    roots = {name.split("/", 1)[0] for name in members if "/" in name}
+    archive_root = None
+    if len(roots) == 1 and all("/" in name for name in members):
+        root = next(iter(roots))
+        if not any(item["path"].startswith(root + "/") for item in expected["files"]):
+            archive_root = root
+            members = {name.split("/", 1)[1]: value for name, value in members.items()}
     for item in expected["files"]:
         found = members.get(item["path"])
         if found is None:
@@ -78,7 +87,8 @@ def verify_archive(archive: str | Path, inventory: str | Path = INVENTORY) -> di
     extra = sorted(set(members) - {i["path"] for i in expected["files"]})
     problems += [{"member": m, "reason": "not_in_inventory"} for m in extra]
     return {"result_type": "LegacyArchiveVerification", "verified": not problems, "file_count": len(members), "expected_file_count": expected["file_count"],
-            "archive_sha256_matches": observed_sha == expected["archive_sha256"], "problems": problems, "archive_modified": False}
+            "archive_sha256_matches": observed_sha == expected["archive_sha256"], "archive_root": archive_root, "problems": problems,
+            "archive_modified": False}
 
 
 def _read(path: Path) -> list[dict]:
