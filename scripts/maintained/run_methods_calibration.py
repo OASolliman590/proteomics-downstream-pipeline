@@ -86,6 +86,21 @@ def _perm_gate(p_values: list[float], B: int, binom, chi_sf) -> dict:
             "chi_square": chi2, "chi_square_df": B, "chi_square_p": chi_p, "gate": "PASS" if ok else "FAIL"}
 
 
+def verify_replicate_counts(out: Path, gates: dict, adaptations: list[dict]) -> None:
+    """A count below the pre-registered count is refused (E_CALIBRATION_REPLICATES) unless it is recorded as an adaptation."""
+    expected = {"nested_auc_null": gates["replicate_counts"]["nested_auc_null"], "permutation_p_null": gates["replicate_counts"]["permutation_p_null_datasets"],
+                "planted_auc": gates["replicate_counts"]["planted_auc"], "planted_permutation_p": gates["replicate_counts"]["planted_permutation_datasets"],
+                "leaky_reference": gates["replicate_counts"]["leaky_reference"]}
+    recorded = {(a["scenario"], a["family"]) for a in adaptations}
+    for scenario, count in expected.items():
+        if not (out / f"{scenario}.tsv").is_file():
+            raise CalibrationError("E_CALIBRATION_REPLICATES", f"{scenario}: the scenario file is missing; the run is not accepted")
+        for fam in [f["family"] for f in gates["families"]]:
+            rows = [r for r in read_tsv(out / f"{scenario}.tsv") if r["family"] == fam]
+            if len(rows) < count and (scenario, fam) not in recorded:
+                raise CalibrationError("E_CALIBRATION_REPLICATES", f"{scenario} for {fam}: {len(rows)} of {count} pre-registered replicates and no recorded adaptation")
+
+
 def evaluate(out: Path, gates: dict) -> dict:
     helpers = _r14f_helpers()
     binom, chi_sf = helpers.binomial_upper_tail, helpers.chi_square_sf
