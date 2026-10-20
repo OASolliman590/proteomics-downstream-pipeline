@@ -1,0 +1,7 @@
+family penalized_logistic
+family lasso
+family elastic_net
+family svm_linear
+family svm_polynomial
+family random_forest
+{"families": ["penalized_logistic", "lasso", "elastic_net", "svm_linear", "svm_polynomial", "random_forest"], "failed_gates": [["penalized_logistic", "loocv_null"], ["lasso", "loocv_null"], ["random_forest", "permutation_p_null"]]}

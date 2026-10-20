@@ -6378,12 +6378,22 @@
         "case_id": "V179",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "tests/scientific/calibration_methods_extension.R",
+        "docs/validation/016-methods-extension-validation/R15c/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V179",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6406,12 +6416,23 @@
         "case_id": "V180",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "FAIL",
+      "evidence": [
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "tests/scientific/calibration_methods_extension.R",
+        "docs/validation/016-methods-extension-validation/R15c/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V180",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit",
+        "reason": "random-forest permutation gate FAILS: the chi-square goodness-of-fit P over the B + 1 values is 0.0059 (< 0.01); the SVM families pass. Gate not changed (pre-registered).",
+        "independent_audit": "NOT_RUN"
       }
     },
     {
@@ -6433,12 +6454,23 @@
         "case_id": "V181",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "FAIL",
+      "evidence": [
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "tests/scientific/calibration_methods_extension.R",
+        "docs/validation/016-methods-extension-validation/R15c/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V181",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit",
+        "reason": "LOOCV null gate FAILS for ridge (pooled out-of-fold AUC mean 0.433) and lasso (0.423): |mean - 0.5| > 0.03. Gate not changed (pre-registered).",
+        "independent_audit": "NOT_RUN"
       }
     },
     {
@@ -6461,12 +6493,22 @@
         "case_id": "V182",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "tests/scientific/calibration_methods_extension.R",
+        "docs/validation/016-methods-extension-validation/R15c/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V182",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6488,12 +6530,21 @@
         "case_id": "V183",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "docs/validation/016-methods-extension-validation/R15c/gates-preregistration.json",
+        "docs/validation/016-methods-extension-validation/R15c/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V183",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6515,12 +6566,21 @@
         "case_id": "V184",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/scientific/methods_extension/test_methods_extension_calibration.py",
+        "docs/validation/016-methods-extension-validation/R15c/calibration/calibration_raw.json",
+        "docs/validation/016-methods-extension-validation/R15c/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V184",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6542,12 +6602,21 @@
         "case_id": "V185",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_multistudy.py",
+        "src/proteomics_pipeline/multistudy/runner.py",
+        "docs/validation/016-methods-extension-validation/R15d/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V185",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d18ff0208048b427626f966a38dca6567a8817911effe529a3639b18b96d502d",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6569,12 +6638,21 @@
         "case_id": "V186",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_multistudy.py",
+        "src/proteomics_pipeline/multistudy/runner.py",
+        "docs/validation/016-methods-extension-validation/R15d/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V186",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d18ff0208048b427626f966a38dca6567a8817911effe529a3639b18b96d502d",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6596,12 +6674,21 @@
         "case_id": "V187",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_multistudy.py",
+        "src/proteomics_pipeline/multistudy/runner.py",
+        "docs/validation/016-methods-extension-validation/R15d/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V187",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d18ff0208048b427626f966a38dca6567a8817911effe529a3639b18b96d502d",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6623,12 +6710,21 @@
         "case_id": "V188",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "tests/integration/test_multistudy.py",
+        "src/proteomics_pipeline/multistudy/runner.py",
+        "docs/validation/016-methods-extension-validation/R15d/receipt.md",
+        "docs/validation/016-methods-extension-validation/R15d/evidence/gate-results.json"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V188",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "route": "Claude route (Haiku builder, Opus review)",
+        "date": "2026-10-13",
+        "working_source_manifest_sha256": "d18ff0208048b427626f966a38dca6567a8817911effe529a3639b18b96d502d",
+        "independent_audit": "NOT_RUN",
+        "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit"
       }
     },
     {
@@ -6650,12 +6746,12 @@
         "case_id": "V189",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V189",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "reason": "real-study validation deferred by the Maintainer (2026-10-13); run locally with the study manifest (docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md)"
       }
     },
     {
@@ -6677,12 +6773,12 @@
         "case_id": "V190",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V190",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "reason": "real-study validation deferred by the Maintainer (2026-10-13); run locally with the study manifest (docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md)"
       }
     },
     {
@@ -6704,12 +6800,12 @@
         "case_id": "V191",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V191",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "reason": "real-study validation deferred by the Maintainer (2026-10-13); run locally with the study manifest (docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md)"
       }
     },
     {
@@ -6731,12 +6827,12 @@
         "case_id": "V192",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V192",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "reason": "real-study validation deferred by the Maintainer (2026-10-13); run locally with the study manifest (docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md)"
       }
     },
     {
@@ -6758,12 +6854,12 @@
         "case_id": "V193",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V193",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "reason": "real-study validation deferred by the Maintainer (2026-10-13); run locally with the study manifest (docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md)"
       }
     },
     {
@@ -6786,12 +6882,12 @@
         "case_id": "V194",
         "status": "pending-after-freeze"
       },
-      "status": "pending-after-freeze",
+      "status": "NOT_RUN",
       "evidence": [],
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V194",
       "verification": {
-        "reason": "Phase 5 (ADR 0011, Maintainer decision 2026-10-08): not yet implemented"
+        "reason": "real-study validation deferred by the Maintainer (2026-10-13); run locally with the study manifest (docs/validation/016-methods-extension-validation/STUDY_VALIDATION_RUNBOOK.md)"
       }
     },
     {

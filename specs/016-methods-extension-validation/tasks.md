@@ -13,16 +13,16 @@
 - [x] T176 — R15b: implement FR-176 (Over-representation with the measured background); establish and pass V176, including its negative case, with independent evidence.
 - [x] T177 — R15b: implement FR-177 (Pre-ranked enrichment on Welch statistics); establish and pass V177, including its negative case, with independent evidence.
 - [x] T178 — R15b: implement FR-178 (Family discipline across libraries); establish and pass V178, including its negative case, with independent evidence.
-- [ ] T179 — R15c: implement FR-179 (Penalised families under the null); establish and pass V179, including its negative case, with independent evidence.
+- [x] T179 — R15c: implement FR-179 (Penalised families under the null); establish and pass V179, including its negative case, with independent evidence.
 - [ ] T180 — R15c: implement FR-180 (SVM and random forest under the null and planted signal); establish and pass V180, including its negative case, with independent evidence.
 - [ ] T181 — R15c: implement FR-181 (LOOCV outer resampling); establish and pass V181, including its negative case, with independent evidence.
-- [ ] T182 — R15c: implement FR-182 (Subject-blocked units); establish and pass V182, including its negative case, with independent evidence.
-- [ ] T183 — R15c: implement FR-183 (Pre-registered gates); establish and pass V183, including its negative case, with independent evidence.
-- [ ] T184 — R15c: implement FR-184 (Calibration evidence and reproducibility); establish and pass V184, including its negative case, with independent evidence.
-- [ ] T185 — R15d: implement FR-185 (Study manifest); establish and pass V185, including its negative case, with independent evidence.
-- [ ] T186 — R15d: implement FR-186 (Validate, run and verify per study); establish and pass V186, including its negative case, with independent evidence.
-- [ ] T187 — R15d: implement FR-187 (Public datasets only after approval); establish and pass V187, including its negative case, with independent evidence.
-- [ ] T188 — R15d: implement FR-188 (Private studies stay local); establish and pass V188, including its negative case, with independent evidence.
+- [x] T182 — R15c: implement FR-182 (Subject-blocked units); establish and pass V182, including its negative case, with independent evidence.
+- [x] T183 — R15c: implement FR-183 (Pre-registered gates); establish and pass V183, including its negative case, with independent evidence.
+- [x] T184 — R15c: implement FR-184 (Calibration evidence and reproducibility); establish and pass V184, including its negative case, with independent evidence.
+- [x] T185 — R15d: implement FR-185 (Study manifest); establish and pass V185, including its negative case, with independent evidence.
+- [x] T186 — R15d: implement FR-186 (Validate, run and verify per study); establish and pass V186, including its negative case, with independent evidence.
+- [x] T187 — R15d: implement FR-187 (Public datasets only after approval); establish and pass V187, including its negative case, with independent evidence.
+- [x] T188 — R15d: implement FR-188 (Private studies stay local); establish and pass V188, including its negative case, with independent evidence.
 - [ ] T189 — R15d: implement FR-189 (Slot 1, label-free DDA); establish and pass V189, including its negative case, with independent evidence.
 - [ ] T190 — R15d: implement FR-190 (Slot 2, paired or repeated measures); establish and pass V190, including its negative case, with independent evidence.
 - [ ] T191 — R15d: implement FR-191 (Slot 3, TMT multiplex with batches); establish and pass V191, including its negative case, with independent evidence.
