@@ -1,0 +1,39 @@
+..F.....................F............................................... [ 79%]
+...................                                                      [100%]
+=================================== FAILURES ===================================
+________ test_v115_reason_code_catalogue_matches_the_sources_both_ways _________
+
+    def test_v115_reason_code_catalogue_matches_the_sources_both_ways():
+        scanned = set()
+        for path in list((ROOT / "src" / "proteomics_pipeline").rglob("*.py")) + list((ROOT / "r" / "proteomicsCore" / "R").glob("*.R")):
+            scanned |= set(re.findall(r"\b([EW]_[A-Z][A-Z0-9_]+)\b", path.read_text(encoding="utf-8")))
+        documented = set(re.findall(r"^\| `([EW]_[A-Z0-9_]+)` \|", CODES.read_text(encoding="utf-8"), re.M))
+>       assert documented == scanned, (sorted(documented - scanned), sorted(scanned - documented))
+E       AssertionError: ([], ['E_MANIFEST_DESIGN', 'E_MANIFEST_HASH', 'E_MAPPING_UNMAPPED', 'E_PRIVATE_IDENTIFIER', 'E_PUBLIC_DATA_UNAPPROVED'])
+E       assert {'E_ARTIFACT_...E_GUARD', ...} == {'E_ARTIFACT_...E_GUARD', ...}
+E         
+E         Extra items in the right set:
+E         'E_MANIFEST_HASH'
+E         'E_MAPPING_UNMAPPED'
+E         'E_PUBLIC_DATA_UNAPPROVED'
+E         'E_PRIVATE_IDENTIFIER'
+E         'E_MANIFEST_DESIGN'
+E         Use -v to get more diff
+
+tests/regression/test_docs.py:61: AssertionError
+__________ test_v117_this_repository_has_no_blocking_hygiene_finding ___________
+
+    def test_v117_this_repository_has_no_blocking_hygiene_finding():
+        report = BR.check(ROOT)
+>       assert report["findings"] == [], report["findings"]
+E       AssertionError: [{'path': 'docs/validation/016-methods-extension-validation/R15c/calibration/calibration_raw.json', 'kind': 'absolute private path', 'rule': 'private_path', 'line': 2}]
+E       assert [{'path': 'do...', 'line': 2}] == []
+E         
+E         Left contains one more item: {'path': 'docs/validation/016-methods-extension-validation/R15c/calibration/calibration_raw.json', 'kind': 'absolute private path', 'rule': 'private_path', 'line': 2}
+E         Use -v to get more diff
+
+tests/regression/test_release.py:105: AssertionError
+=========================== short test summary info ============================
+FAILED tests/regression/test_docs.py::test_v115_reason_code_catalogue_matches_the_sources_both_ways
+FAILED tests/regression/test_release.py::test_v117_this_repository_has_no_blocking_hygiene_finding
+2 failed, 89 passed in 21.08s

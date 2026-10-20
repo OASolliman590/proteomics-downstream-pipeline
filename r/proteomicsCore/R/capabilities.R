@@ -12,13 +12,14 @@ engine_packages <- function(engine) {
          deqms = c("limma", "DEqMS"),
          proda = c("proDA"),
          permanova = c("vegan", "permute"),
+         welch = c("stats"),   # Amendment A-2026-10-01-44 (ADR 0011, R15a): base stats only; no moderation package
          stop(sprintf("E_ENGINE_UNKNOWN: %s", engine), call. = FALSE))
 }
 
 operational_availability <- function(engine, installed = function(pkg) requireNamespace(pkg, quietly = TRUE)) {
   packages <- engine_packages(engine)
   present <- vapply(packages, installed, logical(1))
-  handler <- switch(engine, limma = "limma_stage", deqms = "assay_engine_stage", proda = "assay_engine_stage", permanova = "permanova_stage")
+  handler <- switch(engine, limma = "limma_stage", deqms = "assay_engine_stage", proda = "assay_engine_stage", permanova = "permanova_stage", welch = "welch_stage")
   implemented <- exists(handler, envir = asNamespace("proteomicsCore"), inherits = FALSE)
   list(engine = engine, packages = as.list(present), implemented = implemented,
        state = if (implemented && all(present)) "AVAILABLE" else "NOT_RUN",

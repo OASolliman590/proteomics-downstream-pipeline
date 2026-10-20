@@ -6,6 +6,8 @@ testthat::test_that("dispatch map contains only real handlers", {
  # Amendment A-2026-10-01-14 adds the five R-backed post-DE handlers (ADR 0009)
  expected <- c("foundation.io_roundtrip","preprocessing","design","limma","assay_engines","resources","pathways","response","permanova",
                "post_de_sets","post_de_sensitivity","post_de_association","post_de_biomarker","post_de_networks")
+ # Amendments A-2026-10-01-44 and A-2026-10-01-45 add the welch (R15a) and offline_gene_set_libraries (R15b) handlers
+ expected <- c(expected, "welch", "offline_gene_set_libraries")
  testthat::expect_setequal(names(handlers), expected)
  for (name in unlist(handlers)) if (exists(name, envir=asNamespace("proteomicsCore"), inherits=FALSE)) testthat::expect_true(is.function(get(name, envir=asNamespace("proteomicsCore"))))
  # Amendment A-2026-10-01-38: the public figure functions of R16c and R16e (ADR 0012) are exported next to the dispatch seam.

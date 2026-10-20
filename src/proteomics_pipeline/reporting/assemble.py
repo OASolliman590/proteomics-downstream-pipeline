@@ -119,14 +119,22 @@ def design_section(root: Path, stages: dict) -> dict:
             "blocking": diagnostics["blocking"]}
 
 
+def dea_stage_id(stages: dict) -> str | None:
+    """The stage that owns dea/: limma, or the Welch primary engine (amendment A-2026-10-01-46, which writes the dea/ contract)."""
+    if "limma" in stages:
+        return "limma"
+    return next((sid for sid, entry in stages.items() if entry.get("result_path") == "dea/stage-result.json"), None)
+
+
 def dea_section(root: Path, stages: dict, plan: dict | None) -> dict:
-    if "limma" not in stages:
+    dea_id = dea_stage_id(stages)
+    if dea_id is None:
         return {"state": "NOT_REQUESTED" if plan and plan.get("scope") == "qc_only" else "NOT_RUN", "values": None,
                 "note": "No differential analysis was executed; this is not evidence of no differences."}
-    if not _usable(stages, "limma"):
-        return {"state": stages["limma"]["display_state"], "reason_code": stages["limma"]["reason_code"], "values": None,
+    if not _usable(stages, dea_id):
+        return {"state": stages[dea_id]["display_state"], "reason_code": stages[dea_id]["reason_code"], "values": None,
                 "note": "The required differential stage did not complete; no differential results are reported."}
-    directory = _relative(root, stages, "limma")
+    directory = _relative(root, stages, dea_id)
     prefix = directory.relative_to(root).as_posix()
     families = _table(directory / "families.tsv")
     cutoff = {f["family_id"]: float(f["q_cutoff"]) for f in families}

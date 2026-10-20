@@ -53,6 +53,23 @@ def _semantic(value):
     if primary["engine"]!=value["primary_engine"]: raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","primary model engine does not match primary_engine",f"/models/{pindex}/engine")
     if primary["hypothesis"]!=value["primary_hypothesis"]: raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","primary model hypothesis does not match primary_hypothesis",f"/models/{pindex}/hypothesis")
     if primary.get("execution_requirement")!="required": raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","primary model must be required",f"/models/{pindex}/execution_requirement")
+    # Amendment A-2026-10-01-44 (ADR 0011, R15a): welch exists only when declared under methods_extension.welch (FR-169).
+    welch_block=(value.get("methods_extension") or {}).get("welch") or {}
+    welch_models=[(index,m) for index,m in enumerate(value["models"]) if m["engine"]=="welch"]
+    if (welch_models or value["primary_engine"]=="welch") and not welch_block.get("enabled"):
+        raise ConfigurationError("E_WELCH_NOT_DECLARED","welch is requested but methods_extension.welch.enabled is not true; no welch result is produced and no limma result is relabelled",
+                                 "/methods_extension/welch/enabled")
+    pathway_block=(value.get("methods_extension") or {}).get("pathways") or {}
+    if pathway_block.get("enabled"): _unique(pathway_block.get("libraries",[]),"/methods_extension/pathways/libraries")   # A-2026-10-01-46 (R15b)
+    if value["primary_engine"]=="welch" and any(m["engine"]=="limma" for m in value["models"]):
+        # Amendment A-2026-10-01-46: a welch primary writes dea/, which a limma model would also write; the two cannot share a run.
+        raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","a welch primary writes the dea/ contract and cannot share a run with limma models","/models")
+    if welch_block.get("enabled") and not welch_models:
+        raise ConfigurationError("E_WELCH_NOT_DECLARED","methods_extension.welch is enabled but no model declares engine welch","/methods_extension/welch")
+    for index,model in welch_models:
+        # A primary Welch model maps to role primary; a secondary Welch model is a non-primary model (role sensitivity) with its own family.
+        expected="primary" if model["role"]=="primary" else "secondary"
+        if welch_block.get("role","secondary")!=expected: raise ConfigurationError("E_PRIMARY_MODEL_CONFLICT","methods_extension.welch.role must be primary for the primary welch model and secondary otherwise","/methods_extension/welch/role")
     for index,contrast in enumerate(value["contrasts"]):
         if contrast["design_id"] not in design_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","contrast design does not exist",f"/contrasts/{index}/design_id")
     for index,model in enumerate(value["models"]):
@@ -61,6 +78,8 @@ def _semantic(value):
         if sensitivity["model_id"] not in model_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","sensitivity model does not exist",f"/preprocessing/sensitivities/{index}/model_id")
         # Audit 2026-10-02 (A-2026-10-01-10): an imputed sensitivity matrix may never feed the primary model.
         if sensitivity["model_id"]==primary["id"]: raise ConfigurationError("E_SENSITIVITY_PRIMARY_MODEL","a sensitivity matrix cannot be assigned to the primary model; declare a separate role=sensitivity model",f"/preprocessing/sensitivities/{index}/model_id")
+        # Amendment A-2026-10-01-46 (ADR 0011, F4): the welch engine reads the observed primary matrix only; a sensitivity matrix on a welch model would be ignored silently.
+        if any(m["id"]==sensitivity["model_id"] and m["engine"]=="welch" for m in value["models"]): raise ConfigurationError("E_WELCH_MATRIX_UNSUPPORTED","the welch engine reads the observed primary matrix only; a sensitivity matrix cannot be assigned to a welch model",f"/preprocessing/sensitivities/{index}/model_id")
     for index,omnibus in enumerate(value.get("omnibus_tests",[])):
         if omnibus["model_id"] not in model_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","omnibus model does not exist",f"/omnibus_tests/{index}/model_id")
         if omnibus.get("reduced_design_id") is not None and omnibus["reduced_design_id"] not in design_ids: raise ConfigurationError("E_REFERENCE_UNKNOWN","omnibus reduced design does not exist",f"/omnibus_tests/{index}/reduced_design_id")

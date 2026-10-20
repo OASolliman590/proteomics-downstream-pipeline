@@ -17,13 +17,21 @@ Every sub-block has `enabled` (default `false`) and `execution_requirement` (`re
 | `ci_level` | Confidence level for the effect interval. | plan CI level |
 | `paper_compatible` | `{enabled, raw_p_cutoff}`. Selects features with raw P below the cutoff. Always labelled `not_multiplicity_controlled` (SM43). | `{enabled: false, raw_p_cutoff: 0.05}` |
 
+**Role mapping (F4).** The `role` field above uses the spec's names. The schema's model role admits only `primary` and `sensitivity`, so a secondary Welch model is declared as `models[].role: sensitivity` and `methods_extension.welch.role: secondary`. The mapping is checked in `config.py`. It does not trigger `E_SENSITIVITY_PRIMARY_MODEL`, which concerns only a preprocessing sensitivity matrix assigned to the primary model. A sensitivity matrix assigned to a welch model is refused with `E_WELCH_MATRIX_UNSUPPORTED`, because the welch engine reads the observed primary matrix only. A welch primary writes the `dea/` contract (`zero_null.tsv`, `families.tsv`, `model_status.json`), so it cannot share a run with limma models (`E_PRIMARY_MODEL_CONFLICT`).
+
+The methods extension is Phase 5 only (`runtime.phase` 5). Phase 1 to 4 configurations cannot enable `welch` or `pathways`.
+
 ### `methods_extension.pathways` (R15b)
 
 | Field | Meaning | Default |
 |---|---|---|
 | `libraries` | `[{id, path, sha256, source, version, species, identifier_type, licence_id, redistributable}]`. `path` points to a local file supplied by the user. | `[]` |
 | `methods` | `ora` (hypergeometric, measured universe, SM17) and/or `prerank` (exploratory fgsea adapter, FR-075). | `["ora"]` |
-| `rank_statistic` | `welch_t` (FR-168) or another declared statistic from the frozen plan. | `welch_t` |
+| `rank_statistic` | Fixed to the statistic of the primary zero-null table (`dea/zero_null.tsv`): the Welch t of FR-168 for a welch primary. Not configurable in this release. | Welch t |
+| `ora_threshold` | Family q at or below which a feature is a foreground hit (direction from the effect sign). | `0.05` |
+| `execution_requirement` | `required` or `optional` (a required library stage that fails stops the run). | `optional` |
+
+The stage runs after the primary differential stage in a run. Its inputs are the primary table with one representative gene per feature and contrast (the smallest stable feature ID wins a tie), the measured universe is the mapped genes of the run, and every library is checked by SHA-256 at plan time (`E_RESOURCE_HASH`) and by the licence rule (`E_LIBRARY_REDISTRIBUTION`). The run catalogue draws `path_enrichment_dotplot` for each library and direction with at least one foreground hit.
 | `min_size`, `max_size` | Set-size eligibility, applied to set ∩ universe before any test (SM17). | SM17 defaults |
 
 A library whose `licence_id` is KEGG or MSigDB must have `redistributable: false`. Such a library is usable locally and is never copied into an artifact (E_LIBRARY_REDISTRIBUTION).
@@ -98,6 +106,16 @@ Classification follows [ADR 0010](../../../docs/adr/0010-adaptive-post-de-policy
 | `E_ARTIFACT_HASH` | R15d | verify FAIL | An artifact changed after the run. |
 | `E_PRIVATE_IDENTIFIER` | R15d | structural | A committed record contains a private identifier. The commit is refused. |
 | `E_MAPPING_UNMAPPED` | R15d | validity | An unmapped required column. Only that column is refused. |
+| `E_WELCH_BIOLOGICAL_UNIT` | R15a | validity | An unblocked Welch model whose observations repeat a biological unit (technical replicates are not independent, SM03). The stage stops with this reason. |
+| `E_WELCH_CONTRAST_NOT_PAIRWISE` | R15a | validity | A declared family member whose contrast is not a pairwise group contrast (its weights are not a +w and -w pair on two group levels). It is kept as a `not_run` endpoint with this reason, so the family stays complete (ADR 0010). |
+| `E_WELCH_FAMILY_MIXED` | R15a | validity | A Welch family that also holds endpoints of another engine. Refused, because it would pool Welch and limma P values. |
+| `E_WELCH_WEIGHTS_UNSUPPORTED` | R15a | validity | Precision weights on a welch model. The Welch engine takes no weights; the model is INAPPLICABLE. |
+| `E_WELCH_MATRIX_UNSUPPORTED` | R15a | validity | A preprocessing sensitivity matrix assigned to a welch model. Refused at configuration time, because the welch engine reads the observed primary matrix only. |
+| `E_LIBRARY_FORMAT` | R15b | validity | A malformed GMT file: a row with fewer than three fields, an empty set, or a duplicated set name. The file is not analysed. |
+| `E_RANK_INVALID` | R15b | validity | A ranking with a non-finite statistic. The pre-ranked enrichment is refused for that contrast. |
+| `W_WELCH_ADAPTED` | R15a | warning | A recorded adaptation for a covariate or block that the Welch test cannot honour (run unadjusted, ADR 0010). |
+
+The welch primary and limma co-existence refusal reuses `E_PRIMARY_MODEL_CONFLICT`, and the single-primary rule is enforced by the schema as `E_CONFIG_SCHEMA` ("Too many items").
 
 Existing codes are reused and are not redefined: `E_RESOURCE_HASH`, `E_RESOURCE_DOWNLOAD`, `E_RESOURCE_TAXONOMY`, `E_BIOMARKER_LEAKAGE`, `E_BIOMARKER_GROUP_LEAKAGE`, `E_PHENOTYPE_IMPUTATION`, `E_CONTRAST_NONESTIMABLE`, `E_DEPENDENCY_UNAVAILABLE`. A missing optional package produces NOT_RUN with `E_DEPENDENCY_UNAVAILABLE`, never INAPPLICABLE.
 

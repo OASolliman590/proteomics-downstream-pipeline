@@ -277,14 +277,36 @@ def eligibility_table(config: dict, *, mask_state: str, prior_imputation: str) -
                 reason = "E_PRODA_DESIGN_UNSUPPORTED"
             elif any(h != "zero_null" for h in hypotheses):
                 reason = "E_PRODA_HYPOTHESIS_UNSUPPORTED"
+        adaptations: list[dict] = []
+        if model["engine"] == "welch":
+            # Amendment A-2026-10-01-44 (ADR 0011, R15a, FR-169 to FR-172): Welch is declared, observed-cell only and zero-null only.
+            welch_block = (config.get("methods_extension") or {}).get("welch") or {}
+            paired_declared = str(welch_block.get("paired", "auto")).lower()
+            if model["coverage"]["policy"] != "available_case":
+                reason = "E_COVERAGE_POLICY_UNSUPPORTED"
+            elif weighted:
+                reason = "E_WELCH_WEIGHTS_UNSUPPORTED"
+            elif any(h != "zero_null" for h in hypotheses):
+                reason = "E_HYPOTHESIS_UNSUPPORTED"
+            elif paired_declared == "false" and blocked:
+                reason = "E_WELCH_PAIRED_UNIT"
+            elif paired_declared == "true" and not blocked:
+                reason = "E_WELCH_PAIRED_UNIT"
+            # A covariate that a two-sample Welch test cannot honour runs unadjusted and is recorded in the plan decision (ADR 0010).
+            for item in [*design.get("continuous_covariates", []), *design.get("categorical_covariates", [])]:
+                adaptations.append({"analysis": "welch", "item": f"covariate:{item['column']}", "requested": "adjusted", "used": "unadjusted",
+                                    "reason": "welch_not_covariate_adjusting"})
         for hypothesis in hypotheses:
             if hypothesis == "treat" and model["engine"] == "limma" and not model.get("effect_threshold"):
                 reason = reason or "E_HYPOTHESIS_UNSUPPORTED"
-        if model["engine"] in ("limma",) and reason is None and mask_state != "known" and config["runtime"]["scope"] == "analysis":
+        if model["engine"] in ("limma", "welch") and reason is None and mask_state != "known" and config["runtime"]["scope"] == "analysis":
             reason = "E_ORIGINAL_MASK_REQUIRED"
-        rows.append({"model_id": model["id"], "engine": model["engine"], "role": model["role"], "execution_requirement": model["execution_requirement"],
-                     "hypotheses": hypotheses, "eligible": reason is None, "reason_code": reason,
-                     "decision_basis": "frozen adapter/design table; independent of package installation and hit counts"})
+        row = {"model_id": model["id"], "engine": model["engine"], "role": model["role"], "execution_requirement": model["execution_requirement"],
+               "hypotheses": hypotheses, "eligible": reason is None, "reason_code": reason,
+               "decision_basis": "frozen adapter/design table; independent of package installation and hit counts"}
+        if model["engine"] == "welch":
+            row["adaptations"] = adaptations
+        rows.append(row)
     return rows
 
 

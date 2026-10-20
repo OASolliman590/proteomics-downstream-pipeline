@@ -350,9 +350,33 @@ def _postde_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict
     return jobs, skipped
 
 
+def _library_dotplot_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Amendment A-2026-10-01-46 (ADR 0011, R15b): the over-representation dot plot of each declared offline library, from the
+    library's ORA table (methods_extension/pathways/ora_<library>.tsv). Only tested sets are plotted, with their family BH q."""
+    jobs: list[dict[str, Any]] = []
+    skipped: list[dict[str, str]] = []
+    pathways = run / "methods_extension" / "pathways"
+    if not pathways.is_dir():
+        return jobs, skipped
+    for table in sorted(pathways.glob("ora_*.tsv")):
+        library = table.stem[len("ora_"):]
+        for direction in ("ora_up", "ora_down"):
+            rows = [r for r in _read(table) if r["method"] == direction and r["status"] == "tested"]
+            if not any(int(r["k"]) >= 1 for r in rows):
+                skipped.append({"figure": f"path_enrichment_dotplot__{library}__{direction}", "reason": "no gene set with a foreground hit"})
+                continue
+            header = ["set_id", "N", "K", "n", "k", "p_value", "q_value", "overlap_genes"]
+            output_id = f"path_enrichment_dotplot__{library}__{direction}"
+            jobs.append({"figure_id": "path_enrichment_dotplot", "output_id": output_id,
+                         "source": _write(work / f"{library}_{direction}.tsv", header, [[r[c] for c in header] for r in rows]),
+                         "options": {"title": f"Offline library {library}, {direction.replace('ora_', '')} sets", "caption": f"family {rows[0]['family_id']} (BH)"}})
+    return jobs, skipped
+
+
 def build_jobs(run: Path, work: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
-    """All run-level catalogue jobs (QC, differential, PERMANOVA, post-DE) and the figures that were skipped, with reasons."""
+    """All run-level catalogue jobs (QC, differential, PERMANOVA, post-DE, offline libraries) and the figures that were skipped, with reasons."""
     jobs, skipped = _core_jobs(run, work)
     post_jobs, post_skipped = _postde_jobs(run, work)
-    return jobs + post_jobs, skipped + post_skipped
+    lib_jobs, lib_skipped = _library_dotplot_jobs(run, work)
+    return jobs + post_jobs + lib_jobs, skipped + post_skipped + lib_skipped
 

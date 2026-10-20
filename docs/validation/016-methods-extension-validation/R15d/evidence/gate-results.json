@@ -1,0 +1,21 @@
+{
+  "packet": "R15d",
+  "scope": "multi-study framework (FR-185 to FR-188, V185 to V188); V189 to V194 NOT_RUN (real-study validation deferred by the Maintainer, 2026-10-13); packet gates",
+  "commands": [
+    {
+      "command": "python -m pytest tests/integration/test_multistudy.py -q -rs -p no:cacheprovider",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15d/evidence/python-multistudy-tests.log"
+    },
+    {
+      "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15d/evidence/gates-regression-unit-encoding.log"
+    },
+    {
+      "command": "python scripts/check_spec_kit.py",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15d/evidence/spec-kit-check.log"
+    }
+  ]
+}

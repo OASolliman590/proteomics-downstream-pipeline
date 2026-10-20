@@ -1,6 +1,6 @@
 # Feature Specification: Methods extension and multi-study validation (Welch engine, offline pathway libraries, calibration extension, multi-study framework)
 
-**Phase:** 5 (v1.2-methods-validation). **Packets:** R15a–R15d (four serial dispatch units). **Status:** Maintainer scope decision of 2026-10-08 ([ADR 0011](../../docs/adr/0011-methods-extension-and-multi-study-validation.md)); drafted, not yet implemented. It adds FR-168–FR-194, T168–T194 and V168–V194 and does not renumber any existing identity.
+**Phase:** 5 (v1.2-methods-validation). **Packets:** R15a–R15d (four serial dispatch units). **Status:** Maintainer scope decision of 2026-10-08 ([ADR 0011](../../docs/adr/0011-methods-extension-and-multi-study-validation.md)); partially implemented in the current checkout; V180/V181 remain FAIL and V189–V194 remain NOT_RUN. It adds FR-168–FR-194, T168–T194 and V168–V194 and does not renumber any existing identity.
 
 ## Scope
 
@@ -441,3 +441,7 @@ Every module consumes frozen plan artifacts and completed outputs read-only and 
 **Negative case:** A paper-compatible set labelled as multiplicity-controlled fails. A private identifier in any output fails E_PRIVATE_IDENTIFIER. The Maintainer's local private re-run is NOT_RUN in automated tests and is recorded only as a non-identifying PASS/FAIL status.
 
 **Contract:** SM42, SM43, SM46; **owner:** R15d.
+
+## Status rationale on 2026-10-18
+
+The status above is reconciled to existing tasks and acceptance records, not new scientific execution. Requirement text, identifiers and acceptance thresholds are unchanged. See [the reconciliation record](../001-downstream-proteomics/re-evaluation.md).

@@ -1,6 +1,6 @@
 # Quickstart status
 
-The maintained CLI is not implemented at the recovered baseline. The commands below are **future Phase 1 acceptance targets**, not instructions claiming they work today:
+The maintained CLI exists in the current checkout. The commands below describe its workflow; the examples were not executed during the 2026-10-18 documentation review. Use the project environment (`.venv/bin/proteomics`) and inspect `--help` before execution. A successful integrity verification is not a scientific-validation claim. See [the current reconciliation](re-evaluation.md) for outstanding gates. At the historical recovered baseline these commands were future acceptance targets:
 
 ```bash
 proteomics doctor --json --config specs/001-downstream-proteomics/contracts/example-independent.json

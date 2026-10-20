@@ -1,0 +1,353 @@
+{
+  "gates_file": "docs/validation/016-methods-extension-validation/R15c/gates-preregistration.json",
+  "gates_sha256": "da7577a6cf5da61bd8b0a0d0ca0b9e3c47819cdf76be8451d6f0e06a34336a26",
+  "B": 19,
+  "families": {
+    "penalized_logistic": {
+      "nested_auc_null": {
+        "n": 200,
+        "mean": 0.49189444444444447,
+        "mc_se": 0.009346832907917211,
+        "upper95": 0.5102142369439622,
+        "gate": "PASS"
+      },
+      "permutation_p_null": {
+        "n": 40,
+        "B": 19,
+        "k_at_or_below_0_05": 2,
+        "rate": 0.05,
+        "binomial_upper_tail_p": 0.6009359348767834,
+        "chi_square": 16.0,
+        "chi_square_df": 19,
+        "chi_square_p": 0.6572779982006441,
+        "gate": "PASS"
+      },
+      "leaky_reference": {
+        "n": 60,
+        "mean": 0.8917777777777778,
+        "gate": "PASS"
+      },
+      "planted_signal_auc": {
+        "n": 100,
+        "mean": 0.9330888888888889,
+        "gate": "PASS"
+      },
+      "planted_signal_p": {
+        "n": 40,
+        "share_at_or_below_0_05": 0.95,
+        "gate": "PASS"
+      },
+      "loocv_null": {
+        "n": 100,
+        "mean": 0.43319444444444444,
+        "mc_se": 0.024150596298977978,
+        "upper95": 0.4805296131904413,
+        "gate": "FAIL"
+      },
+      "blocked_null": {
+        "nested": {
+          "n": 100,
+          "mean": 0.47705,
+          "mc_se": 0.014559271491514827,
+          "upper95": 0.505586172123369,
+          "gate": "PASS"
+        },
+        "permutation": {
+          "n": 30,
+          "B": 19,
+          "k_at_or_below_0_05": 1,
+          "rate": 0.03333333333333333,
+          "binomial_upper_tail_p": 0.7853612360570614,
+          "chi_square": 11.333333333333334,
+          "chi_square_df": 19,
+          "chi_square_p": 0.9121159461681605,
+          "gate": "PASS"
+        },
+        "gate": "PASS"
+      },
+      "blocked_ungrouped_reference": {
+        "difference": 0.19749375000000002,
+        "gate": "PASS"
+      }
+    },
+    "lasso": {
+      "nested_auc_null": {
+        "n": 200,
+        "mean": 0.49180555555555555,
+        "mc_se": 0.009577453508212224,
+        "upper95": 0.5105773644316515,
+        "gate": "PASS"
+      },
+      "permutation_p_null": {
+        "n": 40,
+        "B": 19,
+        "k_at_or_below_0_05": 2,
+        "rate": 0.05,
+        "binomial_upper_tail_p": 0.6009359348767834,
+        "chi_square": 17.0,
+        "chi_square_df": 19,
+        "chi_square_p": 0.5898678221289577,
+        "gate": "PASS"
+      },
+      "leaky_reference": {
+        "n": 60,
+        "mean": 0.7891481481481482,
+        "gate": "PASS"
+      },
+      "planted_signal_auc": {
+        "n": 100,
+        "mean": 0.9326555555555555,
+        "gate": "PASS"
+      },
+      "planted_signal_p": {
+        "n": 40,
+        "share_at_or_below_0_05": 0.9,
+        "gate": "PASS"
+      },
+      "loocv_null": {
+        "n": 100,
+        "mean": 0.4232638888888889,
+        "mc_se": 0.021609281244389288,
+        "upper95": 0.4656180801278919,
+        "gate": "FAIL"
+      },
+      "blocked_null": {
+        "nested": {
+          "n": 100,
+          "mean": 0.50045625,
+          "mc_se": 0.013792876374553356,
+          "upper95": 0.5274902876941246,
+          "gate": "PASS"
+        },
+        "permutation": {
+          "n": 30,
+          "B": 19,
+          "k_at_or_below_0_05": 1,
+          "rate": 0.03333333333333333,
+          "binomial_upper_tail_p": 0.7853612360570614,
+          "chi_square": 19.333333333333332,
+          "chi_square_df": 19,
+          "chi_square_p": 0.43564773769699194,
+          "gate": "PASS"
+        },
+        "gate": "PASS"
+      },
+      "blocked_ungrouped_reference": {
+        "difference": 0.191125,
+        "gate": "PASS"
+      }
+    },
+    "elastic_net": {
+      "nested_auc_null": {
+        "n": 200,
+        "mean": 0.49748888888888887,
+        "mc_se": 0.009461541459875749,
+        "upper95": 0.5160335101502453,
+        "gate": "PASS"
+      },
+      "permutation_p_null": {
+        "n": 40,
+        "B": 19,
+        "k_at_or_below_0_05": 0,
+        "rate": 0.0,
+        "binomial_upper_tail_p": 0.9999999999999983,
+        "chi_square": 18.0,
+        "chi_square_df": 19,
+        "chi_square_p": 0.5224382739862623,
+        "gate": "PASS"
+      },
+      "leaky_reference": {
+        "n": 60,
+        "mean": 0.8676111111111111,
+        "gate": "PASS"
+      },
+      "planted_signal_auc": {
+        "n": 100,
+        "mean": 0.9439444444444445,
+        "gate": "PASS"
+      },
+      "planted_signal_p": {
+        "n": 40,
+        "share_at_or_below_0_05": 0.975,
+        "gate": "PASS"
+      },
+      "blocked_null": {
+        "nested": {
+          "n": 100,
+          "mean": 0.49203125,
+          "mc_se": 0.014541366495881688,
+          "upper95": 0.5205323283319281,
+          "gate": "PASS"
+        },
+        "permutation": {
+          "n": 30,
+          "B": 19,
+          "k_at_or_below_0_05": 2,
+          "rate": 0.06666666666666667,
+          "binomial_upper_tail_p": 0.44645792456821315,
+          "chi_square": 11.333333333333334,
+          "chi_square_df": 19,
+          "chi_square_p": 0.9121159461681605,
+          "gate": "PASS"
+        },
+        "gate": "PASS"
+      },
+      "blocked_ungrouped_reference": {
+        "difference": 0.1954312500000001,
+        "gate": "PASS"
+      }
+    },
+    "svm_linear": {
+      "nested_auc_null": {
+        "n": 200,
+        "mean": 0.5035777777777778,
+        "mc_se": 0.009266682466408702,
+        "upper95": 0.5217404754119388,
+        "gate": "PASS"
+      },
+      "permutation_p_null": {
+        "n": 40,
+        "B": 19,
+        "k_at_or_below_0_05": 0,
+        "rate": 0.0,
+        "binomial_upper_tail_p": 0.9999999999999983,
+        "chi_square": 20.0,
+        "chi_square_df": 19,
+        "chi_square_p": 0.39457818208600004,
+        "gate": "PASS"
+      },
+      "leaky_reference": {
+        "n": 60,
+        "mean": 0.8541111111111112,
+        "gate": "PASS"
+      },
+      "planted_signal_auc": {
+        "n": 100,
+        "mean": 0.9226666666666666,
+        "gate": "PASS"
+      },
+      "planted_signal_p": {
+        "n": 40,
+        "share_at_or_below_0_05": 1.0,
+        "gate": "PASS"
+      }
+    },
+    "svm_polynomial": {
+      "nested_auc_null": {
+        "n": 200,
+        "mean": 0.4914222222222222,
+        "mc_se": 0.00705763216999078,
+        "upper95": 0.5052551812754041,
+        "gate": "PASS"
+      },
+      "permutation_p_null": {
+        "n": 40,
+        "B": 19,
+        "k_at_or_below_0_05": 2,
+        "rate": 0.05,
+        "binomial_upper_tail_p": 0.6009359348767834,
+        "chi_square": 8.0,
+        "chi_square_df": 19,
+        "chi_square_p": 0.9866708821944026,
+        "gate": "PASS"
+      },
+      "leaky_reference": {
+        "n": 60,
+        "mean": 0.8265185185185185,
+        "gate": "PASS"
+      },
+      "planted_signal_auc": {
+        "n": 100,
+        "mean": 0.8858222222222222,
+        "gate": "PASS"
+      },
+      "planted_signal_p": {
+        "n": 40,
+        "share_at_or_below_0_05": 0.925,
+        "gate": "PASS"
+      }
+    },
+    "random_forest": {
+      "nested_auc_null": {
+        "n": 200,
+        "mean": 0.4908777777777778,
+        "mc_se": 0.008787083957107722,
+        "upper95": 0.508100462333709,
+        "gate": "PASS"
+      },
+      "permutation_p_null": {
+        "n": 40,
+        "B": 19,
+        "k_at_or_below_0_05": 0,
+        "rate": 0.0,
+        "binomial_upper_tail_p": 0.9999999999999983,
+        "chi_square": 38.0,
+        "chi_square_df": 19,
+        "chi_square_p": 0.005934709007201108,
+        "gate": "FAIL"
+      },
+      "leaky_reference": {
+        "n": 60,
+        "mean": 0.8520833333333333,
+        "gate": "PASS"
+      },
+      "planted_signal_auc": {
+        "n": 100,
+        "mean": 0.908561111111111,
+        "gate": "PASS"
+      },
+      "planted_signal_p": {
+        "n": 40,
+        "share_at_or_below_0_05": 0.925,
+        "gate": "PASS"
+      }
+    }
+  },
+  "not_run": {},
+  "design": {
+    "replicate_counts": {
+      "nested_auc_null": 200,
+      "permutation_p_null_datasets": 40,
+      "permutation_B": 19,
+      "planted_auc": 100,
+      "planted_permutation_datasets": 40,
+      "leaky_reference": 60,
+      "loocv_null": 100,
+      "loocv_planted": 50,
+      "blocked_auc_null": 100,
+      "blocked_permutation_datasets": 30,
+      "families_blocked": [
+        "penalized_logistic",
+        "lasso",
+        "elastic_net"
+      ],
+      "families_loocv": [
+        "penalized_logistic",
+        "lasso"
+      ]
+    },
+    "seeds": {
+      "nested_auc_null_base": 600000,
+      "permutation_null_base": 700000,
+      "leaky_base": 800000,
+      "planted_auc_base": 900000,
+      "planted_permutation_base": 950000,
+      "blocked_base": 1000000,
+      "loocv_null_base": 1100000,
+      "loocv_planted_base": 1150000,
+      "family_offset": "+1000 x family index (penalized_logistic 0 ... random_forest 5); the null bases equal the R14f seeds for penalized_logistic"
+    },
+    "compute": {
+      "seconds": 1874.843,
+      "cores": 12
+    },
+    "versions": {
+      "r_version": "4.6.1",
+      "glmnet": "5.1",
+      "e1071": "1.7.17",
+      "randomForest": "4.7.1.2",
+      "proteomicsCore": "0.1.0"
+    }
+  },
+  "reduced_replicates": []
+}

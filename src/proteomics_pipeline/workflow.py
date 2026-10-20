@@ -63,7 +63,8 @@ def requested_capabilities(config: dict) -> list[dict]:
     if analysis:
         items.append({"capability": "design", "required": True, "source": "design"})
         for model in config["models"]:
-            capability = {"limma": "limma", "deqms": "assay_engines", "proda": "assay_engines"}[model["engine"]]
+            # Amendment A-2026-10-01-44 (ADR 0011, R15a): welch is a separate capability, declared under methods_extension.welch.
+            capability = {"limma": "limma", "deqms": "assay_engines", "proda": "assay_engines", "welch": "welch"}[model["engine"]]
             items.append({"capability": capability, "required": model["execution_requirement"] == "required", "source": f"model:{model['id']}"})
         if config.get("resources"):
             items.append({"capability": "resources", "required": True, "source": "resources"})
@@ -74,6 +75,11 @@ def requested_capabilities(config: dict) -> list[dict]:
     multivariate = config.get("multivariate") or {}
     if multivariate.get("enabled"):
         items.append({"capability": "permanova", "required": multivariate.get("execution_requirement", "optional") == "required", "source": "multivariate"})
+    from . import gene_set_libraries   # A-2026-10-01-46 (ADR 0011, R15b): declared offline libraries, planned after the differential stage
+    if gene_set_libraries.declared(config):
+        pathway_block = (config.get("methods_extension") or {}).get("pathways") or {}
+        items.append({"capability": "offline_gene_set_libraries", "required": pathway_block.get("execution_requirement", "optional") == "required",
+                      "source": "methods_extension.pathways"})
     post_de_block = config.get("post_de") or {}
     if post_de_block.get("enabled"):   # A-2026-10-01-14 (ADR 0009): declared post-DE modules, then the R14f eligibility report
         from . import post_de
@@ -263,6 +269,8 @@ def plan_into(config_path: str | Path, config: dict, *, plan_root: Path, base: P
     if config.get("resources"):
         from . import resources as resource_service
         resource_service.verify_resources(config, config_path.parent)   # every snapshot verified before analysis (SM14)
+    from . import gene_set_libraries
+    gene_set_libraries.verify_declared(config, config_path.parent)   # A-2026-10-01-46: every declared library hashed and licence-checked before the plan is frozen
     if any(m["engine"] in ("deqms", "proda") for m in config["models"]):
         from . import assay_service, design_service as _ds
         # adapter eligibility depends only on declarations, so it is decided before any data stage (SM10)
@@ -432,7 +440,7 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
     if analysis:
         for row in plan["engine_eligibility"]:
             if not row["eligible"]:
-                ledger.virtual(f"model.{row['model_id']}", "limma" if row["engine"] == "limma" else "assay_engines", False, "INAPPLICABLE", row["reason_code"],
+                ledger.virtual(f"model.{row['model_id']}", {"limma": "limma", "welch": "welch"}.get(row["engine"], "assay_engines"), False, "INAPPLICABLE", row["reason_code"],
                                f"optional model {row['model_id']} is scientifically ineligible", 0)
         limma_models = [m for m in config["models"] if m["engine"] == "limma" and eligibility[m["id"]]["eligible"]]
         if limma_models:
@@ -442,6 +450,9 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
                 for status in inference_service.model_status(root / "dea"):
                     if status["state"] != "COMPLETED":
                         ledger.virtual(f"model.{status['model_id']}", "limma", bool(status.get("required")), status["state"], status.get("reason_code"), status.get("message", ""), 4)
+        welch = [m for m in config["models"] if m["engine"] == "welch" and eligibility[m["id"]]["eligible"]]
+        if welch:
+            _run_welch(config, plan, root, ledger, welch)
         assay = [m for m in config["models"] if m["engine"] in ("deqms", "proda") and eligibility[m["id"]]["eligible"]]
         if assay:
             _run_assay_engines(config, plan, root, ledger, config_dir, assay)
@@ -451,11 +462,43 @@ def _run_analysis(config: dict, plan: dict, root: Path, ledger: Ledger, config_d
             _run_response(config, plan, root, ledger, config_dir)
         if (config.get("pathways") or {}).get("enabled"):
             _run_pathways(config, plan, root, ledger)
+        if gene_set_libraries_declared(config):
+            _run_gene_set_libraries(config, plan, root, ledger, config_dir)
     multivariate = config.get("multivariate") or {}
     if multivariate.get("enabled"):
         _run_permanova(config, plan, root, ledger)
     if analysis and (config.get("post_de") or {}).get("enabled"):
         _run_post_de(config, plan, root, ledger, config_dir)
+
+
+def gene_set_libraries_declared(config: dict) -> bool:
+    from . import gene_set_libraries
+    return bool(gene_set_libraries.declared(config))
+
+
+def _run_gene_set_libraries(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path) -> None:
+    """Amendment A-2026-10-01-46 (ADR 0011, R15b): offline libraries on the run's primary differential table, after the DE stage."""
+    from . import gene_set_libraries
+    block = (config.get("methods_extension") or {}).get("pathways") or {}
+    required = block.get("execution_requirement", "optional") == "required"
+    if not (root / "dea" / "stage-result.json").is_file():
+        ledger.virtual("offline_gene_set_libraries", "offline_gene_set_libraries", required, "NOT_RUN", "E_PREREQUISITE_FAILED",
+                       "the offline libraries are analysed on the primary differential table, which did not complete", 4)
+        return
+    ledger.run_stage("offline_gene_set_libraries", "offline_gene_set_libraries", required,
+                     lambda temp: gene_set_libraries.run_request(config, config_dir=config_dir, root=root, run_id=ledger.run_id, output_temp_dir=temp,
+                                                                 plan_hash=plan["plan_hash"]), root / "methods_extension" / "pathways")
+
+
+def _run_welch(config: dict, plan: dict, root: Path, ledger: Ledger, models: list[dict]) -> None:
+    """Amendment A-2026-10-01-44 (ADR 0011, R15a): the Welch engine runs on the frozen plan, in its own directory, never under dea/."""
+    from . import welch_service
+    required = any(m["execution_requirement"] == "required" for m in models)
+    # A welch primary writes the dea/ contract (amendment A-2026-10-01-46); a secondary welch model stays in methods_extension/welch.
+    primary = any(m["role"] == "primary" for m in models)
+    destination = root / "dea" if primary else root / "methods_extension" / "welch"
+    ledger.run_stage("welch", "welch", required, lambda temp: welch_service.build_request(plan, plan_path=root / "plan.json", config=config, run_id=ledger.run_id,
+                     output_temp_dir=temp), destination)
 
 
 def _run_assay_engines(config: dict, plan: dict, root: Path, ledger: Ledger, config_dir: Path, models: list[dict]) -> None:

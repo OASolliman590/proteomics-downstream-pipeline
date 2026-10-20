@@ -63,8 +63,9 @@ def precheck(raw: dict) -> None:
     if not isinstance(top, dict) or not top.get("enabled"):
         return
     runtime = raw.get("runtime") or {}
-    if runtime.get("phase") != 4:
-        raise PostDeRefusal("E_PHASE_CAPABILITY", "post-differential analysis is a Phase 4 capability; runtime.phase must be 4", "/runtime/phase")
+    # Amendment A-2026-10-01-46 (ADR 0011): Phase 5 runs include the Phase 4 post-DE capabilities, so the Welch primary can feed them.
+    if runtime.get("phase") not in (4, 5):
+        raise PostDeRefusal("E_PHASE_CAPABILITY", "post-differential analysis is a Phase 4 capability (Phase 5 includes it); runtime.phase must be 4 or 5", "/runtime/phase")
     for module in MODULES:
         sub = top.get(module) or {}
         impl = module_impl(module)

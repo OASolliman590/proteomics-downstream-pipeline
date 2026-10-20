@@ -1,5 +1,9 @@
 # Progress — evidence, not anticipated completion
 
+## Status reconciliation on 2026-10-18
+
+This is a documentation-only reconciliation of the current local checkout, not a new freeze, dispatch authorization or release acceptance. The acceptance ledger and traceability currently record 207 PASS, two FAIL (V180 and V181), and 13 NOT_RUN cases. Structural reconciliation and recorded evidence hashes were checked; scientific gates were not rerun. Phase 5 is partially implemented, with failed calibration gates and unrun real-study slots. Phase 6 has recorded PASS evidence for V195–V222; that is not a new independent review or a release claim. Older baseline/branch/implementation-status descriptions below are historical where they disagree with this dated snapshot. See [the reconciliation record](re-evaluation.md) before planning further work.
+
 Kit: **1.2.0-frozen** on **2026-09-20** (1.3.0 with the ADR 0009 amendment). Baseline: recovered study code at `3aefdd95c46a1c56dae89e79ddf441b6cc978148`. Maintained successor: **IN PROGRESS, not released** — R02–R11 and R13 (committed as `fd8dfa9`, audit fixes `fa4d948`) are merged into `main` (PR #1, 1578bc8). R14a–R14f and the R12 tooling are on `claude/post-de` (PR #2 into `main`). Two independent reviews (2026-10-02, 2026-10-03) returned ACCEPT WITH FIXES; the fixes are done. A third independent review (2026-10-05) covered the post-DE work and R12 (ACCEPT WITH FIXES, fixed). On 2026-10-05 the Maintainer directed the adaptive policy (ADR 0010). R12 private gates are Maintainer-only and NOT_RUN.
 
 | Gate / scope | State |

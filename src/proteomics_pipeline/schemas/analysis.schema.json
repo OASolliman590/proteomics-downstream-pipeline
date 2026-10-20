@@ -366,7 +366,8 @@
       "enum": [
         "limma",
         "deqms",
-        "proda"
+        "proda",
+        "welch"
       ],
       "default": "limma"
     },
@@ -751,7 +752,8 @@
             1,
             2,
             3,
-            4
+            4,
+            5
           ]
         }
       },
@@ -834,6 +836,9 @@
     },
     "post_de": {
       "$ref": "#/$defs/post_de"
+    },
+    "methods_extension": {
+      "$ref": "#/$defs/methods_extension"
     }
   },
   "required": [
@@ -1104,7 +1109,8 @@
           "enum": [
             "limma",
             "deqms",
-            "proda"
+            "proda",
+            "welch"
           ]
         },
         "role": {
@@ -2008,6 +2014,106 @@
         }
       }
     },
+    "methods_extension": {
+      "description": "Optional methods extension (ADR 0011). Absent or disabled blocks leave every output unchanged.",
+      "type": "object",
+      "properties": {
+        "welch": {
+          "$ref": "#/$defs/methods_extension_welch"
+        },
+        "pathways": {
+          "$ref": "#/$defs/methods_extension_pathways"
+        }
+      },
+      "additionalProperties": false
+    },
+    "methods_extension_pathways": {
+      "description": "Offline GMT pathway libraries (R15b, FR-174 to FR-178; ADR 0011). Runs only when enabled; every library is a local file verified by SHA-256 at plan time. KEGG and MSigDB are never redistributable.",
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean", "default": false},
+        "execution_requirement": {"enum": ["required", "optional"], "default": "optional"},
+        "libraries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "source": {"type": "string", "minLength": 1},
+              "version": {"type": "string", "minLength": 1},
+              "species": {"type": "string", "minLength": 1},
+              "identifier_type": {"type": "string", "minLength": 1},
+              "licence_id": {"type": "string", "minLength": 1},
+              "redistributable": {"type": "boolean"}
+            },
+            "required": ["id", "path", "sha256", "source", "version", "species", "identifier_type", "licence_id", "redistributable"],
+            "additionalProperties": false
+          }
+        },
+        "methods": {"type": "array", "items": {"enum": ["ora", "prerank"]}, "uniqueItems": true},
+        "min_size": {"type": "integer", "minimum": 1},
+        "max_size": {"type": "integer", "minimum": 1},
+        "ora_threshold": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "methods_extension_welch": {
+      "description": "Welch engine (R15a, FR-168 to FR-173). Runs only when enabled. Defaults: enabled false, paired auto, role secondary, family welch_zero_null, ci_level from report.ci_level, paper_compatible disabled with raw_p_cutoff 0.05.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "execution_requirement": {
+          "enum": ["required", "optional"],
+          "default": "optional"
+        },
+        "contrasts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "uniqueItems": true
+        },
+        "role": {
+          "enum": ["primary", "secondary"],
+          "default": "secondary"
+        },
+        "family": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "paired": {
+          "enum": ["auto", true, false],
+          "default": "auto"
+        },
+        "ci_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "paper_compatible": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "raw_p_cutoff": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": ["enabled"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "post_de": {
       "type": "object",
       "required": [
@@ -2523,6 +2629,8 @@
             "classifier": {
               "enum": [
                 "penalized_logistic",
+                "lasso",
+                "elastic_net",
                 "svm_linear",
                 "svm_polynomial",
                 "svm_radial",
@@ -3017,6 +3125,47 @@
             "properties": {
               "enabled": {
                 "const": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "Amendment A-2026-10-01-44 (ADR 0011): the methods extension is Phase 5 only; Phase 1-4 configurations cannot enable it.",
+      "if": {
+        "properties": {
+          "runtime": {
+            "properties": {
+              "phase": {
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "methods_extension": {
+            "properties": {
+              "welch": {
+                "properties": {
+                  "enabled": {
+                    "const": false
+                  }
+                }
+              },
+              "pathways": {
+                "properties": {
+                  "enabled": {
+                    "const": false
+                  }
+                }
               }
             }
           }
