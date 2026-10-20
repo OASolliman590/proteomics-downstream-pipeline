@@ -30,7 +30,7 @@ def main(argv=None) -> int:
     try:
         if args.command == "verify-archive":
             result = legacy_service.verify_archive(args.archive)
-            print(json.dumps({k: result[k] for k in ("verified", "file_count", "expected_file_count", "archive_sha256_matches")} | {"n_problems": len(result["problems"])}))
+            print(json.dumps({k: result[k] for k in ("verified", "file_count", "expected_file_count", "archive_sha256_matches", "archive_root")} | {"n_problems": len(result["problems"])}))
             return 0 if result["verified"] else 5
         print(json.dumps(legacy_service.run(args.config)))
         return 0

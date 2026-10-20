@@ -51,6 +51,23 @@ def test_v111_tooling_negative_tampered_member_and_missing_archive(tmp_path):
     assert error.value.code == "E_LEGACY_UNAVAILABLE" and error.value.exit_code == 3   # NOT_RUN, never an invented reconstruction
 
 
+def test_v111_tooling_strips_a_single_top_level_package_folder(tmp_path):
+    """The Maintainer's real archive stores every member under one package folder, while the recovered inventory lists
+    paths relative to that folder. Members must be matched after removing that single root (found on the real archive,
+    2026-10-13: 165 members reported as both missing and not in the inventory)."""
+    inner = {"00_INDEX/CONTENTS.csv": b"a,b\n1,2\n", "scripts/run.R": b"x <- 1\n"}
+    archive, inventory = synthetic_archive(tmp_path, {f"pkg_2026/{k}": v for k, v in inner.items()})
+    record = json.loads(inventory.read_text(encoding="utf-8"))
+    for item in record["files"]:
+        item["path"] = item["path"].split("/", 1)[1]
+    inventory.write_text(json.dumps(record), encoding="utf-8")
+    result = L.verify_archive(archive, inventory)
+    assert result["verified"] and result["problems"] == [] and result["file_count"] == 2 and result["archive_root"] == "pkg_2026"
+    record["files"][1]["sha256"] = "0" * 64; inventory.write_text(json.dumps(record), encoding="utf-8")   # a changed member is still caught
+    result = L.verify_archive(archive, inventory)
+    assert not result["verified"] and result["problems"] == [{"member": "scripts/run.R", "reason": "hash_or_size_mismatch"}]
+
+
 def write_tsv(path: Path, rows: list[list]) -> Path:
     path.write_text("".join("\t".join(map(str, r)) + "\n" for r in rows), encoding="utf-8")
     return path
