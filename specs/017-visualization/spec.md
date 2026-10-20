@@ -1,6 +1,6 @@
 # Feature Specification: Visualization outputs (Prism files, Prism-style PNG, interactive HTML)
 
-**Phase:** 6 (v1.3-visualization). **Packets:** R16a–R16e (dispatch units). **Status:** Maintainer scope decision of 2026-10-08 ([ADR 0012](../../docs/adr/0012-visualization-outputs.md)); drafted, not yet implemented. It adds FR-195–FR-222, T195–T222 and V195–V222 and does not renumber any existing identity.
+**Phase:** 6 (v1.3-visualization). **Packets:** R16a–R16e (dispatch units). **Status:** Maintainer scope decision of 2026-10-08 ([ADR 0012](../../docs/adr/0012-visualization-outputs.md)); implemented with recorded PASS evidence for V195–V222; no new independent review or release acceptance is claimed. It adds FR-195–FR-222, T195–T222 and V195–V222 and does not renumber any existing identity.
 
 ## Scope
 
@@ -457,3 +457,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 **Negative case:** A P displayed without B or seed fails.
 
 **Contract:** SM29, SM25; **owner:** R16e.
+
+## Status rationale on 2026-10-18
+
+The status above is reconciled to existing tasks and acceptance records, not new scientific execution. Requirement text, identifiers and acceptance thresholds are unchanged. See [the reconciliation record](../001-downstream-proteomics/re-evaluation.md).
