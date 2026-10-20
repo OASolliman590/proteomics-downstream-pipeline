@@ -21,6 +21,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from .errors import ProteomicsError
+from .provenance import is_os_metadata
 
 DETERMINISTIC = (1e-10, 1e-8)
 BACKEND = (1e-8, 1e-6)
@@ -236,7 +237,7 @@ def check_reference_matrix(matrix_path: str | Path, lock_path: str | Path, root:
         present = (f"def {token}(" in text) if path.endswith(".py") else (f'test_that("{token}' in text)
         if not present:
             findings.append({"case_id": case["case_id"], "field": "oracle_test", "frozen": case["oracle_test"], "observed": "missing"})
-    sources = "\n".join(p.read_text(encoding="utf-8") for p in list((root / "r" / "proteomicsCore" / "R").glob("*.R")) + list((root / "src" / "proteomics_pipeline").rglob("*.py")))
+    sources = "\n".join(p.read_text(encoding="utf-8") for p in list((root / "r" / "proteomicsCore" / "R").glob("*.R")) + list((root / "src" / "proteomics_pipeline").rglob("*.py")) if not is_os_metadata(p))
     for item in matrix["unsupported_combinations"]:
         if item["reason_code"] not in sources:
             findings.append({"case_id": item["combination"], "field": "reason_code", "frozen": item["reason_code"], "observed": "not raised anywhere"})
