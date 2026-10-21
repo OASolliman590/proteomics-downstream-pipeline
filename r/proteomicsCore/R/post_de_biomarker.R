@@ -247,6 +247,22 @@ pd_bm_audit_check <- function(audit, folds) {
   invisible(TRUE)
 }
 
+# Leave-pair-out AUC (D-77, A-2026-10-01-49; Airola et al. 2011): every positive x negative unit pair is held out together and
+# the whole inner procedure is refitted on the other units. The AUC is the mean over pairs of the pair's Mann-Whitney
+# comparison of its positive against its negative observations (ties count one half). Pooled leave-one-out scores are
+# biased low under the null (each held-out unit meets a training class balance tilted against it); pairs remove that tilt.
+.bm_leave_pair_out <- function(X, y, units, s, ut, audit, folds_test) {
+  wins <- numeric()
+  for (a in ut$unit[ut$class == "1"]) for (b in ut$unit[ut$class == "0"]) {
+    id <- sprintf("pair_%s_%s", a, b); test <- which(units %in% c(a, b)); train <- which(!(units %in% c(a, b)))
+    res <- .bm_outer_fold(X, y, units, train, test, s, 1L, id, audit)
+    if (!is.null(audit)) { audit <- res$audit; folds_test[[paste(1L, id)]] <- s$observation_ids[test] }
+    sp <- res$score[y[test] == 1L]; sn <- res$score[y[test] == 0L]
+    wins <- c(wins, mean(outer(sp, sn, function(p, n) (p > n) + 0.5 * (p == n))))
+  }
+  list(auc = mean(wins), n_pairs = length(wins), audit = audit, folds_test = folds_test)
+}
+
 # The whole nested procedure for one label vector (one job = one RNG stream).
 pd_bm_nested <- function(X, y, units, s, stream, record = TRUE) {
   if (is.null(rownames(X))) rownames(X) <- s$observation_ids
@@ -254,6 +270,9 @@ pd_bm_nested <- function(X, y, units, s, stream, record = TRUE) {
   .bm_use_stream(stream)
   oof <- list(); audit <- if (record) list() else NULL; per_repeat <- numeric(); selected <- list(); folds_test <- list()
   ut <- .bm_unit_table(units, y)
+  lpo <- identical(s$scheme, "loocv")
+  if (lpo && any(ut$class == "mixed"))
+    stop("E_BIOMARKER_LPO_UNITS: the loocv scheme reports the leave-pair-out AUC, which needs every unit to belong to one class; use repeated_stratified_kfold for within-subject designs", call. = FALSE)
   for (r in seq_len(s$repeats)) {
     fold_unit <- if (identical(s$scheme, "loocv")) seq_len(nrow(ut)) else pd_bm_folds(ut$class, s$outer_k)
     fold <- fold_unit[match(units, ut$unit)]
@@ -271,8 +290,14 @@ pd_bm_nested <- function(X, y, units, s, stream, record = TRUE) {
     per_repeat <- c(per_repeat, pd_auc(scores, y))
   }
   oof <- do.call(rbind, oof)
+  pooled <- pd_auc(oof$score, oof$label); estimator <- "pooled_out_of_fold"
+  if (lpo) {   # the leave-one-out scores above stay for the threshold metrics; the AUC is the leave-pair-out AUC (D-77)
+    pair <- .bm_leave_pair_out(X, y, units, s, ut, audit, folds_test)
+    if (record) { audit <- pair$audit; folds_test <- pair$folds_test }
+    pooled <- pair$auc; per_repeat <- pair$auc; estimator <- "leave_pair_out"
+  }
   if (record) pd_bm_audit_check(audit, folds_test)
-  list(oof = oof, per_repeat = per_repeat, pooled = pd_auc(oof$score, oof$label), selected = selected, audit = audit, probability = prob)
+  list(oof = oof, per_repeat = per_repeat, pooled = pooled, auc_estimator = estimator, selected = selected, audit = audit, probability = prob)
 }
 
 # ----------------------------------------------------------------------------- claims
@@ -385,7 +410,7 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
   q <- stats::quantile(nested$per_repeat, c(0.025, 0.975), names = FALSE)
   cv <- data.frame(analysis = "nested_cv", classifier = p$classifier, selection = p$selection$method, scheme = s$scheme, outer_k = s$outer_k, inner_k = s$inner_k, repeats = s$repeats,
                    n_positive_units = length(unique(units[y == 1L])), n_negative_units = length(unique(units[y == 0L])), grouped_by = if (is.null(p$subject_column)) "biological_unit" else p$subject_column,
-                   pooled_oof_auc = nested$pooled, repeat_auc_mean = mean(nested$per_repeat), repeat_auc_sd = if (length(nested$per_repeat) > 1L) stats::sd(nested$per_repeat) else NA_real_,
+                   pooled_oof_auc = nested$pooled, auc_estimator = nested$auc_estimator, repeat_auc_mean = mean(nested$per_repeat), repeat_auc_sd = if (length(nested$per_repeat) > 1L) stats::sd(nested$per_repeat) else NA_real_,
                    repeat_auc_q025 = q[1], repeat_auc_q975 = q[2], seed = seed, rng = "L'Ecuyer-CMRG stream 0", claim_label = "cross_validated_nested", stringsAsFactors = FALSE)
   write_tsv(data.frame(repeat_id = seq_along(nested$per_repeat), auc = nested$per_repeat, claim_label = "cross_validated_nested"), "cv_repeats.tsv", "post_de_cv_repeats", "CvPerformance")
 
@@ -501,7 +526,8 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
   add_fig(.pm_devices(out, "roc_cv", fm, 5.5, 5.5, function() {
     graphics::par(mar = c(4.5, 4.5, 3, 1))
     graphics::plot(roc$fpr, roc$tpr, type = "s", xlim = c(0, 1), ylim = c(0, 1), xlab = "1 - specificity", ylab = "sensitivity", lwd = 2,
-                   main = sprintf("Nested-CV out-of-fold ROC (cross_validated_nested), AUC %.2f", nested$pooled), cex.main = 0.8)
+                   main = if (identical(nested$auc_estimator, "leave_pair_out")) sprintf("Leave-one-out ROC (cross_validated_nested), leave-pair-out AUC %.2f", nested$pooled)
+                          else sprintf("Nested-CV out-of-fold ROC (cross_validated_nested), AUC %.2f", nested$pooled), cex.main = 0.8)
     graphics::polygon(c(band$fpr, rev(band$fpr)), c(band$tpr_lower, rev(band$tpr_upper)), col = grDevices::adjustcolor("grey60", 0.4), border = NA)
     graphics::abline(0, 1, lty = 3) }))
   rep_src <- data.frame(repeat_id = seq_along(nested$per_repeat), auc = nested$per_repeat, claim_label = "cross_validated_nested")
@@ -511,7 +537,7 @@ post_de_biomarker_stage <- function(request) .pc_run_stage(request, function(out
   if (!is.null(null)) {
     write_tsv(null, file.path("figure_sources", "permutation_null.tsv"), "permutation_null_source", "FigureSource")
     add_fig(.pm_devices(out, "permutation_null", fm, 5.5, 4.5, function() { graphics::par(mar = c(4.5, 4.5, 3, 1))
-      graphics::hist(null$pooled_oof_auc, breaks = 20, col = "grey70", border = "white", xlim = c(0, 1), xlab = "pooled AUC under permuted labels",
+      graphics::hist(null$pooled_oof_auc, breaks = 20, col = "grey70", border = "white", xlim = c(0, 1), xlab = if (identical(nested$auc_estimator, "leave_pair_out")) "leave-pair-out AUC under permuted labels" else "pooled AUC under permuted labels",
                      main = sprintf("Whole-procedure permutation null, P = %.3g (B = %d)", cv$permutation_p, nrow(null)), cex.main = 0.85)
       graphics::abline(v = nested$pooled, col = "#B2182B", lwd = 2) }))
   }

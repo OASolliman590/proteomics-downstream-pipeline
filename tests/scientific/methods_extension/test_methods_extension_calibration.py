@@ -1,7 +1,7 @@
 """R15c acceptance: V179-V184 (FR-179 to FR-184; SM45; ADR 0011).
 
 Oracles are direct glmnet, e1071 and randomForest fits written in the test (run through the house R runner),
-a direct leave-one-unit-out loop, subject-level fold checks, and the committed gate file's SHA-256. The
+a direct leave-pair-out loop (D-77), subject-level fold checks, and the committed gate file's SHA-256. The
 calibration results are read from docs/validation/016-methods-extension-validation/R15c/calibration/ (the run
 is pre-registered: its counts and seeds come from the committed gate file). Each case has a negative assertion.
 """
@@ -109,27 +109,44 @@ cat(jsonlite::toJSON(list(available = rf, finite = ok), auto_unbox = TRUE))
     assert res["finite"] is True
 
 
-def test_v181_loocv_pooled_auc_equals_a_direct_leave_one_unit_out_loop():
+def test_v181_loocv_auc_is_the_leave_pair_out_auc_of_a_direct_pair_loop():
+    # D-77: with scheme loocv the reported AUC is the leave-pair-out AUC; the leave-one-out scores are unchanged.
     code = """ns <- asNamespace("proteomicsCore"); f <- function(n) get(n, envir = ns)
 set.seed(181L); X <- matrix(stats::rnorm(24 * 30), 24, 30, dimnames = list(sprintf("u%02d", 1:24), sprintf("F%02d", 1:30)))
 y <- rep(c(1L, 0L), each = 12); panel <- colnames(X)[1:5]
 s <- list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5, classifier = "lasso",
           lambda = 0.05, cost = NULL, threshold_rule = "youden_train", scheme = "loocv", outer_k = 5L, repeats = 1L, inner_k = 3L,
           observation_ids = rownames(X), fixed_features = panel)
-pipe <- f("pd_bm_nested")(X, y, rownames(X), s, f(".bm_stream")(181L, 0L), record = FALSE)$pooled
-pred <- numeric(24)
-for (i in 1:24) {
-  tr <- setdiff(1:24, i); sc <- list(s); sc[[1]]$observation_ids <- rownames(X)[tr]; sc[[1]]$classifier_grid <- 0.05
-  cfg <- f(".bm_selection_grid")(sc[[1]])[[1]]
-  prep <- f(".bm_fit_prep")(X[tr, panel, drop = FALSE], "none")
-  pred[i] <- f(".bm_fit_score")(X[tr, , drop = FALSE], y[tr], X[i, , drop = FALSE], sc[[1]], cfg, NULL, prep)$score[1, 1]
+res <- f("pd_bm_nested")(X, y, rownames(X), s, f(".bm_stream")(181L, 0L), record = FALSE)
+score_without <- function(held) {
+  tr <- setdiff(1:24, held); sc <- s; sc$observation_ids <- rownames(X)[tr]; sc$classifier_grid <- 0.05
+  cfg <- f(".bm_selection_grid")(sc)[[1]]; prep <- f(".bm_fit_prep")(X[tr, panel, drop = FALSE], "none")
+  f(".bm_fit_score")(X[tr, , drop = FALSE], y[tr], X[held, , drop = FALSE], sc, cfg, NULL, prep)$score[, 1]
 }
-oracle <- f("pd_auc")(pred, y)
-ridge_s <- s; ridge_s$classifier <- "penalized_logistic"
-cat(jsonlite::toJSON(list(pipe = pipe, oracle = oracle), auto_unbox = TRUE, digits = NA))
+loo <- vapply(1:24, score_without, numeric(1))
+wins <- c(); for (i in which(y == 1L)) for (j in which(y == 0L)) { sc <- score_without(c(i, j)); wins <- c(wins, (sc[1] > sc[2]) + 0.5 * (sc[1] == sc[2])) }
+oof <- res$oof[match(rownames(X), res$oof$observation_id), ]
+cat(jsonlite::toJSON(list(pipe = res$pooled, lpo = mean(wins), n_pairs = length(wins), estimator = res$auc_estimator, per_repeat = res$per_repeat,
+  loo_max_diff = max(abs(oof$score - loo)), loo_pooled = f("pd_auc")(loo, y)), auto_unbox = TRUE, digits = NA))
 """
     res = r(code)
-    assert abs(res["pipe"] - res["oracle"]) <= 1e-10
+    assert res["n_pairs"] == 144 and res["estimator"] == "leave_pair_out"
+    assert abs(res["pipe"] - res["lpo"]) <= 1e-10 and abs(res["per_repeat"] - res["lpo"]) <= 1e-10
+    assert res["loo_max_diff"] <= 1e-10                       # the leave-one-out scores for the threshold metrics are unchanged
+    assert abs(res["pipe"] - res["loo_pooled"]) > 1e-6        # and the pooled leave-one-out AUC is no longer reported
+
+
+def test_v181_negative_loocv_with_mixed_class_units_is_refused():
+    code = """ns <- asNamespace("proteomicsCore"); f <- function(n) get(n, envir = ns)
+set.seed(182L); X <- matrix(stats::rnorm(24 * 30), 24, 30, dimnames = list(sprintf("o%02d", 1:24), sprintf("F%02d", 1:30)))
+units <- rep(sprintf("s%02d", 1:12), each = 2); y <- rep(c(1L, 0L), times = 12)   # every subject has one observation of each class
+s <- list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5, classifier = "lasso",
+          lambda = 0.05, cost = NULL, threshold_rule = "youden_train", scheme = "loocv", outer_k = 5L, repeats = 1L, inner_k = 3L,
+          observation_ids = rownames(X), fixed_features = colnames(X)[1:5])
+msg <- tryCatch({ f("pd_bm_nested")(X, y, units, s, f(".bm_stream")(182L, 0L), record = FALSE); "no error" }, error = function(e) conditionMessage(e))
+cat(jsonlite::toJSON(list(msg = msg), auto_unbox = TRUE))
+"""
+    assert r(code)["msg"].startswith("E_BIOMARKER_LPO_UNITS")
 
 
 def test_v181_negative_a_selector_fitted_on_all_units_is_the_leaky_reference():
