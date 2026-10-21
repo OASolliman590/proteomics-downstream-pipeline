@@ -63,7 +63,7 @@ def test_v130_null_location_and_dispersion_fixtures_behave_as_constructed(tmp_pa
     loc = next(r for r in _tests_table(loc_run) if r["analysis"] == "global")
     disp = next(r for r in _tests_table(disp_run) if r["analysis"] == "global")
     assert float(null["p_value"]) > 0.05 and float(null["r2"]) < float(loc["r2"])
-    assert float(loc["p_value"]) == float(loc["p_floor"]) == 1 / 1000 and loc["p_display"] == "< 0.001" and float(loc["r2"]) > 0.3
+    assert float(loc["p_value"]) == float(loc["p_floor"]) == 1 / 1000 and loc["p_display"] == "\u2264 0.001 (B = 999)" and float(loc["r2"]) > 0.3
     assert float(disp["permdisp_p"]) < 0.05 and float(disp["p_value"]) > 0.05
     assert disp["interpretation"] == "dispersion_difference_location_not_established"
     # audit 2026-10-02: no either-label acceptance; the exact location label is asserted on a constructed

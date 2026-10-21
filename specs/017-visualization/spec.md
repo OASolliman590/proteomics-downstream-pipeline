@@ -62,7 +62,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 - **FR-219 — Networks: module heatmap:** The system MUST plot module eigengenes per group or phenotype level for the declared modules only.
 - **FR-220 — Networks: network graph:** The system MUST plot the declared subnetwork's nodes and edges exactly as in the interaction snapshot. Layout coordinates are presentation only and are excluded from data equality.
 - **FR-221 — PERMANOVA: PCoA with centroids:** The system MUST plot principal coordinates of the declared distance with group centroids computed from each group's members, and MUST NOT draw a centroid from the full sample.
-- **FR-222 — PERMANOVA: PERMDISP plot:** The system MUST plot distances to group centroids per group with the PERMDISP permutation P, showing the number of permutations and the seed used.
+- **FR-222 — PERMANOVA: PERMDISP plot:** The system MUST plot distances to group centroids per group with the PERMDISP permutation P, showing the number of permutations and the seed used. *Amended 2026-10-21 (D-79, D-80, A-2026-10-01-50):* the distances are to the group spatial median (vegan betadisper default) and are labelled so; a P at its floor 1/(B + 1) reads "P ≤ floor".
 
 ## Acceptance Scenarios
 
@@ -450,7 +450,7 @@ This slice is additive. The existing R10b, R13 and R14 figure outputs keep their
 
 **Fixture:** The PERMANOVA dispersion fixture with two groups.
 
-**Oracle:** Distances to group centroids and the PERMDISP permutation P with the recorded seed, computed in the test.
+**Oracle:** Distances to the group spatial medians (vegan betadisper default; amended 2026-10-21, D-79) and the PERMDISP permutation P with the recorded seed, computed in the test.
 
 **Exact assertion:** All three outputs exist. Distances and P equal the oracle, and the number of permutations and seed are displayed.
 

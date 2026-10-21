@@ -129,7 +129,8 @@ def _permanova_jobs(run: Path, work: Path) -> list[dict[str, Any]]:
         members = [r for r in ordination if r["feature_set_id"] == set_id]
         pct = {r["axis"]: float(r["percent_positive_eigenvalue"]) for r in axes if r["feature_set_id"] == set_id}
         overall = next(r for r in tests if r["feature_set_id"] == set_id and r["analysis"] == "global")
-        caption = f"PERMANOVA P = {overall['p_display']}; B = {overall['nperm']}"
+        shown = overall["p_display"]   # D-80: a P at its floor already reads "\u2264 floor (B = n)"
+        caption = f"PERMANOVA P {shown}" if shown.startswith("\u2264") else f"PERMANOVA P = {shown}; B = {overall['nperm']}"
         jobs.append({"figure_id": "perm_pcoa_centroids", "output_id": f"perm_pcoa_centroids__{set_id}",
                      "source": _write(work / f"pcoa_{set_id}.tsv", ["observation_id", "group", "axis1", "axis2", "percent_axis1", "percent_axis2"],
                                       [[r["observation_id"], r["group"], float(r["axis1"]), float(r["axis2"]), pct["axis1"], pct["axis2"]] for r in members]),

@@ -21,7 +21,11 @@
   list(files = files, records = records)
 }
 
-.pm_label_p <- function(display) ifelse(grepl("^<", display), paste("p", display), paste("p =", display))
+# A P at its floor reads "p \u2264 floor (B = n)" (D-80). The pdf() device has no glyph for U+2264, so it gets "<=" there.
+.pm_label_p <- function(display) {
+  le <- if (identical(names(grDevices::dev.cur()), "pdf")) "<=" else "\u2264"
+  ifelse(grepl("^(<|\u2264)", display), paste("p", sub("^\u2264", le, display)), paste("p =", display))
+}
 
 permanova_figures <- function(out, tests, ordination, axes, centroids, nulls, feature_r2, random_null, context, formats) {
   formats <- intersect(formats, c("png", "pdf", "svg"))
@@ -39,12 +43,12 @@ permanova_figures <- function(out, tests, ordination, axes, centroids, nulls, fe
       graphics::points(o$axis1, o$axis2, pch = 19, col = cols[o$group])
       graphics::points(ce$axis1, ce$axis2, pch = 23, bg = cols[ce$group], col = "black", cex = 2)
       graphics::legend("topright", legend = groups, col = cols, pch = 19, bty = "n", cex = 0.8)
-      graphics::mtext("Diamonds: group centroids; lines join each unit to its centroid", side = 1, line = 4.6, cex = 0.7)
+      graphics::mtext("Diamonds: group spatial medians (the PERMDISP reference); lines join each unit to its group's spatial median", side = 1, line = 4.6, cex = 0.7)
     }))
     add(.pm_devices(out, paste0("permdisp_", set_id), formats, 5.5, 4.5, function() {
       graphics::par(mar = c(4, 4.5, 3, 1))
       graphics::boxplot(distance_to_centroid ~ factor(group, levels = groups), data = o, col = grDevices::adjustcolor(cols, 0.35), outline = FALSE,
-                        xlab = "", ylab = "Distance to group centroid", main = sprintf("%s: PERMDISP %s", set_id, .pm_label_p(g$permdisp_p_display)), cex.main = 0.9)
+                        xlab = "", ylab = "Distance to group spatial median", main = sprintf("%s: PERMDISP %s", set_id, .pm_label_p(g$permdisp_p_display)), cex.main = 0.9)
       graphics::stripchart(distance_to_centroid ~ factor(group, levels = groups), data = o, vertical = TRUE, method = "jitter", pch = 19, col = cols, add = TRUE)
     }))
     fr <- feature_r2[feature_r2$feature_set_id == set_id, ]

@@ -882,7 +882,10 @@ def test_v222_distances_and_permdisp_p_equal_the_oracle_and_the_permutations_and
     for group in ("A", "B"):
         assert sorted(_trace(figure, group)["y"]) == sorted(float(r["distance_to_centroid"]) for r in rows if r["group"] == group)
     title = figure["layout"]["title"]["text"]
-    assert f"P = {oracle['p']:.3f}" in title and f"B = {boots}" in title and f"seed {seed}" in title
+    floor = 1 / (boots + 1)   # D-80: a P at its floor reads "P \u2264 floor", any other P "P = value" (3 significant digits)
+    shown = f"P \u2264 {floor:.3g}" if oracle["p"] <= floor * (1 + 1e-9) else f"P = {oracle['p']:.3g}"
+    assert shown in title and f"B = {boots}" in title and f"seed {seed}" in title
+    assert "spatial median" in title and "spatial median" in figure["layout"]["yaxis"]["title"]["text"]   # D-79
     stats = _pzfx_columns(Path(result["outputs"]["pzfx"]), table_index=1)
     assert abs(stats["P"][0] - oracle["p"]) <= 1e-12
 

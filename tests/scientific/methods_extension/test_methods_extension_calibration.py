@@ -149,6 +149,16 @@ cat(jsonlite::toJSON(list(msg = msg), auto_unbox = TRUE))
     assert r(code)["msg"].startswith("E_BIOMARKER_LPO_UNITS")
 
 
+def test_v181_the_compute_estimate_counts_the_leave_pair_out_fits():
+    from proteomics_pipeline.post_de.biomarker import compute_estimate
+    r = {"selection": {"method": "top_k_auc", "k": [5]}, "cv": {"scheme": "loocv", "k": 5, "repeats": 1, "inner_k": 3},
+         "permutation": {"enabled": False, "B": 0}}
+    loo_only = compute_estimate(r, 24, 200, 1, 0)
+    assert abs(compute_estimate(r, 24, 200, 1, 0, 144) / loo_only - (24 + 144) / 24) <= 1e-12   # 24 leave-one-out + 144 pair fits
+    r["cv"]["scheme"] = "repeated_stratified_kfold"
+    assert compute_estimate(r, 24, 200, 1, 0, 144) == compute_estimate(r, 24, 200, 1, 0)       # pairs cost nothing outside loocv
+
+
 def test_v181_negative_a_selector_fitted_on_all_units_is_the_leaky_reference():
     summary = json.loads((CAL / "summary.json").read_text(encoding="utf-8")) if (CAL / "summary.json").is_file() else None
     if summary is None:

@@ -55,7 +55,7 @@ testthat::test_that("V122 Df, SS, R2, pseudo-F match hand sums of squares; P mat
   testthat::expect_equal(row$r2, ss_between / ss_total, tolerance = 1e-10); testthat::expect_equal(row$pseudo_f, f_oracle, tolerance = 1e-10)
   set.seed(7); direct <- vegan::adonis2(D ~ g, data = data.frame(g = g), permutations = permute::how(nperm = 199), by = "terms")
   testthat::expect_equal(row$p_value, direct["g", "Pr(>F)"]); testthat::expect_identical(row$nperm, 199L)
-  testthat::expect_identical(fn("pm_display")(1 / 200, 199), "< 0.005"); testthat::expect_identical(fn("pm_display")(0.0421, 199), "0.0421")
+  testthat::expect_identical(fn("pm_display")(1 / 200, 199), "\u2264 0.005 (B = 199)")   # D-80; testthat::expect_identical(fn("pm_display")(0.0421, 199), "0.0421")
   testthat::expect_true(all(res$tests$p_value >= res$tests$p_floor))
 })
 
@@ -329,7 +329,7 @@ testthat::test_that("review P floor: whole-subject permutation is enumerated exa
   exact <- mean(fs >= f_obs - 1e-12)
   testthat::expect_equal(row$p_value, exact, tolerance = 1e-12)
   testthat::expect_gte(row$p_value, 2 / 70)
-  testthat::expect_false(startsWith(row$p_display, "<"))                  # 1/1000 is unreachable: never displayed as "< 0.001"
+  testthat::expect_false(startsWith(row$p_display, "\u2264") || startsWith(row$p_display, "<"))   # 1/1000 is unreachable: never displayed at the floor
   testthat::expect_identical(row$p_display, formatC(exact, format = "g", digits = 3))
   # PERMDISP uses the same complete relabelling set
   bd <- vegan::betadisper(stats::dist(X), factor(d$obs$group))
@@ -350,10 +350,11 @@ testthat::test_that("review P floor: free designs enumerate when N <= S x (nperm
   testthat::expect_identical(rb$permutation_enumeration, "monte_carlo")
   testthat::expect_equal(rb$n_admissible_permutations, factorial(18) / factorial(6)^3, tolerance = 1e-9)
   testthat::expect_equal(rb$p_min_attainable, 6 / (factorial(18) / factorial(6)^3), tolerance = 1e-9)
-  testthat::expect_equal(rb$p_floor, 1 / 1000); testthat::expect_identical(rb$p_value, 1 / 1000); testthat::expect_identical(rb$p_display, "< 0.001")
-  # a Monte Carlo P at a floor below S/N is shown as its value, not "< floor"
+  testthat::expect_equal(rb$p_floor, 1 / 1000); testthat::expect_identical(rb$p_value, 1 / 1000); testthat::expect_identical(rb$p_display, "\u2264 0.001 (B = 999)")
+  # a Monte Carlo P at an attainable floor is shown as "\u2264 floor (B = n)" (D-80)
   testthat::expect_identical(fn("pm_display")(1 / 1000, 999, list(enumeration = "monte_carlo", p_min_attainable = 2 / 1500)), "0.001")
-  testthat::expect_identical(fn("pm_display")(1 / 1000, 999, list(enumeration = "monte_carlo", p_min_attainable = 1e-6)), "< 0.001")
+  testthat::expect_identical(fn("pm_display")(1 / 1000, 999, list(enumeration = "monte_carlo", p_min_attainable = 1e-6)), "\u2264 0.001 (B = 999)")
+  testthat::expect_identical(fn("pm_display")(1 / 10000, 9999), "\u2264 0.0001 (B = 9,999)")
 })
 
 testthat::test_that("review P floor: the enumerator yields each distinct admissible relabelling exactly once", {
