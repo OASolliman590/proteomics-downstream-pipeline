@@ -1218,6 +1218,51 @@
         "specs/016-methods-extension-validation/tasks.md"
       ],
       "change": "Stage 2 (ADR 0011, FR-179 to FR-194, V179 to V194): the Maintainer's 2026-10-13 instruction asked for a study-validation runbook for the deferred real-study slots (V189 to V194), which sits outside the R15d folder; the traceability rows, the acceptance ledger, the reason-code catalogue and the task checkboxes are updated for R15c and R15d. The R15c calibration counts and seeds are those of the pre-registration (commit 1c79fad); the calibration run outputs are in R15c/calibration."
+    },
+    {
+      "id": "A-2026-10-01-49",
+      "adr": "docs/adr/0011-methods-extension-and-multi-study-validation.md",
+      "paths": [
+        "r/proteomicsCore/R/post_de_biomarker.R",
+        "src/proteomics_pipeline/post_de/biomarker.py",
+        "src/proteomics_pipeline/reporting/post_de_biomarker_data.py",
+        "tests/scientific/calibration_lpo.R",
+        "tests/scientific/calibration_rf_diagnostic.R",
+        "specs/016-methods-extension-validation/spec.md",
+        "specs/016-methods-extension-validation/contracts/methods-extension.md",
+        "specs/001-downstream-proteomics/decisions.md"
+      ],
+      "change": "R15c follow-up (D-77, D-78; Maintainer 2026-10-21): the loocv scheme reports the leave-pair-out AUC (V181 FAIL of the pooled leave-one-out AUC); leave-one-out scores stay for the threshold metrics; mixed-class units adapt to repeated stratified k-fold at plan time and are refused by the procedure (E_BIOMARKER_LPO_UNITS); the compute estimate counts the pair fits; cv_performance.tsv records auc_estimator. Two pre-registered follow-up calibration drivers (leave-pair-out, random-forest permutation diagnostic) are added beside the R15c driver."
+    },
+    {
+      "id": "A-2026-10-01-50",
+      "adr": "docs/adr/0006-permanova-scope-amendment.md",
+      "paths": [
+        "r/proteomicsCore/R/permanova.R",
+        "r/proteomicsCore/R/permanova_figures.R",
+        "r/proteomicsCore/R/figures_catalogue.R",
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "specs/017-visualization/spec.md",
+        "specs/014-multivariate-permanova/contracts/permanova.md",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md"
+      ],
+      "change": "D-79 (Maintainer 2026-10-21): PERMDISP distances are to the group spatial median (vegan betadisper default, now written as type = \"median\"); labels, captions and contract text say spatial median; column and file names keep centroid. FR-222/V222 and SM29 amended."
+    },
+    {
+      "id": "A-2026-10-01-51",
+      "adr": "docs/adr/0006-permanova-scope-amendment.md",
+      "paths": [
+        "r/proteomicsCore/R/permanova.R",
+        "r/proteomicsCore/R/permanova_figures.R",
+        "r/proteomicsCore/R/figures_catalogue.R",
+        "r/proteomicsCore/tests/testthat/test-permanova.R",
+        "src/proteomics_pipeline/figures/catalogue.py",
+        "src/proteomics_pipeline/figures/run_sources.py",
+        "tests/scientific/test_permanova.py",
+        "specs/014-multivariate-permanova/spec.md",
+        "specs/001-downstream-proteomics/contracts/scientific-methods.md"
+      ],
+      "change": "D-80 (Maintainer 2026-10-21): a Monte Carlo P at an attainable floor is displayed as \"≤ floor (B = nperm)\" (e.g. \"≤ 0.0001 (B = 9,999)\") instead of \"< floor\"; the floor is printed in fixed notation; the pdf() device, which has no glyph for U+2264, receives \"<=\" in base-graphics titles. D-43 is unchanged. FR-122 and SM27 amended."
     }
   ]
 }

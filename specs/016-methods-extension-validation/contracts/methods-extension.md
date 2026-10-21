@@ -40,7 +40,7 @@ A library whose `licence_id` is KEGG or MSigDB must have `redistributable: false
 
 R14d `classifier` values gain `lasso` (penalty alpha = 1) and `elastic_net` (`alpha` declared, default 0.5, penalty `lambda` tuned by the inner loop). Both use the R14d leakage-safe procedure, the same outer and inner schemes, and the same permutation rule. Missing glmnet yields NOT_RUN.
 
-The outer scheme also accepts `loocv` (R14d `cv.outer.scheme: loocv`, with `cv.inner.k: 5`) under the same rules.
+The outer scheme also accepts `loocv` (R14d `cv.outer.scheme: loocv`, with `cv.inner.k: 5`) under the same rules. *Amended 2026-10-21 (D-77):* its AUC is the leave-pair-out AUC (`cv_performance.tsv` column `auc_estimator` = `leave_pair_out`); the leave-one-out scores give the threshold metrics. Mixed-class units are adapted to repeated stratified k-fold at plan time (recorded) and refused by the procedure with `E_BIOMARKER_LPO_UNITS`.
 
 ### `methods_extension.studies` (R15d)
 
@@ -77,7 +77,9 @@ These gates (R15c, FR-183) are fixed before the first run. The gate file and its
 | `nested_auc_null` | null, each repeated-stratified family | \|mean − 0.5\| ≤ 0.03 and mean + 1.96·SE ≤ 0.53 | R14f, carried over unchanged |
 | `permutation_p_null` | null, each family | binomial P(K ≥ k \| rate 0.05) ≥ 0.01 and chi-square goodness-of-fit P over the B + 1 values ≥ 0.01 | R14f, carried over unchanged |
 | `leaky_reference` | leaky selection and scaling on all data | mean AUC > 0.75 | R14f, carried over unchanged |
-| `loocv_null` | null, LOOCV outer | same rule as `nested_auc_null` on the pooled out-of-fold AUC | R14f rule, applied to LOOCV |
+| `loocv_null` | null, LOOCV outer | same rule as `nested_auc_null` on the pooled out-of-fold AUC | R14f rule, applied to LOOCV (FAIL 2026-10-13; superseded by `lpo_null`, D-77) |
+| `lpo_null` | null, LOOCV outer with the leave-pair-out AUC (ridge, lasso) | same rule as `nested_auc_null` on the leave-pair-out AUC | pre-registered 2026-10-21 in `R15c/followup/` (D-77) |
+| `rf_permutation_diagnostic` | null, random forest, B = 99, 200 datasets | the `permutation_p_null` rules, plus a 10-bin chi-square; tied permutation AUCs and the mid-P recorded | pre-registered 2026-10-21 in `R15c/followup/` (D-78); diagnostic of the V180 FAIL |
 | `blocked_null` | null, subject-blocked | the R14f blocked nested-AUC and blocked permutation rules | R14f, carried over unchanged |
 | `blocked_ungrouped_reference` | subject-blocked, ungrouped folds | mean ungrouped AUC − mean grouped AUC > 0.05 | R14f, carried over unchanged |
 | `planted_signal_auc` | planted signal, each family | mean nested AUC ≥ 0.70 | **proposed**; requires Maintainer confirmation before the first run |
@@ -113,6 +115,7 @@ Classification follows [ADR 0010](../../../docs/adr/0010-adaptive-post-de-policy
 | `E_WELCH_MATRIX_UNSUPPORTED` | R15a | validity | A preprocessing sensitivity matrix assigned to a welch model. Refused at configuration time, because the welch engine reads the observed primary matrix only. |
 | `E_LIBRARY_FORMAT` | R15b | validity | A malformed GMT file: a row with fewer than three fields, an empty set, or a duplicated set name. The file is not analysed. |
 | `E_RANK_INVALID` | R15b | validity | A ranking with a non-finite statistic. The pre-ranked enrichment is refused for that contrast. |
+| `E_BIOMARKER_LPO_UNITS` | R15c | validity | A loocv request whose units are not all of one class (within-subject designs): the leave-pair-out AUC is undefined (D-77). The plan adapts the scheme to repeated stratified k-fold and records it; the procedure refuses if called directly. |
 | `W_WELCH_ADAPTED` | R15a | warning | A recorded adaptation for a covariate or block that the Welch test cannot honour (run unadjusted, ADR 0010). |
 
 The welch primary and limma co-existence refusal reuses `E_PRIMARY_MODEL_CONFLICT`, and the single-primary rule is enforced by the schema as `E_CONFIG_SCHEMA` ("Too many items").

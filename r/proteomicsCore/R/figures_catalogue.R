@@ -490,7 +490,8 @@ catalogue_pcoa <- function(source) {
     ggplot2::theme(legend.title = ggplot2::element_text(size = 9, face = "plain", hjust = 0))
 }
 
-# PERMDISP plot (V222): distances to the group centroids, with the PERMDISP P, B and seed. A P without B or seed is refused.
+# PERMDISP plot (V222): distances to the group spatial medians (vegan::betadisper, D-79), with the PERMDISP P, B and seed.
+# A P without B or seed is refused. A P at its floor 1/(B + 1) reads "P \u2264 floor" (D-80).
 catalogue_permdisp <- function(source) {
   if (anyNA(source$permutations) || anyNA(source$seed)) {
     catalogue_refuse("E_FIGURE_SOURCE_MISSING", "the PERMDISP P is shown without its number of permutations B and its seed")
@@ -500,12 +501,14 @@ catalogue_permdisp <- function(source) {
   groups <- unique(source$group)
   source$group <- factor(source$group, levels = groups)
   palette <- stats::setNames(catalogue_palette[seq_along(groups)], groups)
+  p <- source$permdisp_p[1]
+  shown <- if (p <= (1 + 1e-9) / (B + 1)) sprintf("P \u2264 %s", formatC(1 / (B + 1), format = "fg", digits = 3)) else sprintf("P = %s", formatC(p, format = "g", digits = 3))
   ggplot2::ggplot(source, ggplot2::aes(group, distance_to_centroid, colour = group)) +
     ggplot2::geom_boxplot(colour = "black", fill = NA, outlier.shape = NA, linewidth = 0.4) +
     ggplot2::geom_point(size = 1.8, alpha = 0.85, position = ggplot2::position_jitter(width = 0.15, height = 0, seed = 2026)) +
     ggplot2::scale_colour_manual(values = palette) +
-    ggplot2::labs(x = NULL, y = "distance to group centroid", title = "PERMDISP: distances to group centroids",
-                  caption = sprintf("PERMDISP P = %.3f; B = %d permutations; seed %d", source$permdisp_p[1], B, seed)) +
+    ggplot2::labs(x = NULL, y = "distance to group spatial median", title = "PERMDISP: distances to group spatial medians",
+                  caption = sprintf("PERMDISP %s; B = %s permutations; seed %d", shown, formatC(B, format = "d", big.mark = ","), seed)) +
     prism_figure_theme() +
     ggplot2::theme(legend.position = "none")
 }

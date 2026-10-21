@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from ..errors import ConfigurationError
+from ..provenance import is_os_metadata
 from ..runtime import run_r_code
 from .config import resolve_figure_config
 from .catalogue import build_figure
@@ -43,6 +44,8 @@ def discover(run_root: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]
     skipped: list[dict[str, str]] = []
     used: set[str] = set()
     for path in sorted(run_root.rglob("*.tsv")):
+        if is_os_metadata(path):
+            continue
         relative = path.relative_to(run_root).as_posix()
         if relative.startswith("report/figure_catalogue/"):
             continue

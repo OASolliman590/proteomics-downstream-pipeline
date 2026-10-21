@@ -96,11 +96,11 @@ def resolved(block: dict, config: dict) -> dict:
 MIN_ADAPTED_REPEATS, MIN_ADAPTED_B, MIN_UNITS_COMPUTABLE = 10, 99, 4
 
 
-def adapt_compute(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels: int) -> tuple[float, dict | None]:
+def adapt_compute(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels: int, n_pairs: int = 0) -> tuple[float, dict | None]:
     """Scale outer repeats, then permutations, down (halving) until the estimate fits the guard or the minimums are
     reached.  Returns the final estimate and the adaptation record (None when nothing changed)."""
     guard = r["permutation"]["compute_guard_hours"]
-    hours = compute_estimate(r, n_obs, n_candidates, threads, n_panels)
+    hours = compute_estimate(r, n_obs, n_candidates, threads, n_panels, n_pairs)
     requested = {"repeats": r["cv"]["repeats"], "B": r["permutation"]["B"], "hours": round(hours, 4)}
     while hours > guard:
         if r["cv"]["scheme"] != "loocv" and r["cv"]["repeats"] > MIN_ADAPTED_REPEATS:
@@ -109,7 +109,7 @@ def adapt_compute(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels
             r["permutation"]["B"] = max(MIN_ADAPTED_B, (r["permutation"]["B"] + 1) // 2 - 1)
         else:
             break
-        hours = compute_estimate(r, n_obs, n_candidates, threads, n_panels)
+        hours = compute_estimate(r, n_obs, n_candidates, threads, n_panels, n_pairs)
     if (r["cv"]["repeats"], r["permutation"]["B"]) == (requested["repeats"], requested["B"]):
         return hours, None
     used_b = r["permutation"]["B"]
@@ -119,12 +119,13 @@ def adapt_compute(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels
                               f"the smallest attainable permutation P is now 1/{used_b + 1}" + ("; still above the guard at the minimums" if hours > guard else ""))}
 
 
-def compute_estimate(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels: int) -> float:
-    """Hours for the declared nested CV x permutation work (reference cost model, D-48)."""
+def compute_estimate(r: dict, n_obs: int, n_candidates: int, threads: int, n_panels: int, n_pairs: int = 0) -> float:
+    """Hours for the declared nested CV x permutation work (reference cost model, D-48). The loocv scheme fits every
+    leave-one-out fold and every positive x negative unit pair (the leave-pair-out AUC, D-77)."""
     method = r["selection"]["method"]
     grid = len(r["selection"]["k"]) if method in ("top_k_auc", "top_k_t") else 10
     repeats = 1 if r["cv"]["scheme"] == "loocv" else r["cv"]["repeats"]
-    outer = n_obs if r["cv"]["scheme"] == "loocv" else r["cv"]["k"]
+    outer = n_obs + n_pairs if r["cv"]["scheme"] == "loocv" else r["cv"]["k"]
     jobs = 1 + (r["permutation"]["B"] if r["permutation"]["enabled"] else 0) + 2 * n_panels
     fits = jobs * repeats * outer * (r["cv"]["inner_k"] * grid + 1)
     seconds = fits * (COST_BASE_SECONDS + COST_PER_CELL_SECONDS * n_obs * n_candidates)
@@ -164,6 +165,10 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
     mixed = any(len(v) > 1 for v in classes.values())
     n_pos = sum(1 for v in classes.values() if positive in v); n_neg = sum(1 for v in classes.values() if negative in v)
     reasons, adaptations = [], []
+    if r["cv"]["scheme"] == "loocv" and mixed:   # D-77: leave-pair-out units need one class each; adapt, recorded (D-59)
+        r["cv"]["scheme"] = "repeated_stratified_kfold"
+        adaptations.append({"analysis": "nested_cv", "item": "scheme", "requested": "loocv", "used": "repeated_stratified_kfold",
+                            "reason": "the class varies within subjects, so the leave-pair-out AUC of the loocv scheme is undefined (D-77)"})
     leak_sub = []
     for code, item, requested, used, reason in corrections:
         leak_sub.append({"analysis": "declaration", "item": item, "state": "INAPPLICABLE", "reason_code": code, "reason": f"{item} {requested!r} refused: {reason}"})
@@ -231,13 +236,13 @@ def plan_checks(block: dict, config: dict, context: dict) -> dict:
             panels.append(panel)
     r["fixed_panels"] = panels
     threads = int(config["runtime"]["threads"])
-    hours = compute_estimate(r, len(observations), len(candidates), threads, len(panels))
+    hours = compute_estimate(r, len(observations), len(candidates), threads, len(panels), n_pos * n_neg)
     if hours > r["permutation"]["compute_guard_hours"]:
         if r["compute_policy"] == "refuse":   # opt-in strict mode
             reasons.append(("E_BIOMARKER_COMPUTE_GUARD", f"estimated {hours:.2f} h for nested CV x {r['permutation']['B']} permutations exceeds the declared guard of "
                                                          f"{r['permutation']['compute_guard_hours']} h (compute_policy: refuse)"))
         else:                                 # D-59 default: scale down to the budget, recorded
-            hours, record = adapt_compute(r, len(observations), len(candidates), threads, len(panels))
+            hours, record = adapt_compute(r, len(observations), len(candidates), threads, len(panels), n_pos * n_neg)
             if record:
                 adaptations.append(record)
     validation = None

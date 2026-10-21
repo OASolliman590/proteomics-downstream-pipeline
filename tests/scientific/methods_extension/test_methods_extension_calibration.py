@@ -1,7 +1,7 @@
 """R15c acceptance: V179-V184 (FR-179 to FR-184; SM45; ADR 0011).
 
 Oracles are direct glmnet, e1071 and randomForest fits written in the test (run through the house R runner),
-a direct leave-one-unit-out loop, subject-level fold checks, and the committed gate file's SHA-256. The
+a direct leave-pair-out loop (D-77), subject-level fold checks, and the committed gate file's SHA-256. The
 calibration results are read from docs/validation/016-methods-extension-validation/R15c/calibration/ (the run
 is pre-registered: its counts and seeds come from the committed gate file). Each case has a negative assertion.
 """
@@ -30,6 +30,7 @@ def _load(name, path):
 
 
 RUN = _load("calibration_runner", ROOT / "scripts" / "maintained" / "run_methods_calibration.py")
+FOLLOWUP = _load("calibration_followup", ROOT / "scripts" / "maintained" / "evaluate_calibration_followup.py")
 rscript = shutil.which("Rscript")
 pytestmark = pytest.mark.skipif(rscript is None, reason="NOT_RUN: Rscript unavailable")
 
@@ -109,27 +110,54 @@ cat(jsonlite::toJSON(list(available = rf, finite = ok), auto_unbox = TRUE))
     assert res["finite"] is True
 
 
-def test_v181_loocv_pooled_auc_equals_a_direct_leave_one_unit_out_loop():
+def test_v181_loocv_auc_is_the_leave_pair_out_auc_of_a_direct_pair_loop():
+    # D-77: with scheme loocv the reported AUC is the leave-pair-out AUC; the leave-one-out scores are unchanged.
     code = """ns <- asNamespace("proteomicsCore"); f <- function(n) get(n, envir = ns)
 set.seed(181L); X <- matrix(stats::rnorm(24 * 30), 24, 30, dimnames = list(sprintf("u%02d", 1:24), sprintf("F%02d", 1:30)))
 y <- rep(c(1L, 0L), each = 12); panel <- colnames(X)[1:5]
 s <- list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5, classifier = "lasso",
           lambda = 0.05, cost = NULL, threshold_rule = "youden_train", scheme = "loocv", outer_k = 5L, repeats = 1L, inner_k = 3L,
           observation_ids = rownames(X), fixed_features = panel)
-pipe <- f("pd_bm_nested")(X, y, rownames(X), s, f(".bm_stream")(181L, 0L), record = FALSE)$pooled
-pred <- numeric(24)
-for (i in 1:24) {
-  tr <- setdiff(1:24, i); sc <- list(s); sc[[1]]$observation_ids <- rownames(X)[tr]; sc[[1]]$classifier_grid <- 0.05
-  cfg <- f(".bm_selection_grid")(sc[[1]])[[1]]
-  prep <- f(".bm_fit_prep")(X[tr, panel, drop = FALSE], "none")
-  pred[i] <- f(".bm_fit_score")(X[tr, , drop = FALSE], y[tr], X[i, , drop = FALSE], sc[[1]], cfg, NULL, prep)$score[1, 1]
+res <- f("pd_bm_nested")(X, y, rownames(X), s, f(".bm_stream")(181L, 0L), record = FALSE)
+score_without <- function(held) {
+  tr <- setdiff(1:24, held); sc <- s; sc$observation_ids <- rownames(X)[tr]; sc$classifier_grid <- 0.05
+  cfg <- f(".bm_selection_grid")(sc)[[1]]; prep <- f(".bm_fit_prep")(X[tr, panel, drop = FALSE], "none")
+  f(".bm_fit_score")(X[tr, , drop = FALSE], y[tr], X[held, , drop = FALSE], sc, cfg, NULL, prep)$score[, 1]
 }
-oracle <- f("pd_auc")(pred, y)
-ridge_s <- s; ridge_s$classifier <- "penalized_logistic"
-cat(jsonlite::toJSON(list(pipe = pipe, oracle = oracle), auto_unbox = TRUE, digits = NA))
+loo <- vapply(1:24, score_without, numeric(1))
+wins <- c(); for (i in which(y == 1L)) for (j in which(y == 0L)) { sc <- score_without(c(i, j)); wins <- c(wins, (sc[1] > sc[2]) + 0.5 * (sc[1] == sc[2])) }
+oof <- res$oof[match(rownames(X), res$oof$observation_id), ]
+cat(jsonlite::toJSON(list(pipe = res$pooled, lpo = mean(wins), n_pairs = length(wins), estimator = res$auc_estimator, per_repeat = res$per_repeat,
+  loo_max_diff = max(abs(oof$score - loo)), loo_pooled = f("pd_auc")(loo, y)), auto_unbox = TRUE, digits = NA))
 """
     res = r(code)
-    assert abs(res["pipe"] - res["oracle"]) <= 1e-10
+    assert res["n_pairs"] == 144 and res["estimator"] == "leave_pair_out"
+    assert abs(res["pipe"] - res["lpo"]) <= 1e-10 and abs(res["per_repeat"] - res["lpo"]) <= 1e-10
+    assert res["loo_max_diff"] <= 1e-10                       # the leave-one-out scores for the threshold metrics are unchanged
+    assert abs(res["pipe"] - res["loo_pooled"]) > 1e-6        # and the pooled leave-one-out AUC is no longer reported
+
+
+def test_v181_negative_loocv_with_mixed_class_units_is_refused():
+    code = """ns <- asNamespace("proteomicsCore"); f <- function(n) get(n, envir = ns)
+set.seed(182L); X <- matrix(stats::rnorm(24 * 30), 24, 30, dimnames = list(sprintf("o%02d", 1:24), sprintf("F%02d", 1:30)))
+units <- rep(sprintf("s%02d", 1:12), each = 2); y <- rep(c(1L, 0L), times = 12)   # every subject has one observation of each class
+s <- list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5, classifier = "lasso",
+          lambda = 0.05, cost = NULL, threshold_rule = "youden_train", scheme = "loocv", outer_k = 5L, repeats = 1L, inner_k = 3L,
+          observation_ids = rownames(X), fixed_features = colnames(X)[1:5])
+msg <- tryCatch({ f("pd_bm_nested")(X, y, units, s, f(".bm_stream")(182L, 0L), record = FALSE); "no error" }, error = function(e) conditionMessage(e))
+cat(jsonlite::toJSON(list(msg = msg), auto_unbox = TRUE))
+"""
+    assert r(code)["msg"].startswith("E_BIOMARKER_LPO_UNITS")
+
+
+def test_v181_the_compute_estimate_counts_the_leave_pair_out_fits():
+    from proteomics_pipeline.post_de.biomarker import compute_estimate
+    r = {"selection": {"method": "top_k_auc", "k": [5]}, "cv": {"scheme": "loocv", "k": 5, "repeats": 1, "inner_k": 3},
+         "permutation": {"enabled": False, "B": 0}}
+    loo_only = compute_estimate(r, 24, 200, 1, 0)
+    assert abs(compute_estimate(r, 24, 200, 1, 0, 144) / loo_only - (24 + 144) / 24) <= 1e-12   # 24 leave-one-out + 144 pair fits
+    r["cv"]["scheme"] = "repeated_stratified_kfold"
+    assert compute_estimate(r, 24, 200, 1, 0, 144) == compute_estimate(r, 24, 200, 1, 0)       # pairs cost nothing outside loocv
 
 
 def test_v181_negative_a_selector_fitted_on_all_units_is_the_leaky_reference():
@@ -168,6 +196,28 @@ def test_v183_the_gate_file_is_pinned_and_a_changed_gate_is_refused(tmp_path):
     with pytest.raises(RUN.CalibrationError) as info:
         RUN.load_gates(changed)
     assert info.value.code == "E_CALIBRATION_GATE_CHANGED"
+
+
+def test_v183_the_followup_gate_file_is_pinned_and_a_changed_gate_is_refused(tmp_path):
+    gates = FOLLOWUP.GATES_PATH
+    assert RUN.sha256(gates) == FOLLOWUP.PREREGISTERED_SHA256
+    assert json.loads(gates.read_text(encoding="utf-8"))["status"].startswith("pre-registered before any follow-up run")
+    changed = tmp_path / "gates.json"
+    changed.write_text(gates.read_text(encoding="utf-8").replace("0.03", "0.09", 1), encoding="utf-8")
+    with pytest.raises(FOLLOWUP.base.CalibrationError) as info:
+        FOLLOWUP.load_gates(changed)
+    assert info.value.code == "E_CALIBRATION_GATE_CHANGED"
+
+
+def test_v180_the_binned_uniformity_check_counts_ten_equal_bins_of_the_attainable_values():
+    chi_sf = RUN._r14f_helpers().chi_square_sf
+    B = 99
+    uniform = [j / (B + 1) for j in range(1, B + 2)] * 2                         # every attainable value twice: 20 per bin
+    res = FOLLOWUP.binned_uniformity(uniform, B, 10, chi_sf)
+    assert res["counts"] == [20] * 10 and res["chi_square"] == 0 and res["gate"] == "PASS"
+    skewed = [0.9 + j / (B + 1) for j in range(1, 11)] * 20                      # all 200 values in the top bin (0.91 to 1.00)
+    res = FOLLOWUP.binned_uniformity(skewed, B, 10, chi_sf)
+    assert res["counts"] == [0] * 9 + [200] and res["gate"] == "FAIL"           # negative: a conservative pile-up fails
 
 
 def test_v184_the_run_records_seeds_counts_versions_and_reproduces_one_replicate():

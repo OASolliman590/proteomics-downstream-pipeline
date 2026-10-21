@@ -1,0 +1,51 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+_____ test_v181_loocv_auc_is_the_leave_pair_out_auc_of_a_direct_pair_loop ______
+
+    def test_v181_loocv_auc_is_the_leave_pair_out_auc_of_a_direct_pair_loop():
+        # D-77: with scheme loocv the reported AUC is the leave-pair-out AUC; the leave-one-out scores are unchanged.
+        code = """ns <- asNamespace("proteomicsCore"); f <- function(n) get(n, envir = ns)
+    set.seed(181L); X <- matrix(stats::rnorm(24 * 30), 24, 30, dimnames = list(sprintf("u%02d", 1:24), sprintf("F%02d", 1:30)))
+    y <- rep(c(1L, 0L), each = 12); panel <- colnames(X)[1:5]
+    s <- list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5, classifier = "lasso",
+              lambda = 0.05, cost = NULL, threshold_rule = "youden_train", scheme = "loocv", outer_k = 5L, repeats = 1L, inner_k = 3L,
+              observation_ids = rownames(X), fixed_features = panel)
+    res <- f("pd_bm_nested")(X, y, rownames(X), s, f(".bm_stream")(181L, 0L), record = FALSE)
+    score_without <- function(held) {
+      tr <- setdiff(1:24, held); sc <- s; sc$observation_ids <- rownames(X)[tr]; sc$classifier_grid <- 0.05
+      cfg <- f(".bm_selection_grid")(sc)[[1]]; prep <- f(".bm_fit_prep")(X[tr, panel, drop = FALSE], "none")
+      f(".bm_fit_score")(X[tr, , drop = FALSE], y[tr], X[held, , drop = FALSE], sc, cfg, NULL, prep)$score[, 1]
+    }
+    loo <- vapply(1:24, score_without, numeric(1))
+    wins <- c(); for (i in which(y == 1L)) for (j in which(y == 0L)) { sc <- score_without(c(i, j)); wins <- c(wins, (sc[1] > sc[2]) + 0.5 * (sc[1] == sc[2])) }
+    oof <- res$oof[match(rownames(X), res$oof$observation_id), ]
+    cat(jsonlite::toJSON(list(pipe = res$pooled, lpo = mean(wins), n_pairs = length(wins), estimator = res$auc_estimator, per_repeat = res$per_repeat,
+      loo_max_diff = max(abs(oof$score - loo)), loo_pooled = f("pd_auc")(loo, y)), auto_unbox = TRUE, digits = NA))
+    """
+        res = r(code)
+>       assert res["n_pairs"] == 144 and res["estimator"] == "leave_pair_out"
+E       AssertionError: assert (144 == 144 and {} == 'leave_pair_out')
+
+tests/scientific/methods_extension/test_methods_extension_calibration.py:133: AssertionError
+__________ test_v181_negative_loocv_with_mixed_class_units_is_refused __________
+
+    def test_v181_negative_loocv_with_mixed_class_units_is_refused():
+        code = """ns <- asNamespace("proteomicsCore"); f <- function(n) get(n, envir = ns)
+    set.seed(182L); X <- matrix(stats::rnorm(24 * 30), 24, 30, dimnames = list(sprintf("o%02d", 1:24), sprintf("F%02d", 1:30)))
+    units <- rep(sprintf("s%02d", 1:12), each = 2); y <- rep(c(1L, 0L), times = 12)   # every subject has one observation of each class
+    s <- list(positive = "P", negative = "N", levels = c("P", "N"), imputation = "none", selection = "top_k_auc", k = 5L, alpha = 0.5, classifier = "lasso",
+              lambda = 0.05, cost = NULL, threshold_rule = "youden_train", scheme = "loocv", outer_k = 5L, repeats = 1L, inner_k = 3L,
+              observation_ids = rownames(X), fixed_features = colnames(X)[1:5])
+    msg <- tryCatch({ f("pd_bm_nested")(X, y, units, s, f(".bm_stream")(182L, 0L), record = FALSE); "no error" }, error = function(e) conditionMessage(e))
+    cat(jsonlite::toJSON(list(msg = msg), auto_unbox = TRUE))
+    """
+>       assert r(code)["msg"].startswith("E_BIOMARKER_LPO_UNITS")
+E       AssertionError: assert False
+E        +  where False = <built-in method startswith of str object at 0x10dfc07b0>('E_BIOMARKER_LPO_UNITS')
+E        +    where <built-in method startswith of str object at 0x10dfc07b0> = 'no error'.startswith
+
+tests/scientific/methods_extension/test_methods_extension_calibration.py:149: AssertionError
+=========================== short test summary info ============================
+FAILED tests/scientific/methods_extension/test_methods_extension_calibration.py::test_v181_loocv_auc_is_the_leave_pair_out_auc_of_a_direct_pair_loop
+FAILED tests/scientific/methods_extension/test_methods_extension_calibration.py::test_v181_negative_loocv_with_mixed_class_units_is_refused
+2 failed, 1 passed, 7 deselected in 25.28s

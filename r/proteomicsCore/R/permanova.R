@@ -166,14 +166,16 @@ pm_distance <- function(X, metric) {
        residual_df = a["Residual", "Df"], residual_ss = a["Residual", "SumOfSqs"], total_ss = a["Total", "SumOfSqs"])
 }
 
-# "< 1/(nperm+1)" is shown only for a Monte Carlo P at its floor when that floor is attainable (D-43); an exact
-# (completely enumerated) P is shown as its value, and so is a Monte Carlo P whose floor lies below S / N.
+# "\u2264 1/(nperm+1) (B = nperm)" is shown only for a Monte Carlo P at its floor when that floor is attainable (D-43, D-80:
+# the estimate equals the floor and is never below it); an exact (completely enumerated) P is shown as its value, and so
+# is a Monte Carlo P whose floor lies below S / N.
 pm_display <- function(p, nperm, info = NULL) {
   floor <- 1 / (nperm + 1)
   if (is.na(p)) return(NA_character_)
   if (!is.null(info) && identical(info$enumeration, "complete")) return(formatC(p, format = "g", digits = 3))
   attainable <- is.null(info) || info$p_min_attainable < floor * (1 - 1e-9)
-  if (p <= floor * (1 + 1e-9) && attainable) paste0("< ", formatC(floor, format = "g", digits = 3)) else formatC(p, format = "g", digits = 3)
+  if (p <= floor * (1 + 1e-9) && attainable) sprintf("\u2264 %s (B = %s)", formatC(floor, format = "fg", digits = 3), formatC(nperm, format = "d", big.mark = ","))
+  else formatC(p, format = "g", digits = 3)
 }
 
 .pm_floor <- function(nperm, info) if (!is.null(info) && identical(info$enumeration, "complete")) info$p_min_attainable else 1 / (nperm + 1)
@@ -187,7 +189,7 @@ pm_adonis <- function(D, data, formula_rhs, permutations, seed, by = "terms") {
 }
 
 pm_permdisp <- function(D, groups, permutations, seed) {
-  bd <- vegan::betadisper(D, factor(groups))
+  bd <- vegan::betadisper(D, factor(groups), type = "median")   # distances to the group spatial median (vegan default, written explicitly; D-79)
   set.seed(seed)
   pt <- vegan::permutest(bd, permutations = permutations)
   list(betadisper = bd, f = pt$tab[1, "F"], p = pt$tab[1, "Pr(>F)"], nperm = NROW(pt$perm))

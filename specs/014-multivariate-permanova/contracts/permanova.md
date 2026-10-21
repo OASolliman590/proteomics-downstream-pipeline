@@ -39,7 +39,7 @@ Genuinely observed cells of the frozen primary matrix (prior-imputed cells are t
 | `identity_check.json` | Mean per-feature R² versus multivariate R² per set; `pass`, `fail` or `not_applicable`. |
 | `selection_context.tsv`, `random_set_null.tsv` | Random equal-size null (draws, seed), best-possible same-size R², fraction of null ≥ the set's R², optimism flag. |
 | `permutation_null.tsv` | Permuted pseudo-F values for each reported term (source data of the null histograms). |
-| `ordination.tsv`, `ordination_axes.tsv`, `centroids.tsv` | PCoA coordinates, centroids and distances to centroid (source data of ordination and PERMDISP figures). |
+| `ordination.tsv`, `ordination_axes.tsv`, `centroids.tsv` | PCoA coordinates, PERMDISP reference points and distances to them (source data of ordination and PERMDISP figures). The reference point is the group spatial median (vegan betadisper default; D-79, 2026-10-21); the file and column names keep `centroid`. |
 | `figures/*.png` (+ requested pdf/svg) | Ordination with centroids and spider lines, PERMDISP boxplots, permutation-null histograms, R² bars, per-feature R², random-set null. |
 | `permanova_result.json` | Settings, versions, seeds, states, interpretation rule and limitations. |
 

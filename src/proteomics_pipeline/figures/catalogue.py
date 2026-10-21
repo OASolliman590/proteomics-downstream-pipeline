@@ -730,8 +730,14 @@ def _content_pcoa(rows: list[dict], sha: str, **_: Any) -> dict:
             "traces": traces, "layout": _layout("PCoA with group centroids", x_title, y_title), "png": {}}
 
 
+def _permutation_p_text(p_value: float, boots: int) -> str:
+    """D-80: a P at its floor 1/(B + 1) is never below it, so it reads "P \u2264 floor"; any other P reads "P = value"."""
+    floor = 1 / (boots + 1)
+    return f"P \u2264 {floor:.3g}" if p_value <= floor * (1 + 1e-9) else f"P = {p_value:.3g}"
+
+
 def _content_permdisp(rows: list[dict], sha: str, **_: Any) -> dict:
-    """V222: distances to group centroids with the PERMDISP P, the number of permutations and the seed. A P without B or
+    """V222: distances to the group spatial medians (vegan betadisper, D-79) with the PERMDISP P, the number of permutations and the seed. A P without B or
     seed is refused (E_FIGURE_SOURCE_MISSING)."""
     if any(not r["permutations"] or not r["seed"] for r in rows):
         _refuse("E_FIGURE_SOURCE_MISSING", "the PERMDISP P is shown without its number of permutations B and its seed")
@@ -740,7 +746,8 @@ def _content_permdisp(rows: list[dict], sha: str, **_: Any) -> dict:
     p_value = float(head["permdisp_p"])
     groups = list(dict.fromkeys(r["group"] for r in rows))
     distances = {g: [float(r["distance_to_centroid"]) for r in rows if r["group"] == g] for g in groups}
-    tables = [column_table("PERMDISP distances to group centroid", distances)]
+    p_text = _permutation_p_text(p_value, boots)
+    tables = [column_table("PERMDISP distances to group spatial median", distances)]
     stats = [{"row": f"{g} - {groups[0]}", "effect": _mean(distances[g]) - _mean(distances[groups[0]]), "P": p_value, "q": None,
               "n": {gg: len(distances[gg]) for gg in groups}} for g in groups[1:]]
     if stats:
@@ -750,17 +757,17 @@ def _content_permdisp(rows: list[dict], sha: str, **_: Any) -> dict:
         members = [r for r in rows if r["group"] == g]
         traces.append({"type": "box", "name": g, "x": [g] * len(members), "y": [float(r["distance_to_centroid"]) for r in members],
                        "boxpoints": "all", "jitter": 0.3, "pointpos": 0, "marker": {"color": "#0072B2", "size": 6}, "line": {"color": "#000000"},
-                       "customdata": [[r["observation_id"], g, f"PERMDISP P = {p_value:.3f}; B = {boots}; seed {seed}"] for r in members],
+                       "customdata": [[r["observation_id"], g, f"PERMDISP {p_text}; B = {boots}; seed {seed}"] for r in members],
                        "hovertemplate": "<b>%{customdata[0]}</b><br>group: %{customdata[1]}<br>distance %{y:.3f}"
                                         "<br>%{customdata[2]}<extra></extra>"})
     sizes = "; ".join(f"{g} {len(distances[g])}" for g in groups)
-    notes = [f"PERMDISP P = {p_value:.4g} from permutest with B = {boots} permutations and seed {seed}; Euclidean distance to the group centroid.",
+    notes = [f"PERMDISP {p_text} from permutest with B = {boots} permutations and seed {seed}; Euclidean distance to the group spatial median (vegan betadisper default).",
              "Statistics table: the dispersion difference of each group from the first group; P is the PERMDISP family P."]
-    return {"tables": tables, "statistics": stats or None, "info": _info("PERMDISP distances to centroid", "table" if stats else "none",
+    return {"tables": tables, "statistics": stats or None, "info": _info("PERMDISP distances to spatial median", "table" if stats else "none",
             f"PERMDISP (vegan betadisper and permutest), B = {boots}, seed {seed}", sha, sizes, notes,
-            multiplicity="none (one PERMDISP family per figure)", effect_scale="distance to centroid difference", stage="R16e stage 2"),
-            "traces": traces, "layout": _layout(f"PERMDISP: distances to group centroids (P = {p_value:.3f}, B = {boots}, seed {seed})",
-                                                "group", "distance to group centroid"), "png": {}}
+            multiplicity="none (one PERMDISP family per figure)", effect_scale="distance to spatial median difference", stage="R16e stage 2"),
+            "traces": traces, "layout": _layout(f"PERMDISP: distances to group spatial medians ({p_text}, B = {boots}, seed {seed})",
+                                                "group", "distance to group spatial median"), "png": {}}
 
 
 _BUILDERS: dict[str, Callable[..., dict]] = {

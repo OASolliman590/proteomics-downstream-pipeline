@@ -44,7 +44,7 @@ Every module consumes frozen plan artifacts and completed outputs read-only and 
 
 - **FR-179 — Penalised families under the null:** The system MUST calibrate lasso and elastic net classifiers, with the elastic-net penalty tuned by inner cross-validation, within the nested procedure of FR-153. Under the null, each family MUST meet the pre-registered null gates of FR-183.
 - **FR-180 — SVM and random forest under the null and planted signal:** The system MUST calibrate linear and polynomial SVM classifiers, and the optional random forest classifier, under the null and under a planted signal. A missing random forest package MUST yield NOT_RUN for that family only.
-- **FR-181 — LOOCV outer resampling:** The system MUST calibrate the nested procedure with leave-one-out outer resampling and inner 5-fold tuning, and report its pooled out-of-fold AUC under the same null gates as the repeated-stratified scheme.
+- **FR-181 — LOOCV outer resampling:** The system MUST calibrate the nested procedure with leave-one-out outer resampling and inner 5-fold tuning, and report its pooled out-of-fold AUC under the same null gates as the repeated-stratified scheme. *Amended 2026-10-21 (D-77, A-2026-10-01-49):* the pooled leave-one-out AUC failed the null gate (V181, mean 0.43), so the AUC of the loocv scheme is the leave-pair-out AUC: every positive × negative unit pair is held out together, the whole inner procedure is refitted on the other units, and the AUC is the mean pair comparison (ties count one half). Leave-one-out scores remain for the threshold-based metrics. Mixed-class units cannot form pairs; the plan adapts such a design to repeated stratified k-fold (recorded) and the procedure refuses with E_BIOMARKER_LPO_UNITS. The follow-up gates are pre-registered in `R15c/followup/gates-preregistration.json`.
 - **FR-182 — Subject-blocked units:** The system MUST calibrate repeated-measures designs with subject-blocked folds and block-restricted permutations. The ungrouped reference MUST be shown to inflate the AUC, which demonstrates that the blocked form is required.
 - **FR-183 — Pre-registered gates:** Before the first calibration run, the system MUST record its gate values, the seeds and their SHA-256 in the R15c evidence. Any later change to the gates MUST be detected. The pre-registered gates are: (a) null nested AUC, |mean − 0.5| ≤ 0.03 and mean + 1.96 SE ≤ 0.53; (b) null permutation P, binomial P(K ≥ k | rate 0.05) ≥ 0.01 and chi-square goodness-of-fit P over the B + 1 values ≥ 0.01; (c) leaky reference, mean AUC > 0.75; (d) subject-blocked nulls and the ungrouped reference, as in R14f; (e) planted signal (proposed, pending Maintainer confirmation before the first run), mean nested AUC ≥ 0.70 and permutation P ≤ 0.05 in at least 90 % of replicates. Gates (a)–(d) are carried over unchanged from R14f. The full table and the seeds are in the [contract](contracts/methods-extension.md#calibration-gates).
 - **FR-184 — Calibration evidence and reproducibility:** Every calibration run MUST record its seeds, replicate counts, package versions, classifier configurations and gate evaluation. Replicate counts MUST NOT be reduced silently. Calibration results apply only to the families and designs they tested ([SM45](../001-downstream-proteomics/contracts/scientific-methods.md#methods-extension)).
@@ -252,11 +252,11 @@ Every module consumes frozen plan artifacts and completed outputs read-only and 
 
 **Fixture:** Twelve versus twelve null units with leave-one-out outer resampling and 5-fold inner tuning.
 
-**Oracle:** A direct leave-one-out loop written in the test with the same selector and classifier.
+**Oracle:** A direct leave-pair-out loop written in the test with the same selector and classifier (amended 2026-10-21, D-77; it was a leave-one-out loop).
 
-**Exact assertion:** The pooled out-of-fold AUC equals the oracle. The mean across replicates meets the null gates.
+**Exact assertion:** The reported AUC equals the leave-pair-out oracle, and the leave-one-out scores equal a direct leave-one-out loop. The mean across replicates meets the pre-registered null gate `lpo_null`. The 2026-10-13 pooled leave-one-out result (FAIL) stays recorded.
 
-**Negative case:** A selector fitted on all units before the leave-one-out loop fails E_BIOMARKER_LEAKAGE and is reported as the leaky reference.
+**Negative case:** A selector fitted on all units before the leave-one-out loop fails E_BIOMARKER_LEAKAGE and is reported as the leaky reference. A loocv request with mixed-class units is refused with E_BIOMARKER_LPO_UNITS.
 
 **Contract:** SM45, SM35; **owner:** R15c.
 

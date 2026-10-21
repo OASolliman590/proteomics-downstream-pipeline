@@ -1,0 +1,11 @@
+{
+  "gates": "docs/validation/016-methods-extension-validation/R15c/followup/gates-preregistration.json",
+  "gates_sha256": "e98bcb2d30b37605430ef905f2c34f08542371e44d108559b06b9f4ec80d50c4",
+  "seconds": null,
+  "cores": 12,
+  "r_version": "4.6.1",
+  "randomForest": "4.7.1.2",
+  "proteomicsCore": "0.1.0",
+  "proteomicsCore_source_commit": "85486bc",
+  "note": "Written after the run: the driver wrote rf_permutation_diagnostic.tsv and then failed while serialising this record (an openssl hash object is not JSON-serialisable; fixed in the driver afterwards). The run used a frozen copy of proteomicsCore installed from commit 85486bc, which has no R change since the R15c run. The elapsed time was not recorded."
+}

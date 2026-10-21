@@ -3940,16 +3940,23 @@
       "proposed_test_target": {
         "path": "tests/regression/**",
         "case_id": "V111",
-        "status": "NOT_RUN"
+        "status": "PASS"
       },
-      "status": "NOT_RUN",
-      "evidence": [],
+      "status": "PASS",
+      "evidence": [
+        "docs/validation/013-release/evidence/v111-maintainer-verification.json",
+        "tests/regression/test_legacy_tooling.py",
+        "docs/validation/013-release/MAINTAINER_RUNBOOK.md"
+      ],
       "verified_commit": null,
       "acceptance_spec": "specs/013-release/spec.md#V111",
       "verification": {
-        "route": "claude-opus (operator-authorized substitute for Sol/Astra/Luna; ADR 0007)",
-        "date": "2026-10-04",
-        "reason": "Maintainer-only private regression; run locally by Omar (docs/validation/013-release/MAINTAINER_RUNBOOK.md). The tooling is tested on synthetic stand-ins only (tests/regression/test_legacy_tooling.py)."
+        "route": "Maintainer-local run (Claude route at the Maintainer's request)",
+        "date": "2026-10-13",
+        "recorded": "2026-10-21 on the Maintainer's instruction (D-83)",
+        "independent_audit": "NOT_RUN",
+        "reason": "Archive and all 165 member hashes verified against the public inventory on the Maintainer's machine; only a non-identifying summary is committed.",
+        "working_source_manifest_sha256": "402d725abdbc515ba1a9d869148dc9978140a770dbba3df953b8937e56af194d"
       }
     },
     {
@@ -6416,8 +6423,12 @@
         "case_id": "V180",
         "status": "pending-after-freeze"
       },
-      "status": "FAIL",
+      "status": "PASS",
       "evidence": [
+        "docs/validation/016-methods-extension-validation/R15c/followup/evidence/v180-gate-results.json",
+        "docs/validation/016-methods-extension-validation/R15c/followup/evidence/rf-diagnostic-run.log",
+        "docs/validation/016-methods-extension-validation/R15c/followup/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/followup/receipt.md",
         "tests/scientific/methods_extension/test_methods_extension_calibration.py",
         "tests/scientific/calibration_methods_extension.R",
         "docs/validation/016-methods-extension-validation/R15c/calibration/summary.json",
@@ -6427,12 +6438,13 @@
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V180",
       "verification": {
-        "route": "Claude route (Haiku builder, Opus review)",
-        "date": "2026-10-13",
+        "route": "Claude route (Haiku builder, Opus review, 2026-10-13); follow-up diagnostic by the Claude route (Opus, 2026-10-21)",
+        "date": "2026-10-21",
         "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
         "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit",
-        "reason": "random-forest permutation gate FAILS: the chi-square goodness-of-fit P over the B + 1 values is 0.0059 (< 0.01); the SVM families pass. Gate not changed (pre-registered).",
-        "independent_audit": "NOT_RUN"
+        "reason": "Accepted by the Maintainer (D-81): the pre-registered diagnostic (200 datasets, B = 99) met every permutation-P rule; the 2026-10-13 FAIL (40 datasets, B = 19) stays recorded in R15c/calibration.",
+        "independent_audit": "NOT_RUN",
+        "accepted": "Maintainer, 2026-10-21 (D-81), on the pre-registered random-forest diagnostic (D-78)"
       }
     },
     {
@@ -6456,6 +6468,10 @@
       },
       "status": "FAIL",
       "evidence": [
+        "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/evidence/gate-results.json",
+        "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/followup/calibration/summary.json",
+        "docs/validation/016-methods-extension-validation/R15c/followup/receipt.md",
         "tests/scientific/methods_extension/test_methods_extension_calibration.py",
         "tests/scientific/calibration_methods_extension.R",
         "docs/validation/016-methods-extension-validation/R15c/calibration/summary.json",
@@ -6465,11 +6481,11 @@
       "verified_commit": null,
       "acceptance_spec": "specs/016-methods-extension-validation/spec.md#V181",
       "verification": {
-        "route": "Claude route (Haiku builder, Opus review)",
-        "date": "2026-10-13",
+        "route": "Claude route (Haiku builder, Opus review, 2026-10-13); follow-ups by the Claude route (Opus, 2026-10-21)",
+        "date": "2026-10-21",
         "working_source_manifest_sha256": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
         "committed": "local commits on claude/methods-016 (not pushed); verified_commit null until CI on a pushed commit",
-        "reason": "LOOCV null gate FAILS for ridge (pooled out-of-fold AUC mean 0.433) and lasso (0.423): |mean - 0.5| > 0.03. Gate not changed (pre-registered).",
+        "reason": "FAIL kept (D-82): with the leave-pair-out AUC (D-77) ridge meets the null gate (100 replicates, mean 0.491, upper95 0.530), but lasso does not: 100 replicates mean 0.495, upper95 0.538; 400 fresh replicates mean 0.520, upper95 0.540. The pooled leave-one-out bias of 2026-10-13 (0.43) is removed.",
         "independent_audit": "NOT_RUN"
       }
     },

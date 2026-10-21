@@ -12,7 +12,7 @@ import importlib
 import json
 from pathlib import Path
 
-from ..provenance import sha256_file
+from ..provenance import is_os_metadata, sha256_file
 
 SCHEMA_VERSION = "1.2.0"
 # Fixed optional section providers (same discipline as the R01 capability map).
@@ -159,7 +159,7 @@ def dea_section(root: Path, stages: dict, plan: dict | None) -> dict:
     status = json.loads((directory / "model_status.json").read_text(encoding="utf-8"))
     return {"state": "COMPLETED", "families": families, "families_source": f"{prefix}/families.tsv", "tables": tables,
             "contrast_summaries": list(contrasts.values()), "model_status": status["models"], "settings": status["settings"],
-            "influence_sources": sorted(f"{prefix}/influence/{p.name}" for p in (directory / "influence").glob("*.tsv")) if (directory / "influence").is_dir() else [],
+            "influence_sources": sorted(f"{prefix}/influence/{p.name}" for p in (directory / "influence").glob("*.tsv") if not is_os_metadata(p)) if (directory / "influence").is_dir() else [],
             "note": "Counts of q-values at or below each family's prespecified cutoff are reported for all planned contrasts, including secondary ones; zero is a real completed result, not evidence of no biological effect."}
 
 

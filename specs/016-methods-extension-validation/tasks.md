@@ -14,7 +14,7 @@
 - [x] T177 — R15b: implement FR-177 (Pre-ranked enrichment on Welch statistics); establish and pass V177, including its negative case, with independent evidence.
 - [x] T178 — R15b: implement FR-178 (Family discipline across libraries); establish and pass V178, including its negative case, with independent evidence.
 - [x] T179 — R15c: implement FR-179 (Penalised families under the null); establish and pass V179, including its negative case, with independent evidence.
-- [ ] T180 — R15c: implement FR-180 (SVM and random forest under the null and planted signal); establish and pass V180, including its negative case, with independent evidence.
+- [x] T180 — R15c: implement FR-180 (SVM and random forest under the null and planted signal); establish and pass V180, including its negative case, with independent evidence.
 - [ ] T181 — R15c: implement FR-181 (LOOCV outer resampling); establish and pass V181, including its negative case, with independent evidence.
 - [x] T182 — R15c: implement FR-182 (Subject-blocked units); establish and pass V182, including its negative case, with independent evidence.
 - [x] T183 — R15c: implement FR-183 (Pre-registered gates); establish and pass V183, including its negative case, with independent evidence.

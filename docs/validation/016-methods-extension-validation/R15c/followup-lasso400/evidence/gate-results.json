@@ -1,0 +1,16 @@
+{
+  "packet": "R15c follow-up 2",
+  "scope": "D-82: 400 lasso leave-pair-out null replicates (V181); pre-registration R15c/followup-lasso400/gates-preregistration.json",
+  "commands": [
+    {
+      "command": "Rscript --vanilla tests/scientific/calibration_lpo.R <gate file> <calibration dir> 12",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/evidence/lasso400-run.log"
+    },
+    {
+      "command": "python scripts/maintained/evaluate_calibration_followup.py --gates <gate file>",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/evidence/evaluate.log"
+    }
+  ]
+}

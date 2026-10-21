@@ -19,7 +19,7 @@ import subprocess
 from pathlib import Path
 from string import Template
 
-from ..provenance import sha256_file
+from ..provenance import is_os_metadata, sha256_file
 from .assemble import assemble, validate_report_data
 from .methods import render_full_methods
 from .stub import Raw, e, link, render as render_stub, state_span, table
@@ -207,7 +207,7 @@ def build_report(run_root: str | Path, snapshot: dict, out: Path, formats: list[
     (out / "methods.md").write_text(render_methods(data), encoding="utf-8", newline="\n")
     (out / "figures.json").write_text(json.dumps(figures, indent=2), encoding="utf-8", newline="\n")
     (out / "index.html").write_text(render(data, root, figures), encoding="utf-8", newline="\n")
-    return sorted(p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file())
+    return sorted(p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file() and not is_os_metadata(p))
 
 
 def execute(request: dict) -> dict:

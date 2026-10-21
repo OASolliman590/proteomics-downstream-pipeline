@@ -31,16 +31,18 @@ def post_de_biomarker_section(directory: str | Path, *, prefix: str = "post_de/b
     eligibility = json.loads((root / "eligibility.json").read_text(encoding="utf-8"))
     cv = _table(root / "cv_performance.tsv")[0]
     perm = result.get("permutation") or {}
+    lpo = cv.get("auc_estimator") == "leave_pair_out"   # D-77: the loocv scheme reports the leave-pair-out AUC
+    auc_name = "leave-pair-out AUC (leave-one-out scores for the threshold metrics)" if lpo else "pooled out-of-fold AUC"
     section = {"state": "COMPLETED", "title": "Post-DE biomarker discrimination (performance estimates)", "claim_label": eligibility["claim_label"],
                "summary": [f"Binary contrast {result['contrast']}: {cv['n_positive_units']} {result['positive_class']} vs {cv['n_negative_units']} {result['negative_class']} biological units "
                            f"(grouped by {cv['grouped_by']}); classifier {result['classifier']}, selection {result['selection']['method']}.",
-                           f"Nested CV ({cv['scheme']}, outer k = {cv['outer_k']}, inner k = {cv['inner_k']}, repeats = {cv['repeats']}; seed {result['seed']}): pooled out-of-fold AUC "
+                           f"Nested CV ({cv['scheme']}, outer k = {cv['outer_k']}, inner k = {cv['inner_k']}, repeats = {cv['repeats']}; seed {result['seed']}): {auc_name} "
                            f"{_f(cv['pooled_oof_auc'])}, per-repeat mean {_f(cv['repeat_auc_mean'])} (SD {_f(cv['repeat_auc_sd'])}) [cross_validated_nested].",
                            (f"Whole-procedure permutation test (selection and tuning rerun; B = {cv['permutation_B']}, seed {result['seed']}, scheme {cv['permutation_scheme']}): "
                             f"P = {_f(cv['permutation_p'])} [cross_validated_nested]." if perm.get("enabled") else "No permutation test was requested."),
                            f"External validation: {result['external_validation']}."],
                "tables": [{"caption": "Nested cross-validated performance [cross_validated_nested]",
-                           "columns": ["pooled AUC", "repeat mean", "repeat SD", "Brier", "threshold rule", "sensitivity", "specificity", "permutation P", "claim"],
+                           "columns": ["leave-pair-out AUC" if lpo else "pooled AUC", "repeat mean", "repeat SD", "Brier", "threshold rule", "sensitivity", "specificity", "permutation P", "claim"],
                            "rows": [[_f(cv["pooled_oof_auc"]), _f(cv["repeat_auc_mean"]), _f(cv["repeat_auc_sd"]), _f(cv["brier"]), cv["threshold_rule"],
                                      f"{_f(cv['sensitivity'])} ({_f(cv['sensitivity_lower'])}-{_f(cv['sensitivity_upper'])})",
                                      f"{_f(cv['specificity'])} ({_f(cv['specificity_lower'])}-{_f(cv['specificity_upper'])})", _f(cv["permutation_p"]), cv["claim_label"]]],
