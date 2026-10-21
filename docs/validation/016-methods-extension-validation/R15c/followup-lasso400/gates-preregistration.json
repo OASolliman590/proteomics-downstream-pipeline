@@ -1,0 +1,26 @@
+{
+  "schema": "R15c follow-up 2 calibration gate (FR-181, FR-183; Maintainer decision D-82, 2026-10-21)",
+  "status": "pre-registered before any run of this file: 400 fresh lasso replicates of the leave-pair-out null, with seeds disjoint from every earlier calibration; the earlier 100-replicate lasso FAIL (R15c/followup) stays recorded and is not pooled with these replicates",
+  "gates": {
+    "lpo_null": {
+      "scenario": "null, LOOCV scheme with the leave-pair-out AUC estimator (lasso)",
+      "rule": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53 on the leave-pair-out AUC",
+      "source": "FR-183 (a), unchanged; the replicate count is raised from 100 to 400 (D-82)"
+    }
+  },
+  "design": {
+    "lpo": "identical to R15c/followup: 12 vs 12 biological units, 200 pure-noise features; leave-pair-out over every positive x negative unit pair; inner 3-fold tuning; top-5 by AUC on the training data"
+  },
+  "replicate_counts": {
+    "lpo_null": 400,
+    "lpo_planted": 0,
+    "families_lpo": ["lasso"]
+  },
+  "seeds": {
+    "lpo_null_base": 1400000,
+    "lpo_planted_base": 1450000,
+    "family_offset": "+1000 x family index (lasso 1), as in the R15c pre-registration"
+  },
+  "compute_budget_minutes": 30,
+  "reduced_replicates_recorded_as_adaptation": true
+}

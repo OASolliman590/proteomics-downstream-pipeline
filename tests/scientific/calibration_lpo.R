@@ -42,14 +42,15 @@ for (cl in unlist(rc$families_lpo)) {
     stopifnot(identical(r$auc_estimator, "leave_pair_out")); r$pooled }
   null <- lapply_cores(seq_len(rc$lpo_null), run(sd_$lpo_null_base, 0))
   results$lpo_null <- rbind(results$lpo_null, data.frame(family = cl, dataset = seq_along(null), seed = sd_$lpo_null_base + off + seq_along(null), lpo_auc = null))
+  if (rc$lpo_planted == 0) next   # a null-only pre-registration (D-82)
   planted <- lapply_cores(seq_len(rc$lpo_planted), run(sd_$lpo_planted_base, 1.5))
   results$lpo_planted <- rbind(results$lpo_planted, data.frame(family = cl, dataset = seq_along(planted), seed = sd_$lpo_planted_base + off + seq_along(planted), lpo_auc = planted))
 }
-for (name in names(results))
+for (name in names(results)) if (!is.null(results[[name]]))
   utils::write.table(results[[name]], file.path(out, paste0(name, ".tsv")), sep = "\t", quote = FALSE, row.names = FALSE, eol = "\n")
 raw <- list(gates = "docs/validation/016-methods-extension-validation/R15c/followup/gates-preregistration.json",
             gates_sha256 = paste(unclass(openssl::sha256(file(gates_path))), collapse = ""), seconds = round(as.numeric(difftime(Sys.time(), started, units = "secs")), 3),
             cores = cores, r_version = paste(R.version$major, R.version$minor, sep = "."),
             glmnet = as.character(utils::packageVersion("glmnet")), proteomicsCore = as.character(utils::packageVersion("proteomicsCore")))
 writeBin(charToRaw(paste0(as.character(jsonlite::toJSON(raw, auto_unbox = TRUE, pretty = TRUE)), "\n")), file.path(out, "lpo_raw.json"))
-cat("lpo calibration:", nrow(results$lpo_null), "null and", nrow(results$lpo_planted), "planted replicates,", raw$seconds, "s\n")
+cat("lpo calibration:", nrow(results$lpo_null), "null and", NROW(results$lpo_planted), "planted replicates,", raw$seconds, "s\n")
