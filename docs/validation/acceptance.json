@@ -2,9 +2,9 @@
   "schema": "src/proteomics_pipeline/schemas/validation-evidence.schema.json",
   "verified_commit": null,
   "status_counts": {
-    "PASS": 207,
-    "NOT_RUN": 13,
-    "FAIL": 2
+    "PASS": 209,
+    "NOT_RUN": 12,
+    "FAIL": 1
   },
   "note": "Generated from traceability.json and packet gate evidence; PASS/FAIL/NOT_RUN/SKIPPED/INAPPLICABLE stay distinct. Uncommitted Claude-route receipts record the working-source manifest hash as the reviewed tree.",
   "records": [
@@ -3776,16 +3776,33 @@
       "acceptance_id": "V111",
       "requirement": "FR-111",
       "task": "T111",
-      "status": "NOT_RUN",
-      "reviewed_tree": null,
-      "commands": [],
+      "status": "PASS",
+      "reviewed_tree": "402d725abdbc515ba1a9d869148dc9978140a770dbba3df953b8937e56af194d",
+      "commands": [
+        {
+          "command": "historical Maintainer receipt (see artifact)",
+          "exit_code": 0
+        }
+      ],
       "versions": {},
-      "artifacts": [],
+      "artifacts": [
+        {
+          "path": "docs/validation/013-release/evidence/v111-maintainer-verification.json",
+          "sha256": "7f26419404f53b0c08fa156209f31b2698e01a2bb31e30d281c302b40013c8a7"
+        },
+        {
+          "path": "tests/regression/test_legacy_tooling.py",
+          "sha256": "064bb4dd0f39182de28ac1e2a7368ebb6425093a08af7161027a62f8c1cbade0"
+        },
+        {
+          "path": "docs/validation/013-release/MAINTAINER_RUNBOOK.md",
+          "sha256": "3797752becf77f36fba1a31b5df7cdf1d25d8a86792b61574fdd20ff8ae74db3"
+        }
+      ],
       "expected_oracle": "Verify private reconstruction locally without exposing private inputs/logs to implementers/reviewers/docs workers and without modifying originals.",
-      "observed": "no execution recorded",
-      "reviewer_conclusion": "NOT_RUN",
-      "verified_commit": null,
-      "reason": "Maintainer-only private regression; run locally by Omar (docs/validation/013-release/MAINTAINER_RUNBOOK.md). The tooling is tested on synthetic stand-ins only (tests/regression/test_legacy_tooling.py)."
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Maintainer-local run (Claude route at the Maintainer's request); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V112",
@@ -6569,54 +6586,33 @@
       "acceptance_id": "V180",
       "requirement": "FR-180",
       "task": "T180",
-      "status": "FAIL",
+      "status": "PASS",
       "reviewed_tree": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
       "commands": [
         {
-          "command": "Rscript --vanilla tests/scientific/calibration_methods_extension.R <gate file> <calibration dir> 12 (driver exit code; the gate verdicts are evaluated afterwards by scripts/maintained/run_methods_calibration.py into calibration/summary.json, where FAIL gates are recorded)",
-          "exit_code": 0
-        },
-        {
-          "command": "python -m pytest tests/scientific/methods_extension/test_methods_extension_calibration.py -q -rs -p no:cacheprovider",
-          "exit_code": 0
-        },
-        {
-          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
-          "exit_code": 0
-        },
-        {
-          "command": "python scripts/check_spec_kit.py",
+          "command": "python scripts/maintained/evaluate_calibration_followup.py (gate file R15c/followup/gates-preregistration.json)",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json",
-          "sha256": "c23da041e54f2750a2f709329099023ee31cd007c966066ca9522ab4e9e71acb"
+          "path": "docs/validation/016-methods-extension-validation/R15c/followup/evidence/v180-gate-results.json",
+          "sha256": "22c7f56120f8d3e2ccf32725a0b2775b11f8199f5c8f072b54d3f15344dac06e"
         },
         {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/calibration-run.log",
-          "sha256": "98e67e185b8c9e637e0ba78a253fcacfef8073faaab9922d9cb4f17b29caf5d9"
+          "path": "docs/validation/016-methods-extension-validation/R15c/followup/evidence/evaluate.log",
+          "sha256": "58a3b9690893877ac51aca9071e9b16845b7056b7b85f255fed1c7beb76d7825"
         },
         {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/python-calibration-tests.log",
-          "sha256": "654d3a4940843c5bd46479b07f32c396f3cb4188a682e6589ecb65c142d9b8f6"
-        },
-        {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/gates-regression-unit-encoding.log",
-          "sha256": "1d0388ce47be45e28dfc27d17af3b880f2edc428eeb48548670f785e963a27a5"
-        },
-        {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/spec-kit-check.log",
-          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+          "path": "docs/validation/016-methods-extension-validation/R15c/followup/evidence/rf-diagnostic-run.log",
+          "sha256": "a5737cba3236ad0ed86a5701fbb52628af1f7a51008544364e07404343f02f5f"
         }
       ],
       "expected_oracle": "The system MUST calibrate linear and polynomial SVM classifiers, and the optional random forest classifier, under the null and under a planted signal. A missing random forest package MUST yield NOT_RUN for that family only.",
-      "observed": "random-forest permutation gate FAILS: the chi-square goodness-of-fit P over the B + 1 values is 0.0059 (< 0.01); the SVM families pass. Gate not changed (pre-registered).",
-      "reviewer_conclusion": "FAIL",
-      "verified_commit": null,
-      "reason": "random-forest permutation gate FAILS: the chi-square goodness-of-fit P over the B + 1 values is 0.0059 (< 0.01); the SVM families pass. Gate not changed (pre-registered)."
+      "observed": "see packet receipt and gate logs",
+      "reviewer_conclusion": "PASS by Claude route (Haiku builder, Opus review, 2026-10-13); follow-up diagnostic by the Claude route (Opus, 2026-10-21); independent audit NOT_RUN",
+      "verified_commit": null
     },
     {
       "acceptance_id": "V181",
@@ -6626,50 +6622,34 @@
       "reviewed_tree": "eb36151d0fb9134d6bebabafb856373728be159a1dd2c88e771efe2be2170ccb",
       "commands": [
         {
-          "command": "Rscript --vanilla tests/scientific/calibration_methods_extension.R <gate file> <calibration dir> 12 (driver exit code; the gate verdicts are evaluated afterwards by scripts/maintained/run_methods_calibration.py into calibration/summary.json, where FAIL gates are recorded)",
+          "command": "Rscript --vanilla tests/scientific/calibration_lpo.R <gate file> <calibration dir> 12",
           "exit_code": 0
         },
         {
-          "command": "python -m pytest tests/scientific/methods_extension/test_methods_extension_calibration.py -q -rs -p no:cacheprovider",
-          "exit_code": 0
-        },
-        {
-          "command": "python -m pytest tests/regression tests/unit tests/scientific/reference/test_text_encoding.py -q -p no:cacheprovider",
-          "exit_code": 0
-        },
-        {
-          "command": "python scripts/check_spec_kit.py",
+          "command": "python scripts/maintained/evaluate_calibration_followup.py --gates <gate file>",
           "exit_code": 0
         }
       ],
       "versions": {},
       "artifacts": [
         {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/gate-results.json",
-          "sha256": "c23da041e54f2750a2f709329099023ee31cd007c966066ca9522ab4e9e71acb"
+          "path": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/evidence/gate-results.json",
+          "sha256": "31482494b1e842f7b1a6564e760ce0f18a31f63286c492a9067c11b7ebb144c3"
         },
         {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/calibration-run.log",
-          "sha256": "98e67e185b8c9e637e0ba78a253fcacfef8073faaab9922d9cb4f17b29caf5d9"
+          "path": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/evidence/lasso400-run.log",
+          "sha256": "d02b4b898fbfc858eb27f86ca015b558100a3ec98fa9fd8a1c61b189af399846"
         },
         {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/python-calibration-tests.log",
-          "sha256": "654d3a4940843c5bd46479b07f32c396f3cb4188a682e6589ecb65c142d9b8f6"
-        },
-        {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/gates-regression-unit-encoding.log",
-          "sha256": "1d0388ce47be45e28dfc27d17af3b880f2edc428eeb48548670f785e963a27a5"
-        },
-        {
-          "path": "docs/validation/016-methods-extension-validation/R15c/evidence/spec-kit-check.log",
-          "sha256": "067e0e42ce45d66ec03431006bc098fe530bdb91d960311014a8706e868e27c2"
+          "path": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/evidence/evaluate.log",
+          "sha256": "bc63886d3b5c75d1cc8e33463eb8cbe92b03d0728c840e2898665123ea7f972e"
         }
       ],
       "expected_oracle": "The system MUST calibrate the nested procedure with leave-one-out outer resampling and inner 5-fold tuning, and report its pooled out-of-fold AUC under the same null gates as the repeated-stratified scheme.",
-      "observed": "LOOCV null gate FAILS for ridge (pooled out-of-fold AUC mean 0.433) and lasso (0.423): |mean - 0.5| > 0.03. Gate not changed (pre-registered).",
+      "observed": "FAIL kept (D-82): with the leave-pair-out AUC (D-77) ridge meets the null gate (100 replicates, mean 0.491, upper95 0.530), but lasso does not: 100 replicates mean 0.495, upper95 0.538; 400 fresh replicates mean 0.520, upper95 0.540. The pooled leave-one-out bias of 2026-10-13 (0.43) is removed.",
       "reviewer_conclusion": "FAIL",
       "verified_commit": null,
-      "reason": "LOOCV null gate FAILS for ridge (pooled out-of-fold AUC mean 0.433) and lasso (0.423): |mean - 0.5| > 0.03. Gate not changed (pre-registered)."
+      "reason": "FAIL kept (D-82): with the leave-pair-out AUC (D-77) ridge meets the null gate (100 replicates, mean 0.491, upper95 0.530), but lasso does not: 100 replicates mean 0.495, upper95 0.538; 400 fresh replicates mean 0.520, upper95 0.540. The pooled leave-one-out bias of 2026-10-13 (0.43) is removed."
     },
     {
       "acceptance_id": "V182",

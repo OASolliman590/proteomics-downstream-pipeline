@@ -2,7 +2,7 @@
 
 **Phase:** 3. All tasks pending-after-freeze. Implementer may edit only its allowlist; Maintainer owns status changes.
 
-- [ ] T111 — R12: implement FR-111 (Private local legacy adapter regression); establish and pass V111, including its negative case, with independent evidence.
+- [x] T111 — R12: implement FR-111 (Private local legacy adapter regression); establish and pass V111, including its negative case, with independent evidence.
 - [ ] T112 — R12: implement FR-112 (Legacy core numerical comparison); establish and pass V112, including its negative case, with independent evidence.
 - [ ] T113 — R12: implement FR-113 (Scientific-change reconciliation); establish and pass V113, including its negative case, with independent evidence.
 - [ ] T114 — R12: implement FR-114 (Full maintained study run); establish and pass V114, including its negative case, with independent evidence.

@@ -1,0 +1,29 @@
+{
+  "schema": "V111 non-identifying Maintainer verification summary (D-83)",
+  "acceptance_id": "V111",
+  "date": "2026-10-13",
+  "where": "the Maintainer's machine; the archive and the private output stay outside the repository",
+  "run_by": "Claude route at the Maintainer's request; recording authorized by the Maintainer on 2026-10-21 (D-83)",
+  "command": "python scripts/maintained/legacy_regression.py verify-archive --archive <original archive>",
+  "tooling": "legacy_service.verify_archive with the single-package-folder fix (branch claude/fix-v111-archive-root, commit f7f4cd2, PR #4)",
+  "exit_code": 0,
+  "result": {
+    "verified": true,
+    "file_count": 165,
+    "expected_file_count": 165,
+    "archive_sha256_matches": true,
+    "n_problems": 0,
+    "single_package_folder_stripped": true,
+    "archive_modified": false,
+    "extracted": false
+  },
+  "inventory": "docs/audit/archive_inventory.json",
+  "first_attempt": "before the fix the same archive reported every member as both missing and not_in_inventory, because all members sit under one top-level folder; the bytes were never in question",
+  "not_covered": "V112 (numerical comparison), V113 and V114 are not recorded by this summary and stay NOT_RUN",
+  "tooling_manifest": [
+    "0d9c4bb509992cff2587af93a1c3e2831c9d9e4cae42ae0d2a29638a13e1be46  scripts/maintained/legacy_regression.py",
+    "54dd2abc9dd347b1c74aa18e45c8adc8452797c4704e9bb8cab33f1c4a0eceb2  src/proteomics_pipeline/legacy_service.py",
+    "bc34c65b267a151fd9e6880a9e07e207a04319bd14e7800c42dbdc012b3454e6  tests/regression/test_legacy_tooling.py"
+  ],
+  "tooling_manifest_sha256": "402d725abdbc515ba1a9d869148dc9978140a770dbba3df953b8937e56af194d"
+}

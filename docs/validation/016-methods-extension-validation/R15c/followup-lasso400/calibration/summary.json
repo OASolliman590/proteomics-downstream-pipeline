@@ -1,0 +1,16 @@
+{
+ "gates_file": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/gates-preregistration.json",
+ "gates_sha256": "e8c3c0dac5e03f60d930fd2078e6bb852ddb7331e17aa3142a79319976b25901",
+ "leave_pair_out": {
+  "lasso": {
+   "lpo_null": {
+    "n": 400,
+    "mean": 0.5203645833333332,
+    "mc_se": 0.010140793346461681,
+    "upper95": 0.5402405382923982,
+    "gate": "FAIL"
+   }
+  }
+ },
+ "note": "Earlier verdicts stay recorded; acceptance on this evidence is the Maintainer's decision (decisions.md)."
+}

@@ -48,6 +48,8 @@ The leave-pair-out driver first ran to completion and wrote both tables, then fa
 
 ## Open for the Maintainer
 
+**Resolved 2026-10-21:** item 1 — V180 accepted (D-81); item 2 — 400 fresh lasso replicates run (D-82, `R15c/followup-lasso400/`), still FAIL; item 3 remains open.
+
 1. Accept V180 on the diagnostic evidence, or keep the 2026-10-13 FAIL.
 2. V181 for lasso: accept on the unbiased mean, pre-register a larger leave-pair-out run (for example 400 replicates, which narrows the upper bound to about 0.52 if the mean holds), or keep FAIL.
 3. Confirm or revise the proposed planted-signal rules (carried unchanged from R15c).

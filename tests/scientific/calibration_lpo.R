@@ -48,7 +48,7 @@ for (cl in unlist(rc$families_lpo)) {
 }
 for (name in names(results)) if (!is.null(results[[name]]))
   utils::write.table(results[[name]], file.path(out, paste0(name, ".tsv")), sep = "\t", quote = FALSE, row.names = FALSE, eol = "\n")
-raw <- list(gates = "docs/validation/016-methods-extension-validation/R15c/followup/gates-preregistration.json",
+raw <- list(gates = gates_path,
             gates_sha256 = paste(unclass(openssl::sha256(file(gates_path))), collapse = ""), seconds = round(as.numeric(difftime(Sys.time(), started, units = "secs")), 3),
             cores = cores, r_version = paste(R.version$major, R.version$minor, sep = "."),
             glmnet = as.character(utils::packageVersion("glmnet")), proteomicsCore = as.character(utils::packageVersion("proteomicsCore")))

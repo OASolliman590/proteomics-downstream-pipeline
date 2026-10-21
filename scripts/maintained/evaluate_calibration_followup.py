@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""R15c follow-up gate evaluation (D-77, D-78; FR-180, FR-181, FR-183).
+"""R15c follow-up gate evaluation (D-77, D-78, D-82; FR-180, FR-181, FR-183).
 
 Reads the outputs of tests/scientific/calibration_lpo.R and tests/scientific/calibration_rf_diagnostic.R and evaluates
 every gate of the follow-up pre-registration (docs/validation/016-methods-extension-validation/R15c/followup/
-gates-preregistration.json), which is pinned here by SHA-256: a changed gate file fails with E_CALIBRATION_GATE_CHANGED.
+gates-preregistration.json, and R15c/followup-lasso400/ for D-82), each pinned here by SHA-256: a changed or unknown gate file
+fails with E_CALIBRATION_GATE_CHANGED.
 A missing or short scenario file fails with E_CALIBRATION_REPLICATES. A failed gate is recorded as FAIL and never changed.
 The 2026-10-13 R15c summary is not modified.
 
-Usage: python scripts/maintained/evaluate_calibration_followup.py [--output DIR]   (writes DIR/summary.json)
+Usage: python scripts/maintained/evaluate_calibration_followup.py [--gates FILE] [--output DIR]   (writes DIR/summary.json;
+DIR defaults to the calibration folder beside FILE)
 """
 from __future__ import annotations
 
@@ -21,13 +23,16 @@ FOLLOWUP = ROOT / "docs" / "validation" / "016-methods-extension-validation" / "
 GATES_PATH = FOLLOWUP / "gates-preregistration.json"
 DEFAULT_OUT = FOLLOWUP / "calibration"
 PREREGISTERED_SHA256 = "e98bcb2d30b37605430ef905f2c34f08542371e44d108559b06b9f4ec80d50c4"
+LASSO400_GATES = FOLLOWUP.parent / "followup-lasso400" / "gates-preregistration.json"
+PINNED = {GATES_PATH: PREREGISTERED_SHA256, LASSO400_GATES: "e8c3c0dac5e03f60d930fd2078e6bb852ddb7331e17aa3142a79319976b25901"}
 
 sys.path.insert(0, str(ROOT / "scripts" / "maintained"))
 import run_methods_calibration as base   # noqa: E402  (shared gate rules, TSV reader and error type)
 
 
-def load_gates(path: Path = GATES_PATH) -> dict:
-    if base.sha256(path) != PREREGISTERED_SHA256:
+def load_gates(path: Path = GATES_PATH, pinned: str | None = None) -> dict:
+    expected = pinned or PINNED.get(Path(path).resolve(), PREREGISTERED_SHA256)
+    if base.sha256(path) != expected:
         raise base.CalibrationError("E_CALIBRATION_GATE_CHANGED", "the follow-up gate file differs from its pre-registration; nothing is evaluated")
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -64,11 +69,19 @@ def evaluate(out: Path, gates: dict) -> dict:
     lpo: dict[str, dict] = {}
     for fam in rc["families_lpo"]:
         null = [float(r["lpo_auc"]) for r in _rows(out, "lpo_null.tsv", rc["lpo_null"], fam)]
-        planted = [float(r["lpo_auc"]) for r in _rows(out, "lpo_planted.tsv", rc["lpo_planted"], fam)]
-        mean_planted = sum(planted) / len(planted)
-        lpo[fam] = {"lpo_null": base._auc_gate(null),
-                    "lpo_planted": {"n": len(planted), "mean": mean_planted, "gate": "PASS" if mean_planted >= 0.70 else "FAIL",
-                                    "note": "planted-signal rule as pre-registered (proposed, pending Maintainer confirmation)"}}
+        lpo[fam] = {"lpo_null": base._auc_gate(null)}
+        if rc.get("lpo_planted", 0):
+            planted = [float(r["lpo_auc"]) for r in _rows(out, "lpo_planted.tsv", rc["lpo_planted"], fam)]
+            mean_planted = sum(planted) / len(planted)
+            lpo[fam]["lpo_planted"] = {"n": len(planted), "mean": mean_planted, "gate": "PASS" if mean_planted >= 0.70 else "FAIL",
+                                       "note": "planted-signal rule as pre-registered (proposed, pending Maintainer confirmation)"}
+    summary = {"leave_pair_out": lpo}
+    if "rf_diagnostic_datasets" in rc:
+        summary["random_forest_permutation_diagnostic"] = _rf(out, rc, binom, chi_sf)
+    return summary
+
+
+def _rf(out: Path, rc: dict, binom, chi_sf) -> dict:
     B = int(rc["rf_diagnostic_B"])
     rows = _rows(out, "rf_permutation_diagnostic.tsv", rc["rf_diagnostic_datasets"], "random_forest")
     p_values = [float(r["permutation_p"]) for r in rows]
@@ -83,21 +96,23 @@ def evaluate(out: Path, gates: dict) -> dict:
           "ties": {"datasets_with_ties": sum(t > 0 for t in ties), "mean_tied_permutations": sum(ties) / len(ties), "max_tied_permutations": max(ties),
                    "mean_permutation_p": sum(p_values) / len(p_values), "mean_mid_p": sum(mid) / len(mid),
                    "mid_p_at_or_below_0_05": sum(m <= 0.05 + 1e-12 for m in mid), "note": "descriptive (no gate); a uniform P has mean 0.5 + 0.5 / (B + 1)"}}
-    return {"gates_file": "docs/validation/016-methods-extension-validation/R15c/followup/gates-preregistration.json", "gates_sha256": PREREGISTERED_SHA256,
-            "leave_pair_out": lpo, "random_forest_permutation_diagnostic": rf,
-            "note": "The 2026-10-13 R15c verdicts (V180, V181 FAIL) are unchanged by this file; acceptance is the Maintainer's decision on this evidence."}
+    return rf
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--gates", type=Path, default=GATES_PATH)
+    parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args(argv)
+    out = args.output or args.gates.parent / "calibration"
     try:
-        summary = evaluate(args.output, load_gates())
+        gates = load_gates(args.gates)
+        summary = {"gates_file": args.gates.resolve().relative_to(ROOT).as_posix(), "gates_sha256": base.sha256(args.gates), **evaluate(out, gates),
+                   "note": "Earlier verdicts stay recorded; acceptance on this evidence is the Maintainer's decision (decisions.md)."}
     except base.CalibrationError as error:
         print(json.dumps({"error": error.code, "message": str(error)}), file=sys.stderr)
         return 2
-    (args.output / "summary.json").write_bytes((json.dumps(summary, indent=1) + "\n").encode("utf-8"))
+    (out / "summary.json").write_bytes((json.dumps(summary, indent=1) + "\n").encode("utf-8"))
     print(json.dumps(summary, indent=1))
     return 0
 

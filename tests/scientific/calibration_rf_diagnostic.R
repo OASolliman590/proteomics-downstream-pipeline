@@ -42,7 +42,7 @@ res <- if (cores > 1L && .Platform$OS.type == "unix") parallel::mclapply(idx, on
 if (any(vapply(res, inherits, logical(1), "try-error")) || any(vapply(res, is.null, logical(1))))
   stop("E_CALIBRATION_REPLICATE: a calibration replicate failed; the run is not accepted", call. = FALSE)
 utils::write.table(do.call(rbind, res), file.path(out, "rf_permutation_diagnostic.tsv"), sep = "\t", quote = FALSE, row.names = FALSE, eol = "\n")
-raw <- list(gates = "docs/validation/016-methods-extension-validation/R15c/followup/gates-preregistration.json",
+raw <- list(gates = gates_path,
             gates_sha256 = paste(unclass(openssl::sha256(file(gates_path))), collapse = ""), seconds = round(as.numeric(difftime(Sys.time(), started, units = "secs")), 3),
             cores = cores, r_version = paste(R.version$major, R.version$minor, sep = "."),
             randomForest = as.character(utils::packageVersion("randomForest")), proteomicsCore = as.character(utils::packageVersion("proteomicsCore")))

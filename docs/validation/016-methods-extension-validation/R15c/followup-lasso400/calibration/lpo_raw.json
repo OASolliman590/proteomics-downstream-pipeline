@@ -1,0 +1,10 @@
+{
+  "gates": "docs/validation/016-methods-extension-validation/R15c/followup-lasso400/gates-preregistration.json",
+  "gates_sha256": "e8c3c0dac5e03f60d930fd2078e6bb852ddb7331e17aa3142a79319976b25901",
+  "seconds": 1085.128,
+  "cores": 12,
+  "r_version": "4.6.1",
+  "glmnet": "5.1",
+  "proteomicsCore": "0.1.0",
+  "note": "The 'gates' path was corrected after the run: the driver at commit 595572c wrote a fixed path (now fixed). gates_sha256 was computed from the file the run actually read, and it equals this pre-registration."
+}

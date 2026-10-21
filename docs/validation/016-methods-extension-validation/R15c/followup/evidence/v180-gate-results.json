@@ -1,0 +1,11 @@
+{
+  "packet": "R15c follow-up (V180 acceptance, D-81)",
+  "scope": "evaluation of the pre-registered random-forest permutation diagnostic (D-78); the driver run and its exit status are in rf-diagnostic-run.log and the receipt",
+  "commands": [
+    {
+      "command": "python scripts/maintained/evaluate_calibration_followup.py (gate file R15c/followup/gates-preregistration.json)",
+      "exit_code": 0,
+      "log": "docs/validation/016-methods-extension-validation/R15c/followup/evidence/evaluate.log"
+    }
+  ]
+}

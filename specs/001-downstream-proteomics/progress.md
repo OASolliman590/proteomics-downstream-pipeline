@@ -1,5 +1,9 @@
 # Progress — evidence, not anticipated completion
 
+## Status update on 2026-10-21
+
+Maintainer decisions D-77 to D-83 (see [decisions.md](decisions.md)). The ledger now records 209 PASS, one FAIL (V181, lasso under the leave-pair-out null; ridge passes) and 12 NOT_RUN. V180 is accepted on the pre-registered random-forest diagnostic (D-81). V111 is recorded from the Maintainer-local archive verification (D-83). Evidence: `docs/validation/016-methods-extension-validation/R15c/followup*/` and `docs/validation/013-release/evidence/v111-maintainer-verification.json`.
+
 ## Status reconciliation on 2026-10-18
 
 This is a documentation-only reconciliation of the current local checkout, not a new freeze, dispatch authorization or release acceptance. The acceptance ledger and traceability currently record 207 PASS, two FAIL (V180 and V181), and 13 NOT_RUN cases. Structural reconciliation and recorded evidence hashes were checked; scientific gates were not rerun. Phase 5 is partially implemented, with failed calibration gates and unrun real-study slots. Phase 6 has recorded PASS evidence for V195–V222; that is not a new independent review or a release claim. Older baseline/branch/implementation-status descriptions below are historical where they disagree with this dated snapshot. See [the reconciliation record](re-evaluation.md) before planning further work.
