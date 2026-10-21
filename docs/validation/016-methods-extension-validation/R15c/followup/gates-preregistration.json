@@ -1,0 +1,45 @@
+{
+  "schema": "R15c follow-up calibration gates (FR-180, FR-181, FR-183; Maintainer decisions D-77 and D-78, 2026-10-21)",
+  "status": "pre-registered before any follow-up run and before the leave-pair-out code exists; the R15c gates of 2026-10-13 and their FAIL verdicts for V180 and V181 are not changed",
+  "gates": {
+    "lpo_null": {
+      "scenario": "null, LOOCV scheme with the leave-pair-out AUC estimator (ridge and lasso)",
+      "rule": "|mean - 0.5| <= 0.03 and mean + 1.96 SE <= 0.53 on the leave-pair-out AUC",
+      "source": "FR-183 (a), the R14f null rule, applied to the leave-pair-out estimator (D-77)"
+    },
+    "lpo_planted": {
+      "scenario": "planted signal, LOOCV scheme with the leave-pair-out AUC estimator (ridge and lasso)",
+      "rule": "mean leave-pair-out AUC >= 0.70",
+      "source": "the planted-signal AUC rule of the R15c pre-registration (proposed, pending Maintainer confirmation), applied unchanged"
+    },
+    "rf_permutation_diagnostic": {
+      "scenario": "null, random forest, whole-procedure permutation P with B = 99",
+      "rules": {
+        "type_i": "binomial P(K >= k | rate 0.05) >= 0.01, with K the number of P <= 0.05 (unchanged rule)",
+        "uniformity_original": "chi-square goodness-of-fit P over the B + 1 attainable values >= 0.01 (unchanged rule; expected count 2 per value, reported as written)",
+        "uniformity_binned": "chi-square goodness-of-fit P over 10 equal bins of the B + 1 attainable values (10 values per bin, expected 20 per bin) >= 0.01",
+        "ties": "for every dataset the number of permutations whose AUC equals the observed AUC within 1e-12 is recorded, and the mid-P (ties counted one half) is reported beside the production P; descriptive, no gate"
+      },
+      "source": "D-78: diagnostic of the V180 FAIL. It is a new, larger run of the same production procedure; V180 keeps its 2026-10-13 FAIL unless the Maintainer decides otherwise on the evidence"
+    }
+  },
+  "design": {
+    "lpo": "12 vs 12 biological units, 200 pure-noise features (planted: five features +1.5 SD in the positive class); leave-pair-out over every positive x negative unit pair; inner 3-fold tuning; top-5 by AUC on the training data; the AUC is the mean over pairs of 1[s_pos > s_neg] + 0.5 x 1[s_pos = s_neg]",
+    "rf_diagnostic": "15 vs 15 biological units, 200 pure-noise features, 2 x 5-fold repeated stratified outer, inner 3-fold, top-5 by AUC, random forest with 500 trees"
+  },
+  "replicate_counts": {
+    "lpo_null": 100,
+    "lpo_planted": 50,
+    "families_lpo": ["penalized_logistic", "lasso"],
+    "rf_diagnostic_datasets": 200,
+    "rf_diagnostic_B": 99
+  },
+  "seeds": {
+    "lpo_null_base": 1200000,
+    "lpo_planted_base": 1250000,
+    "rf_diagnostic_base": 1300000,
+    "family_offset": "+1000 x family index (penalized_logistic 0, lasso 1, random_forest 5), as in the R15c pre-registration"
+  },
+  "compute_budget_minutes": 60,
+  "reduced_replicates_recorded_as_adaptation": true
+}
