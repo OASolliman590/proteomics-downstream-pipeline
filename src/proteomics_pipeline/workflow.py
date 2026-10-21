@@ -21,7 +21,7 @@ from typing import Callable
 from . import __version__
 from .config import _read as read_raw_config, load_config
 from .errors import CapabilityError, CollisionError, IntegrityError, ProteomicsError
-from .provenance import canonical_json_bytes, content_sha256, sha256_bytes, sha256_file
+from .provenance import canonical_json_bytes, content_sha256, is_os_metadata, sha256_bytes, sha256_file
 from .runtime import RunLock, capabilities as discovered_capabilities, execute_capability, stage_result, utc_now, validate_run_status
 
 PLANNING_CAPABILITIES = ("intake", "preprocessing", "design")
@@ -127,11 +127,11 @@ def code_manifest(package_root: Path | None = None, repository_root: Path | None
     package_root = Path(package_root) if package_root is not None else Path(__file__).resolve().parent
     repository_root = Path(repository_root) if repository_root is not None else REPOSITORY_ROOT
     for path in sorted(package_root.rglob("*")):
-        if path.is_file() and "__pycache__" not in path.parts and path.suffix in (".py", ".json", ".html", ".typed"):
+        if path.is_file() and not is_os_metadata(path) and "__pycache__" not in path.parts and path.suffix in (".py", ".json", ".html", ".typed"):
             files.append((f"src/proteomics_pipeline/{path.relative_to(package_root).as_posix()}", content_sha256(path)))
     r_root = repository_root / "r" / "proteomicsCore"
     if r_root.is_dir():
-        for path in sorted((r_root / "R").glob("*.R")) + [r_root / "DESCRIPTION", r_root / "NAMESPACE", repository_root / "scripts" / "maintained" / "run_stage.R"]:
+        for path in sorted(p for p in (r_root / "R").glob("*.R") if not is_os_metadata(p)) + [r_root / "DESCRIPTION", r_root / "NAMESPACE", repository_root / "scripts" / "maintained" / "run_stage.R"]:
             if path.is_file():
                 files.append((path.relative_to(repository_root).as_posix(), content_sha256(path)))
     lines = "".join(f"{digest}  {name}\n" for name, digest in sorted(files))
@@ -385,7 +385,7 @@ def plan_command(config_path: str | Path, output: str | Path) -> tuple[dict, int
         for leftover in output.parent.glob(".stage-*"):
             shutil.rmtree(leftover, ignore_errors=True)
         shutil.rmtree(artifacts, ignore_errors=True)
-        shutil.rmtree(output.parent / "logs", ignore_errors=True) if not any((output.parent / "logs").glob("*")) else None
+        shutil.rmtree(output.parent / "logs", ignore_errors=True) if not any(p for p in (output.parent / "logs").glob("*") if not is_os_metadata(p)) else None
         raise
     from .design_service import write_plan
     write_plan(plan, output)
@@ -683,7 +683,7 @@ def _finalize(root: Path, config: dict, ledger: Ledger, run_id: str, plan_hash: 
             artifacts.append({"artifact_id": relative.replace("/", "_").replace(".", "_"), "relative_path": relative, "sha256": sha256_file(path), "result_type": kind})
     catalogue = root / "report" / "figure_catalogue"
     if catalogue.is_dir():
-        for index, path in enumerate(sorted(item for item in catalogue.rglob("*") if item.is_file())):
+        for index, path in enumerate(sorted(item for item in catalogue.rglob("*") if item.is_file() and not is_os_metadata(item))):
             artifacts.append({"artifact_id": f"figure_catalogue_{index:04d}", "relative_path": path.relative_to(root).as_posix(),
                               "sha256": sha256_file(path), "result_type": "FigureArtifact"})
     status = {"schema_version": "1.2.0", "run_id": run_id, "plan_hash": plan_hash, "requested_phase": config["runtime"]["phase"],

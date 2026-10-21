@@ -33,6 +33,13 @@ def normalized_content(data: bytes) -> bytes:
 def content_sha256(path: str | Path) -> str:
     """Platform-independent content hash (see CONTENT_HASH_RULE)."""
     return hashlib.sha256(normalized_content(Path(path).read_bytes())).hexdigest()
+# Operating-system metadata sidecars (reconciliation 2026-10-18, item 4): macOS writes AppleDouble `._<name>` files on
+# exFAT/FAT/SMB volumes and `.DS_Store` in folders; Windows Explorer writes `Thumbs.db` and `desktop.ini`. They are never
+# pipeline files, so every directory walk skips them.
+OS_METADATA_NAMES = frozenset({".DS_Store", "Thumbs.db", "desktop.ini"})
+def is_os_metadata(path: str | Path) -> bool:
+    name = Path(path).name
+    return name.startswith("._") or name in OS_METADATA_NAMES
 def file_manifest(root: str | Path) -> list[dict[str, str]]:
     root = Path(root).resolve()
-    return [{"relative_path": p.relative_to(root).as_posix(), "sha256": sha256_file(p)} for p in sorted(x for x in root.rglob("*") if x.is_file())]
+    return [{"relative_path": p.relative_to(root).as_posix(), "sha256": sha256_file(p)} for p in sorted(x for x in root.rglob("*") if x.is_file() and not is_os_metadata(x))]
