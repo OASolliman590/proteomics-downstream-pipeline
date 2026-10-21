@@ -1,0 +1,3 @@
+Error: No method asJSON S3 class: sha256
+Execution halted
+exit 1

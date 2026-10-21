@@ -43,7 +43,7 @@ if (any(vapply(res, inherits, logical(1), "try-error")) || any(vapply(res, is.nu
   stop("E_CALIBRATION_REPLICATE: a calibration replicate failed; the run is not accepted", call. = FALSE)
 utils::write.table(do.call(rbind, res), file.path(out, "rf_permutation_diagnostic.tsv"), sep = "\t", quote = FALSE, row.names = FALSE, eol = "\n")
 raw <- list(gates = "docs/validation/016-methods-extension-validation/R15c/followup/gates-preregistration.json",
-            gates_sha256 = as.character(openssl::sha256(file(gates_path))), seconds = round(as.numeric(difftime(Sys.time(), started, units = "secs")), 3),
+            gates_sha256 = paste(unclass(openssl::sha256(file(gates_path))), collapse = ""), seconds = round(as.numeric(difftime(Sys.time(), started, units = "secs")), 3),
             cores = cores, r_version = paste(R.version$major, R.version$minor, sep = "."),
             randomForest = as.character(utils::packageVersion("randomForest")), proteomicsCore = as.character(utils::packageVersion("proteomicsCore")))
 writeBin(charToRaw(paste0(as.character(jsonlite::toJSON(raw, auto_unbox = TRUE, pretty = TRUE)), "\n")), file.path(out, "rf_diagnostic_raw.json"))

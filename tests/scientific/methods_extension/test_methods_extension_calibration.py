@@ -30,6 +30,7 @@ def _load(name, path):
 
 
 RUN = _load("calibration_runner", ROOT / "scripts" / "maintained" / "run_methods_calibration.py")
+FOLLOWUP = _load("calibration_followup", ROOT / "scripts" / "maintained" / "evaluate_calibration_followup.py")
 rscript = shutil.which("Rscript")
 pytestmark = pytest.mark.skipif(rscript is None, reason="NOT_RUN: Rscript unavailable")
 
@@ -195,6 +196,28 @@ def test_v183_the_gate_file_is_pinned_and_a_changed_gate_is_refused(tmp_path):
     with pytest.raises(RUN.CalibrationError) as info:
         RUN.load_gates(changed)
     assert info.value.code == "E_CALIBRATION_GATE_CHANGED"
+
+
+def test_v183_the_followup_gate_file_is_pinned_and_a_changed_gate_is_refused(tmp_path):
+    gates = FOLLOWUP.GATES_PATH
+    assert RUN.sha256(gates) == FOLLOWUP.PREREGISTERED_SHA256
+    assert json.loads(gates.read_text(encoding="utf-8"))["status"].startswith("pre-registered before any follow-up run")
+    changed = tmp_path / "gates.json"
+    changed.write_text(gates.read_text(encoding="utf-8").replace("0.03", "0.09", 1), encoding="utf-8")
+    with pytest.raises(FOLLOWUP.base.CalibrationError) as info:
+        FOLLOWUP.load_gates(changed)
+    assert info.value.code == "E_CALIBRATION_GATE_CHANGED"
+
+
+def test_v180_the_binned_uniformity_check_counts_ten_equal_bins_of_the_attainable_values():
+    chi_sf = RUN._r14f_helpers().chi_square_sf
+    B = 99
+    uniform = [j / (B + 1) for j in range(1, B + 2)] * 2                         # every attainable value twice: 20 per bin
+    res = FOLLOWUP.binned_uniformity(uniform, B, 10, chi_sf)
+    assert res["counts"] == [20] * 10 and res["chi_square"] == 0 and res["gate"] == "PASS"
+    skewed = [0.9 + j / (B + 1) for j in range(1, 11)] * 20                      # all 200 values in the top bin (0.91 to 1.00)
+    res = FOLLOWUP.binned_uniformity(skewed, B, 10, chi_sf)
+    assert res["counts"] == [0] * 9 + [200] and res["gate"] == "FAIL"           # negative: a conservative pile-up fails
 
 
 def test_v184_the_run_records_seeds_counts_versions_and_reproduces_one_replicate():
